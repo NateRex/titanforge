@@ -2,6 +2,8 @@
 build/*
 !.build/.gitkeep
 
+CMakeSettings.json
+
 .vscode
 .vs
 out

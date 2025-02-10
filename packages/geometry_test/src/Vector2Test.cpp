@@ -1,11 +1,13 @@
 #include <geometry/Vector2.h>
+#include <geometry/Vector3.h>
 #include <geometry/Utils.h>
 #include <catch.hpp>
 
 /**
  * Tests the basic constructors and accessors of the class
  */
-TEST_CASE("Basics", "[Vector2]") {
+TEST_CASE("Basics", "[Vector2]")
+{
     Vector2 vec;
     REQUIRE(vec.x == 0);
     REQUIRE(vec.y == 0);
@@ -16,17 +18,22 @@ TEST_CASE("Basics", "[Vector2]") {
 
     Vector2 vec2(vec);
     REQUIRE(vec == vec2);
+
+    Vector2 vec3(Vector3(1.1, -2.2, 3.3));
+    REQUIRE(vec == vec3);
 }
 
 /**
  * Tests the isZero() method
  */
-TEST_CASE("IsZero", "[Vector2]") {
+TEST_CASE("IsZero", "[Vector2]")
+{
     Vector2 vec(0, 0);
     REQUIRE(vec.isZero());
 
     vec = Vector2(0.1, 0);
     REQUIRE_FALSE(vec.isZero());
+    REQUIRE(vec.isZero(0.1));
 
     vec = Vector2(0, 0.1);
     REQUIRE_FALSE(vec.isZero());
@@ -34,23 +41,28 @@ TEST_CASE("IsZero", "[Vector2]") {
 }
 
 /**
- * Tests the ability to compare vectors for equality within tolerance
+ * Tests the ability to compare vectors for equality
  */
-TEST_CASE("EqualWithinTol", "[Vector2]") {
+TEST_CASE("EqualTo", "[Vector2]")
+{
     Vector2 v1(1, 2);
     REQUIRE(v1.equalTo(v1));
+    REQUIRE(v1 == v1);
 
-    Vector2 v2(1.02, 2);
-    REQUIRE_FALSE(v1.equalTo(v2, 0.01));
+    Vector2 v2(1.1, 2);
+    REQUIRE_FALSE(v1.equalTo(v2));
+    REQUIRE_FALSE(v1 == v2);
 
-    v2 = Vector2(1, 2.01);
-    REQUIRE_FALSE(v1.equalTo(v2, 0.009));
+    v2 = Vector2(1, 2.1);
+    REQUIRE_FALSE(v1.equalTo(v2));
+    REQUIRE_FALSE(v1 == v2);
 }
 
 /**
  * Tests the getMagnitude() method
  */
-TEST_CASE("Magnitude", "[Vector2]") {
+TEST_CASE("Magnitude", "[Vector2]")
+{
     Vector2 vec(3, -4);
     REQUIRE(vec.getMagnitude() == 5);
 }
@@ -58,10 +70,11 @@ TEST_CASE("Magnitude", "[Vector2]") {
 /**
  * Tests the normalize() method
  */
-TEST_CASE("Normalize", "[Vector2]") {
+TEST_CASE("Normalize", "[Vector2]")
+{
     Vector2 vec;
     Vector2 normalized = vec.normalize();
-    REQUIRE(normalized.getMagnitude() == 0);
+    REQUIRE(normalized.isZero());
 
     vec = Vector2(100, -42);
     normalized = vec.normalize();
@@ -71,7 +84,8 @@ TEST_CASE("Normalize", "[Vector2]") {
 /**
  * Tests the ability to obtain the dot product of two vectors
  */
-TEST_CASE("DotProduct", "[Vector2]") {
+TEST_CASE("DotProduct", "[Vector2]")
+{
     Vector2 v1(1, -2);
     Vector2 v2(-4, 5);
     double dotProduct = v1.dot(v2);
@@ -82,7 +96,8 @@ TEST_CASE("DotProduct", "[Vector2]") {
 /**
  * Tests the ability to obtain the cross product of two vectors
  */
-TEST_CASE("CrossProduct", "[Vector2]") {
+TEST_CASE("CrossProduct", "[Vector2]")
+{
     Vector2 v1(1, -2);
     Vector2 v2(-4, 5);
     double v1CrossV2 = v1.cross(v2);
@@ -95,7 +110,8 @@ TEST_CASE("CrossProduct", "[Vector2]") {
 /**
  * Tests the operator for scaling a vector
  */
-TEST_CASE("Scaling", "[Vector2]") {
+TEST_CASE("Scaling", "[Vector2]")
+{
     Vector2 v1(-3, 8);
     Vector2 v2 = v1.scale(-2);
     REQUIRE(equals(v2.x, 6, 1.0e-12));
@@ -105,7 +121,8 @@ TEST_CASE("Scaling", "[Vector2]") {
 /**
  * Tests the operator for subtracting a vector from another vector
  */
-TEST_CASE("Subtraction", "[Vector2]") {
+TEST_CASE("Subtraction", "[Vector2]")
+{
     Vector2 v1(4, 1002);
     Vector2 result = v1.minus(v1);
     REQUIRE(result.isZero());
@@ -116,19 +133,3 @@ TEST_CASE("Subtraction", "[Vector2]") {
     REQUIRE(equals(result.y, 0.1, 1.0e-12));
 }
 
-/**
- * Tests the operator for testing two vectors for equality
- */
-TEST_CASE("Equals", "[Vector2]") {
-    Vector2 vec1(1, 2);
-    REQUIRE(vec1 == vec1);
-
-    Vector2 vec2(1, 2);
-    REQUIRE(vec1 == vec2);
-
-    Vector2 vec3(2, 2);
-    REQUIRE_FALSE(vec1 == vec3);
-
-    Vector2 vec4(1, 1);
-    REQUIRE_FALSE(vec1 == vec4);
-}

@@ -2,7 +2,8 @@ project(Geometry CXX)
 
 add_library(Geometry
     src/Utils.cpp
-    src/Vector2.cpp)
+    src/Vector2.cpp
+    src/Vector3.cpp)
 add_library(Geometry::Geometry ALIAS Geometry)
 
 target_include_directories(
