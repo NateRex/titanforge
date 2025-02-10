@@ -4,7 +4,8 @@
 /**
  * Tests equals
  */
-TEST_CASE("equals", "[Utils]") {
+TEST_CASE("equals", "[Utils]")
+{
     REQUIRE(equals(1.101, 1.101, 0));
     REQUIRE(equals(1.101, 0, 1.101));
     REQUIRE_FALSE(equals(1.101, 0, 1.100));
@@ -13,7 +14,8 @@ TEST_CASE("equals", "[Utils]") {
 /**
  * Tests getOrDefault
  */
-TEST_CASE("getOrDefault", "[Utils]") {
+TEST_CASE("getOrDefault", "[Utils]")
+{
     double val = 1;
 
     double* ptr = &val;

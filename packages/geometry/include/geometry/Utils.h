@@ -19,7 +19,8 @@ bool equals(double a, double b, double tol);
  */
 #pragma warning(disable : 4172)
 template <typename T>
-T getOrDefault(const T* ptr, const T& def) {
+T getOrDefault(const T* ptr, const T& def)
+{
 	return ptr != nullptr ? *ptr : def;
 }
 #pragma warning(default : 4172)

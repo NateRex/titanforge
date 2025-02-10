@@ -7,7 +7,8 @@
  * @param argv The arguments to the program
  * @return The result, which will be zero if all tests passed, and non-zero if one or more tests fail.
  */
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     Catch::Session session;
     return session.run(argc, argv);
 }

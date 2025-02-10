@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project(core CXX)
+project(titanforge CXX)
 
 add_subdirectory(packages/geometry)
 add_subdirectory(packages/geometry_test)
