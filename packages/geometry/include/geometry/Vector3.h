@@ -6,7 +6,8 @@ class Vector2;
  * A three-dimensional vector.
  * @author Nathaniel Rex
  */
-class Vector3 {
+class Vector3
+{
 public:
 	
 	/**
@@ -35,7 +36,7 @@ public:
      * @param y Y coordinate value
 	 * @param z Z coordinate value
 	 */
-	Vector3(const double x, const double y, const double z);
+	Vector3(double x, double y, double z);
 
 	/**
 	 * Constructs a vector using the x and y coordinates from a two-dimensional vector
@@ -54,7 +55,7 @@ public:
      * @param tol Tolerance to use when comparing. Defaults to 0.
      * @return True if this vector is the zero vector. Returns false otherwise.
      */
-    bool isZero(const double tol = 0.0) const;
+    bool isZero(double tol = 0.0) const;
 
     /**
      * Determines if this vector is equal to another vector (within tolerance).
@@ -62,7 +63,7 @@ public:
      * @param tol Tolerance value to use when comparing. Defaults to 0.
      * @return True if the two vectors are equal. Returns false otherwise.
      */
-    bool equalTo(const Vector3& other, const double tol = 0.0) const;
+    bool equalTo(const Vector3& other, double tol = 0.0) const;
 
     /**
      * @return The magnitude of this vector
@@ -97,7 +98,7 @@ public:
      * @param result (Optional) Pointer to a vector in which to store the results
      * @return The resulting vector
      */
-    Vector3 scale(const double value, Vector3* result = nullptr) const;
+    Vector3 scale(double value, Vector3* result = nullptr) const;
 
     /**
      * Subtracts another vector from this vector.

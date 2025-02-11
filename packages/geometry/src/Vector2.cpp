@@ -1,6 +1,6 @@
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
-#include <geometry/Utils.h>
+#include <common/Utils.h>
 #include <math.h>
 
 Vector2::Vector2(): x(0.0), y(0.0)

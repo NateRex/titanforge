@@ -1,6 +1,6 @@
 #include <geometry/Vector3.h>
 #include <geometry/Vector2.h>
-#include <geometry/Utils.h>
+#include <common/Utils.h>
 #include <catch.hpp>
 
 /**
