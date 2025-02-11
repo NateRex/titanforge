@@ -81,12 +81,34 @@ void Matrix3::inverse(Matrix3* result) const
 
 Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
 {
+	double x = v.x;
+	double y = v.y;
+	double z = v.z;
 
+	Vector3 r = getOrDefault(result, Vector3());
+	r.x = _m[0] * x + _m[1] * y + _m[2] * z;
+	r.y = _m[3] * x + _m[4] * y + _m[5] * z;
+	r.z = _m[6] * x + _m[7] * y + _m[8] * z;
+
+	return r;
 }
 
 Matrix3 Matrix3::multiply(const Matrix3& m, Matrix3* result) const
 {
+	double r00 = _m[0] * m._m[0] + _m[1] * m._m[3] + _m[2] * m._m[6];
+	double r01 = _m[0] * m._m[1] + _m[1] * m._m[4] + _m[2] * m._m[7];
+	double r02 = _m[0] * m._m[2] + _m[1] * m._m[5] + _m[2] * m._m[8];
+	double r10 = _m[3] * m._m[0] + _m[4] * m._m[3] + _m[5] * m._m[6];
+	double r11 = _m[3] * m._m[1] + _m[4] * m._m[4] + _m[5] * m._m[7];
+	double r12 = _m[3] * m._m[2] + _m[4] * m._m[5] + _m[5] * m._m[8];
+	double r20 = _m[6] * m._m[0] + _m[7] * m._m[3] + _m[8] * m._m[6];
+	double r21 = _m[6] * m._m[1] + _m[7] * m._m[4] + _m[8] * m._m[7];
+	double r22 = _m[6] * m._m[2] + _m[7] * m._m[5] + _m[8] * m._m[8];
 
+	Matrix3 r = getOrDefault(result, Matrix3());
+	r.setValues(r00, r01, r02, r10, r11, r12, r20, r21, r22);
+
+	return r;
 }
 
 double Matrix3::operator[](int i) const
