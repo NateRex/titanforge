@@ -10,6 +10,13 @@
 bool equals(double a, double b, double tol);
 
 /**
+ * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
+ * does nothing.
+ * @param ptr Possibly null pointer
+ */
+void safeDelete(void* ptr);
+
+/**
  * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
  * provided instead.
  * @param <T> The value type

@@ -22,6 +22,12 @@ Matrix3::Matrix3(const Matrix3& other)
 	{
 		_m[i] = other._m[i];
 	}
+
+	_didComputeInverse = other._didComputeInverse;
+	if (other._inverse != nullptr)
+	{
+		_inverse = new Matrix3(*other._inverse);
+	}
 }
 
 Matrix3::~Matrix3()
@@ -116,7 +122,13 @@ std::optional<Matrix3> Matrix3::inverse(Matrix3* result)
 
 	Matrix3 r = getOrDefault(result, Matrix3());
 	r.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+
+	// Set this matrix's inverse, as well as the inverse of the new matrix
+	safeDelete(r._inverse);
+	r._didComputeInverse = true;
+	r._inverse = new Matrix3(*this);
 	_inverse = new Matrix3(r);
+
 	return std::optional<Matrix3>{r};
 }
 

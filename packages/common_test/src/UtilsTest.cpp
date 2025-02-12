@@ -12,6 +12,17 @@ TEST_CASE("equals", "[Utils]")
 }
 
 /**
+ * Tests safeDelete
+ */
+TEST_CASE("safeDelete", "[Utils]")
+{
+    REQUIRE_NOTHROW(safeDelete(nullptr));
+
+    int* ptr = new int;
+    REQUIRE_NOTHROW(safeDelete(ptr));
+}
+
+/**
  * Tests getOrDefault
  */
 TEST_CASE("getOrDefault", "[Utils]")
