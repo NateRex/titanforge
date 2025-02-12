@@ -1,9 +1,9 @@
 #include <geometry/Matrix3.h>
 #include <geometry/Vector3.h>
 #include <common/Utils.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <math.h>
 #include <string>
-#include <stdexcept>
 #include <optional>
 
 Matrix3::Matrix3()
@@ -157,7 +157,7 @@ double Matrix3::operator[](int i) const
 	if (i < 0 || i > 8)
 	{
 		std::string errMsg = "Index " + std::to_string(i) + " out of range for 3x3 matrix";
-		throw std::runtime_error(errMsg);
+		throw IllegalArgumentException(errMsg);
 	}
 	return _m[i];
 }
