@@ -5,6 +5,7 @@ include(CTest)
 include(Catch)
 
 add_executable(CommonTest
+    src/exceptions/IllegalArgumentExceptionTest.cpp
     src/main.cpp
     src/UtilsTest.cpp)
 
