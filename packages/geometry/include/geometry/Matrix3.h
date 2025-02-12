@@ -1,5 +1,10 @@
 #pragma once
 
+namespace std {
+	template <typename T>
+	class optional;
+}
+
 class Vector3;
 
 /**
@@ -34,6 +39,11 @@ public:
 	 * @param other Matrix to copy
 	 */
 	Matrix3(const Matrix3& other);
+
+	/**
+	 * Destructor
+	 */
+	~Matrix3();
 
 	/**
 	 * Constructs a matrix from three row vectors
@@ -88,9 +98,11 @@ public:
 
 	/**
 	 * Computes the inverse of this matrix
-	 * @param result Matrix in which to store the result
+	 * @param (Optional) Result matrix in which to store the result. This matrix will be unchanged if
+	 * the inverse does not exist.
+	 * @return An optional value containing the inverse, if it exists.
 	 */
-	void inverse(Matrix3* result) const;
+	std::optional<Matrix3> inverse(Matrix3* result);
 
 	/**
 	 * Compute the product of this matrix and a column vector
@@ -122,6 +134,17 @@ private:
 	 * The values of this matrix
 	 */
 	double _m[9];
+
+	/**
+	 * Boolean value indicating whether the inverse of this matrix has been computed.
+	 */
+	bool _didComputeInverse = false;
+
+	/**
+	 * Cached inverse of this matrix. Will be null until the inverse is first computed, after which the value may either be
+	 * null or a valid matrix.
+	 */
+	Matrix3* _inverse = nullptr;
 
 	/**
 	 * Sets the values of this matrix, specified in row-major order

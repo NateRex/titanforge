@@ -10,8 +10,8 @@ target_include_directories(
     Geometry PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                     $<INSTALL_INTERFACE:include>)
 
-target_link_libraries(Geometry PRIVATE
-    Common::Common)
+target_link_libraries(Geometry
+    PRIVATE Common::Common)
 
 install(
     TARGETS Geometry

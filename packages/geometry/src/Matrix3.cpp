@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string>
 #include <stdexcept>
+#include <optional>
 
 Matrix3::Matrix3()
 {
@@ -20,6 +21,14 @@ Matrix3::Matrix3(const Matrix3& other)
 	for (int i = 0; i < 9; i++)
 	{
 		_m[i] = other._m[i];
+	}
+}
+
+Matrix3::~Matrix3()
+{
+	if (_inverse != nullptr)
+	{
+		delete _inverse;
 	}
 }
 
@@ -74,9 +83,41 @@ Matrix3 Matrix3::transpose(Matrix3* result) const
 	return r;
 }
 
-void Matrix3::inverse(Matrix3* result) const
+std::optional<Matrix3> Matrix3::inverse(Matrix3* result)
 {
+	if (_didComputeInverse)
+	{
+		return _inverse == nullptr ? std::nullopt : std::optional<Matrix3>{ *_inverse };
+	}
+	_didComputeInverse = true;
 
+	double t00 = _m[8] * _m[4] - _m[5] * _m[7];
+	double t01 = _m[5] * _m[6] - _m[8] * _m[3];
+	double t02 = _m[7] * _m[3] - _m[4] * _m[6];
+
+	double det = _m[0] * t00 + _m[1] * t01 + _m[2] * t02;
+	
+	if (equals(det, 0, 1.0e-11))
+	{
+		return std::nullopt;
+	}
+
+	double detInv = 1. / det;
+
+	double m00 = t01 * detInv;
+	double m01 = (_m[2] * _m[7] - _m[8] * _m[1]) * detInv;
+	double m02 = (_m[5] * _m[1] - _m[2] * _m[4]) * detInv;
+	double m10 = t01 * detInv;
+	double m11 = (_m[8] * _m[0] - _m[2] * _m[6]) * detInv;
+	double m12 = (_m[2] * _m[3] - _m[5] * _m[0]) * detInv;
+	double m20 = t02 * detInv;
+	double m21 = (_m[1] * _m[6] - _m[7] * _m[0]) * detInv;
+	double m22 = (_m[4] * _m[0] - _m[1] * _m[3]) * detInv;
+
+	Matrix3 r = getOrDefault(result, Matrix3());
+	r.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	_inverse = new Matrix3(r);
+	return std::optional<Matrix3>{r};
 }
 
 Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
@@ -95,18 +136,18 @@ Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
 
 Matrix3 Matrix3::multiply(const Matrix3& m, Matrix3* result) const
 {
-	double r00 = _m[0] * m._m[0] + _m[1] * m._m[3] + _m[2] * m._m[6];
-	double r01 = _m[0] * m._m[1] + _m[1] * m._m[4] + _m[2] * m._m[7];
-	double r02 = _m[0] * m._m[2] + _m[1] * m._m[5] + _m[2] * m._m[8];
-	double r10 = _m[3] * m._m[0] + _m[4] * m._m[3] + _m[5] * m._m[6];
-	double r11 = _m[3] * m._m[1] + _m[4] * m._m[4] + _m[5] * m._m[7];
-	double r12 = _m[3] * m._m[2] + _m[4] * m._m[5] + _m[5] * m._m[8];
-	double r20 = _m[6] * m._m[0] + _m[7] * m._m[3] + _m[8] * m._m[6];
-	double r21 = _m[6] * m._m[1] + _m[7] * m._m[4] + _m[8] * m._m[7];
-	double r22 = _m[6] * m._m[2] + _m[7] * m._m[5] + _m[8] * m._m[8];
+	double m00 = _m[0] * m._m[0] + _m[1] * m._m[3] + _m[2] * m._m[6];
+	double m01 = _m[0] * m._m[1] + _m[1] * m._m[4] + _m[2] * m._m[7];
+	double m02 = _m[0] * m._m[2] + _m[1] * m._m[5] + _m[2] * m._m[8];
+	double m10 = _m[3] * m._m[0] + _m[4] * m._m[3] + _m[5] * m._m[6];
+	double m11 = _m[3] * m._m[1] + _m[4] * m._m[4] + _m[5] * m._m[7];
+	double m12 = _m[3] * m._m[2] + _m[4] * m._m[5] + _m[5] * m._m[8];
+	double m20 = _m[6] * m._m[0] + _m[7] * m._m[3] + _m[8] * m._m[6];
+	double m21 = _m[6] * m._m[1] + _m[7] * m._m[4] + _m[8] * m._m[7];
+	double m22 = _m[6] * m._m[2] + _m[7] * m._m[5] + _m[8] * m._m[8];
 
 	Matrix3 r = getOrDefault(result, Matrix3());
-	r.setValues(r00, r01, r02, r10, r11, r12, r20, r21, r22);
+	r.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 
 	return r;
 }

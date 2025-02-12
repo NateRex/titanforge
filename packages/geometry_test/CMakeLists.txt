@@ -9,9 +9,9 @@ add_executable(GeometryTest
     src/Vector2Test.cpp
     src/Vector3Test.cpp)
 
-target_link_libraries(GeometryTest PRIVATE
-    Catch2::Catch2
-    Common::Common
-    Geometry::Geometry)
+target_link_libraries(GeometryTest
+    PRIVATE Catch2::Catch2
+    PRIVATE Common::Common
+    PRIVATE Geometry::Geometry)
 
 catch_discover_tests(GeometryTest)
