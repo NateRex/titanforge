@@ -45,7 +45,7 @@ double Vector3::dot(const Vector3& other) const
 
 Vector3 Vector3::cross(const Vector3& other, Vector3* result) const
 {
-	Vector3 r = getOrDefault(result, Vector3());
+    Vector3& r = getOrDefault(result, Vector3());
 
 	r.x = y * other.z - other.y * z;
 	r.y = z * other.x - other.z * x;
@@ -58,7 +58,7 @@ Vector3 Vector3::normalize(Vector3* result) const
 {
     double mag = getMagnitude();
 
-    Vector3 r = getOrDefault(result, Vector3());
+    Vector3& r = getOrDefault(result, Vector3());
     if (isZero())
     {
         r.x = 0;
@@ -77,20 +77,20 @@ Vector3 Vector3::normalize(Vector3* result) const
 
 Vector3 Vector3::scale(double value, Vector3* result) const
 {
-    Vector3 res = getOrDefault(result, Vector3());
-    res.x = x * value;
-    res.y = y * value;
-    res.z = z * value;
-    return res;
+    Vector3& r = getOrDefault(result, Vector3());
+    r.x = x * value;
+    r.y = y * value;
+    r.z = z * value;
+    return r;
 }
 
 Vector3 Vector3::minus(const Vector3& other, Vector3* result) const
 {
-    Vector3 res = getOrDefault(result, Vector3());
-    res.x = x - other.x;
-    res.y = y - other.y;
-    res.z = z - other.z;
-    return res;
+    Vector3& r = getOrDefault(result, Vector3());
+    r.x = x - other.x;
+    r.y = y - other.y;
+    r.z = z - other.z;
+    return r;
 }
 
 bool Vector3::operator==(const Vector3& other) const

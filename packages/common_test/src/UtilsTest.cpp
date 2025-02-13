@@ -1,4 +1,5 @@
 #include <common/Utils.h>
+#include <common/Constants.h>
 #include <catch.hpp>
 
 /**
@@ -23,15 +24,39 @@ TEST_CASE("safeDelete", "[Utils]")
 }
 
 /**
+ * Tests rad2Deg
+ */
+TEST_CASE("rad2Deg", "[Utils]")
+{
+    REQUIRE(rad2Deg(0) == 0);
+    REQUIRE(rad2Deg(-PI / 2) == -90);
+    REQUIRE(rad2Deg(PI) == 180);
+    REQUIRE(rad2Deg(-2 * PI) == -360);
+}
+
+/**
+ * Tests deg2Rad
+ */
+TEST_CASE("deg2Rad", "[Utils]")
+{
+    REQUIRE(deg2Rad(0) == 0);
+    REQUIRE(deg2Rad(-90) == -PI / 2);
+    REQUIRE(deg2Rad(180) == PI);
+    REQUIRE(deg2Rad(-360) == -2 * PI);
+}
+
+/**
  * Tests getOrDefault
  */
 TEST_CASE("getOrDefault", "[Utils]")
 {
-    double val = 1;
+    double one = 1.;
+    double* ptr = nullptr;
+    REQUIRE(getOrDefault(ptr, 1.) == 1.);
+    REQUIRE(&getOrDefault(ptr, one) == &one);
 
-    double* ptr = &val;
-    REQUIRE(getOrDefault(ptr, 2.) == 1.);
-
-    ptr = nullptr;
-    REQUIRE(getOrDefault(ptr, 2.) == 2.);
+    double two = 2.;
+    ptr = &two;
+    REQUIRE(getOrDefault(ptr, 1.) == 2.);
+    REQUIRE(&getOrDefault(ptr, one) == &two);
 }

@@ -17,6 +17,20 @@ bool equals(double a, double b, double tol);
 void safeDelete(void* ptr);
 
 /**
+ * Converts a value from radians to degrees
+ * @param rad Angle in radians
+ * @return Angle in degrees
+ */
+double rad2Deg(double rad);
+
+/**
+ * Converts a value from degrees to radians
+ * @param deg Angle in degrees
+ * @return Angle in radians
+ */
+double deg2Rad(double deg);
+
+/**
  * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
  * provided instead.
  * @param <T> The value type
@@ -24,10 +38,22 @@ void safeDelete(void* ptr);
  * @param def Default value to return if the pointer is null
  * @return The dereferenced pointer, or the default value if the pointer was null
  */
-#pragma warning(disable : 4172)
 template <typename T>
-T getOrDefault(const T* ptr, const T& def)
+T& getOrDefault(T* ptr, T& def)
 {
 	return ptr != nullptr ? *ptr : def;
 }
-#pragma warning(default : 4172)
+
+/**
+ * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
+ * provided instead.
+ * @param <T> The value type
+ * @param ptr Pointer to dereference
+ * @param def Default value to return if the pointer is null
+ * @return The dereferenced pointer, or the default value if the pointer was null
+ */
+template <typename T>
+T& getOrDefault(T* ptr, const T& def)
+{
+	return ptr != nullptr ? *ptr : def;
+}

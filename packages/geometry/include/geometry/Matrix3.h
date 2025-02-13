@@ -90,6 +90,19 @@ public:
 	static Matrix3 fromZRotation(double radians);
 
 	/**
+	 * @return True if this matrix is the identity matrix. Returns false otherwise.
+	 */
+	bool isIdentity() const;
+
+	/**
+	 * Tests whether this matrix is equal to another matrix, within tolerance
+	 * @param other Matrix to evaluate against
+	 * @param (Optional) Tolerance value. Defaults to 0.
+	 * @return True if the two matrices are equal (within tolerance). False otherwise.
+	 */
+	bool equalTo(const Matrix3& other, double tol = 0.) const;
+
+	/**
 	 * Computes the transpose of this matrix
 	 * @param result (Optional) Matrix in which to store the result
 	 * @return The transpose matrix
@@ -127,6 +140,13 @@ public:
 	 * @return The value at the requested index
 	 */
 	double operator[](int i) const;
+
+	/**
+	 * Operator that compares this matrix to another matrix to determine if they are equal.
+     * @param other The matrix to compare to
+     * @return True if the two matrices are equal. Returns false otherwise.
+	 */
+	bool operator==(const Matrix3& other) const;
 
 private:
 

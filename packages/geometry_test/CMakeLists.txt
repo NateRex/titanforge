@@ -6,6 +6,7 @@ include(Catch)
 
 add_executable(GeometryTest
     src/main.cpp
+    src/Matrix3Test.cpp
     src/Vector2Test.cpp
     src/Vector3Test.cpp)
 
