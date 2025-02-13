@@ -71,7 +71,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromXRotation(double radians);
+	static Matrix3 fromXRotation(double radians, Matrix3* result = nullptr);
 
 	/**
 	 * Constructs a matrix representing a rotation about the Y-axis
@@ -79,7 +79,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromYRotation(double radians);
+	static Matrix3 fromYRotation(double radians, Matrix3* result = nullptr);
 
 	/**
 	 * Constructs a matrix representing a rotation about the Z-axis
@@ -87,7 +87,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromZRotation(double radians);
+	static Matrix3 fromZRotation(double radians, Matrix3* result = nullptr);
 
 	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.

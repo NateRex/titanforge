@@ -28,7 +28,8 @@ TEST_CASE("fromRowsAndColumns", "[Matrix3]")
 {
 	Matrix3 expected = Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9);
 
-	Matrix3 m = Matrix3::fromRows(Vector3(1, 2, 3), Vector3(4, 5, 6), Vector3(7, 8, 9));
+	Matrix3 m;
+	Matrix3::fromRows(Vector3(1, 2, 3), Vector3(4, 5, 6), Vector3(7, 8, 9), &m);
 	REQUIRE(m == expected);
 
 	Matrix3::fromColumns(Vector3(1, 4, 7), Vector3(2, 5, 8), Vector3(3, 6, 9), &m);
@@ -40,15 +41,18 @@ TEST_CASE("fromRowsAndColumns", "[Matrix3]")
  */
 TEST_CASE("fromRotations", "[Matrix3]")
 {
-	Matrix3 xRotation = Matrix3::fromXRotation(deg2Rad(90));
-	Vector3 v = xRotation.multiply(Vector3(0, 0, 1));
+	Matrix3 rot;
+	Vector3 v;
+
+	Matrix3::fromXRotation(deg2Rad(90), &rot);
+	rot.multiply(Vector3(0, 0, 1), &v);
 	REQUIRE(v.equalTo(Vector3(0, -1, 0), 1.0e-12));
 
-	Matrix3 yRotation = Matrix3::fromYRotation(deg2Rad(90));
-	yRotation.multiply(Vector3(1, 0, 0), &v);
+	Matrix3::fromYRotation(deg2Rad(90), &rot);
+	rot.multiply(Vector3(1, 0, 0), &v);
 	REQUIRE(v.equalTo(Vector3(0, 0, -1), 1.0e-12));
 
-	Matrix3 zRotation = Matrix3::fromZRotation(deg2Rad(90));
-	zRotation.multiply(Vector3(0, 1, 0), &v);
+	Matrix3::fromZRotation(deg2Rad(90), &rot);
+	rot.multiply(Vector3(0, 1, 0), &v);
 	REQUIRE(v.equalTo(Vector3(-1, 0, 0), 1.0e-12));
 }

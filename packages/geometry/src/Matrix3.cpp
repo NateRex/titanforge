@@ -58,25 +58,34 @@ Matrix3 Matrix3::fromColumns(const Vector3& c0, const Vector3& c1, const Vector3
 	return r;
 }
 
-Matrix3 Matrix3::fromXRotation(double radians)
+Matrix3 Matrix3::fromXRotation(double radians, Matrix3* result)
 {
 	double c = cos(radians);
 	double s = sin(radians);
-	return Matrix3(1., 0., 0., 0., c, -s, 0., s, c);
+
+	Matrix3& r = getOrDefault(result, Matrix3());
+	r.setValues(1., 0., 0., 0., c, -s, 0., s, c);
+	return r;
 }
 
-Matrix3 Matrix3::fromYRotation(double radians)
+Matrix3 Matrix3::fromYRotation(double radians, Matrix3* result)
 {
 	double c = cos(radians);
 	double s = sin(radians);
-	return Matrix3(c, 0., s, 0., 1., 0., -s, 0., c);
+
+	Matrix3& r = getOrDefault(result, Matrix3());
+	r.setValues(c, 0., s, 0., 1., 0., -s, 0., c);
+	return r;
 }
 
-Matrix3 Matrix3::fromZRotation(double radians)
+Matrix3 Matrix3::fromZRotation(double radians, Matrix3* result)
 {
 	double c = cos(radians);
 	double s = sin(radians);
-	return Matrix3(c, -s, 0., s, c, 0., 0., 0., 1.);
+
+	Matrix3& r = getOrDefault(result, Matrix3());
+	r.setValues(c, -s, 0., s, c, 0., 0., 0., 1.);
+	return r;
 }
 
 bool Matrix3::isIdentity() const
