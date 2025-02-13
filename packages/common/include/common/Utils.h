@@ -43,17 +43,3 @@ T& getOrDefault(T* ptr, T& def)
 {
 	return ptr != nullptr ? *ptr : def;
 }
-
-/**
- * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
- * provided instead.
- * @param <T> The value type
- * @param ptr Pointer to dereference
- * @param def Default value to return if the pointer is null
- * @return The dereferenced pointer, or the default value if the pointer was null
- */
-template <typename T>
-T& getOrDefault(T* ptr, const T& def)
-{
-	return ptr != nullptr ? *ptr : def;
-}

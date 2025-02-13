@@ -52,11 +52,9 @@ TEST_CASE("getOrDefault", "[Utils]")
 {
     double one = 1.;
     double* ptr = nullptr;
-    REQUIRE(getOrDefault(ptr, 1.) == 1.);
     REQUIRE(&getOrDefault(ptr, one) == &one);
 
     double two = 2.;
     ptr = &two;
-    REQUIRE(getOrDefault(ptr, 1.) == 2.);
     REQUIRE(&getOrDefault(ptr, one) == &two);
 }
