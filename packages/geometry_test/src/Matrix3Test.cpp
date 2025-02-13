@@ -83,15 +83,15 @@ TEST_CASE("equalTo", "[Matrix3]")
 
 	// Strict checks
 	REQUIRE(m.equalTo(m));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1.1, 2, 3, 4, 5, 6, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2.1, 3, 4, 5, 6, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3.1, 4, 5, 6, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4.1, 5, 6, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4, 5.1, 6, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6.1, 7, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7.1, 8, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7, 8.1, 9)));
-	REQUIRE_FALSE(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9.1)));
+	REQUIRE_FALSE(m == Matrix3(1.1, 2, 3, 4, 5, 6, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2.1, 3, 4, 5, 6, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3.1, 4, 5, 6, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4.1, 5, 6, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4, 5.1, 6, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4, 5, 6.1, 7, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4, 5, 6, 7.1, 8, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4, 5, 6, 7, 8.1, 9));
+	REQUIRE_FALSE(m == Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9.1));
 
 	// Checks within tolerance
 	REQUIRE(m.equalTo(Matrix3(1.1, 2, 3, 4, 5, 6, 7, 8, 9), 0.2));
