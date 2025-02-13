@@ -150,7 +150,17 @@ TEST_CASE("inverse", "[Matrix3]")
  */
 TEST_CASE("vectorMultiplication", "[Matrix3]")
 {
-	
+	Matrix3 m(
+		1.5, 2.0, 3.1,
+		3.2, 4.5, 5.6,
+		6.1, 7.2, 8.3);
+	Vector3 v(2.1, 3.0, 4.2);
+
+	Vector3 expected(22.17, 43.74, 69.27);
+
+	Vector3 result;
+	m.multiply(v, &result);
+	REQUIRE(result.equalTo(expected, 1.0e-12));
 }
 
 /**
