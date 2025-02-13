@@ -1,10 +1,5 @@
 #pragma once
 
-namespace std {
-	template <typename T>
-	class optional;
-}
-
 class Vector3;
 
 /**
@@ -111,11 +106,11 @@ public:
 
 	/**
 	 * Computes the inverse of this matrix
-	 * @param (Optional) Result matrix in which to store the result. This matrix will be unchanged if
+	 * @param Result matrix in which to store the result. This matrix will be unchanged if
 	 * the inverse does not exist.
 	 * @return An optional value containing the inverse, if it exists.
 	 */
-	std::optional<Matrix3> inverse(Matrix3* result);
+	bool inverse(Matrix3* result);
 
 	/**
 	 * Compute the product of this matrix and a column vector
@@ -179,4 +174,15 @@ private:
 	 * @param m22 Row 2, column 2 value
 	 */
 	void setValues(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22);
+
+	/**
+	 * Set the values of this matrix from another matrix
+	 * @param other The matrix to copy from
+	 */
+	void setValues(const Matrix3& other);
 };
+
+/**
+ * The identity matrix
+ */
+const Matrix3 IDENTITY_MATRIX = Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1);

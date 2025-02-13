@@ -4,7 +4,6 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <math.h>
 #include <string>
-#include <optional>
 
 Matrix3::Matrix3()
 {
@@ -18,24 +17,12 @@ Matrix3::Matrix3(double m00, double m01, double m02, double m10, double m11, dou
 
 Matrix3::Matrix3(const Matrix3& other)
 {
-	for (int i = 0; i < 9; i++)
-	{
-		_m[i] = other._m[i];
-	}
-
-	_didComputeInverse = other._didComputeInverse;
-	if (other._inverse != nullptr)
-	{
-		_inverse = new Matrix3(*other._inverse);
-	}
+	setValues(other);
 }
 
 Matrix3::~Matrix3()
 {
-	if (_inverse != nullptr)
-	{
-		delete _inverse;
-	}
+	safeDelete(_inverse);
 }
 
 Matrix3 Matrix3::fromRows(const Vector3& r0, const Vector3& r1, const Vector3& r2, Matrix3* result)
@@ -90,9 +77,7 @@ Matrix3 Matrix3::fromZRotation(double radians, Matrix3* result)
 
 bool Matrix3::isIdentity() const
 {
-	return _m[0] == 1 && _m[1] == 0 && _m[2] == 0
-		&& _m[3] == 0 && _m[4] == 1 && _m[5] == 0
-		&& _m[6] == 0 && _m[7] == 0 && _m[8] == 1;
+	return equalTo(IDENTITY_MATRIX);
 }
 
 bool Matrix3::equalTo(const Matrix3& other, double tol) const
@@ -118,11 +103,17 @@ Matrix3 Matrix3::transpose(Matrix3* result) const
 	return r;
 }
 
-std::optional<Matrix3> Matrix3::inverse(Matrix3* result)
+bool Matrix3::inverse(Matrix3* result)
 {
 	if (_didComputeInverse)
 	{
-		return _inverse == nullptr ? std::nullopt : std::optional<Matrix3>{ *_inverse };
+		if (_inverse == nullptr)
+		{
+			return false;
+		}
+
+		result->setValues(*_inverse);
+		return true;
 	}
 	_didComputeInverse = true;
 
@@ -134,12 +125,12 @@ std::optional<Matrix3> Matrix3::inverse(Matrix3* result)
 	
 	if (equals(det, 0, 1.0e-11))
 	{
-		return std::nullopt;
+		return false;
 	}
 
 	double detInv = 1. / det;
 
-	double m00 = t01 * detInv;
+	double m00 = t00 * detInv;
 	double m01 = (_m[2] * _m[7] - _m[8] * _m[1]) * detInv;
 	double m02 = (_m[5] * _m[1] - _m[2] * _m[4]) * detInv;
 	double m10 = t01 * detInv;
@@ -149,16 +140,15 @@ std::optional<Matrix3> Matrix3::inverse(Matrix3* result)
 	double m21 = (_m[1] * _m[6] - _m[7] * _m[0]) * detInv;
 	double m22 = (_m[4] * _m[0] - _m[1] * _m[3]) * detInv;
 
-	Matrix3& r = getOrDefault(result, Matrix3());
-	r.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	result->setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 
 	// Set this matrix's inverse, as well as the inverse of the new matrix
-	safeDelete(r._inverse);
-	r._didComputeInverse = true;
-	r._inverse = new Matrix3(*this);
-	_inverse = new Matrix3(r);
+	safeDelete(result->_inverse);
+	result->_didComputeInverse = true;
+	result->_inverse = new Matrix3(*this);
+	_inverse = new Matrix3(*result);
 
-	return std::optional<Matrix3>{r};
+	return true;
 }
 
 Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
@@ -213,4 +203,19 @@ void Matrix3::setValues(double m00, double m01, double m02, double m10, double m
 	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;
 	_m[3] = m10;	_m[4] = m11;	_m[5] = m12;
 	_m[6] = m20;	_m[7] = m21;	_m[8] = m22;
+}
+
+void Matrix3::setValues(const Matrix3& other)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		_m[i] = other._m[i];
+	}
+
+	_didComputeInverse = other._didComputeInverse;
+	if (other._inverse != nullptr)
+	{
+		safeDelete(_inverse);
+		_inverse = new Matrix3(*other._inverse);
+	}
 }
