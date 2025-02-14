@@ -7,14 +7,6 @@ bool equals(double a, double b, double tol)
     return fabs(a - b) <= tol;
 }
 
-void safeDelete(void* ptr)
-{
-    if (ptr != nullptr)
-    {
-        delete ptr;
-    }
-}
-
 double rad2Deg(double rad)
 {
     return rad * 180. / PI;

@@ -10,13 +10,6 @@
 bool equals(double a, double b, double tol);
 
 /**
- * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
- * does nothing.
- * @param ptr Possibly null pointer
- */
-void safeDelete(void* ptr);
-
-/**
  * Converts a value from radians to degrees
  * @param rad Angle in radians
  * @return Angle in degrees
@@ -31,6 +24,20 @@ double rad2Deg(double rad);
 double deg2Rad(double deg);
 
 /**
+ * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
+ * does nothing.
+ * @param ptr Possibly null pointer
+ */
+template <typename T>
+void safeDelete(T* ptr)
+{
+	if (ptr != nullptr)
+    {
+        delete ptr;
+    }
+}
+
+/**
  * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
  * provided instead.
  * @param <T> The value type
@@ -39,7 +46,7 @@ double deg2Rad(double deg);
  * @return The dereferenced pointer, or the default value if the pointer was null
  */
 template <typename T>
-T& getOrDefault(T* ptr, T& def)
+T& getOrDefault(T* ptr, T def)
 {
 	return ptr != nullptr ? *ptr : def;
 }

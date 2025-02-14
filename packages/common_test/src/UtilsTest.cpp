@@ -17,9 +17,10 @@ TEST_CASE("equals", "[Utils]")
  */
 TEST_CASE("safeDelete", "[Utils]")
 {
-    REQUIRE_NOTHROW(safeDelete(nullptr));
-
     int* ptr = new int;
+    REQUIRE_NOTHROW(safeDelete(ptr));
+
+    ptr = nullptr;
     REQUIRE_NOTHROW(safeDelete(ptr));
 }
 
@@ -52,9 +53,9 @@ TEST_CASE("getOrDefault", "[Utils]")
 {
     double one = 1.;
     double* ptr = nullptr;
-    REQUIRE(&getOrDefault(ptr, one) == &one);
+    REQUIRE(getOrDefault(ptr, one) == one);
 
     double two = 2.;
     ptr = &two;
-    REQUIRE(&getOrDefault(ptr, one) == &two);
+    REQUIRE(getOrDefault(ptr, one) == two);
 }
