@@ -1,6 +1,6 @@
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
-#include <geometry/Utils.h>
+#include <common/Utils.h>
 #include <catch.hpp>
 
 /**
@@ -79,6 +79,10 @@ TEST_CASE("Normalize", "[Vector2]")
     vec = Vector2(100, -42);
     normalized = vec.normalize();
     REQUIRE(equals(normalized.getMagnitude(), 1, 1.0e-12));
+
+    Vector2 result;
+    vec.normalize(&result);
+    REQUIRE(result == normalized);
 }
 
 /**
@@ -116,6 +120,10 @@ TEST_CASE("Scaling", "[Vector2]")
     Vector2 v2 = v1.scale(-2);
     REQUIRE(equals(v2.x, 6, 1.0e-12));
     REQUIRE(equals(v2.y, -16, 1.0e-12));
+
+    Vector2 result;
+    v1.scale(-2, &result);
+    REQUIRE(v2 == result);
 }
 
 /**
@@ -124,12 +132,15 @@ TEST_CASE("Scaling", "[Vector2]")
 TEST_CASE("Subtraction", "[Vector2]")
 {
     Vector2 v1(4, 1002);
-    Vector2 result = v1.minus(v1);
-    REQUIRE(result.isZero());
+    REQUIRE(v1.minus(v1).isZero());
 
-    Vector2 v2(2.5, 1001.9);
-    result = v1.minus(v2);
-    REQUIRE(equals(result.x, 1.5, 1.0e-12));
-    REQUIRE(equals(result.y, 0.1, 1.0e-12));
+    Vector2 v2 = Vector2(2.5, 1001.9);
+    Vector2 subtraction = v1.minus(v2);
+    REQUIRE(equals(subtraction.x, 1.5, 1.0e-12));
+    REQUIRE(equals(subtraction.y, 0.1, 1.0e-12));
+
+    Vector2 result;
+    v1.minus(v2, &result);
+    REQUIRE(result == subtraction);
 }
 

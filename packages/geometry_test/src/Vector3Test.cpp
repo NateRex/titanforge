@@ -1,6 +1,6 @@
 #include <geometry/Vector3.h>
 #include <geometry/Vector2.h>
-#include <geometry/Utils.h>
+#include <common/Utils.h>
 #include <catch.hpp>
 
 /**
@@ -91,6 +91,10 @@ TEST_CASE("Normalize", "[Vector3]")
     vec = Vector3(1, 2, 3);
     normalized = vec.normalize();
     REQUIRE(normalized.equalTo(Vector3(0.267261241, 0.534522483, 0.801783725), 1.0e-9));
+
+    Vector3 result;
+    vec.normalize(&result);
+    REQUIRE(result == normalized);
 }
 
 /**
@@ -117,6 +121,10 @@ TEST_CASE("CrossProduct", "[Vector3]")
 
     Vector3 v2CrossV1 = v2.cross(v1);
     REQUIRE(v2CrossV1.equalTo(Vector3(3, 6, 3), 1.0e-12));
+
+    Vector3 result;
+    v2.cross(v1, &result);
+    REQUIRE(result == v2CrossV1);
 }
 
 /**
@@ -129,6 +137,10 @@ TEST_CASE("Scaling", "[Vector3]")
     REQUIRE(equals(v2.x, 6, 1.0e-12));
     REQUIRE(equals(v2.y, -16, 1.0e-12));
     REQUIRE(equals(v2.z, -2, 1.0e-12));
+
+    Vector3 result;
+    v1.scale(-2, &result);
+    REQUIRE(result == v2);
 }
 
 /**
@@ -137,12 +149,15 @@ TEST_CASE("Scaling", "[Vector3]")
 TEST_CASE("Subtraction", "[Vector3]")
 {
     Vector3 v1(4, 1002, -101.5);
-    Vector3 result = v1.minus(v1);
-    REQUIRE(result.isZero());
+    REQUIRE(v1.minus(v1).isZero());
 
     Vector3 v2(2.5, 1001.9, -5);
-    result = v1.minus(v2);
-    REQUIRE(equals(result.x, 1.5, 1.0e-12));
-    REQUIRE(equals(result.y, 0.1, 1.0e-12));
-    REQUIRE(equals(result.z, -96.5, 1.0e-12));
+    Vector3 subtraction = v1.minus(v2);
+    REQUIRE(equals(subtraction.x, 1.5, 1.0e-12));
+    REQUIRE(equals(subtraction.y, 0.1, 1.0e-12));
+    REQUIRE(equals(subtraction.z, -96.5, 1.0e-12));
+
+    Vector3 result;
+    v1.minus(v2, &result);
+    REQUIRE(result == subtraction);
 }

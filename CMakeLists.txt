@@ -7,6 +7,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(titanforge CXX)
 
+add_subdirectory(packages/common)
+add_subdirectory(packages/common_test)
 add_subdirectory(packages/geometry)
 add_subdirectory(packages/geometry_test)
 add_subdirectory(packages/sampleapp)

@@ -1,6 +1,6 @@
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
-#include <geometry/Utils.h>
+#include <common/Utils.h>
 #include <math.h>
 
 Vector2::Vector2(): x(0.0), y(0.0)
@@ -52,35 +52,35 @@ Vector2 Vector2::normalize(Vector2* result) const
 {
     double mag = getMagnitude();
     
-    Vector2 res = getOrDefault(result, Vector2());
+    Vector2& r = getOrDefault(result, Vector2());
     if (isZero())
     {
-        res.x = 0;
-        res.y = 0;
+        r.x = 0;
+        r.y = 0;
     }
     else
     {
-        res.x = x / mag;
-        res.y = y / mag;
+        r.x = x / mag;
+        r.y = y / mag;
     }
     
-    return res;
+    return r;
 }
 
 Vector2 Vector2::scale(double value, Vector2* result) const
 {
-    Vector2 res = getOrDefault(result, Vector2());
-    res.x = x * value;
-    res.y = y * value;
-    return res;
+    Vector2& r = getOrDefault(result, Vector2());
+    r.x = x * value;
+    r.y = y * value;
+    return r;
 }
 
 Vector2 Vector2::minus(const Vector2& other, Vector2* result) const
 {
-    Vector2 res = getOrDefault(result, Vector2());
-    res.x = x - other.x;
-    res.y = y - other.y;
-    return res;
+    Vector2& r = getOrDefault(result, Vector2());
+    r.x = x - other.x;
+    r.y = y - other.y;
+    return r;
 }
 
 bool Vector2::operator==(const Vector2& other) const
