@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <iterator>
+#include <cstddef>
 
 class Vector3;
 
@@ -12,38 +14,58 @@ class Polyface
 public:
 
 	/**
-	 * Iterator used to step over the facets of a polyface
+	 * Iterator used to step over the facets of a polyface.
 	 * @author Nathaniel Rex
 	 */
-	class FacetIterator
+	class Iterator
 	{
-	public:
-		
-		/**
-		 * @return True if the polyface has a next facet. Returns false otherwise.
-		 */
-		bool hasNextFacet() const;
-	
-		/**
-		 * Moves this iterator to the next facet of the polyface
-		 */
-		void operator++();
+	public:	
+		using iterator_category = std::input_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using value_type = std::vector<Vector3>;
+		using pointer = unsigned int*;
+		using reference = unsigned int&;
 
 		/**
-		 * @return The ordered vector of points for the current facet
+		 * Constructor
+		 */
+		Iterator(const std::vector<Vector3>& positions, const std::vector<unsigned int>& vertices);
+
+		/**
+		 * @return An iterator representing the next facet of the polyface
+		 */
+		Iterator operator++();
+
+		/**
+		 * Determines whether this iterator and the given one are equal
+		 * @param other Iterator to compare to
+		 * @return True if the two iterators point to the same data. Returns false otherwise.
+		 */
+		bool operator==() const;
+
+		/**
+		 * Determines whether this iterator and the given one are not equal
+		 * @param other Iterator to compare to
+		 * @return True if the two iterators do not point to the same data. Returns false otherwise.
+		 */
+		bool operator!=() const;
+
+		/**
+		 * @return The points that make up the current facet
 		 */
 		std::vector<Vector3> operator*() const;
 
 	private:
-		
-		/**
-		 * Vertex
-		 */
 
 		/**
-		 * The index representing the last vertex that was parsed from the polyface
+		 * Pointer to the vector of polyface positions
 		 */
-		unsigned int _previous = 0;
+		const std::vector<Vector3>* _pos;
+
+		/**
+		 * Vertex iterator
+		 */
+		typename std::vector<unsigned int>::iterator _itr;
 	};
 
 
