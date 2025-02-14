@@ -38,8 +38,8 @@ void safeDelete(T* ptr)
 }
 
 /**
- * Attempts to dereference the given pointer. If that pointer is null, this method returns the default value
- * provided instead.
+ * Attempts to dereference the given pointer. If that pointer is null, this method returns a copy of the
+ * default value. If the pointer is non-null, this method returns the dereferenced pointer.
  * @param <T> The value type
  * @param ptr Pointer to dereference
  * @param def Default value to return if the pointer is null
