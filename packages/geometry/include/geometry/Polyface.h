@@ -28,27 +28,29 @@ public:
 
 		/**
 		 * Constructor
+		 * @param pos Polyface positions
+		 * @param verts Polyface vertices
 		 */
-		Iterator(const std::vector<Vector3>& positions, const std::vector<unsigned int>& vertices);
+		Iterator(const std::vector<Vector3>& pos, const std::vector<unsigned int>& verts);
 
 		/**
 		 * @return An iterator representing the next facet of the polyface
 		 */
-		Iterator operator++();
+		Iterator& operator++();
 
 		/**
 		 * Determines whether this iterator and the given one are equal
 		 * @param other Iterator to compare to
 		 * @return True if the two iterators point to the same data. Returns false otherwise.
 		 */
-		bool operator==() const;
+		bool operator==(const Iterator& other) const;
 
 		/**
 		 * Determines whether this iterator and the given one are not equal
 		 * @param other Iterator to compare to
 		 * @return True if the two iterators do not point to the same data. Returns false otherwise.
 		 */
-		bool operator!=() const;
+		bool operator!=(const Iterator& other) const;
 
 		/**
 		 * @return The points that make up the current facet
@@ -63,9 +65,20 @@ public:
 		const std::vector<Vector3>* _pos;
 
 		/**
+		 * Pointer to the vector of polyface vertices
+		 */
+		const std::vector<unsigned int>* _verts;
+
+		/**
 		 * Vertex iterator
 		 */
-		typename std::vector<unsigned int>::iterator _itr;
+		std::vector<unsigned int>::const_iterator _itr;
+
+		/**
+		 * Helper method that moves the vertex iterator to the start of the next facet.
+		 * If there is no next facet, the iterator will remain unchanged.
+		 */
+		void toNextFacet();
 	};
 
 
