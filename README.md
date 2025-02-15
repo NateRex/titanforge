@@ -10,4 +10,4 @@ This monorepo contains the software libraries that make up the TitanForge engine
 
 ## 📄 Additional Documentation
 
-- [Developer Guide](./docs/development.md)
+- [Developer Guide](./development.md)
