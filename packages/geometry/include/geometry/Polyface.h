@@ -23,8 +23,8 @@ public:
 		using iterator_category = std::input_iterator_tag;
 		using difference_type = std::ptrdiff_t;
 		using value_type = std::vector<Vector3>;
-		using pointer = unsigned int*;
-		using reference = unsigned int&;
+		using pointer = int*;
+		using reference = int&;
 
 		/**
 		 * Constructor
@@ -32,8 +32,8 @@ public:
 		 * @param verts Polyface vertices
 		 * @param itr Vertex iterator
 		 */
-		Iterator(const std::vector<Vector3>& pos, const std::vector<unsigned int>& verts,
-			const std::vector<unsigned int>::const_iterator& itr);
+		Iterator(const std::vector<Vector3>& pos, const std::vector<int>& verts,
+			const std::vector<int>::const_iterator& itr);
 
 		/**
 		 * @return An iterator representing the next facet of the polyface
@@ -69,12 +69,12 @@ public:
 		/**
 		 * Pointer to the vector of polyface vertices
 		 */
-		const std::vector<unsigned int>* _verts;
+		const std::vector<int>* _verts;
 
 		/**
 		 * Vertex iterator
 		 */
-		std::vector<unsigned int>::const_iterator _itr;
+		std::vector<int>::const_iterator _itr;
 
 		/**
 		 * Helper method that moves the vertex iterator to the start of the next facet.
@@ -88,23 +88,35 @@ public:
 
 	/**
 	 * Constructor
+	 * @param pos Vertex positions
+	 * @param numPos Number of values in the position array
+	 * @param verts Ordered vertices that make up the facets of this polyface. Each value
+	 * should represents an index into the list of positions. A value of -1 implies the end
+	 * of a facet and the start of another
+	 * @param numVerts Number of values in the vertex array (including -1 values representing the ends
+	 * of facets)
+	 */
+	Polyface(const Vector3* pos, int numPos, const int* verts, int numVerts);
+
+	/**
+	 * Constructor
 	 * @param positions Vertex positions
 	 * @param vertices Ordered vertices that make up the facets of this polyface. Each value
 	 * should represents an index into the list of positions. A value of -1 implies the end
 	 * of a facet and the start of another
 	 */
-	Polyface(const std::vector<Vector3>& positions, const std::vector<unsigned int> vertices);
+	Polyface(const std::vector<Vector3>& positions, const std::vector<int> vertices);
 
 	/**
 	 * @return The total number of vertices in this polyface. Vertices of shared facets will
 	 * be counted multiple times.
 	 */
-	unsigned int getNumVertices() const;
+	int getNumVertices() const;
 
 	/**
 	 * @return The total number of facets in this polyface.
 	 */
-	unsigned int getNumFacets() const;
+	int getNumFacets() const;
 
 	/**
 	 * @return An iterator pointing to the first facet of this polyface.
@@ -128,5 +140,5 @@ private:
 	 * an index into the list of positions. A value of -1 implies the end of a facet and the
 	 * start of another
 	 */
-	std::vector<unsigned int> _vertices;
+	std::vector<int> _vertices;
 };
