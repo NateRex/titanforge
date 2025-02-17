@@ -1,6 +1,11 @@
 #pragma once
 #include <stdexcept>
 
+/**
+ * Exception used in cases where a caller provided invalid input to a function or
+ * object method.
+ * @author Nathaniel Rex
+ */
 class IllegalArgumentException : public std::runtime_error
 {
 public:

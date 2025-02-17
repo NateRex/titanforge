@@ -1,0 +1,144 @@
+#pragma once
+#include <vector>
+#include <iterator>
+#include <cstddef>
+
+class Vector3;
+
+/**
+ * A three-dimensional polyface
+ * @author Nathaniel Rex
+ */
+class Polyface
+{
+public:
+
+	/**
+	 * Iterator used to step over the facets of a polyface.
+	 * @author Nathaniel Rex
+	 */
+	class Iterator
+	{
+	public:	
+		using iterator_category = std::input_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using value_type = std::vector<Vector3>;
+		using pointer = int*;
+		using reference = int&;
+
+		/**
+		 * Constructor
+		 * @param pos Polyface positions
+		 * @param verts Polyface vertices
+		 * @param itr Vertex iterator
+		 */
+		Iterator(const std::vector<Vector3>& pos, const std::vector<int>& verts,
+			const std::vector<int>::const_iterator& itr);
+
+		/**
+		 * @return An iterator representing the next facet of the polyface
+		 */
+		Iterator& operator++();
+
+		/**
+		 * Determines whether this iterator and the given one are equal
+		 * @param other Iterator to compare to
+		 * @return True if the two iterators point to the same data. Returns false otherwise.
+		 */
+		bool operator==(const Iterator& other) const;
+
+		/**
+		 * Determines whether this iterator and the given one are not equal
+		 * @param other Iterator to compare to
+		 * @return True if the two iterators do not point to the same data. Returns false otherwise.
+		 */
+		bool operator!=(const Iterator& other) const;
+
+		/**
+		 * @return The points that make up the current facet
+		 */
+		std::vector<Vector3> operator*() const;
+
+	private:
+
+		/**
+		 * Pointer to the vector of polyface positions
+		 */
+		const std::vector<Vector3>* _pos;
+
+		/**
+		 * Pointer to the vector of polyface vertices
+		 */
+		const std::vector<int>* _verts;
+
+		/**
+		 * Vertex iterator
+		 */
+		std::vector<int>::const_iterator _itr;
+
+		/**
+		 * Helper method that moves the vertex iterator to the start of the next facet.
+		 * If there is no next facet, the iterator will remain unchanged.
+		 */
+		void toNextFacet();
+	};
+
+
+public:
+
+	/**
+	 * Constructor
+	 * @param pos Vertex positions
+	 * @param numPos Number of values in the position array
+	 * @param verts Ordered vertices that make up the facets of this polyface. Each value
+	 * should represents an index into the list of positions. A value of -1 implies the end
+	 * of a facet and the start of another
+	 * @param numVerts Number of values in the vertex array (including -1 values representing the ends
+	 * of facets)
+	 */
+	Polyface(const Vector3* pos, int numPos, const int* verts, int numVerts);
+
+	/**
+	 * Constructor
+	 * @param positions Vertex positions
+	 * @param vertices Ordered vertices that make up the facets of this polyface. Each value
+	 * should represents an index into the list of positions. A value of -1 implies the end
+	 * of a facet and the start of another
+	 */
+	Polyface(const std::vector<Vector3>& positions, const std::vector<int> vertices);
+
+	/**
+	 * @return The total number of vertices in this polyface. Vertices of shared facets will
+	 * be counted multiple times.
+	 */
+	int getNumVertices() const;
+
+	/**
+	 * @return The total number of facets in this polyface.
+	 */
+	int getNumFacets() const;
+
+	/**
+	 * @return An iterator pointing to the first facet of this polyface.
+	 */
+	Iterator begin() const;
+
+	/**
+	 * @return An iterator pointing to the theoretical element after the last facet of this polyface.
+	 */
+	Iterator end() const;
+	
+private:
+
+	/**
+	 * Vertex positions
+	 */
+	std::vector<Vector3> _positions;
+
+	/**
+	 * Ordered vertices that make up the facets of this polyface. Each value should represents
+	 * an index into the list of positions. A value of -1 implies the end of a facet and the
+	 * start of another
+	 */
+	std::vector<int> _vertices;
+};

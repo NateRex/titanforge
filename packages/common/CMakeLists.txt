@@ -2,6 +2,7 @@ project(Common CXX)
 
 add_library(Common
     src/exceptions/IllegalArgumentException.cpp
+    src/exceptions/OutOfBoundsException.cpp
     src/Utils.cpp)
 add_library(Common::Common ALIAS Common)
 
