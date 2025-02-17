@@ -30,8 +30,10 @@ public:
 		 * Constructor
 		 * @param pos Polyface positions
 		 * @param verts Polyface vertices
+		 * @param itr Vertex iterator
 		 */
-		Iterator(const std::vector<Vector3>& pos, const std::vector<unsigned int>& verts);
+		Iterator(const std::vector<Vector3>& pos, const std::vector<unsigned int>& verts,
+			const std::vector<unsigned int>::const_iterator& itr);
 
 		/**
 		 * @return An iterator representing the next facet of the polyface
@@ -99,6 +101,20 @@ public:
 	 */
 	unsigned int getNumVertices() const;
 
+	/**
+	 * @return The total number of facets in this polyface.
+	 */
+	unsigned int getNumFacets() const;
+
+	/**
+	 * @return An iterator pointing to the first facet of this polyface.
+	 */
+	Iterator begin() const;
+
+	/**
+	 * @return An iterator pointing to the theoretical element after the last facet of this polyface.
+	 */
+	Iterator end() const;
 	
 private:
 

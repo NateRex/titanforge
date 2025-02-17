@@ -1,8 +1,12 @@
 #include <geometry/Polyface.h>
 #include <common/exceptions/OutOfBoundsException.h>
 
-Polyface::Iterator::Iterator(const std::vector<Vector3>& positions, const std::vector<unsigned int>& verts)
-	: _pos(&positions), _verts(&verts), _itr(verts.begin())
+// ------------------------------------------------------------------------------------------------------------------
+// Polyface::Iterator
+// ------------------------------------------------------------------------------------------------------------------
+
+Polyface::Iterator::Iterator(const std::vector<Vector3>& positions, const std::vector<unsigned int>& verts,
+	const std::vector<unsigned int>::const_iterator& itr) : _pos(&positions), _verts(&verts), _itr(itr)
 {
 	if (*_itr == -1)
 	{
@@ -57,4 +61,47 @@ void Polyface::Iterator::toNextFacet()
 	{
 		_itr++;
 	}
+}
+
+// ------------------------------------------------------------------------------------------------------------------
+// Polyface
+// ------------------------------------------------------------------------------------------------------------------
+
+Polyface::Polyface(const std::vector<Vector3>& positions, const std::vector<unsigned int> vertices)
+	: _positions(positions), _vertices(vertices)
+{
+
+}
+
+unsigned int Polyface::getNumVertices() const
+{
+	unsigned int count = 0;
+	for (auto& v : _vertices)
+	{
+		if (v != -1)
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+unsigned int Polyface::getNumFacets() const
+{
+	unsigned int count = 0;
+	for (Polyface::Iterator itr = begin(); itr != end(); ++itr)
+	{
+		count++;
+	}
+	return count;
+}
+
+Polyface::Iterator Polyface::begin() const
+{
+	return Iterator(_positions, _vertices, _vertices.begin());
+}
+
+Polyface::Iterator Polyface::end() const
+{
+	return Iterator(_positions, _vertices, _vertices.end());
 }
