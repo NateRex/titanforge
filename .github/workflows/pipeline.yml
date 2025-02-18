@@ -8,9 +8,9 @@ on:
 
 jobs:
 
-  # Installs project dependencies
-  initialize:
-    name: 📥 Install Dependencies
+  # Build
+  build:
+    name: 🛠️ Build
     runs-on: ubuntu-latest
     container: natejrex/cmake
     steps:
@@ -25,19 +25,21 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: vcpkg
-          key: ${{ runner.os }}-cache-${{ hashFiles('.github/scripts/init.sh') }}
+          key: ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            ${{ runner.os }}-cache-${{ hashFiles('.github/scripts/init.sh') }}
+            ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
 
       - name: Execute Commands
-        run: ./.github/scripts/init.sh
-
-      - name: List Dependencies (On Cache Miss)
-        if: env.CACHE_HIT != 'true'
-        continue-on-error: true
         run: |
-          cd vcpkg
-          ./vcpkg list
+          if [ -f "./vcpkg/vcpkg" ]; then
+            echo "CACHE_HIT=true" >> $GITHUB_ENV
+          else
+            echo "CACHE_HIT=false" >> $GITHUB_ENV
+          fi
+          cd .build
+          cmake ..
+          cmake --build .
+          cd ..
 
       - name: Save Dependency Cache (On Cache Miss; Default Branch Only)
         if: env.CACHE_HIT != 'true' && github.ref == 'refs/heads/master'
@@ -45,42 +47,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: vcpkg
-          key: ${{ runner.os }}-cache-${{ hashFiles('.github/scripts/init.sh') }}
-
-      - name: Upload Artifact -> vcpkg
-        uses: actions/upload-artifact@v4
-        with:
-          name: vcpkg
-          include-hidden-files: true
-          path: vcpkg
-          retention-days: 1
-
-  # Build
-  build:
-    name: 🛠️ Build
-    runs-on: ubuntu-latest
-    container: natejrex/cmake
-    needs:
-      - initialize
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: Download Artifact -> vcpkg
-        uses: actions/download-artifact@v4
-        with:
-          name: vcpkg
-          path: vcpkg
-
-      - name: Execute Commands
-        run: |
-          cd .build
-          cmake ..
-          cmake --build .
-          cd ..
+          key: ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
 
       - name: Upload Artifact -> build
         uses: actions/upload-artifact@v4
