@@ -7,8 +7,8 @@ This document contains instructions on how to build TitanForge on your machine.
 ## ☝🏻 First Time Setup
 
 - Ensure that you have a valid C++ compiler installed on your machine.
-    - **Windows** - [Visual Studio](https://visualstudio.microsoft.com/).
-    - **OSX and Linux** - [GCC](https://gcc.gnu.org/install/)
+    - For Windows, [Visual Studio](https://visualstudio.microsoft.com/)
+    - For OSX and Linux, [GCC](https://gcc.gnu.org/install/)
 
 - Download [CMake](https://cmake.org/) (version 3.27.1 or above).
 
@@ -16,14 +16,6 @@ This document contains instructions on how to build TitanForge on your machine.
 
     ```
     git clone --recurse-submodules https://github.com/NateRex/titanforge.git
-    ```
-
-- Install the dependencies of this project:
-    
-    ```
-    cd vcpkg
-    bootstrap-vcpkg
-    vcpkg install
     ```
 
 <br>
