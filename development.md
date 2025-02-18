@@ -15,18 +15,16 @@ This document contains instructions on how to build TitanForge on your machine.
 - Clone this repository and it's submodules:
 
     ```
-    git clone --recurse-submodules https://gitlab.com/ir0nsoftware/core.git
+    git clone --recurse-submodules https://github.com/NateRex/titanforge.git
     ```
 
 - Install the dependencies of this project:
     
     ```
     cd vcpkg
-    ./bootstrap-vcpkg
-    vcpkg install catch2:x64-windows
+    bootstrap-vcpkg
+    vcpkg install
     ```
-
-    - Replace `x64-windows` if using a different operating system.
 
 <br>
 
