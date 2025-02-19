@@ -46,7 +46,7 @@ jobs:
         continue-on-error: true
         uses: actions/cache/save@v4
         with:
-          path: .build/vcpkg_installaed
+          path: .build/vcpkg_installed
           key: ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
 
       - name: Upload Artifact -> build
