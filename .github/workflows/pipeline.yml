@@ -24,14 +24,14 @@ jobs:
         id: cache
         uses: actions/cache/restore@v4
         with:
-          path: vcpkg
+          path: .build/vcpkg_installed
           key: ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
 
       - name: Execute Commands
         run: |
-          if [ -f "./vcpkg/vcpkg" ]; then
+          if [ -d ".build/vcpkg_installed" ]; then
             echo "CACHE_HIT=true" >> $GITHUB_ENV
           else
             echo "CACHE_HIT=false" >> $GITHUB_ENV
@@ -46,7 +46,7 @@ jobs:
         continue-on-error: true
         uses: actions/cache/save@v4
         with:
-          path: vcpkg
+          path: .build/vcpkg_installaed
           key: ${{ runner.os }}-cache-${{ hashFiles('vcpkg.json') }}
 
       - name: Upload Artifact -> build
