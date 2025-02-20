@@ -1,61 +1,61 @@
+#include <boost/test/unit_test.hpp>
 #include <common/Utils.h>
 #include <common/Constants.h>
-#include <catch.hpp>
 
 /**
  * Tests equals
  */
-TEST_CASE("equals", "[Utils]")
+BOOST_AUTO_TEST_CASE(Utils_equals)
 {
-    REQUIRE(equals(1.101, 1.101, 0));
-    REQUIRE(equals(1.101, 0, 1.101));
-    REQUIRE_FALSE(equals(1.101, 0, 1.100));
+    BOOST_TEST(equals(1.101, 1.101, 0));
+    BOOST_TEST(equals(1.101, 0, 1.101));
+    BOOST_TEST(!equals(1.101, 0, 1.100));
 }
 
 /**
  * Tests safeDelete
  */
-TEST_CASE("safeDelete", "[Utils]")
+BOOST_AUTO_TEST_CASE(Utils_safeDelete)
 {
     int* ptr = new int;
-    REQUIRE_NOTHROW(safeDelete(ptr));
+    BOOST_REQUIRE_NO_THROW(safeDelete(ptr));
 
     ptr = nullptr;
-    REQUIRE_NOTHROW(safeDelete(ptr));
+    BOOST_REQUIRE_NO_THROW(safeDelete(ptr));
 }
 
 /**
  * Tests rad2Deg
  */
-TEST_CASE("rad2Deg", "[Utils]")
+BOOST_AUTO_TEST_CASE(Utils_rad2Deg)
 {
-    REQUIRE(rad2Deg(0) == 0);
-    REQUIRE(rad2Deg(-PI / 2) == -90);
-    REQUIRE(rad2Deg(PI) == 180);
-    REQUIRE(rad2Deg(-2 * PI) == -360);
+    BOOST_TEST(rad2Deg(0) == 0);
+    BOOST_TEST(rad2Deg(-PI / 2) == -90);
+    BOOST_TEST(rad2Deg(PI) == 180);
+    BOOST_TEST(rad2Deg(-2 * PI) == -360);
 }
 
 /**
  * Tests deg2Rad
  */
-TEST_CASE("deg2Rad", "[Utils]")
+BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
 {
-    REQUIRE(deg2Rad(0) == 0);
-    REQUIRE(deg2Rad(-90) == -PI / 2);
-    REQUIRE(deg2Rad(180) == PI);
-    REQUIRE(deg2Rad(-360) == -2 * PI);
+    BOOST_TEST(deg2Rad(0) == 0);
+    BOOST_TEST(deg2Rad(-90) == -PI / 2);
+    BOOST_TEST(deg2Rad(180) == PI);
+    BOOST_TEST(deg2Rad(-360) == -2 * PI);
 }
 
 /**
  * Tests getOrDefault
  */
-TEST_CASE("getOrDefault", "[Utils]")
+BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
 {
     double one = 1.;
     double* ptr = nullptr;
-    REQUIRE(getOrDefault(ptr, one) == one);
+    BOOST_TEST((getOrDefault(ptr, one) == one));
 
     double two = 2.;
     ptr = &two;
-    REQUIRE(getOrDefault(ptr, one) == two);
+    BOOST_TEST((getOrDefault(ptr, one) == two));
 }

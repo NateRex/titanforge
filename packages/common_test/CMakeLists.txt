@@ -1,8 +1,7 @@
 project(CommonTest CXX)
 
-find_package(Catch2 CONFIG REQUIRED)
-include(CTest)
-include(Catch)
+enable_testing()
+find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 add_executable(CommonTest
     src/exceptions/IllegalArgumentExceptionTest.cpp
@@ -10,8 +9,8 @@ add_executable(CommonTest
     src/main.cpp
     src/UtilsTest.cpp)
 
-target_link_libraries(CommonTest PRIVATE
-    Catch2::Catch2
-    Common::Common)
+target_link_libraries(CommonTest
+    PRIVATE Boost::unit_test_framework
+    PRIVATE Common::Common)
 
-catch_discover_tests(CommonTest)
+add_test(NAME BoostTests COMMAND boost_tests)
