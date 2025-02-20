@@ -1,8 +1,7 @@
 project(GeometryTest CXX)
 
-find_package(Catch2 CONFIG REQUIRED)
-include(CTest)
-include(Catch)
+enable_testing()
+find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 add_executable(GeometryTest
     src/main.cpp
@@ -12,8 +11,8 @@ add_executable(GeometryTest
     src/Vector3Test.cpp)
 
 target_link_libraries(GeometryTest
-    PRIVATE Catch2::Catch2
+    PRIVATE Boost::unit_test_framework
     PRIVATE Common::Common
     PRIVATE Geometry::Geometry)
 
-catch_discover_tests(GeometryTest)
+add_test(NAME BoostTests COMMAND boost_tests)

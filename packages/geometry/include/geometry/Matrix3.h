@@ -139,9 +139,16 @@ public:
 	/**
 	 * Operator that compares this matrix to another matrix to determine if they are equal.
      * @param other The matrix to compare to
-     * @return True if the two matrices are equal. Returns false otherwise.
+     * @return True if the two matrices are equal in value. Returns false otherwise.
 	 */
 	bool operator==(const Matrix3& other) const;
+
+	/**
+	 * Operator that compares this matrix to another matrix to determine if they are not equal.
+	 * @param other The matrix to compare to
+	 * @return True if the two matrices are equal in value. Returns false otherwise.
+	 */
+	bool operator!=(const Matrix3& other) const;
 
 private:
 

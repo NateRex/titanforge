@@ -198,6 +198,11 @@ bool Matrix3::operator==(const Matrix3& other) const
 	return equalTo(other);
 }
 
+bool Matrix3::operator!=(const Matrix3& other) const
+{
+	return !equalTo(other);
+}
+
 void Matrix3::setValues(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
 {
 	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;
