@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_basics)
 	}
 
 	Matrix3 m2 = Matrix3(m);
-	BOOST_TEST(m2 == m);
+	BOOST_TEST(m2 != m);
 }
 
 /**

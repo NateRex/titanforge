@@ -80,7 +80,16 @@ jobs:
       - name: Execute Commands
         run: |
           chmod +x ./.build/packages/common_test/CommonTest
-          ./.build/packages/common_test/CommonTest
+          ./.build/packages/common_test/CommonTest &> test_output.txt
+          export code=$?
+          cat test_output.txt
+          if [ $code -ne 0 ]; then
+            exit $code
+          fi
+          if grep -q "Detected memory leaks!" test_output.txt; then
+            exit 1
+          fi
+
 
   # Geometry Tests
   geometry-tests:
@@ -105,4 +114,12 @@ jobs:
       - name: Execute Commands
         run: |
           chmod +x ./.build/packages/geometry_test/GeometryTest
-          ./.build/packages/geometry_test/GeometryTest
+          ./.build/packages/geometry_test/GeometryTest &> test_output.txt
+          export code=$?
+          cat test_output.txt
+          if [ $code -ne 0 ]; then
+            exit $code
+          fi
+          if grep -q "Detected memory leaks!" test_output.txt; then
+            exit 1
+          fi

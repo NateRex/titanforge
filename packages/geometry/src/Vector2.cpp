@@ -85,5 +85,10 @@ Vector2 Vector2::minus(const Vector2& other, Vector2* result) const
 
 bool Vector2::operator==(const Vector2& other) const
 {
-    return equalTo(other, 0.);
+    return equalTo(other);
+}
+
+bool Vector2::operator!=(const Vector2& other) const
+{
+    return !equalTo(other);
 }
