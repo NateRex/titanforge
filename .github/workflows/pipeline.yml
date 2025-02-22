@@ -102,4 +102,4 @@ jobs:
           path: .build
 
       - name: Execute Commands
-        run: ./.github/scripts/runTest.sh ./.build/packages/common_test/CommonTest
+        run: ./.github/scripts/runTest.sh ./.build/packages/common_test/GeometryTest
