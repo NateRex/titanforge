@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <type_traits>
 
 /**
  * Tests that two values are equal, within tolerance.
@@ -52,4 +54,28 @@ T& getOrDefault(T* ptr, T def)
         return *ptr;
     }
 	return ptr != nullptr ? *ptr : def;
+}
+
+/**
+ * Helper struct used to detect if a given type T has an overloaded << operator
+ */
+template <typename T, typename = void>
+struct has_ostream_operator : std::false_type {};
+
+/**
+ * Helper struct used to detect if a given type T has an overloaded << operator
+ */
+template <typename T>
+struct has_ostream_operator<
+    T, std::void_t<decltype(std::declval<std::ostream&>() << std::declval<T>())>
+> : std::true_type {};
+
+/**
+ * Overloaded << operator, enabled for classes only that do not already have an << operator
+ * defined
+ */
+template <typename T>
+std::enable_if_t<!has_ostream_operator<T>::value, std::ostream&>
+operator<<(std::ostream& os, const T& obj) {
+    return os << "[object]";
 }
