@@ -120,6 +120,8 @@ BOOST_AUTO_TEST_CASE(Matrix3_transpose)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_inverse)
 {
+	double* deleteMe = new double;
+
 	// Get inverse
 	Matrix3 m(0, 1, 0, 0, 0, 1, 1, 0, 0);
 	Matrix3 inv;
