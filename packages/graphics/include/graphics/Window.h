@@ -16,9 +16,14 @@ public:
     Window();
 
     /**
-     * @return True if this window has been instructed to close. Returns false otherwise.
+     * @return True if this window is currently open. Returns false otherwise.
      */
-    bool closed() const;
+    bool isOpen() const;
+
+    /**
+     * Closes the window
+     */
+    void close();
 
     /**
      * Renders the next frame

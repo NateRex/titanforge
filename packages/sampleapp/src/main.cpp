@@ -8,7 +8,7 @@ int main() {
     Engine::start();
 
     Window window;
-    while (!window.closed())
+    while (window.isOpen())
     {
         window.renderFrame();
     }

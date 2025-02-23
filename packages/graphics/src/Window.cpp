@@ -23,9 +23,14 @@ Window::Window()
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
 }
 
-bool Window::closed() const
+bool Window::isOpen() const
 {
-    return glfwWindowShouldClose(_glfwWindow);
+    return !glfwWindowShouldClose(_glfwWindow);
+}
+
+void Window::close()
+{
+    glfwSetWindowShouldClose(_glfwWindow, true);
 }
 
 void Window::renderFrame() const
