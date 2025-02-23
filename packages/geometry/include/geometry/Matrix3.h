@@ -137,6 +137,13 @@ public:
 	double operator[](int i) const;
 
 	/**
+	 * Operator that reassigns this matrix to a new value
+	 * @param other Matrix to assign to
+	 * @return The matrix instance after reassignment
+	 */
+	Matrix3& operator=(const Matrix3& other);
+
+	/**
 	 * Operator that compares this matrix to another matrix to determine if they are equal.
      * @param other The matrix to compare to
      * @return True if the two matrices are equal in value. Returns false otherwise.
@@ -187,6 +194,17 @@ private:
 	 * @param other The matrix to copy from
 	 */
 	void setValues(const Matrix3& other);
+
+	/**
+	 * Clears the cached inverse of this matrix
+	 */
+	void clearInverse();
+
+	/**
+	 * Sets the cached inverse of this matrix
+	 * @param inv Inverse matrix
+	 */
+	void setInverse(Matrix3* inv);
 };
 
 /**

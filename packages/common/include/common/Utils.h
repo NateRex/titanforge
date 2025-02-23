@@ -29,14 +29,16 @@ double deg2Rad(double deg);
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
  * does nothing.
  * @param ptr Possibly null pointer
+ * @return The nullptr
  */
 template <typename T>
-void safeDelete(T* ptr)
+T* safeDelete(T* ptr)
 {
 	if (ptr != nullptr)
     {
         delete ptr;
     }
+    return nullptr;
 }
 
 /**
