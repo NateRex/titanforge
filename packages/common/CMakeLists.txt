@@ -3,6 +3,7 @@ project(Common CXX)
 # Library files
 add_library(Common
     src/exceptions/IllegalArgumentException.cpp
+    src/exceptions/NullPointerException.cpp
     src/exceptions/OutOfBoundsException.cpp
     src/Utils.cpp)
 add_library(Common::Common ALIAS Common)

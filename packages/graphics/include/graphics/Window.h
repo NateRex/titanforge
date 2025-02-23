@@ -9,4 +9,12 @@ class Window
 public:
 
     Window();
+
+private:
+
+    /**
+     * A pointer to the GLFW window object
+     */
+    GLFWwindow* _glfwWindow;
+
 };

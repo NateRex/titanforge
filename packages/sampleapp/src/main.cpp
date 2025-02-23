@@ -1,8 +1,9 @@
-#include <iostream>
+#include <graphics/Window.h>
 
 /**
  * Main entrypoint for the application
  */
 int main() {
-    std::cout << "Hello world" << std::endl;
+    Window window;
+    return 0;
 }
