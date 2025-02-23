@@ -103,3 +103,27 @@ jobs:
 
       - name: Execute Commands
         run: ./.github/scripts/runTest.sh ./.build/packages/geometry_test/GeometryTest
+
+
+  # Graphics Tests
+  graphics-tests:
+    name: 🧪 Graphics Tests
+    runs-on: ubuntu-latest
+    container: natejrex/cmake
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Download Artifact -> build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: .build
+
+      - name: Execute Commands
+        run: ./.github/scripts/runTest.sh ./.build/packages/graphics_test/GraphicsTest
