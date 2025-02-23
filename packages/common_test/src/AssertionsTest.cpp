@@ -12,10 +12,10 @@ BOOST_AUTO_TEST_CASE(Assertions_notNull)
 	};
 
 	int* ptr = nullptr;
-	BOOST_REQUIRE_THROW(assertNotNull(ptr), NullPointerException);
-	BOOST_REQUIRE_THROW(assertNotNull(ptr, increment), NullPointerException);
+	BOOST_REQUIRE_THROW(assertNotNull(ptr, "Ptr cannot be null"), NullPointerException);
+	BOOST_REQUIRE_THROW(assertNotNull(ptr, "Ptr cannot be null", increment), NullPointerException);
 	BOOST_TEST(value == 2);
 
 	ptr = &value;
-	BOOST_REQUIRE_NO_THROW(assertNotNull(ptr));
+	BOOST_REQUIRE_NO_THROW(assertNotNull(ptr, "Ptr cannot be null"));
 }

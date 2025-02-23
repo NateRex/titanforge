@@ -5,16 +5,36 @@
 
 Window::Window()
 {
-    // Initialize GLFW
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    #ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-
-    // Create window
+    // Create window context
     _glfwWindow = glfwCreateWindow(800, 600, "TitanForge", NULL, NULL);
-    assertNotNull(_glfwWindow);
+    assertNotNull(_glfwWindow, "Failed to create GLFW window", []() {
+        glfwTerminate();
+        });
+    glfwMakeContextCurrent(_glfwWindow);
+
+    // Ensure GLFW functions have been loaded via GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+
+    // Set viewport
+    glViewport(0, 0, 800, 600);
+    glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
+}
+
+bool Window::closed() const
+{
+    return glfwWindowShouldClose(_glfwWindow);
+}
+
+void Window::renderFrame() const
+{
+    glfwSwapBuffers(_glfwWindow);
+    glfwPollEvents();
+}
+
+void Window::onResize(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }

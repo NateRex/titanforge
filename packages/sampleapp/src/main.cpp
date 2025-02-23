@@ -1,9 +1,17 @@
+#include <graphics/Engine.h>
 #include <graphics/Window.h>
 
 /**
  * Main entrypoint for the application
  */
 int main() {
+    Engine::start();
+
     Window window;
-    return 0;
+    while (!window.closed())
+    {
+        window.renderFrame();
+    }
+
+    Engine::stop();
 }
