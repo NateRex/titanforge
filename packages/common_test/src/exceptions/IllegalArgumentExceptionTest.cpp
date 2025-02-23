@@ -1,15 +1,15 @@
+#include <boost/test/unit_test.hpp>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <cstring>
-#include <catch.hpp>
 
 /**
  * Tests the ability to create an instance of the exception
  */
-TEST_CASE("basics", "[IllegalArgumentException]")
+BOOST_AUTO_TEST_CASE(IllegalArgumentException_basics)
 {
     IllegalArgumentException ex("Test exception");
-    REQUIRE_THROWS_AS(throw ex, IllegalArgumentException);
+    BOOST_REQUIRE_THROW(throw ex, IllegalArgumentException);
 
     const char* str = ex.what();
-    REQUIRE(strcmp("Test exception", str) == 0);
+    BOOST_TEST(strcmp("Test exception", str) == 0);
 }

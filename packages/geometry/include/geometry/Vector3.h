@@ -114,4 +114,11 @@ public:
      * @return True if the two vectors are equal. Returns false otherwise.
      */
     bool operator==(const Vector3& other) const;
+
+    /**
+     * Operator that compares this vector to another vector to determine if they are not equal.
+     * @param other The vector to compare to
+     * @return True if the two vectors are not equal. Returns false otherwise.
+     */
+    bool operator!=(const Vector3& other) const;
 };

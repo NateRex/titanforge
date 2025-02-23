@@ -113,6 +113,8 @@ bool Matrix3::inverse(Matrix3* result)
 		}
 
 		result->setValues(*_inverse);
+		result->setInverse(new Matrix3(*this));
+
 		return true;
 	}
 	_didComputeInverse = true;
@@ -141,13 +143,9 @@ bool Matrix3::inverse(Matrix3* result)
 	double m22 = (_m[4] * _m[0] - _m[1] * _m[3]) * detInv;
 
 	result->setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	result->setInverse(new Matrix3(*this));
 
-	// Set this matrix's inverse, as well as the inverse of the new matrix
-	safeDelete(result->_inverse);
-	result->_didComputeInverse = true;
-	result->_inverse = new Matrix3(*this);
 	_inverse = new Matrix3(*result);
-
 	return true;
 }
 
@@ -198,8 +196,28 @@ bool Matrix3::operator==(const Matrix3& other) const
 	return equalTo(other);
 }
 
+bool Matrix3::operator!=(const Matrix3& other) const
+{
+	return !equalTo(other);
+}
+
+Matrix3& Matrix3::operator=(const Matrix3& other)
+{
+	setValues(other);
+	_didComputeInverse = other._didComputeInverse;
+	_inverse = safeDelete(_inverse);
+	if (other._inverse != nullptr)
+	{
+		setInverse(new Matrix3(*other._inverse));
+	}
+
+	return *this;
+}
+
 void Matrix3::setValues(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
 {
+	clearInverse();
+
 	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;
 	_m[3] = m10;	_m[4] = m11;	_m[5] = m12;
 	_m[6] = m20;	_m[7] = m21;	_m[8] = m22;
@@ -207,15 +225,23 @@ void Matrix3::setValues(double m00, double m01, double m02, double m10, double m
 
 void Matrix3::setValues(const Matrix3& other)
 {
+	clearInverse();
+
 	for (int i = 0; i < 9; i++)
 	{
 		_m[i] = other._m[i];
 	}
+}
 
-	_didComputeInverse = other._didComputeInverse;
-	if (other._inverse != nullptr)
-	{
-		safeDelete(_inverse);
-		_inverse = new Matrix3(*other._inverse);
-	}
+void Matrix3::clearInverse()
+{
+	_didComputeInverse = false;
+	_inverse = safeDelete(_inverse);
+}
+
+void Matrix3::setInverse(Matrix3* inv)
+{
+	_didComputeInverse = true;
+	safeDelete(_inverse);
+	_inverse = inv;
 }

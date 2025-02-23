@@ -1,5 +1,5 @@
 {
     "dependencies": [
-        "catch2"
+        "boost-test"
     ]
 }

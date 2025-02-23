@@ -1,15 +1,15 @@
+#include <boost/test/unit_test.hpp>
 #include <common/exceptions/OutOfBoundsException.h>
 #include <cstring>
-#include <catch.hpp>
 
 /**
  * Tests the ability to create an instance of the exception
  */
-TEST_CASE("basics", "[OutOfBoundsException]")
+BOOST_AUTO_TEST_CASE(OutOfBoundsException_basics)
 {
     OutOfBoundsException ex("Test exception");
-    REQUIRE_THROWS_AS(throw ex, OutOfBoundsException);
+    BOOST_REQUIRE_THROW(throw ex, OutOfBoundsException);
 
     const char* str = ex.what();
-    REQUIRE(strcmp("Test exception", str) == 0);
+    BOOST_TEST(strcmp("Test exception", str) == 0);
 }

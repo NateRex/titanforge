@@ -78,9 +78,8 @@ jobs:
           path: .build
 
       - name: Execute Commands
-        run: |
-          chmod +x ./.build/packages/common_test/CommonTest
-          ./.build/packages/common_test/CommonTest
+        run: ./.github/scripts/runTest.sh ./.build/packages/common_test/CommonTest
+
 
   # Geometry Tests
   geometry-tests:
@@ -103,6 +102,4 @@ jobs:
           path: .build
 
       - name: Execute Commands
-        run: |
-          chmod +x ./.build/packages/geometry_test/GeometryTest
-          ./.build/packages/geometry_test/GeometryTest
+        run: ./.github/scripts/runTest.sh ./.build/packages/geometry_test/GeometryTest

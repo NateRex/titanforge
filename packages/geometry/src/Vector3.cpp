@@ -95,5 +95,10 @@ Vector3 Vector3::minus(const Vector3& other, Vector3* result) const
 
 bool Vector3::operator==(const Vector3& other) const
 {
-    return equalTo(other, 0.);
+    return equalTo(other);
+}
+
+bool Vector3::operator!=(const Vector3& other) const
+{
+    return !equalTo(other);
 }
