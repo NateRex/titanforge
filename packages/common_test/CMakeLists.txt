@@ -1,14 +1,17 @@
 project(CommonTest CXX)
 
+# Dependencies
 enable_testing()
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
+# Executable files
 add_executable(CommonTest
     src/exceptions/IllegalArgumentExceptionTest.cpp
     src/exceptions/OutOfBoundsExceptionTest.cpp
     src/main.cpp
     src/UtilsTest.cpp)
 
+# Linked libraries
 target_link_libraries(CommonTest
     PRIVATE Boost::unit_test_framework
     PRIVATE Common::Common)
