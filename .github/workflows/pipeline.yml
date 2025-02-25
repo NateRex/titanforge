@@ -37,7 +37,7 @@ jobs:
             echo "CACHE_HIT=false" >> $GITHUB_ENV
           fi
           cd .build
-          cmake ..
+          cmake .. -Wno-dev
           cmake --build .
           cd ..
 
