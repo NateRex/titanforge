@@ -1,8 +1,8 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics_test/GraphicsTestFixture.h>
+#include <graphics_test/utils/TestFixture.h>
 #include <graphics/Window.h>
 
-BOOST_FIXTURE_TEST_SUITE(Window_suite, GraphicsTestFixture);
+BOOST_FIXTURE_TEST_SUITE(Window_suite, TestFixture);
 
 /**
  * Tests the ability to create a new window

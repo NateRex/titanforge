@@ -5,19 +5,19 @@
  * capabilities.
  * @author Nathaniel Rex
  */
-class GraphicsTestFixture
+class TestFixture
 {
 public:
 	
 	/**
 	 * Constructor
 	 */
-	GraphicsTestFixture();
+	TestFixture();
 
 	/**
-	 * Destructore
+	 * Destructor
 	 */
-	~GraphicsTestFixture();
+	~TestFixture();
 
 	/**
 	 * Code to run before each test

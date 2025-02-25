@@ -6,9 +6,9 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 # Executable files
 add_executable(GraphicsTest
+    src/utils/TestFixture.cpp
     src/EngineTest.cpp
     src/main.cpp
-    src/GraphicsTestFixture.cpp
     src/WindowTest.cpp
 )
 
