@@ -1,5 +1,5 @@
 #include <graphics/Engine.h>
-#include <graphics/Window.h>
+#include <graphics/window/Window.h>
 
 /**
  * Main entrypoint for the application

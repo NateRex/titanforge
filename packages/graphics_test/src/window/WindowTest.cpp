@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics_test/utils/TestFixture.h>
-#include <graphics/Window.h>
+#include <graphics/window/Window.h>
 
 BOOST_FIXTURE_TEST_SUITE(Window_suite, TestFixture);
 

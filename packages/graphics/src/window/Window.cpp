@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <graphics/Window.h>
+#include <graphics/window/Window.h>
 #include <common/Assertions.h>
 
 Window::Window()
