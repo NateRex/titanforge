@@ -53,11 +53,9 @@ BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
 {
     double one = 1.;
     double* ptr = nullptr;
-    double value = getOrDefault(ptr, one);
-    BOOST_TEST(value == one);
+    BOOST_TEST((getOrDefault(ptr, one) == one));
 
     double two = 2.;
     ptr = &two;
-    value = getOrDefault(ptr, one);
-    BOOST_TEST(value == two);
+    BOOST_TEST((getOrDefault(ptr, one) == two));
 }
