@@ -7,6 +7,6 @@ cat test_output.txt
 if [ $code -ne 0 ]; then
     exit $code
 fi
-if ! grep -q "no leaks are possible" test_output.txt; then
+if ! grep -q "no leaks are possible|definitely lost: 0 bytes in 0 blocks" test_output.txt; then
     exit 1
 fi

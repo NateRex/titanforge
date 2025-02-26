@@ -19,6 +19,7 @@ Window::Window()
     }
 
     // Set viewport
+    double* deleteMe = new double;
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
 }

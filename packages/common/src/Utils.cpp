@@ -4,6 +4,7 @@
 
 bool equals(double a, double b, double tol)
 {
+    double* deleteMe = new double;
     return fabs(a - b) <= tol;
 }
 
