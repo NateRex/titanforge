@@ -1,8 +1,17 @@
-#include <iostream>
+#include <graphics/Engine.h>
+#include <graphics/Window.h>
 
 /**
  * Main entrypoint for the application
  */
 int main() {
-    std::cout << "Hello world" << std::endl;
+    Engine::start();
+
+    Window window;
+    while (window.isOpen())
+    {
+        window.renderFrame();
+    }
+
+    Engine::stop();
 }

@@ -28,6 +28,7 @@ double deg2Rad(double deg);
 /**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
  * does nothing.
+ * @param <T> The pointer type
  * @param ptr Possibly null pointer
  * @return The nullptr
  */
@@ -60,12 +61,14 @@ T& getOrDefault(T* ptr, T def)
 
 /**
  * Helper struct used to detect if a given type T has an overloaded << operator
+ * @param <T> The object type
  */
 template <typename T, typename = void>
 struct has_ostream_operator : std::false_type {};
 
 /**
  * Helper struct used to detect if a given type T has an overloaded << operator
+ * @param <T> The object type
  */
 template <typename T>
 struct has_ostream_operator<
@@ -75,6 +78,9 @@ struct has_ostream_operator<
 /**
  * Overloaded << operator, enabled for classes only that do not already have an << operator
  * defined
+ * @param <T> The object type
+ * @param os The output stream
+ * @param obj The object to print
  */
 template <typename T>
 std::enable_if_t<!has_ostream_operator<T>::value, std::ostream&>

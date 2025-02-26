@@ -1,5 +1,7 @@
 {
-    "dependencies": [
-        "boost-test"
-    ]
+  "dependencies": [
+    "glfw3",
+    "glad",
+    "boost-test"
+  ]
 }
