@@ -126,4 +126,7 @@ jobs:
           path: .build
 
       - name: Execute Commands
-        run: ./.github/scripts/runTest.sh ./.build/packages/graphics_test/GraphicsTest
+        run: |
+          Xvfb :99 -screen 0 1024x768x16 &
+          export DISPLAY=:99
+          ./.github/scripts/runTest.sh ./.build/packages/graphics_test/GraphicsTest
