@@ -1,7 +1,7 @@
 #!/bin/bash
 
 chmod +x $1
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=/usr/share/valgrind/default.supp $1 &> test_output.txt
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=/usr/local/libexec/valgrind/default.supp $1 &> test_output.txt
 export code=$?
 cat test_output.txt
 if [ $code -ne 0 ]; then
