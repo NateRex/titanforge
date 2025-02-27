@@ -6,6 +6,7 @@ find_package(glad CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
+    src/window/InputController.cpp
     src/window/Window.cpp
     src/Engine.cpp)
 add_library(Graphics::Graphics ALIAS Graphics)
