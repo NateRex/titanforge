@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/window/Window.h>
+#include <graphics/window/InputController.h>
 #include <common/Assertions.h>
 
 Window::Window()
@@ -12,6 +13,9 @@ Window::Window()
         });
     glfwMakeContextCurrent(_glfwWindow);
 
+    // Create the input controller
+    _inputController = new InputController(_glfwWindow);
+
     // Ensure GLFW functions have been loaded via GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -21,6 +25,16 @@ Window::Window()
     // Set viewport
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
+}
+
+Window::~Window()
+{
+    delete _inputController;
+}
+
+InputController* Window::getInputController()
+{
+    return _inputController;
 }
 
 bool Window::isOpen() const

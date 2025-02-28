@@ -10,6 +10,7 @@ BOOST_FIXTURE_TEST_SUITE(Window_suite, TestFixture);
 BOOST_AUTO_TEST_CASE(Window_basics)
 {
 	Window win;
+	BOOST_TEST(win.getInputController() != nullptr);
 	BOOST_TEST(win.isOpen());
 	BOOST_REQUIRE_NO_THROW(win.renderFrame());
 

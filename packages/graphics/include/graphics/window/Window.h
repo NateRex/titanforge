@@ -1,6 +1,8 @@
 #pragma once
+#include <functional>
 
 struct GLFWwindow;
+class InputController;
 
 /**
  * Representation of a window target for rendering
@@ -14,6 +16,16 @@ public:
      * Constructor
      */
     Window();
+
+    /**
+     * Destructor
+     */
+    ~Window();
+
+    /**
+     * @return The input controller
+     */
+    InputController* getInputController();
 
     /**
      * @return True if this window is currently open. Returns false otherwise.
@@ -36,6 +48,11 @@ private:
      * A pointer to the GLFW window object
      */
     GLFWwindow* _glfwWindow;
+
+    /**
+     * Input controller
+     */
+    InputController* _inputController;
 
     /**
      * Callback method that is triggered whenever the window is resized
