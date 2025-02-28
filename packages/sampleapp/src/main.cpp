@@ -1,6 +1,15 @@
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
+#include <graphics/primitives/PPolyface.h>
+
+/**
+ * Create an example polyface
+ */
+PPolyface examplePolyface()
+{
+    return PolyfacePrimitive()
+}
 
 /**
  * Main entrypoint for the application

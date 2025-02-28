@@ -6,7 +6,7 @@ find_package(glad CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
-    src/primitives/PolyfacePrimitive.cpp
+    src/primitives/PPolyface.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Color.cpp
