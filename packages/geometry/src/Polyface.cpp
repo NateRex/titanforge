@@ -81,6 +81,12 @@ Polyface::Polyface(const std::vector<Vector3>& positions, const std::vector<int>
 
 }
 
+Polyface::Polyface(const Polyface& polyface)
+	: _positions(polyface._positions), _vertices(polyface._vertices)
+{
+
+}
+
 int Polyface::getNumVertices() const
 {
 	int count = 0;

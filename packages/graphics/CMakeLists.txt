@@ -6,6 +6,7 @@ find_package(glad CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
+    src/primitives/PolyfacePrimitive.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Color.cpp
@@ -21,7 +22,8 @@ target_include_directories(
 target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
-    PRIVATE Common::Common)
+    PRIVATE Common::Common
+    PRIVATE Geometry::Geometry)
 
 # Library installation
 install(

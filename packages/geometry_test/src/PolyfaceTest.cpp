@@ -29,10 +29,14 @@ BOOST_AUTO_TEST_CASE(Polyface_basics)
 	// Test using vectors
 	std::vector<Vector3> ptsVec(pts, pts + 4);
 	std::vector<int> vertsVec(verts, verts + 16);
-
 	p = Polyface(ptsVec, vertsVec);
 	BOOST_TEST(p.getNumVertices() == 12);
 	BOOST_TEST(p.getNumFacets() == 4);
+
+	// Test using existing polyface
+	Polyface p2(p);
+	BOOST_TEST(p2.getNumVertices() == 12);
+	BOOST_TEST(p2.getNumFacets() == 4);
 }
 
 /**
