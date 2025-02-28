@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <graphics/Color.h>
 
 struct GLFWwindow;
 class InputController;
@@ -38,6 +39,12 @@ public:
     void close();
 
     /**
+     * Sets the background (clear) color
+     * @param color Color
+     */
+    void setBackgroundColor(const Color color);
+
+    /**
      * Renders the next frame
      */
     void renderFrame() const;
@@ -53,6 +60,11 @@ private:
      * Input controller
      */
     InputController* _inputController;
+
+    /**
+     * Background (clear) color. Defaults to black.
+     */
+    Color _clearColor;
 
     /**
      * Callback method that is triggered whenever the window is resized

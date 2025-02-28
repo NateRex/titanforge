@@ -10,7 +10,8 @@ struct GLFWwindow;
  * events while that window is active.
  * @author Nathaniel Rex
  */
-class InputController {
+class InputController
+{
 public:
 
 	/**

@@ -5,7 +5,9 @@
 #include <common/Assertions.h>
 
 Window::Window()
+    : _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
 {
+
     // Create window context
     _glfwWindow = glfwCreateWindow(800, 600, "TitanForge", NULL, NULL);
     assertNotNull(_glfwWindow, "Failed to create GLFW window", []() {
@@ -47,8 +49,18 @@ void Window::close()
     glfwSetWindowShouldClose(_glfwWindow, true);
 }
 
+void Window::setBackgroundColor(const Color color)
+{
+    _clearColor = color;
+}
+
 void Window::renderFrame() const
 {
+    _inputController->processInput();
+
+    glClearColor(_clearColor.getRed(), _clearColor.getGreen(), _clearColor.getBlue(), _clearColor.getAlpha());
+    glClear(GL_COLOR_BUFFER_BIT);
+
     glfwSwapBuffers(_glfwWindow);
     glfwPollEvents();
 }
