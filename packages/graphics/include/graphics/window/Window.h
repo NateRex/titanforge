@@ -1,6 +1,9 @@
 #pragma once
+#include <functional>
+#include <graphics/Color.h>
 
 struct GLFWwindow;
+class InputController;
 
 /**
  * Representation of a window target for rendering
@@ -16,6 +19,16 @@ public:
     Window();
 
     /**
+     * Destructor
+     */
+    ~Window();
+
+    /**
+     * @return The input controller
+     */
+    InputController* getInputController();
+
+    /**
      * @return True if this window is currently open. Returns false otherwise.
      */
     bool isOpen() const;
@@ -24,6 +37,12 @@ public:
      * Closes the window
      */
     void close();
+
+    /**
+     * Sets the background (clear) color
+     * @param color Color
+     */
+    void setBackgroundColor(const Color color);
 
     /**
      * Renders the next frame
@@ -36,6 +55,16 @@ private:
      * A pointer to the GLFW window object
      */
     GLFWwindow* _glfwWindow;
+
+    /**
+     * Input controller
+     */
+    InputController* _inputController;
+
+    /**
+     * Background (clear) color. Defaults to black.
+     */
+    Color _clearColor;
 
     /**
      * Callback method that is triggered whenever the window is resized

@@ -20,3 +20,46 @@ void assertNotNull(const T* obj, const char* errMsg, const std::function<void()>
 		throw NullPointerException(errMsg);
 	}
 }
+
+/**
+ * Asserts that a value is greater than some constant
+ * @param value Value to test
+ * @param lowerBound Lower bound
+ * @throws IllegalArgumentException if value is not greater than the constant
+ */
+void assertGreaterThan(double value, double lowerBound);
+
+/**
+ * Asserts that a value is greater than or equal to some constant
+ * @param value Value to test
+ * @param lowerBound Lower bound
+ * @throws IllegalArgumentException if value is not greater than or equal to the constant
+ */
+void assertGreaterThanOrEqual(double value, double lowerBound);
+
+/**
+ * Asserts that a value is less than some constant
+ * @param value Value to test
+ * @param upperBound Upper bound
+ * @throws IllegalArgumentException if value is not less than the constant
+ */
+void assertLessThan(double value, double upperBound);
+
+/**
+ * Asserts that a value is less than or equal to some constant
+ * @param value Value to test
+ * @param upperBound Upper bound
+ * @throws IllegalArgumentException if value is not less than or equal to the constant
+ */
+void assertLessThanOrEqual(double value, double upperBound);
+
+/**
+ * Asserts that a value is within a given range
+ * @param value Value to test
+ * @param lowerBound Lower bound
+ * @param upperBound Upper bound
+ * @param inclusive True if the lower and upper bounds should be considered inclusive. False otherwise.
+ * Defaults to true.
+ * @throws IllegalArgumentException if value is not within the expected range
+ */
+void assertInRange(double value, double lowerBound, double upperBound, bool inclusive = true);

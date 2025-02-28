@@ -1,15 +1,23 @@
 #include <graphics/Engine.h>
-#include <graphics/Window.h>
+#include <graphics/window/Window.h>
+#include <graphics/window/InputController.h>
 
 /**
  * Main entrypoint for the application
  */
 int main() {
     Engine::start();
-
     Window window;
+    window.setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+
+    // Create input listeners
+    window.getInputController()->addListener(256, [&window]() {
+        window.close();
+    });
+
     while (window.isOpen())
     {
+
         window.renderFrame();
     }
 
