@@ -1,4 +1,5 @@
 #include <graphics/primitives/PPolyface.h>
+#include <geometry/Vector3.h>
 
 PPolyface::PPolyface(const Vector3* pos, int numPos, const int* verts, int numVerts)
 	: Polyface(pos, numPos, verts, numVerts)

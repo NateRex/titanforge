@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
  */
 BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
 {
-    double one = 1.;
-    double* ptr = nullptr;
+    float one = 1.;
+    float* ptr = nullptr;
     BOOST_TEST((getOrDefault(ptr, one) == one));
 
-    double two = 2.;
+    float two = 2.;
     ptr = &two;
     BOOST_TEST((getOrDefault(ptr, one) == two));
 }

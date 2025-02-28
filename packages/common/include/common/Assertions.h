@@ -27,7 +27,7 @@ void assertNotNull(const T* obj, const char* errMsg, const std::function<void()>
  * @param lowerBound Lower bound
  * @throws IllegalArgumentException if value is not greater than the constant
  */
-void assertGreaterThan(double value, double lowerBound);
+void assertGreaterThan(float value, float lowerBound);
 
 /**
  * Asserts that a value is greater than or equal to some constant
@@ -35,7 +35,7 @@ void assertGreaterThan(double value, double lowerBound);
  * @param lowerBound Lower bound
  * @throws IllegalArgumentException if value is not greater than or equal to the constant
  */
-void assertGreaterThanOrEqual(double value, double lowerBound);
+void assertGreaterThanOrEqual(float value, float lowerBound);
 
 /**
  * Asserts that a value is less than some constant
@@ -43,7 +43,7 @@ void assertGreaterThanOrEqual(double value, double lowerBound);
  * @param upperBound Upper bound
  * @throws IllegalArgumentException if value is not less than the constant
  */
-void assertLessThan(double value, double upperBound);
+void assertLessThan(float value, float upperBound);
 
 /**
  * Asserts that a value is less than or equal to some constant
@@ -51,7 +51,7 @@ void assertLessThan(double value, double upperBound);
  * @param upperBound Upper bound
  * @throws IllegalArgumentException if value is not less than or equal to the constant
  */
-void assertLessThanOrEqual(double value, double upperBound);
+void assertLessThanOrEqual(float value, float upperBound);
 
 /**
  * Asserts that a value is within a given range
@@ -62,4 +62,4 @@ void assertLessThanOrEqual(double value, double upperBound);
  * Defaults to true.
  * @throws IllegalArgumentException if value is not within the expected range
  */
-void assertInRange(double value, double lowerBound, double upperBound, bool inclusive = true);
+void assertInRange(float value, float lowerBound, float upperBound, bool inclusive = true);

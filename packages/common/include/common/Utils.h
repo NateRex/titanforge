@@ -9,21 +9,21 @@
  * @param tol (Optional) Tolerance. Defaults to 0.
  * @return True if the two values are equal within tolerance. Returns false otherwise.
  */
-bool equals(double a, double b, double tol);
+bool equals(float a, float b, float tol);
 
 /**
  * Converts a value from radians to degrees
  * @param rad Angle in radians
  * @return Angle in degrees
  */
-double rad2Deg(double rad);
+float rad2Deg(float rad);
 
 /**
  * Converts a value from degrees to radians
  * @param deg Angle in degrees
  * @return Angle in radians
  */
-double deg2Rad(double deg);
+float deg2Rad(float deg);
 
 /**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function

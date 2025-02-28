@@ -14,7 +14,7 @@ class Window
 public:
 
     /**
-     * Constructor
+     * Constructor. Requires the graphics engine to have been initialized.
      */
     Window();
 

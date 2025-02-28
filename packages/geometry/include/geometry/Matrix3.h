@@ -27,7 +27,7 @@ public:
 	 * @param m21 Row 2, column 1 value
 	 * @param m22 Row 2, column 2 value
 	 */
-	Matrix3(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22);
+	Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 	/**
 	 * Constructs a matrix from another 3x3 matrix
@@ -66,7 +66,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromXRotation(double radians, Matrix3* result = nullptr);
+	static Matrix3 fromXRotation(float radians, Matrix3* result = nullptr);
 
 	/**
 	 * Constructs a matrix representing a rotation about the Y-axis
@@ -74,7 +74,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromYRotation(double radians, Matrix3* result = nullptr);
+	static Matrix3 fromYRotation(float radians, Matrix3* result = nullptr);
 
 	/**
 	 * Constructs a matrix representing a rotation about the Z-axis
@@ -82,7 +82,7 @@ public:
 	 * @param (Optional) Matrix in which to store the results
 	 * @return The rotation matrix
 	 */
-	static Matrix3 fromZRotation(double radians, Matrix3* result = nullptr);
+	static Matrix3 fromZRotation(float radians, Matrix3* result = nullptr);
 
 	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
@@ -95,7 +95,7 @@ public:
 	 * @param (Optional) Tolerance value. Defaults to 0.
 	 * @return True if the two matrices are equal (within tolerance). False otherwise.
 	 */
-	bool equalTo(const Matrix3& other, double tol = 0.) const;
+	bool equalTo(const Matrix3& other, float tol = 0.) const;
 
 	/**
 	 * Computes the transpose of this matrix
@@ -134,7 +134,7 @@ public:
 	 * @param i The index to access
 	 * @return The value at the requested index
 	 */
-	double operator[](int i) const;
+	float operator[](int i) const;
 
 	/**
 	 * Operator that reassigns this matrix to a new value
@@ -162,7 +162,7 @@ private:
 	/**
 	 * The values of this matrix
 	 */
-	double _m[9];
+	float _m[9];
 
 	/**
 	 * Boolean value indicating whether the inverse of this matrix has been computed.
@@ -187,7 +187,7 @@ private:
 	 * @param m21 Row 2, column 1 value
 	 * @param m22 Row 2, column 2 value
 	 */
-	void setValues(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22);
+	void setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 	/**
 	 * Set the values of this matrix from another matrix

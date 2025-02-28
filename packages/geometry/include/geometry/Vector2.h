@@ -13,12 +13,12 @@ public:
     /**
      * X coordinate
      */
-    double x;
+    float x;
 
     /**
      * Y coordinate
      */
-    double y;
+    float y;
 
     /**
      * Constructs a vector where all coordinate values are zero
@@ -30,7 +30,7 @@ public:
      * @param x X coordinate value
      * @param y Y coordinate value
      */
-    Vector2(double x, double y);
+    Vector2(float x, float y);
 
     /**
      * Constructs a vector from another vector
@@ -49,7 +49,7 @@ public:
      * @param tol Tolerance to use when comparing. Defaults to 0.
      * @return True if this vector is the zero vector. Returns false otherwise.
      */
-    bool isZero(double tol = 0.0) const;
+    bool isZero(float tol = 0.0) const;
 
     /**
      * Determines if this vector is equal to another vector (within tolerance).
@@ -57,26 +57,26 @@ public:
      * @param tol Tolerance value to use when comparing. Defaults to 0.
      * @return True if the two vectors are equal. Returns false otherwise.
      */
-    bool equalTo(const Vector2& other, double tol = 0.0) const;
+    bool equalTo(const Vector2& other, float tol = 0.0) const;
 
     /**
      * @return The magnitude of this vector
      */
-    double getMagnitude() const;
+    float getMagnitude() const;
 
     /**
      * Computes the dot product of this vector with another vector
      * @param other The other vector
      * @return The dot product of this vector and the given vector
      */
-    double dot(const Vector2& other) const;
+    float dot(const Vector2& other) const;
 
     /**
      * Computes the cross product of this vector with another vector.
      * @param other The other vector
      * @return The cross product of this vector and the given vector.
      */
-    double cross(const Vector2& other) const;
+    float cross(const Vector2& other) const;
 
     /**
      * Normalizes this vector to have a magnitude of 1. If this vector is the zero vector, this method has no effect.
@@ -91,7 +91,7 @@ public:
      * @param result (Optional) Pointer to a vector in which to store the results
      * @return The resulting vector
      */
-    Vector2 scale(double value, Vector2* result = nullptr) const;
+    Vector2 scale(float value, Vector2* result = nullptr) const;
 
     /**
      * Subtracts another vector from this vector.

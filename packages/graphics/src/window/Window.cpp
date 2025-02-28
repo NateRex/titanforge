@@ -58,7 +58,7 @@ void Window::renderFrame() const
 {
     _inputController->processInput();
 
-    glClearColor(_clearColor.getRed(), _clearColor.getGreen(), _clearColor.getBlue(), _clearColor.getAlpha());
+    glClearColor(_clearColor.red, _clearColor.green, _clearColor.blue, _clearColor.alpha);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glfwSwapBuffers(_glfwWindow);

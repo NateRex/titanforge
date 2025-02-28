@@ -9,14 +9,14 @@
 BOOST_AUTO_TEST_CASE(Vector3_basics)
 {
     Vector3 vec;
-    BOOST_TEST(vec.x == 0.);
-    BOOST_TEST(vec.y == 0.);
-    BOOST_TEST(vec.z == 0.);
+    BOOST_TEST(equals(vec.x, 0., 1.0e-6));
+    BOOST_TEST(equals(vec.y, 0., 1.0e-6));
+    BOOST_TEST(equals(vec.z, 0., 1.0e-6));
 
     vec = Vector3(1.1, -2.2, 3.3);
-    BOOST_TEST(vec.x == 1.1);
-    BOOST_TEST(vec.y == -2.2);
-    BOOST_TEST(vec.z == 3.3);
+    BOOST_TEST(equals(vec.x, 1.1, 1.0e-6));
+    BOOST_TEST(equals(vec.y, -2.2, 1.0e-6));
+    BOOST_TEST(equals(vec.z, 3.3, 1.0e-6));
 
     Vector3 vec2(vec);
     BOOST_TEST(vec == vec2);
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(Vector3_normalize)
 
     vec = Vector3(1, 2, 3);
     normalized = vec.normalize();
-    BOOST_TEST(normalized.equalTo(Vector3(0.267261241, 0.534522483, 0.801783725), 1.0e-9));
+    BOOST_TEST(normalized.equalTo(Vector3(0.2672, 0.5345, 0.8017), 1.0e-4));
 
     Vector3 result;
     vec.normalize(&result);
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(Vector3_dotProduct)
 {
     Vector3 v1(1, -2, 3);
     Vector3 v2(-4, 5, -6);
-    double dotProduct = v1.dot(v2);
+    float dotProduct = v1.dot(v2);
     BOOST_TEST(dotProduct == v2.dot(v1));
     BOOST_TEST(dotProduct == -32.);
 }
@@ -153,9 +153,9 @@ BOOST_AUTO_TEST_CASE(Vector3_subtraction)
 
     Vector3 v2(2.5, 1001.9, -5);
     Vector3 subtraction = v1.minus(v2);
-    BOOST_TEST(equals(subtraction.x, 1.5, 1.0e-12));
-    BOOST_TEST(equals(subtraction.y, 0.1, 1.0e-12));
-    BOOST_TEST(equals(subtraction.z, -96.5, 1.0e-12));
+    BOOST_TEST(equals(subtraction.x, 1.5, 1.0e-2));
+    BOOST_TEST(equals(subtraction.y, 0.1, 1.0e-2));
+    BOOST_TEST(equals(subtraction.z, -96.5, 1.0e-2));
 
     Vector3 result;
     v1.minus(v2, &result);

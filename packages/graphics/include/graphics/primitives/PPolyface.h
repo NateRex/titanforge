@@ -1,9 +1,6 @@
 #pragma once
 #include <geometry/Polyface.h>
 
-class Vector3;
-
-
 /**
  * A three-dimensional polyface primitive capable of being rendered
  * @author Nathaniel Rex

@@ -2,13 +2,22 @@
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
 #include <graphics/primitives/PPolyface.h>
+#include <geometry/Vector3.h>
 
 /**
  * Create an example polyface
  */
 PPolyface examplePolyface()
 {
-    return PolyfacePrimitive()
+    Vector3 pts[] = {
+        Vector3(-0.5, -0.5, 0.),
+        Vector3(0.5, -0.5, 0.),
+        Vector3(0., 0.5, 0.)
+    };
+    int verts[] = {
+        0, 1, 2
+    };
+    return PPolyface(pts, 3, verts, 3);
 }
 
 /**
@@ -24,6 +33,10 @@ int main() {
         window.close();
     });
 
+    // Get example geometry
+    PPolyface geometry = examplePolyface();
+
+    // Render loop
     while (window.isOpen())
     {
 

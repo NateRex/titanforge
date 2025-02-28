@@ -2,7 +2,7 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <sstream>
 
-void assertGreaterThan(double value, double lowerBound) {
+void assertGreaterThan(float value, float lowerBound) {
 	if (value <= lowerBound)
 	{
 		std::ostringstream oss;
@@ -11,7 +11,7 @@ void assertGreaterThan(double value, double lowerBound) {
 	}
 }
 
-void assertGreaterThanOrEqual(double value, double lowerBound) {
+void assertGreaterThanOrEqual(float value, float lowerBound) {
 	if (value < lowerBound)
 	{
 		std::ostringstream oss;
@@ -20,7 +20,7 @@ void assertGreaterThanOrEqual(double value, double lowerBound) {
 	}
 }
 
-void assertLessThan(double value, double upperBound) {
+void assertLessThan(float value, float upperBound) {
 	if (value >= upperBound)
 	{
 		std::ostringstream oss;
@@ -29,7 +29,7 @@ void assertLessThan(double value, double upperBound) {
 	}
 }
 
-void assertLessThanOrEqual(double value, double upperBound) {
+void assertLessThanOrEqual(float value, float upperBound) {
 	if (value > upperBound)
 	{
 		std::ostringstream oss;
@@ -38,7 +38,7 @@ void assertLessThanOrEqual(double value, double upperBound) {
 	}
 }
 
-void assertInRange(double value, double lowerBound, double upperBound, bool inclusive)
+void assertInRange(float value, float lowerBound, float upperBound, bool inclusive)
 {
 	if (inclusive)
 	{

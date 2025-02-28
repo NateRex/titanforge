@@ -11,22 +11,28 @@ public:
 	/**
 	 * Red channel value (a value between 0 and 1)
 	 */
-	const float red;
+	float red;
 
 	/**
 	 * Green channel value (a value between 0 and 1)
 	 */
-	const float green;
+	float green;
 
 	/**
 	 * Blue channel value (a value between 0 and 1)
 	 */
-	const float blue;
+	float blue;
 
 	/**
 	 * Alpha channel value (a value between 0 and 1)
 	 */
-	const float alpha;
+	float alpha;
+
+	/**
+	 * Constructor
+	 * @param color Color to copy values from
+	 */
+	Color::Color(const Color& color);
 
 	/**
 	 * Constructs a color from four floating point values in the range 0 to 1

@@ -2,17 +2,17 @@
 #include <common/Constants.h>
 #include <cmath>
 
-bool equals(double a, double b, double tol)
+bool equals(float a, float b, float tol)
 {
     return fabs(a - b) <= tol;
 }
 
-double rad2Deg(double rad)
+float rad2Deg(float rad)
 {
     return rad * 180. / PI;
 }
 
-double deg2Rad(double deg)
+float deg2Rad(float deg)
 {
     return deg * PI / 180.;
 }
