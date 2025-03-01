@@ -12,19 +12,11 @@ Window::Window()
     assertNotNull(_glfwWindow, "Failed to create GLFW window", []() {
         glfwTerminate();
         });
-    glfwMakeContextCurrent(_glfwWindow);
 
     // Create the input controller
-    _inputController = std::unique_ptr<InputController>(new InputController(_glfwWindow));
+    _inputController = std::shared_ptr<InputController>(new InputController(_glfwWindow));
 
-    // Ensure GLFW functions have been loaded via GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        throw std::runtime_error("Failed to initialize GLAD");
-    }
-
-    // Set viewport
-    glViewport(0, 0, 800, 600);
+    // Set resize callback
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
 }
 
@@ -59,7 +51,19 @@ void Window::renderFrame() const
     glfwPollEvents();
 }
 
+void Window::setContext()
+{
+    glfwMakeContextCurrent(_glfwWindow);
+
+    int width, height;
+    glfwGetWindowSize(_glfwWindow, &width, &height);
+    glViewport(0, 0, width, height);
+}
+
 void Window::onResize(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+    if (glfwGetCurrentContext() == window)
+    {
+        glViewport(0, 0, width, height);
+    }
 }

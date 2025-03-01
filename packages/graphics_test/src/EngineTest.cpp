@@ -60,6 +60,7 @@ BOOST_AUTO_TEST_CASE(Engine_createBuffer)
 	BOOST_REQUIRE_THROW(Engine::createBuffer(), IllegalStateException);
 
 	Window window = Engine::createWindow();
+
 	BOOST_REQUIRE_NO_THROW(Engine::createBuffer());
 }
 
@@ -68,6 +69,11 @@ BOOST_AUTO_TEST_CASE(Engine_createBuffer)
  */
 BOOST_AUTO_TEST_CASE(Engine_getShader)
 {
+	// Fails if no window has yet been created
+	BOOST_REQUIRE_THROW(Engine::getShader("vertex"), IllegalStateException);
+
+	Window window = Engine::createWindow();
+
 	// Returns nullptr on not found
 	BOOST_TEST(Engine::getShader("does-not-exist") == nullptr);
 

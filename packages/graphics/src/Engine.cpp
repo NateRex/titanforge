@@ -33,6 +33,16 @@ void Engine::start()
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
+    // Create starting window context
+    _CURRENT_WINDOW = createWindow();
+    _CURRENT_WINDOW.setContext();
+
+    // Init GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+
     // Load default shaders
     ShaderManager::registerDefaults();
 
@@ -57,6 +67,13 @@ void Engine::stop()
     _INIT = false;
 }
 
+void Engine::setContext(Window& window)
+{
+    std::lock_guard<std::mutex> lock(_MUTEX);
+    _CURRENT_WINDOW = window;
+    _CURRENT_WINDOW.setContext();
+}
+
 Window Engine::createWindow()
 {
     assertInitialized();
@@ -66,7 +83,6 @@ Window Engine::createWindow()
 Buffer Engine::createBuffer()
 {
     assertInitialized();
-    assertWindowContext();
     return Buffer();
 }
 
@@ -81,13 +97,5 @@ void Engine::assertInitialized()
     if (!_INIT)
     {
         throw IllegalStateException("Graphics engine has not been initialized");
-    }
-}
-
-void Engine::assertWindowContext()
-{
-    if (glfwGetCurrentContext() == nullptr)
-    {
-        throw IllegalStateException("No window has been created or assigned to the context");
     }
 }

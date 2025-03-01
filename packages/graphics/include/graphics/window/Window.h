@@ -53,7 +53,7 @@ private:
     /**
      * Input controller
      */
-    std::unique_ptr<InputController> _inputController;
+    std::shared_ptr<InputController> _inputController;
 
     /**
      * Background (clear) color. Defaults to black.
@@ -64,6 +64,11 @@ private:
      * Constructor.
      */
     Window();
+
+    /**
+     * Makes this window the target of the current rendering context
+     */
+    void setContext();
 
     /**
      * Callback method that is triggered whenever the window is resized

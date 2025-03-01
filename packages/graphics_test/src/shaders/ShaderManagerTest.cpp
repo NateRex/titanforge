@@ -5,6 +5,7 @@
 #include <graphics/shaders/VertexShader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
  * Custom shader used for testing
@@ -16,7 +17,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TestShader() : IShader("test", "source")
+	TestShader() : IShader(GL_VERTEX_SHADER, "test", "source")
 	{
 
 	}

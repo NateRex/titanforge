@@ -1,5 +1,7 @@
 #include <graphics/shaders/VertexShader.h>
+#include <glad/glad.h>
 
+unsigned int type = GL_VERTEX_SHADER;
 const char* name = "vertex";
 const char* src = R"(
 #version 330 core
@@ -12,7 +14,7 @@ void main()
 }
 )";
 
-VertexShader::VertexShader(): IShader(name, src)
+VertexShader::VertexShader(): IShader(type, name, src)
 {
 
 }

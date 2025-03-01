@@ -8,6 +8,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(CommonTest
     src/exceptions/IllegalArgumentExceptionTest.cpp
     src/exceptions/IllegalStateExceptionTest.cpp
+    src/exceptions/InstantiationExceptionTest.cpp
     src/exceptions/NullPointerExceptionTest.cpp
     src/exceptions/OutOfBoundsExceptionTest.cpp
     src/AssertionsTest.cpp

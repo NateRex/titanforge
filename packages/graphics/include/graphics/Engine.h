@@ -1,9 +1,9 @@
 #pragma once
+#include <graphics/window/Window.h>
 #include <mutex>
 #include <string>
 
 class Buffer;
-class Window;
 class IShader;
 
 /**
@@ -26,19 +26,26 @@ public:
 	static void stop();
 
 	/**
+	 * Makes a given window the new current context
+	 * @param window Window instance 
+	 */
+	static void setContext(Window& window);
+
+	/**
 	 * @return A new window
 	 * @throws IllegalStateException If the window could not be created
 	 */
 	static Window createWindow();
 
 	/**
+	 * Constructs a new buffer for the current context
 	 * @return A new buffer used to store data to be passed to the GPU
 	 * @throws IllegalStateException If the buffer could not be created
 	 */
 	static Buffer createBuffer();
 
 	/**
-	 * Fetches a shader by name
+	 * Fetches a shader by name. Requires a window to have been created and made active for the current context.
 	 * @param name Unique name of the shader. This shader must have been previously registered
 	 * with the shader manager in order to be found.
 	 * @return A pointer to the shader instance, or null if not found.
@@ -58,6 +65,11 @@ private:
 	static bool _INIT;
 
 	/**
+	 * Window representing the current context
+	 */
+	static Window _CURRENT_WINDOW;
+
+	/**
 	 * Constructor
 	 */
 	Engine();
@@ -67,10 +79,5 @@ private:
 	 * prior to creating each resource.
 	 */
 	static void assertInitialized();
-
-	/**
-	 * Helper method that asserts that a window has been assigned to the current context
-	 */
-	static void assertWindowContext();
 
 };
