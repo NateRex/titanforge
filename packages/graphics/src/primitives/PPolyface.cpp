@@ -20,16 +20,28 @@ PPolyface::PPolyface(const Polyface& polyface)
 
 }
 
+#pragma warning( push )
+#pragma warning( disable : 6386)
 void PPolyface::buffer(Buffer& buffer) const
 {
-	std::vector<float> flattened(_vertices.size() * 3);
+	float* flattened = new float[_vertices.size() * 3];
 	for (int i = 0; i < _vertices.size(); ++i)
 	{
+		int vertex = _vertices[i];
+		if (vertex == -1) {
+			continue;
+		}
+
 		Vector3 pos = _positions[_vertices[i]];
-		flattened.push_back(pos.x);
-		flattened.push_back(pos.y);
-		flattened.push_back(pos.z);
+
+		int idx = i * 3;
+		flattened[idx] = pos.x;
+		flattened[idx + 1] = pos.y;
+		flattened[idx + 2] = pos.z;
 	}
 
-	buffer.addVertices(flattened.data(), _vertices.size());
+	buffer.addVertices(flattened, _vertices.size() * 3);
+
+	delete[] flattened;
 }
+#pragma warning( pop )

@@ -55,4 +55,10 @@ private:
 	 * prior to creating each resource.
 	 */
 	static void assertInitialized();
+
+	/**
+	 * Helper method that asserts that a window has been assigned to the current context
+	 */
+	static void assertWindowContext();
+
 };

@@ -56,6 +56,7 @@ Window Engine::createWindow()
 Buffer Engine::createBuffer()
 {
     assertInitialized();
+    assertWindowContext();
     return Buffer();
 }
 
@@ -64,5 +65,13 @@ void Engine::assertInitialized()
     if (!_INIT)
     {
         throw IllegalStateException("Graphics engine has not been initialized");
+    }
+}
+
+void Engine::assertWindowContext()
+{
+    if (glfwGetCurrentContext() == nullptr)
+    {
+        throw IllegalStateException("No window has been created or assigned to the context");
     }
 }
