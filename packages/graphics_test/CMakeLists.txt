@@ -9,6 +9,7 @@ add_executable(GraphicsTest
     src/utils/TestFixture.cpp
     src/window/InputControllerTest.cpp
     src/window/WindowTest.cpp
+    src/BufferTest.cpp
     src/ColorTest.cpp
     src/EngineTest.cpp
     src/main.cpp
