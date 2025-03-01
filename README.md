@@ -1,3 +1,5 @@
+![Pipeline](https://github.com/naterex/titanforge/actions/workflows/pipeline.yml/badge.svg)
+
 # TitanForge 
 
 <img src="./images/logo2.png" >
