@@ -32,7 +32,7 @@ public:
 	 * Constructor
 	 * @param color Color to copy values from
 	 */
-	Color::Color(const Color& color);
+	Color(const Color& color);
 
 	/**
 	 * Constructs a color from four floating point values in the range 0 to 1
