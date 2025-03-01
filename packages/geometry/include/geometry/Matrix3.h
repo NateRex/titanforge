@@ -11,6 +11,11 @@ class Matrix3
 public:
 
 	/**
+	 * Identity matrix
+	 */
+	static const Matrix3 IDENTITY;
+
+	/**
 	 * Constructs the identity matrix
 	 */
 	Matrix3();
@@ -206,8 +211,3 @@ private:
 	 */
 	void setInverse(Matrix3* inv);
 };
-
-/**
- * The identity matrix
- */
-const Matrix3 IDENTITY_MATRIX = Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1);

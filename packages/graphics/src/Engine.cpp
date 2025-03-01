@@ -3,6 +3,8 @@
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
 #include <graphics/Buffer.h>
+#include <graphics/shaders/ShaderManager.h>
+#include <graphics/shaders/IShader.h>
 #include <common/exceptions/IllegalStateException.h>
 
 bool Engine::_INIT = false;
@@ -31,6 +33,9 @@ void Engine::start()
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
+    // Load default shaders
+    ShaderManager::registerDefaults();
+
     _INIT = true;
 }
 
@@ -43,7 +48,12 @@ void Engine::stop()
         return;
     }
 
+    // Terminate GLFW
     glfwTerminate();
+
+    // Unload shaders
+    ShaderManager::clear();
+
     _INIT = false;
 }
 
@@ -58,6 +68,12 @@ Buffer Engine::createBuffer()
     assertInitialized();
     assertWindowContext();
     return Buffer();
+}
+
+const IShader* Engine::getShader(const std::string& name)
+{
+    assertInitialized();
+    return ShaderManager::get(name);
 }
 
 void Engine::assertInitialized()

@@ -7,11 +7,15 @@ find_package(glad CONFIG REQUIRED)
 # Library files
 add_library(Graphics
     src/primitives/PPolyface.cpp
+    src/shaders/IShader.cpp
+    src/shaders/ShaderManager.cpp
+    src/shaders/VertexShader.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Buffer.cpp
     src/Color.cpp
-    src/Engine.cpp)
+    src/Engine.cpp
+)
 add_library(Graphics::Graphics ALIAS Graphics)
 
 # Include directories
@@ -33,5 +37,4 @@ install(
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION lib
-    INCLUDES
-    DESTINATION include)
+    INCLUDES DESTINATION include)

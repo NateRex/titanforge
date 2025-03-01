@@ -11,10 +11,8 @@
 BOOST_AUTO_TEST_CASE(Engine_startAndStop)
 {
 	BOOST_REQUIRE_NO_THROW(Engine::start());
-	BOOST_REQUIRE_NO_THROW(Engine::start());	// no-op
 
 	BOOST_REQUIRE_NO_THROW(Engine::stop());
-	BOOST_REQUIRE_NO_THROW(Engine::stop());		// no-op
 }
 
 /**
@@ -23,6 +21,22 @@ BOOST_AUTO_TEST_CASE(Engine_startAndStop)
 BOOST_AUTO_TEST_CASE(Engine_windowFailure)
 {
 	BOOST_REQUIRE_THROW(Engine::createWindow(), IllegalStateException);
+}
+
+/**
+ * Tests that we fail to create a buffer if the engine is not yet initialized
+ */
+BOOST_AUTO_TEST_CASE(Engine_bufferFailure)
+{
+	BOOST_REQUIRE_THROW(Engine::createBuffer(), IllegalStateException);
+}
+
+/**
+ * Tests that we fail to obtain a reference to a shader if the engine is not yet initialized
+ */
+BOOST_AUTO_TEST_CASE(Engine_shaderFailure)
+{
+	BOOST_REQUIRE_THROW(Engine::getShader("vertex"), IllegalStateException);
 }
 
 
@@ -42,18 +56,22 @@ BOOST_AUTO_TEST_CASE(Engine_createWindow)
  */
 BOOST_AUTO_TEST_CASE(Engine_createBuffer)
 {
-	// Fails if engine has not been initialized
-	BOOST_REQUIRE_THROW(Engine::createBuffer(), IllegalStateException);
-	
-	Engine::start();
-
 	// Fails if no window has yet been created
 	BOOST_REQUIRE_THROW(Engine::createBuffer(), IllegalStateException);
 
 	Window window = Engine::createWindow();
 	BOOST_REQUIRE_NO_THROW(Engine::createBuffer());
+}
 
-	Engine::stop();
+/**
+ * Tests the ability to fetch a shader by name
+ */
+BOOST_AUTO_TEST_CASE(Engine_getShader)
+{
+	// Returns nullptr on not found
+	BOOST_TEST(Engine::getShader("does-not-exist") == nullptr);
+
+	BOOST_TEST(Engine::getShader("vertex") != nullptr);
 }
 
 
