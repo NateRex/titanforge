@@ -9,6 +9,32 @@ class Color
 public:
 
 	/**
+	 * Red channel value (a value between 0 and 1)
+	 */
+	float red;
+
+	/**
+	 * Green channel value (a value between 0 and 1)
+	 */
+	float green;
+
+	/**
+	 * Blue channel value (a value between 0 and 1)
+	 */
+	float blue;
+
+	/**
+	 * Alpha channel value (a value between 0 and 1)
+	 */
+	float alpha;
+
+	/**
+	 * Constructor
+	 * @param color Color to copy values from
+	 */
+	Color(const Color& color);
+
+	/**
 	 * Constructs a color from four floating point values in the range 0 to 1
 	 * @param r Red channel value
 	 * @param g Green channel value
@@ -16,26 +42,6 @@ public:
 	 * @param a Alpha channel value
 	 */
 	static Color fromFloats(float r, float g, float b, float a);
-
-	/**
-	 * @return The red channel value (a value between 0 and 1)
-	 */
-	float getRed() const;
-
-	/**
-	 * @return The green channel value (a value between 0 and 1)
-	 */
-	float getGreen() const;
-
-	/**
-	 * @return The blue channel value (a value between 0 and 1)
-	 */
-	float getBlue() const;
-
-	/**
-	 * @return The alpha channel value (a value between 0 and 1)
-	 */
-	float getAlpha() const;
 
 private:
 
@@ -47,24 +53,4 @@ private:
 	 * @param a Alpha channel value (must be between 0 and 1)
 	 */
 	Color(float r, float g, float b, float a);
-
-	/**
-	 * Red channel value
-	 */
-	float _r;
-
-	/**
-	 * Green channel value
-	 */
-	float _g;
-
-	/**
-	 * Blue channel value
-	 */
-	float _b;
-
-	/**
-	 * Alpha channel value
-	 */
-	float _a;
 };

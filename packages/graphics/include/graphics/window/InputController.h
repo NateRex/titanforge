@@ -13,12 +13,8 @@ struct GLFWwindow;
 class InputController
 {
 public:
-
-	/**
-	 * Constructor
-	 * @param glfwWindow A pointer to the GLFW window object for which we want to monitor input
-	 */
-	InputController(GLFWwindow* glfwWindow);
+	
+	friend class Window;
 
 	/**
 	 * Destructor
@@ -80,5 +76,10 @@ private:
 	 * keys are pressed
 	 */
 	std::map<int, std::vector<std::function<void()>>> _listeners;
-	
+
+	/**
+	 * Constructor
+	 * @param glfwWindow A pointer to the GLFW window object for which we want to monitor input
+	 */
+	InputController(GLFWwindow* glfwWindow);
 };

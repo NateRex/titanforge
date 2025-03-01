@@ -108,6 +108,12 @@ public:
 	Polyface(const std::vector<Vector3>& positions, const std::vector<int> vertices);
 
 	/**
+	 * Constructor
+	 * @param polyface Polyface to copy data from
+	 */
+	Polyface(const Polyface& polyface);
+
+	/**
 	 * @return The total number of vertices in this polyface. Vertices of shared facets will
 	 * be counted multiple times.
 	 */
@@ -128,7 +134,7 @@ public:
 	 */
 	Iterator end() const;
 	
-private:
+protected:
 
 	/**
 	 * Vertex positions

@@ -8,7 +8,7 @@ Vector3::Vector3() : x(0.), y(0.), z(0.)
 
 }
 
-Vector3::Vector3(double x, double y, double z) : x(x), y(y), z(z)
+Vector3::Vector3(float x, float y, float z) : x(x), y(y), z(z)
 {
 
 }
@@ -23,22 +23,22 @@ Vector3::Vector3(const Vector3& other) : x(other.x), y(other.y), z(other.z)
 
 }
 
-bool Vector3::isZero(double tol) const
+bool Vector3::isZero(float tol) const
 {
 	return equals(x, 0., tol) && equals(y, 0., tol) && equals(z, 0., tol);
 }
 
-bool Vector3::equalTo(const Vector3& other, double tol) const
+bool Vector3::equalTo(const Vector3& other, float tol) const
 {
 	return equals(x, other.x, tol) && equals(y, other.y, tol) && equals(z, other.z, tol);
 }
 
-double Vector3::getMagnitude() const
+float Vector3::getMagnitude() const
 {
 	return sqrt(x * x + y * y + z * z);
 }
 
-double Vector3::dot(const Vector3& other) const
+float Vector3::dot(const Vector3& other) const
 {
 	return x * other.x + y * other.y + z * other.z;
 }
@@ -56,7 +56,7 @@ Vector3 Vector3::cross(const Vector3& other, Vector3* result) const
 
 Vector3 Vector3::normalize(Vector3* result) const
 {
-    double mag = getMagnitude();
+    float mag = getMagnitude();
 
     Vector3& r = getOrDefault(result, Vector3());
     if (isZero())
@@ -75,7 +75,7 @@ Vector3 Vector3::normalize(Vector3* result) const
     return r;
 }
 
-Vector3 Vector3::scale(double value, Vector3* result) const
+Vector3 Vector3::scale(float value, Vector3* result) const
 {
     Vector3& r = getOrDefault(result, Vector3());
     r.x = x * value;

@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
 #include <common/Assertions.h>
 
 Window::Window()
@@ -16,7 +15,7 @@ Window::Window()
     glfwMakeContextCurrent(_glfwWindow);
 
     // Create the input controller
-    _inputController = new InputController(_glfwWindow);
+    _inputController = std::unique_ptr<InputController>(new InputController(_glfwWindow));
 
     // Ensure GLFW functions have been loaded via GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -29,14 +28,9 @@ Window::Window()
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
 }
 
-Window::~Window()
-{
-    delete _inputController;
-}
-
 InputController* Window::getInputController()
 {
-    return _inputController;
+    return _inputController.get();
 }
 
 bool Window::isOpen() const
@@ -58,7 +52,7 @@ void Window::renderFrame() const
 {
     _inputController->processInput();
 
-    glClearColor(_clearColor.getRed(), _clearColor.getGreen(), _clearColor.getBlue(), _clearColor.getAlpha());
+    glClearColor(_clearColor.red, _clearColor.green, _clearColor.blue, _clearColor.alpha);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glfwSwapBuffers(_glfwWindow);

@@ -9,12 +9,12 @@
 BOOST_AUTO_TEST_CASE(Vector2_basics)
 {
     Vector2 vec;
-    BOOST_TEST(vec.x == 0);
-    BOOST_TEST(vec.y == 0);
+    BOOST_TEST(equals(vec.x, 0, 1.0e-6));
+    BOOST_TEST(equals(vec.y, 0, 1.0e-6));
 
     vec = Vector2(1.1, -2.2);
-    BOOST_TEST(vec.x == 1.1);
-    BOOST_TEST(vec.y == -2.2);
+    BOOST_TEST(equals(vec.x, 1.1, 1.0e-6));
+    BOOST_TEST(equals(vec.y, -2.2, 1.0e-6));
 
     Vector2 vec2(vec);
     BOOST_TEST(vec == vec2);
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(Vector2_dotProduct)
 {
     Vector2 v1(1, -2);
     Vector2 v2(-4, 5);
-    double dotProduct = v1.dot(v2);
+    float dotProduct = v1.dot(v2);
     BOOST_TEST(dotProduct == v2.dot(v1));
     BOOST_TEST(dotProduct == -14);
 }
@@ -104,10 +104,10 @@ BOOST_AUTO_TEST_CASE(Vector2_crossProduct)
 {
     Vector2 v1(1, -2);
     Vector2 v2(-4, 5);
-    double v1CrossV2 = v1.cross(v2);
+    float v1CrossV2 = v1.cross(v2);
     BOOST_TEST(equals(v1CrossV2, -3, 1.0e-12));
 
-    double v2CrossV1 = v2.cross(v1);
+    float v2CrossV1 = v2.cross(v1);
     BOOST_TEST(equals(v2CrossV1, 3, 1.0e-12));   
 }
 
@@ -136,8 +136,8 @@ BOOST_AUTO_TEST_CASE(Vector2_subtraction)
 
     Vector2 v2 = Vector2(2.5, 1001.9);
     Vector2 subtraction = v1.minus(v2);
-    BOOST_TEST(equals(subtraction.x, 1.5, 1.0e-12));
-    BOOST_TEST(equals(subtraction.y, 0.1, 1.0e-12));
+    BOOST_TEST(equals(subtraction.x, 1.5, 1.0e-2));
+    BOOST_TEST(equals(subtraction.y, 0.1, 1.0e-2));
 
     Vector2 result;
     v1.minus(v2, &result);

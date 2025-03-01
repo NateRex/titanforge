@@ -46,15 +46,15 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromRotations)
 
 	Matrix3::fromXRotation(deg2Rad(90), &rot);
 	rot.multiply(Vector3(0, 0, 1), &v);
-	BOOST_TEST(v.equalTo(Vector3(0, -1, 0), 1.0e-12));
+	BOOST_TEST(v.equalTo(Vector3(0, -1, 0), 1.0e-6));
 
 	Matrix3::fromYRotation(deg2Rad(90), &rot);
 	rot.multiply(Vector3(1, 0, 0), &v);
-	BOOST_TEST(v.equalTo(Vector3(0, 0, -1), 1.0e-12));
+	BOOST_TEST(v.equalTo(Vector3(0, 0, -1), 1.0e-6));
 
 	Matrix3::fromZRotation(deg2Rad(90), &rot);
 	rot.multiply(Vector3(0, 1, 0), &v);
-	BOOST_TEST(v.equalTo(Vector3(-1, 0, 0), 1.0e-12));
+	BOOST_TEST(v.equalTo(Vector3(-1, 0, 0), 1.0e-6));
 }
 
 /**
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_vectorMultiplication)
 
 	Vector3 result;
 	m.multiply(v, &result);
-	BOOST_TEST(result.equalTo(expected, 1.0e-12));
+	BOOST_TEST(result.equalTo(expected, 1.0e-3));
 }
 
 /**
@@ -184,5 +184,5 @@ BOOST_AUTO_TEST_CASE(Matrix3_matrixMultiplication)
 
 	Matrix3 result;
 	m1.multiply(m2, &result);
-	BOOST_TEST(result.equalTo(expected, 1.0e-12));
+	BOOST_TEST(result.equalTo(expected, 1.0e-3));
 }

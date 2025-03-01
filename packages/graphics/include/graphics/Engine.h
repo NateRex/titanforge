@@ -1,6 +1,9 @@
 #pragma once
 #include <mutex>
 
+class Buffer;
+class Window;
+
 /**
  * TitanForge engine responsible for maintaining all allocated resources used to render
  * graphics
@@ -20,6 +23,15 @@ public:
 	 */
 	static void stop();
 
+	/**
+	 * @return A new window
+	 */
+	static Window createWindow();
+
+	/**
+	 * @return A new buffer used to store data to be passed to the GPU
+	 */
+	static Buffer createBuffer();
 
 private:
 
@@ -37,4 +49,16 @@ private:
 	 * Constructor
 	 */
 	Engine();
+
+	/**
+	 * Helper method that asserts the engine has been initialized. This method should be called
+	 * prior to creating each resource.
+	 */
+	static void assertInitialized();
+
+	/**
+	 * Helper method that asserts that a window has been assigned to the current context
+	 */
+	static void assertWindowContext();
+
 };

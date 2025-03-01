@@ -10,7 +10,7 @@ Matrix3::Matrix3()
 	setValues(1, 0, 0, 0, 1, 0, 0, 0, 1);
 }
 
-Matrix3::Matrix3(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
+Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
 {
 	setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 }
@@ -45,30 +45,30 @@ Matrix3 Matrix3::fromColumns(const Vector3& c0, const Vector3& c1, const Vector3
 	return r;
 }
 
-Matrix3 Matrix3::fromXRotation(double radians, Matrix3* result)
+Matrix3 Matrix3::fromXRotation(float radians, Matrix3* result)
 {
-	double c = cos(radians);
-	double s = sin(radians);
+	float c = cos(radians);
+	float s = sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(1., 0., 0., 0., c, -s, 0., s, c);
 	return r;
 }
 
-Matrix3 Matrix3::fromYRotation(double radians, Matrix3* result)
+Matrix3 Matrix3::fromYRotation(float radians, Matrix3* result)
 {
-	double c = cos(radians);
-	double s = sin(radians);
+	float c = cos(radians);
+	float s = sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(c, 0., s, 0., 1., 0., -s, 0., c);
 	return r;
 }
 
-Matrix3 Matrix3::fromZRotation(double radians, Matrix3* result)
+Matrix3 Matrix3::fromZRotation(float radians, Matrix3* result)
 {
-	double c = cos(radians);
-	double s = sin(radians);
+	float c = cos(radians);
+	float s = sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(c, -s, 0., s, c, 0., 0., 0., 1.);
@@ -80,7 +80,7 @@ bool Matrix3::isIdentity() const
 	return equalTo(IDENTITY_MATRIX);
 }
 
-bool Matrix3::equalTo(const Matrix3& other, double tol) const
+bool Matrix3::equalTo(const Matrix3& other, float tol) const
 {
 	for (int i = 0; i < 9; i++)
 	{
@@ -119,28 +119,28 @@ bool Matrix3::inverse(Matrix3* result)
 	}
 	_didComputeInverse = true;
 
-	double t00 = _m[8] * _m[4] - _m[5] * _m[7];
-	double t01 = _m[5] * _m[6] - _m[8] * _m[3];
-	double t02 = _m[7] * _m[3] - _m[4] * _m[6];
+	float t00 = _m[8] * _m[4] - _m[5] * _m[7];
+	float t01 = _m[5] * _m[6] - _m[8] * _m[3];
+	float t02 = _m[7] * _m[3] - _m[4] * _m[6];
 
-	double det = _m[0] * t00 + _m[1] * t01 + _m[2] * t02;
+	float det = _m[0] * t00 + _m[1] * t01 + _m[2] * t02;
 	
 	if (equals(det, 0, 1.0e-11))
 	{
 		return false;
 	}
 
-	double detInv = 1. / det;
+	float detInv = 1. / det;
 
-	double m00 = t00 * detInv;
-	double m01 = (_m[2] * _m[7] - _m[8] * _m[1]) * detInv;
-	double m02 = (_m[5] * _m[1] - _m[2] * _m[4]) * detInv;
-	double m10 = t01 * detInv;
-	double m11 = (_m[8] * _m[0] - _m[2] * _m[6]) * detInv;
-	double m12 = (_m[2] * _m[3] - _m[5] * _m[0]) * detInv;
-	double m20 = t02 * detInv;
-	double m21 = (_m[1] * _m[6] - _m[7] * _m[0]) * detInv;
-	double m22 = (_m[4] * _m[0] - _m[1] * _m[3]) * detInv;
+	float m00 = t00 * detInv;
+	float m01 = (_m[2] * _m[7] - _m[8] * _m[1]) * detInv;
+	float m02 = (_m[5] * _m[1] - _m[2] * _m[4]) * detInv;
+	float m10 = t01 * detInv;
+	float m11 = (_m[8] * _m[0] - _m[2] * _m[6]) * detInv;
+	float m12 = (_m[2] * _m[3] - _m[5] * _m[0]) * detInv;
+	float m20 = t02 * detInv;
+	float m21 = (_m[1] * _m[6] - _m[7] * _m[0]) * detInv;
+	float m22 = (_m[4] * _m[0] - _m[1] * _m[3]) * detInv;
 
 	result->setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	result->setInverse(new Matrix3(*this));
@@ -151,9 +151,9 @@ bool Matrix3::inverse(Matrix3* result)
 
 Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
 {
-	double x = _m[0] * v.x + _m[1] * v.y + _m[2] * v.z;
-	double y = _m[3] * v.x + _m[4] * v.y + _m[5] * v.z;
-	double z = _m[6] * v.x + _m[7] * v.y + _m[8] * v.z;
+	float x = _m[0] * v.x + _m[1] * v.y + _m[2] * v.z;
+	float y = _m[3] * v.x + _m[4] * v.y + _m[5] * v.z;
+	float z = _m[6] * v.x + _m[7] * v.y + _m[8] * v.z;
 
 	Vector3& r = getOrDefault(result, Vector3());
 	r.x = x;
@@ -165,15 +165,15 @@ Vector3 Matrix3::multiply(const Vector3& v, Vector3* result) const
 
 Matrix3 Matrix3::multiply(const Matrix3& m, Matrix3* result) const
 {
-	double m00 = _m[0] * m._m[0] + _m[1] * m._m[3] + _m[2] * m._m[6];
-	double m01 = _m[0] * m._m[1] + _m[1] * m._m[4] + _m[2] * m._m[7];
-	double m02 = _m[0] * m._m[2] + _m[1] * m._m[5] + _m[2] * m._m[8];
-	double m10 = _m[3] * m._m[0] + _m[4] * m._m[3] + _m[5] * m._m[6];
-	double m11 = _m[3] * m._m[1] + _m[4] * m._m[4] + _m[5] * m._m[7];
-	double m12 = _m[3] * m._m[2] + _m[4] * m._m[5] + _m[5] * m._m[8];
-	double m20 = _m[6] * m._m[0] + _m[7] * m._m[3] + _m[8] * m._m[6];
-	double m21 = _m[6] * m._m[1] + _m[7] * m._m[4] + _m[8] * m._m[7];
-	double m22 = _m[6] * m._m[2] + _m[7] * m._m[5] + _m[8] * m._m[8];
+	float m00 = _m[0] * m._m[0] + _m[1] * m._m[3] + _m[2] * m._m[6];
+	float m01 = _m[0] * m._m[1] + _m[1] * m._m[4] + _m[2] * m._m[7];
+	float m02 = _m[0] * m._m[2] + _m[1] * m._m[5] + _m[2] * m._m[8];
+	float m10 = _m[3] * m._m[0] + _m[4] * m._m[3] + _m[5] * m._m[6];
+	float m11 = _m[3] * m._m[1] + _m[4] * m._m[4] + _m[5] * m._m[7];
+	float m12 = _m[3] * m._m[2] + _m[4] * m._m[5] + _m[5] * m._m[8];
+	float m20 = _m[6] * m._m[0] + _m[7] * m._m[3] + _m[8] * m._m[6];
+	float m21 = _m[6] * m._m[1] + _m[7] * m._m[4] + _m[8] * m._m[7];
+	float m22 = _m[6] * m._m[2] + _m[7] * m._m[5] + _m[8] * m._m[8];
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
@@ -181,7 +181,7 @@ Matrix3 Matrix3::multiply(const Matrix3& m, Matrix3* result) const
 	return r;
 }
 
-double Matrix3::operator[](int i) const
+float Matrix3::operator[](int i) const
 {
 	if (i < 0 || i > 8)
 	{
@@ -214,7 +214,7 @@ Matrix3& Matrix3::operator=(const Matrix3& other)
 	return *this;
 }
 
-void Matrix3::setValues(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
+void Matrix3::setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
 {
 	clearInverse();
 

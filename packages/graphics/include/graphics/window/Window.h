@@ -1,5 +1,7 @@
 #pragma once
 #include <functional>
+#include <memory>
+#include <graphics/window/InputController.h>
 #include <graphics/Color.h>
 
 struct GLFWwindow;
@@ -13,15 +15,7 @@ class Window
 {
 public:
 
-    /**
-     * Constructor
-     */
-    Window();
-
-    /**
-     * Destructor
-     */
-    ~Window();
+    friend class Engine;
 
     /**
      * @return The input controller
@@ -59,12 +53,17 @@ private:
     /**
      * Input controller
      */
-    InputController* _inputController;
+    std::unique_ptr<InputController> _inputController;
 
     /**
      * Background (clear) color. Defaults to black.
      */
     Color _clearColor;
+
+    /**
+     * Constructor.
+     */
+    Window();
 
     /**
      * Callback method that is triggered whenever the window is resized

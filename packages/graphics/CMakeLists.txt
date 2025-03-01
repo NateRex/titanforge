@@ -6,8 +6,10 @@ find_package(glad CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
+    src/primitives/PPolyface.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
+    src/Buffer.cpp
     src/Color.cpp
     src/Engine.cpp)
 add_library(Graphics::Graphics ALIAS Graphics)
@@ -21,7 +23,8 @@ target_include_directories(
 target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
-    PRIVATE Common::Common)
+    PRIVATE Common::Common
+    PRIVATE Geometry::Geometry)
 
 # Library installation
 install(

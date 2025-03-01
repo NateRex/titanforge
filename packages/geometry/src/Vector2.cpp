@@ -8,7 +8,7 @@ Vector2::Vector2(): x(0.0), y(0.0)
 
 }
 
-Vector2::Vector2(double x, double y): x(x), y(y)
+Vector2::Vector2(float x, float y): x(x), y(y)
 {
 
 }
@@ -23,34 +23,34 @@ Vector2::Vector2(const Vector3& other) : x(other.x), y(other.y)
 
 }
 
-bool Vector2::isZero(double tol) const
+bool Vector2::isZero(float tol) const
 {
     return equals(x, 0.0, tol) && equals(y, 0.0, tol);
 }
 
-bool Vector2::equalTo(const Vector2& other, double tol) const
+bool Vector2::equalTo(const Vector2& other, float tol) const
 {
     return equals(x, other.x, tol) && equals(y, other.y, tol);
 }
 
-double Vector2::getMagnitude() const
+float Vector2::getMagnitude() const
 {
     return sqrt(x * x + y * y);
 }
 
-double Vector2::dot(const Vector2& other) const
+float Vector2::dot(const Vector2& other) const
 {
     return x * other.x + y * other.y;
 }
 
-double Vector2::cross(const Vector2& other) const
+float Vector2::cross(const Vector2& other) const
 {
     return x * other.y - y * other.x;
 }
 
 Vector2 Vector2::normalize(Vector2* result) const
 {
-    double mag = getMagnitude();
+    float mag = getMagnitude();
     
     Vector2& r = getOrDefault(result, Vector2());
     if (isZero())
@@ -67,7 +67,7 @@ Vector2 Vector2::normalize(Vector2* result) const
     return r;
 }
 
-Vector2 Vector2::scale(double value, Vector2* result) const
+Vector2 Vector2::scale(float value, Vector2* result) const
 {
     Vector2& r = getOrDefault(result, Vector2());
     r.x = x * value;
