@@ -5,6 +5,8 @@
 #include <math.h>
 #include <string>
 
+const Matrix3 Matrix3::IDENTITY(1, 0, 0, 0, 1, 0, 0, 0, 1);
+
 Matrix3::Matrix3()
 {
 	setValues(1, 0, 0, 0, 1, 0, 0, 0, 1);
@@ -77,7 +79,7 @@ Matrix3 Matrix3::fromZRotation(float radians, Matrix3* result)
 
 bool Matrix3::isIdentity() const
 {
-	return equalTo(IDENTITY_MATRIX);
+	return equalTo(Matrix3::IDENTITY);
 }
 
 bool Matrix3::equalTo(const Matrix3& other, float tol) const

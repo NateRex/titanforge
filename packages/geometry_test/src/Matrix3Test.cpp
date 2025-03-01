@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_inverse)
 	Matrix3 inv;
 	bool hasInverse = m.inverse(&inv);
 	BOOST_TEST(hasInverse);
-	BOOST_TEST(inv.multiply(m).equalTo(IDENTITY_MATRIX, 1.0e-6));
+	BOOST_TEST(inv.multiply(m).equalTo(Matrix3::IDENTITY, 1.0e-6));
 
 	// Obtain cached value
 	Matrix3 cached;
