@@ -1,11 +1,12 @@
 #pragma once
+#include <graphics/primitives/IPrimitive.h>
 #include <geometry/Polyface.h>
 
 /**
  * A three-dimensional polyface primitive capable of being rendered
  * @author Nathaniel Rex
  */
-class PPolyface : public Polyface
+class PPolyface : public IPrimitive, public Polyface
 {
 public:
 	
@@ -35,4 +36,11 @@ public:
 	 * @param polyface Polyface to copy data from
 	 */
 	PPolyface(const Polyface& polyface);
+
+	/**
+	 * Store the data of this primitive into the given buffer
+	 * @param buffer Buffer object
+	 */
+	void buffer(Buffer& buffer) const override;
+
 };

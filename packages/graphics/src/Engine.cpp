@@ -1,8 +1,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/Engine.h>
-#include <stdexcept>
-#include <cstdlib>
+#include <graphics/window/Window.h>
+#include <graphics/Buffer.h>
+#include <common/exceptions/IllegalStateException.h>
 
 bool Engine::_INIT = false;
 std::mutex Engine::_MUTEX;
@@ -44,4 +45,24 @@ void Engine::stop()
 
     glfwTerminate();
     _INIT = false;
+}
+
+Window Engine::createWindow()
+{
+    assertInitialized();
+    return Window();
+}
+
+Buffer Engine::createBuffer()
+{
+    assertInitialized();
+    return Buffer();
+}
+
+void Engine::assertInitialized()
+{
+    if (!_INIT)
+    {
+        throw IllegalStateException("Graphics engine has not been initialized");
+    }
 }

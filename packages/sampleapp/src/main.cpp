@@ -25,7 +25,9 @@ PPolyface examplePolyface()
  */
 int main() {
     Engine::start();
-    Window window;
+
+    // Create window
+    Window window = Engine::createWindow();
     window.setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
 
     // Create input listeners
