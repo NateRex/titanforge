@@ -25,12 +25,24 @@ protected:
 
 	/**
 	 * Constructor
+	 * @param type Shader type. For possible types, see
+	 * https://registry.khronos.org/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
 	 * @param name Unique name of this shader
 	 * @param source Shader source code
 	 */
-	IShader(const std::string& name, const std::string& source);
+	IShader(unsigned int type, const std::string& name, const std::string& source);
 
 private:
+
+	/**
+	 * GLFW id
+	 */
+	unsigned int _id;
+
+	/**
+	 * Shader type
+	 */
+	unsigned int _type;
 
 	/**
 	 * Unique name of this shader

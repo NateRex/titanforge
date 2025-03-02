@@ -4,6 +4,7 @@ project(Common CXX)
 add_library(Common
     src/exceptions/IllegalArgumentException.cpp
     src/exceptions/IllegalStateException.cpp
+    src/exceptions/InstantiationException.cpp
     src/exceptions/NullPointerException.cpp
     src/exceptions/OutOfBoundsException.cpp
     src/Assertions.cpp

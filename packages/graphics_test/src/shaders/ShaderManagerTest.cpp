@@ -1,10 +1,9 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics_test/utils/TestFixture.h>
-#include <graphics/Engine.h>
 #include <graphics/shaders/IShader.h>
 #include <graphics/shaders/VertexShader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
  * Custom shader used for testing
@@ -15,24 +14,32 @@ public:
 
 	/**
 	 * Constructor
+	 * @param name Unique name to give to this shader
 	 */
-	TestShader() : IShader("test", "source")
+	TestShader(const std::string& name) : IShader(GL_VERTEX_SHADER, name, R"(
+		#version 330 core
+
+		layout (location = 0) in vec3 aPos;
+
+		void main()
+		{
+			gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+		}
+		)")
 	{
 
 	}
 };
-
-BOOST_FIXTURE_TEST_SUITE(ShaderManager_suite, TestFixture);
 
 /**
  * Tests the ability to register shaders
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_register)
 {
-	BOOST_TEST(ShaderManager::get("test") == nullptr);
+	BOOST_TEST(ShaderManager::get("TestShader1") == nullptr);
 
-	ShaderManager::registerShader(TestShader());
-	BOOST_TEST(ShaderManager::get("test") != nullptr);
+	ShaderManager::registerShader(TestShader("TestShader1"));
+	BOOST_TEST(ShaderManager::get("TestShader1") != nullptr);
 }
 
 /**
@@ -40,9 +47,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_register)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotRegisterTwice)
 {
-	TestShader shader;
+	TestShader shader("TestShader2");
 	BOOST_REQUIRE_NO_THROW(ShaderManager::registerShader(shader));
 	BOOST_REQUIRE_THROW(ShaderManager::registerShader(shader), IllegalArgumentException);
 }
-
-BOOST_AUTO_TEST_SUITE_END();
