@@ -4,7 +4,7 @@
 #include <string>
 
 class Buffer;
-class IShader;
+class Shader;
 
 /**
  * TitanForge engine responsible for maintaining all allocated resources used to render
@@ -58,7 +58,7 @@ public:
 	 * with the shader manager in order to be found.
 	 * @return A pointer to the shader instance, or null if not found.
 	 */
-	static const IShader* getShader(const std::string& name);
+	static const Shader* getShader(const std::string& name);
 	
 	/**
 	 * Renders the next frame for the currently active window context

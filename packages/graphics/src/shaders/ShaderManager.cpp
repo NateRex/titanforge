@@ -1,13 +1,12 @@
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/IShader.h>
-#include <graphics/shaders/VertexShader.h>
+#include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <sstream>
 
 std::mutex ShaderManager::_MUTEX;
-std::map<std::string, IShader> ShaderManager::_SHADERS;
+std::map<std::string, Shader> ShaderManager::_SHADERS;
 
-void ShaderManager::registerShader(const IShader& shader)
+void ShaderManager::loadShader(Shader& shader)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -19,10 +18,11 @@ void ShaderManager::registerShader(const IShader& shader)
 		throw IllegalArgumentException(oss.str());
 	}
 
+	shader.load();
 	ShaderManager::_SHADERS.emplace(name, shader);
 }
 
-const IShader* ShaderManager::get(const std::string name)
+const Shader* ShaderManager::get(const std::string name)
 {
 	auto it = ShaderManager::_SHADERS.find(name);
 	if (it != ShaderManager::_SHADERS.end())
@@ -30,11 +30,6 @@ const IShader* ShaderManager::get(const std::string name)
 		return &it->second;
 	}
 	return nullptr;
-}
-
-void ShaderManager::registerDefaults()
-{
-	ShaderManager::registerShader(VertexShader());
 }
 
 void ShaderManager::clear()

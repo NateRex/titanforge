@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/shaders/IShader.h>
-#include <graphics/shaders/VertexShader.h>
+#include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
@@ -8,7 +7,7 @@
 /**
  * Custom shader used for testing
  */
-class TestShader : public IShader
+class ShaderManagerTest_Shader : public Shader
 {
 public:
 
@@ -16,7 +15,7 @@ public:
 	 * Constructor
 	 * @param name Unique name to give to this shader
 	 */
-	TestShader(const std::string& name) : IShader(GL_VERTEX_SHADER, name, R"(
+	ShaderManagerTest_Shader(const std::string& name) : Shader(GL_VERTEX_SHADER, name, R"(
 		#version 330 core
 
 		layout (location = 0) in vec3 aPos;
@@ -36,10 +35,10 @@ public:
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_register)
 {
-	BOOST_TEST(ShaderManager::get("TestShader1") == nullptr);
+	BOOST_TEST(ShaderManager::get("ShaderManagerTest_Shader1") == nullptr);
 
-	ShaderManager::registerShader(TestShader("TestShader1"));
-	BOOST_TEST(ShaderManager::get("TestShader1") != nullptr);
+	ShaderManager::loadShader(ShaderManagerTest_Shader("ShaderManagerTest_Shader1"));
+	BOOST_TEST(ShaderManager::get("ShaderManagerTest_Shader1") != nullptr);
 }
 
 /**
@@ -47,7 +46,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_register)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotRegisterTwice)
 {
-	TestShader shader("TestShader2");
-	BOOST_REQUIRE_NO_THROW(ShaderManager::registerShader(shader));
-	BOOST_REQUIRE_THROW(ShaderManager::registerShader(shader), IllegalArgumentException);
+	ShaderManagerTest_Shader shader("ShaderManagerTest_Shader2");
+	BOOST_REQUIRE_NO_THROW(ShaderManager::loadShader(shader));
+	BOOST_REQUIRE_THROW(ShaderManager::loadShader(shader), IllegalArgumentException);
 }

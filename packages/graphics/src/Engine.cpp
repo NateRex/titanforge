@@ -4,7 +4,7 @@
 #include <graphics/window/Window.h>
 #include <graphics/Buffer.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/IShader.h>
+#include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
 
 std::mutex Engine::_MUTEX;
@@ -52,7 +52,7 @@ Window Engine::start(bool headlessMode)
     _ENGINE->_currentWindow.makeCurrent();
 
     // Load default shaders
-    ShaderManager::registerDefaults();
+    ShaderManager::loadDefaults();
 
     return _ENGINE->_currentWindow;
 }
@@ -99,7 +99,7 @@ Buffer Engine::createBuffer()
     return Buffer();
 }
 
-const IShader* Engine::getShader(const std::string& name)
+const Shader* Engine::getShader(const std::string& name)
 {
     assertInitialized();
     return ShaderManager::get(name);

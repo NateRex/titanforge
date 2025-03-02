@@ -3,7 +3,7 @@
 #include <string>
 #include <mutex>
 
-class IShader;
+class Shader;
 
 /**
  * The shader manager is responsible for tracking all shaders that have been registered
@@ -17,17 +17,17 @@ public:
 	friend class Engine;
 
 	/**
-	 * Registers a new shader for use by the graphics engine
+	 * Compiles and registers a new shader for use by the graphics engine
 	 * @param shader Shader instance
 	 */
-	static void registerShader(const IShader& shader);
+	static void loadShader(Shader& shader);
 
 	/**
 	 * Fetches a shader by name
 	 * @param name The name of the shader
 	 * @return A pointer to the shader, or null if not found
 	 */
-	static const IShader* get(const std::string name);
+	static const Shader* get(const std::string name);
 
 private:
 	
@@ -39,7 +39,7 @@ private:
 	/**
 	 * Map containing all loaded shaders, referenced by name
 	 */
-	static std::map<std::string, IShader> _SHADERS;
+	static std::map<std::string, Shader> _SHADERS;
 
 	/**
 	 * Constructor
@@ -59,9 +59,9 @@ private:
 	ShaderManager(ShaderManager&& mgr) = delete;
 
 	/**
-	 * Constructs and registers the default list of shaders
+	 * Compiles and registers all built-in shaders for use by the graphics engine
 	 */
-	static void registerDefaults();
+	static void loadDefaults();
 
 	/**
 	 * De-registers and clears this manager of all shaders

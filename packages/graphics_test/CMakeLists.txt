@@ -7,9 +7,8 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 # Executable files
 add_executable(GraphicsTest
     src/primitives/PPolyfaceTest.cpp
-    src/shaders/IShaderTest.cpp
     src/shaders/ShaderManagerTest.cpp
-    src/shaders/VertexShaderTest.cpp
+    src/shaders/ShaderTest.cpp
     src/window/InputControllerTest.cpp
     src/window/WindowTest.cpp
     src/BufferTest.cpp
