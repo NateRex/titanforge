@@ -4,6 +4,7 @@
 #include <mutex>
 
 class Shader;
+class ShaderProgram;
 
 /**
  * The shader manager is responsible for tracking all shaders that have been registered
@@ -17,17 +18,27 @@ public:
 	friend class Engine;
 
 	/**
-	 * Compiles and registers a new shader for use by the graphics engine
-	 * @param shader Shader instance
+	 * Mounts and compiles a new shader for use in linking
+	 * @param shader Shader
 	 */
-	static void loadShader(Shader& shader);
+	static void mountShader(Shader& shader);
 
 	/**
-	 * Fetches a shader by name
-	 * @param name The name of the shader
-	 * @return A pointer to the shader, or null if not found
+	 * Unmounts all shaders
 	 */
-	static const Shader* get(const std::string name);
+	static void unmountShaders();
+
+	/**
+	 * Links and stores a new shader program for use via the one or more of the shaders currently mounted.
+	 * @param prgm The shader program
+	 */
+	static void linkProgram(ShaderProgram& prgm);
+
+	/**
+	 * Updates the shader program used for rendering
+	 * @param name The name of the program
+	 */
+	static void useProgram(const std::string& name);
 
 private:
 	
@@ -37,9 +48,14 @@ private:
 	static std::mutex _MUTEX;
 
 	/**
-	 * Map containing all loaded shaders, referenced by name
+	 * Map containing all shaders currently mounted and ready for linking
 	 */
 	static std::map<std::string, Shader> _SHADERS;
+
+	/**
+	 * Map containing all shader programs that have been linked and are ready-for-use
+	 */
+	static std::map<std::string, ShaderProgram> _PROGRAMS;
 
 	/**
 	 * Constructor
@@ -59,12 +75,12 @@ private:
 	ShaderManager(ShaderManager&& mgr) = delete;
 
 	/**
-	 * Compiles and registers all built-in shaders for use by the graphics engine
+	 * Compiles and links all built-in shader programs
 	 */
-	static void loadDefaults();
+	static void linkDefaults();
 
 	/**
-	 * De-registers and clears this manager of all shaders
+	 * Unmounts all shaders, and deletes all previously-created shader programs
 	 */
 	static void clear();
 };

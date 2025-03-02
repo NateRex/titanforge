@@ -1,53 +1,44 @@
 #include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <sstream>
 
-void assertGreaterThan(float value, float lowerBound) {
+void assertGreaterThan(float value, float lowerBound, const char* errMsg) {
 	if (value <= lowerBound)
 	{
-		std::ostringstream oss;
-		oss << value << " is not greater than " << lowerBound;
-		throw IllegalArgumentException(oss.str());
+		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertGreaterThanOrEqual(float value, float lowerBound) {
+void assertGreaterThanOrEqual(float value, float lowerBound, const char* errMsg) {
 	if (value < lowerBound)
 	{
-		std::ostringstream oss;
-		oss << value << " is not greater than or equal to " << lowerBound;
-		throw IllegalArgumentException(oss.str());
+		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertLessThan(float value, float upperBound) {
+void assertLessThan(float value, float upperBound, const char* errMsg) {
 	if (value >= upperBound)
 	{
-		std::ostringstream oss;
-		oss << value << " is not less than " << upperBound;
-		throw IllegalArgumentException(oss.str());
+		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertLessThanOrEqual(float value, float upperBound) {
+void assertLessThanOrEqual(float value, float upperBound, const char* errMsg) {
 	if (value > upperBound)
 	{
-		std::ostringstream oss;
-		oss << value << " is not less than or equal to " << upperBound;
-		throw IllegalArgumentException(oss.str());
+		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertInRange(float value, float lowerBound, float upperBound, bool inclusive)
+void assertInRange(float value, float lowerBound, float upperBound, bool inclusive, const char* errMsg)
 {
 	if (inclusive)
 	{
-		assertGreaterThanOrEqual(value, lowerBound);
-		assertLessThanOrEqual(value, upperBound);
+		assertGreaterThanOrEqual(value, lowerBound, errMsg);
+		assertLessThanOrEqual(value, upperBound, errMsg);
 	}
 	else
 	{
-		assertGreaterThan(value, lowerBound);
-		assertLessThan(value, upperBound);
+		assertGreaterThan(value, lowerBound, errMsg);
+		assertLessThan(value, upperBound, errMsg);
 	}
 }

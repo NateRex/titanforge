@@ -51,8 +51,8 @@ Window Engine::start(bool headlessMode)
     // Set viewport
     _ENGINE->_currentWindow.makeCurrent();
 
-    // Load default shaders
-    ShaderManager::loadDefaults();
+    // Load default shader programs
+    ShaderManager::linkDefaults();
 
     return _ENGINE->_currentWindow;
 }
@@ -69,7 +69,7 @@ void Engine::stop()
     // Terminate GLFW
     glfwTerminate();
 
-    // Unload shaders
+    // Clear shader programs
     ShaderManager::clear();
 
     delete _ENGINE;
@@ -97,12 +97,6 @@ Buffer Engine::createBuffer()
 {
     assertInitialized();
     return Buffer();
-}
-
-const Shader* Engine::getShader(const std::string& name)
-{
-    assertInitialized();
-    return ShaderManager::get(name);
 }
 
 void Engine::renderFrame()

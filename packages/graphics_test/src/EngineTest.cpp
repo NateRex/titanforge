@@ -30,17 +30,6 @@ BOOST_AUTO_TEST_CASE(Engine_createBuffer)
 }
 
 /**
- * Tests the ability to fetch a shader by name
- */
-BOOST_AUTO_TEST_CASE(Engine_getShader)
-{
-	// Returns nullptr on not found
-	BOOST_TEST(Engine::getShader("does-not-exist") == nullptr);
-
-	BOOST_TEST(Engine::getShader("vertex") != nullptr);
-}
-
-/**
  * Tests that no errors occur rendering a frame for the current window context
  */
 BOOST_AUTO_TEST_CASE(Engine_render)

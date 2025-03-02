@@ -2,7 +2,7 @@
 #include <string>
 
 /**
- * A shader capable of being loaded onto the GPU
+ * A shader capable of being compiled and linked into a shader program
  * @author Nathaniel Rex
  */
 class Shader
@@ -33,14 +33,9 @@ public:
 private:
 
 	/**
-	 * GLFW id. Will not be valid until this shader has been loaded.
+	 * GLFW id. Will be zero when this shader is not currently mounted.
 	 */
 	unsigned int _id;
-
-	/**
-	 * True if this shader has already been successfully loaded. False otherwise.
-	 */
-	bool _loaded;
 
 	/**
 	 * Shader type
@@ -58,10 +53,17 @@ private:
 	std::string _src;
 
 	/**
-	 * Loads and compiles this shader for use on the GPU
-	 * @throws InstantiationException if the shader compilation fails
+	 * Initializes and compiles this shader. Does nothing if this shader has already been compiled.
+	 * This creates the resources necessary to link this shader as part of one or more shader programs.
+	 * @throws InstantiationException on failure to compile the shader
 	 */
-	void load();
+	void mount();
+
+	/**
+	 * Releases all resources for this shader. After calling this method, this shader may not be linked
+	 * as part of a shader program unless it is re-mounted.
+	 */
+	void unmount();
 
 	/**
 	 * Assignment operator for copying data from another shader

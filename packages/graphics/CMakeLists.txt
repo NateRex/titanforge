@@ -7,9 +7,10 @@ find_package(glad CONFIG REQUIRED)
 # Library files
 add_library(Graphics
     src/primitives/PPolyface.cpp
-    src/shaders/DefaultShaders.cpp
+    src/shaders/Defaults.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
+    src/shaders/ShaderProgram.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Buffer.cpp
