@@ -31,13 +31,13 @@ public:
 	/**
 	 * @return The window representing the current context
 	 */
-	static Window getCurrentContext();
+	static Window getCurrentWindow();
 
 	/**
 	 * Makes a given window the new current context
 	 * @param window Window instance 
 	 */
-	static void setContext(Window& window);
+	static void setCurrentWindow(Window& window);
 
 	/**
 	 * @return A new window

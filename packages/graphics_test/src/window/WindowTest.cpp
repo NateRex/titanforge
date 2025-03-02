@@ -7,7 +7,7 @@
  */
 BOOST_AUTO_TEST_CASE(Window_basics)
 {
-	Window win = Engine::getCurrentContext();
+	Window win = Engine::getCurrentWindow();
 	BOOST_TEST(win.getInputController() != nullptr);
 	BOOST_TEST(win.isOpen());
 	BOOST_REQUIRE_NO_THROW(win.renderFrame());

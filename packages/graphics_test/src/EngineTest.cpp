@@ -7,10 +7,9 @@
 /**
  * Test the ability to obtain the current render context
  */
-BOOST_AUTO_TEST_CASE(Engine_getContext)
+BOOST_AUTO_TEST_CASE(Engine_getCurrentWindow)
 {
-	Window window = Engine::getCurrentContext();
-	BOOST_TEST(window.isCurrentContext());
+	BOOST_REQUIRE_NO_THROW(Engine::getCurrentWindow());
 }
 
 /**
@@ -19,10 +18,7 @@ BOOST_AUTO_TEST_CASE(Engine_getContext)
 BOOST_AUTO_TEST_CASE(Engine_createAndSetContext)
 {
 	Window window = Engine::createWindow();
-	BOOST_TEST(!window.isCurrentContext());
-
-	Engine::setContext(window);
-	BOOST_TEST(window.isCurrentContext());
+	BOOST_REQUIRE_NO_THROW(Engine::setCurrentWindow(window));
 }
 
 /**

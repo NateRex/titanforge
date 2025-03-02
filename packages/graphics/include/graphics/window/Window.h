@@ -28,11 +28,6 @@ public:
     bool isOpen() const;
 
     /**
-     * @return True if this window is the current context. Returns false otherwise.
-     */
-    bool isCurrentContext() const;
-
-    /**
      * Closes the window
      */
     void close();

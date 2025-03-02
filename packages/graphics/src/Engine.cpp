@@ -75,13 +75,13 @@ void Engine::stop()
     delete _ENGINE;
 }
 
-Window Engine::getCurrentContext()
+Window Engine::getCurrentWindow()
 {
     assertInitialized();
     return _ENGINE->_currentWindow;
 }
 
-void Engine::setContext(Window& window)
+void Engine::setCurrentWindow(Window& window)
 {
     _ENGINE->_currentWindow = window;
     window.makeCurrent();

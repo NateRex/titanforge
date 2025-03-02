@@ -9,7 +9,7 @@
  */
 BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
 {
-    Window window = Engine::getCurrentContext();
+    Window window = Engine::getCurrentWindow();
     InputController* controller = window.getInputController();
     
     BOOST_TEST(!controller->isKeyPressed(GLFW_KEY_0));
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
  */
 BOOST_AUTO_TEST_CASE(InputController_listeners)
 {
-    Window window = Engine::getCurrentContext();
+    Window window = Engine::getCurrentWindow();
     InputController* controller = window.getInputController();
     
     // Add listener

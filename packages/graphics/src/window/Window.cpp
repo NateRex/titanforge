@@ -27,11 +27,6 @@ bool Window::isOpen() const
     return !glfwWindowShouldClose(_glfwWindow);
 }
 
-bool Window::isCurrentContext() const
-{
-    return glfwGetCurrentContext() == _glfwWindow;
-}
-
 void Window::close()
 {
     glfwSetWindowShouldClose(_glfwWindow, true);
