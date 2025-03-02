@@ -6,12 +6,9 @@
 Window::Window()
     : _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
 {
-
-    // Create window context
+    // Create window
     _glfwWindow = glfwCreateWindow(800, 600, "TitanForge", NULL, NULL);
-    assertNotNull(_glfwWindow, "Failed to create GLFW window", []() {
-        glfwTerminate();
-        });
+    assertNotNull(_glfwWindow, "Failed to create GLFW window");
 
     // Create the input controller
     _inputController = std::shared_ptr<InputController>(new InputController(_glfwWindow));
@@ -28,6 +25,11 @@ InputController* Window::getInputController()
 bool Window::isOpen() const
 {
     return !glfwWindowShouldClose(_glfwWindow);
+}
+
+bool Window::isCurrentContext() const
+{
+    return glfwGetCurrentContext() == _glfwWindow;
 }
 
 void Window::close()
@@ -51,7 +53,7 @@ void Window::renderFrame() const
     glfwPollEvents();
 }
 
-void Window::setContext()
+void Window::makeCurrent()
 {
     glfwMakeContextCurrent(_glfwWindow);
 

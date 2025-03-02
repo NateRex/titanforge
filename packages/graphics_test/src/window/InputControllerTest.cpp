@@ -1,18 +1,15 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics_test/utils/TestFixture.h>
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
 #include <GLFW/glfw3.h>
-
-BOOST_FIXTURE_TEST_SUITE(InputController_suite, TestFixture);
 
 /**
  * Tests the ability to determine whether or not a key is pressed
  */
 BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
 {
-    Window window = Engine::createWindow();
+    Window window = Engine::getCurrentContext();
     InputController* controller = window.getInputController();
     
     BOOST_TEST(!controller->isKeyPressed(GLFW_KEY_0));
@@ -32,7 +29,7 @@ BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
  */
 BOOST_AUTO_TEST_CASE(InputController_listeners)
 {
-    Window window = Engine::createWindow();
+    Window window = Engine::getCurrentContext();
     InputController* controller = window.getInputController();
     
     // Add listener
@@ -50,5 +47,3 @@ BOOST_AUTO_TEST_CASE(InputController_listeners)
     controller->processInput();
     BOOST_TEST(value == 1);
 }
-
-BOOST_AUTO_TEST_SUITE_END();

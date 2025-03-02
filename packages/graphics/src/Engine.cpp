@@ -7,21 +7,21 @@
 #include <graphics/shaders/IShader.h>
 #include <common/exceptions/IllegalStateException.h>
 
-bool Engine::_INIT = false;
 std::mutex Engine::_MUTEX;
+Engine* Engine::_ENGINE = nullptr;
 
 Engine::Engine()
 {
 
 }
 
-void Engine::start()
+Window Engine::start(bool headlessMode)
 {
     std::lock_guard<std::mutex> lock(_MUTEX);
 
-    if (_INIT)
+    if (_ENGINE != nullptr)
     {
-        return;
+        return _ENGINE->_currentWindow;
     }
 
     // Init GLFW
@@ -33,9 +33,14 @@ void Engine::start()
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
 
-    // Create starting window context
-    _CURRENT_WINDOW = createWindow();
-    _CURRENT_WINDOW.setContext();
+    if (headlessMode)
+    {
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+    }
+
+    // Create engine instance and starting context
+    _ENGINE = new Engine();
+    glfwMakeContextCurrent(_ENGINE->_currentWindow._glfwWindow);
 
     // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -43,17 +48,20 @@ void Engine::start()
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
+    // Set viewport
+    _ENGINE->_currentWindow.makeCurrent();
+
     // Load default shaders
     ShaderManager::registerDefaults();
 
-    _INIT = true;
+    return _ENGINE->_currentWindow;
 }
 
 void Engine::stop()
 {
     std::lock_guard<std::mutex> lock(_MUTEX);
 
-    if (!_INIT)
+    if (_ENGINE == nullptr)
     {
         return;
     }
@@ -64,14 +72,19 @@ void Engine::stop()
     // Unload shaders
     ShaderManager::clear();
 
-    _INIT = false;
+    delete _ENGINE;
+}
+
+Window Engine::getCurrentContext()
+{
+    assertInitialized();
+    return _ENGINE->_currentWindow;
 }
 
 void Engine::setContext(Window& window)
 {
-    std::lock_guard<std::mutex> lock(_MUTEX);
-    _CURRENT_WINDOW = window;
-    _CURRENT_WINDOW.setContext();
+    _ENGINE->_currentWindow = window;
+    window.makeCurrent();
 }
 
 Window Engine::createWindow()
@@ -94,7 +107,7 @@ const IShader* Engine::getShader(const std::string& name)
 
 void Engine::assertInitialized()
 {
-    if (!_INIT)
+    if (_ENGINE == nullptr)
     {
         throw IllegalStateException("Graphics engine has not been initialized");
     }

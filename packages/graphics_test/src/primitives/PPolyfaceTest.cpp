@@ -1,5 +1,4 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics_test/utils/TestFixture.h>
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
 #include <graphics/Buffer.h>
@@ -42,9 +41,6 @@ BOOST_AUTO_TEST_CASE(PPolyface_basics)
 	BOOST_TEST(p2.getNumFacets() == 4);
 }
 
-
-BOOST_FIXTURE_TEST_SUITE(PPolyface_suite, TestFixture);
-
 /**
  * Tests that the data stored inside a polyface primitive can be injected into a buffer
  */
@@ -64,9 +60,6 @@ BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 	};
 	PPolyface poly(pts, 4, verts, 16);
 
-	Window window = Engine::createWindow();
 	Buffer buffer = Engine::createBuffer();
 	BOOST_REQUIRE_NO_THROW(poly.buffer(buffer));
 }
-
-BOOST_AUTO_TEST_SUITE_END();

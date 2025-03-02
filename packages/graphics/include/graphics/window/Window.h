@@ -28,6 +28,11 @@ public:
     bool isOpen() const;
 
     /**
+     * @return True if this window is the current context. Returns false otherwise.
+     */
+    bool isCurrentContext() const;
+
+    /**
      * Closes the window
      */
     void close();
@@ -68,7 +73,7 @@ private:
     /**
      * Makes this window the target of the current rendering context
      */
-    void setContext();
+    void makeCurrent();
 
     /**
      * Callback method that is triggered whenever the window is resized
