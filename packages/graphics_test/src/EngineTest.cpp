@@ -3,12 +3,20 @@
 #include <graphics/window/Window.h>
 #include <graphics/Buffer.h>
 #include <common/exceptions/IllegalStateException.h>
-#include <GLFW/glfw3.h>
+
+/**
+ * Test the ability to obtain the current render context
+ */
+BOOST_AUTO_TEST_CASE(Engine_getContext)
+{
+	Window window = Engine::getCurrentContext();
+	BOOST_TEST(window.isCurrentContext());
+}
 
 /**
  * Tests the ability to create a new window and set it as the current context
  */
-BOOST_AUTO_TEST_CASE(Engine_createWindow)
+BOOST_AUTO_TEST_CASE(Engine_createAndSetContext)
 {
 	Window window = Engine::createWindow();
 	BOOST_TEST(!window.isCurrentContext());

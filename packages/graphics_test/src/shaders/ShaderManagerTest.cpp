@@ -1,5 +1,4 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/Engine.h>
 #include <graphics/shaders/IShader.h>
 #include <graphics/shaders/VertexShader.h>
 #include <graphics/shaders/ShaderManager.h>
@@ -37,10 +36,10 @@ public:
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_register)
 {
-	BOOST_TEST(ShaderManager::get("test1") == nullptr);
+	BOOST_TEST(ShaderManager::get("TestShader1") == nullptr);
 
-	ShaderManager::registerShader(TestShader("test1"));
-	BOOST_TEST(ShaderManager::get("test1") != nullptr);
+	ShaderManager::registerShader(TestShader("TestShader1"));
+	BOOST_TEST(ShaderManager::get("TestShader1") != nullptr);
 }
 
 /**
@@ -48,7 +47,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_register)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotRegisterTwice)
 {
-	TestShader shader("test2");
+	TestShader shader("TestShader2");
 	BOOST_REQUIRE_NO_THROW(ShaderManager::registerShader(shader));
 	BOOST_REQUIRE_THROW(ShaderManager::registerShader(shader), IllegalArgumentException);
 }
