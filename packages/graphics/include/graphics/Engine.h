@@ -31,7 +31,7 @@ public:
 	/**
 	 * @return The window representing the current context
 	 */
-	static Window getCurrentWindow();
+	static Window* getCurrentWindow();
 
 	/**
 	 * Makes a given window the new current context

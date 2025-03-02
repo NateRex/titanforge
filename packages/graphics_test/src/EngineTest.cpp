@@ -9,7 +9,7 @@
  */
 BOOST_AUTO_TEST_CASE(Engine_getCurrentWindow)
 {
-	BOOST_REQUIRE_NO_THROW(Engine::getCurrentWindow());
+	BOOST_TEST(Engine::getCurrentWindow() != nullptr);
 }
 
 /**

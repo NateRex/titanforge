@@ -75,10 +75,10 @@ void Engine::stop()
     delete _ENGINE;
 }
 
-Window Engine::getCurrentWindow()
+Window* Engine::getCurrentWindow()
 {
     assertInitialized();
-    return _ENGINE->_currentWindow;
+    return &_ENGINE->_currentWindow;
 }
 
 void Engine::setCurrentWindow(Window& window)
