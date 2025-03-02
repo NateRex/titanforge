@@ -39,3 +39,11 @@ BOOST_AUTO_TEST_CASE(Engine_getShader)
 
 	BOOST_TEST(Engine::getShader("vertex") != nullptr);
 }
+
+/**
+ * Tests that no errors occur rendering a frame for the current window context
+ */
+BOOST_AUTO_TEST_CASE(Engine_render)
+{
+	BOOST_REQUIRE_NO_THROW(Engine::renderFrame());
+}

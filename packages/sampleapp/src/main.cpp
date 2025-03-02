@@ -39,7 +39,7 @@ int main() {
     // Render loop
     while (window.isOpen())
     {
-        window.renderFrame();
+        Engine::renderFrame();
     }
 
     Engine::stop();

@@ -37,17 +37,6 @@ void Window::setBackgroundColor(const Color color)
     _clearColor = color;
 }
 
-void Window::renderFrame() const
-{
-    _inputController->processInput();
-
-    glClearColor(_clearColor.red, _clearColor.green, _clearColor.blue, _clearColor.alpha);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glfwSwapBuffers(_glfwWindow);
-    glfwPollEvents();
-}
-
 void Window::makeCurrent()
 {
     glfwMakeContextCurrent(_glfwWindow);

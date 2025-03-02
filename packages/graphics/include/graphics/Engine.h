@@ -59,6 +59,11 @@ public:
 	 * @return A pointer to the shader instance, or null if not found.
 	 */
 	static const IShader* getShader(const std::string& name);
+	
+	/**
+	 * Renders the next frame for the currently active window context
+	 */
+	static void renderFrame();
 
 private:
 

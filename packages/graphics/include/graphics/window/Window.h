@@ -38,11 +38,6 @@ public:
      */
     void setBackgroundColor(const Color color);
 
-    /**
-     * Renders the next frame
-     */
-    void renderFrame() const;
-
 private:
 
     /**

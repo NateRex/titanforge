@@ -105,6 +105,26 @@ const IShader* Engine::getShader(const std::string& name)
     return ShaderManager::get(name);
 }
 
+void Engine::renderFrame()
+{
+    assertInitialized();
+
+    Window window = _ENGINE->_currentWindow;
+
+    // Process input
+    InputController* inputController = window.getInputController();
+    inputController->processInput();
+
+    // Clear
+    Color clearColor = window._clearColor;
+    glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // Render
+    glfwSwapBuffers(window._glfwWindow);
+    glfwPollEvents();
+}
+
 void Engine::assertInitialized()
 {
     if (_ENGINE == nullptr)
