@@ -66,11 +66,11 @@ void Engine::stop()
         return;
     }
 
-    // Terminate GLFW
-    glfwTerminate();
-
     // Clear shader programs
     ShaderManager::clear();
+
+    // Terminate GLFW
+    glfwTerminate();
 
     delete _ENGINE;
 }
