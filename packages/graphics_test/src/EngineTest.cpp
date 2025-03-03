@@ -7,10 +7,9 @@
 /**
  * Test the ability to obtain the current render context
  */
-BOOST_AUTO_TEST_CASE(Engine_getContext)
+BOOST_AUTO_TEST_CASE(Engine_getCurrentWindow)
 {
-	Window window = Engine::getCurrentContext();
-	BOOST_TEST(window.isCurrentContext());
+	BOOST_TEST(Engine::getCurrentWindow() != nullptr);
 }
 
 /**
@@ -19,10 +18,7 @@ BOOST_AUTO_TEST_CASE(Engine_getContext)
 BOOST_AUTO_TEST_CASE(Engine_createAndSetContext)
 {
 	Window window = Engine::createWindow();
-	BOOST_TEST(!window.isCurrentContext());
-
-	Engine::setContext(window);
-	BOOST_TEST(window.isCurrentContext());
+	BOOST_REQUIRE_NO_THROW(Engine::setCurrentWindow(window));
 }
 
 /**
@@ -34,12 +30,9 @@ BOOST_AUTO_TEST_CASE(Engine_createBuffer)
 }
 
 /**
- * Tests the ability to fetch a shader by name
+ * Tests that no errors occur rendering a frame for the current window context
  */
-BOOST_AUTO_TEST_CASE(Engine_getShader)
+BOOST_AUTO_TEST_CASE(Engine_render)
 {
-	// Returns nullptr on not found
-	BOOST_TEST(Engine::getShader("does-not-exist") == nullptr);
-
-	BOOST_TEST(Engine::getShader("vertex") != nullptr);
+	BOOST_REQUIRE_NO_THROW(Engine::renderFrame());
 }

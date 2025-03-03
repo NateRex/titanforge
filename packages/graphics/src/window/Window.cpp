@@ -27,11 +27,6 @@ bool Window::isOpen() const
     return !glfwWindowShouldClose(_glfwWindow);
 }
 
-bool Window::isCurrentContext() const
-{
-    return glfwGetCurrentContext() == _glfwWindow;
-}
-
 void Window::close()
 {
     glfwSetWindowShouldClose(_glfwWindow, true);
@@ -40,17 +35,6 @@ void Window::close()
 void Window::setBackgroundColor(const Color color)
 {
     _clearColor = color;
-}
-
-void Window::renderFrame() const
-{
-    _inputController->processInput();
-
-    glClearColor(_clearColor.red, _clearColor.green, _clearColor.blue, _clearColor.alpha);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glfwSwapBuffers(_glfwWindow);
-    glfwPollEvents();
 }
 
 void Window::makeCurrent()

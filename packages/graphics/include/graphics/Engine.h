@@ -4,7 +4,7 @@
 #include <string>
 
 class Buffer;
-class IShader;
+class Shader;
 
 /**
  * TitanForge engine responsible for maintaining all allocated resources used to render
@@ -31,13 +31,13 @@ public:
 	/**
 	 * @return The window representing the current context
 	 */
-	static Window getCurrentContext();
+	static Window* getCurrentWindow();
 
 	/**
 	 * Makes a given window the new current context
 	 * @param window Window instance 
 	 */
-	static void setContext(Window& window);
+	static void setCurrentWindow(Window& window);
 
 	/**
 	 * @return A new window
@@ -51,14 +51,11 @@ public:
 	 * @throws IllegalStateException If the buffer could not be created
 	 */
 	static Buffer createBuffer();
-
+	
 	/**
-	 * Fetches a shader by name. Requires a window to have been created and made active for the current context.
-	 * @param name Unique name of the shader. This shader must have been previously registered
-	 * with the shader manager in order to be found.
-	 * @return A pointer to the shader instance, or null if not found.
+	 * Renders the next frame for the currently active window context
 	 */
-	static const IShader* getShader(const std::string& name);
+	static void renderFrame();
 
 private:
 

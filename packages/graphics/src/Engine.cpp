@@ -4,7 +4,7 @@
 #include <graphics/window/Window.h>
 #include <graphics/Buffer.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/IShader.h>
+#include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
 
 std::mutex Engine::_MUTEX;
@@ -38,7 +38,7 @@ Window Engine::start(bool headlessMode)
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     }
 
-    // Create engine instance and starting context
+    // Create engine instance and starting window
     _ENGINE = new Engine();
     glfwMakeContextCurrent(_ENGINE->_currentWindow._glfwWindow);
 
@@ -48,11 +48,11 @@ Window Engine::start(bool headlessMode)
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    // Set viewport
+    // Make starting engine window the current context
     _ENGINE->_currentWindow.makeCurrent();
 
-    // Load default shaders
-    ShaderManager::registerDefaults();
+    // Build and initialize shaders
+    ShaderManager::setup();
 
     return _ENGINE->_currentWindow;
 }
@@ -66,22 +66,22 @@ void Engine::stop()
         return;
     }
 
+    // Clear shader programs
+    ShaderManager::clear();
+
     // Terminate GLFW
     glfwTerminate();
-
-    // Unload shaders
-    ShaderManager::clear();
 
     delete _ENGINE;
 }
 
-Window Engine::getCurrentContext()
+Window* Engine::getCurrentWindow()
 {
     assertInitialized();
-    return _ENGINE->_currentWindow;
+    return &_ENGINE->_currentWindow;
 }
 
-void Engine::setContext(Window& window)
+void Engine::setCurrentWindow(Window& window)
 {
     _ENGINE->_currentWindow = window;
     window.makeCurrent();
@@ -99,10 +99,24 @@ Buffer Engine::createBuffer()
     return Buffer();
 }
 
-const IShader* Engine::getShader(const std::string& name)
+void Engine::renderFrame()
 {
     assertInitialized();
-    return ShaderManager::get(name);
+
+    Window window = _ENGINE->_currentWindow;
+
+    // Process input
+    InputController* inputController = window.getInputController();
+    inputController->processInput();
+
+    // Clear
+    Color clearColor = window._clearColor;
+    glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // Render
+    glfwSwapBuffers(window._glfwWindow);
+    glfwPollEvents();
 }
 
 void Engine::assertInitialized()

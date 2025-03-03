@@ -25,21 +25,22 @@ PPolyface examplePolyface()
  */
 int main() {
     Engine::start();
-    Window window = Engine::getCurrentContext();
-    window.setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+    Window* window = Engine::getCurrentWindow();
+    window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
 
     // Create input listeners
-    window.getInputController()->addListener(256, [&window]() {
-        window.close();
+    InputController* inputController = window->getInputController();
+    inputController->addListener(256, [&window]() {
+        window->close();
     });
 
     // Get example geometry
     PPolyface geometry = examplePolyface();
 
     // Render loop
-    while (window.isOpen())
+    while (window->isOpen())
     {
-        window.renderFrame();
+        Engine::renderFrame();
     }
 
     Engine::stop();

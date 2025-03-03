@@ -3,8 +3,6 @@
 #include <graphics/Engine.h>
 #include <GLFW/glfw3.h>
 
-#define __TEST__
-
 /**
  * Test fixture capable of executing code before and after all tests
  */
