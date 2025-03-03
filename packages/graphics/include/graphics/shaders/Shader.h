@@ -64,10 +64,4 @@ private:
 	 * as part of a shader program unless it is re-mounted.
 	 */
 	void unmount();
-
-	/**
-	 * Assignment operator for copying data from another shader
-	 * @param shader Shader to copy data from
-	 */
-	void operator=(const Shader& shader);
 };

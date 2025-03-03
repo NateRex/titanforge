@@ -62,14 +62,17 @@ void ShaderManager::linkProgram(ShaderProgram& prgm)
 	for (const auto& shader : prgm._shaders)
 	{
 		// Assert shader has been mounted
-		if (_SHADERS.find(shader) == _SHADERS.end())
+		auto it = _SHADERS.find(shader);
+		if (it == _SHADERS.end())
 		{
+			prgm._id = 0;
+
 			std::ostringstream oss;
 			oss << "Shader referenced by shader program was not mounted: " << shader;
 			throw IllegalArgumentException(oss.str());
 		}
 
-		glAttachShader(prgm._id, _SHADERS[shader]._id);
+		glAttachShader(prgm._id, it->second._id);
 	}
 
 	// Link program
@@ -82,6 +85,7 @@ void ShaderManager::linkProgram(ShaderProgram& prgm)
 	if (!success) {
 		glGetProgramInfoLog(prgm._id, 512, NULL, infoLog);
 		glDeleteProgram(prgm._id);
+
 		prgm._id = 0;
 
 		std::ostringstream oss;
@@ -94,14 +98,15 @@ void ShaderManager::linkProgram(ShaderProgram& prgm)
 
 void ShaderManager::useProgram(const std::string& name)
 {
-	if (_PROGRAMS.find(name) == _PROGRAMS.end())
+	auto it = _PROGRAMS.find(name);
+	if (it == _PROGRAMS.end())
 	{
 		std::ostringstream oss;
 		oss << "No shader program found with name: " << name;
 		throw IllegalArgumentException(oss.str());
 	}
 
-	glUseProgram(_PROGRAMS[name]._id);
+	glUseProgram(it->second._id);
 }
 
 void ShaderManager::clear()

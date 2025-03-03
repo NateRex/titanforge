@@ -75,9 +75,10 @@ private:
 	ShaderManager(ShaderManager&& mgr) = delete;
 
 	/**
-	 * Compiles and links all built-in shader programs
+	 * Initializes this shader manager by compiling and linking all default shader programs,
+	 * and sets the starting shader program for use by the GPU
 	 */
-	static void linkDefaults();
+	static void setup();
 
 	/**
 	 * Unmounts all shaders, and deletes all previously-created shader programs

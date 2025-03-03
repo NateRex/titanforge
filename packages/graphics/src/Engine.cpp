@@ -38,7 +38,7 @@ Window Engine::start(bool headlessMode)
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     }
 
-    // Create engine instance and starting context
+    // Create engine instance and starting window
     _ENGINE = new Engine();
     glfwMakeContextCurrent(_ENGINE->_currentWindow._glfwWindow);
 
@@ -48,11 +48,11 @@ Window Engine::start(bool headlessMode)
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    // Set viewport
+    // Make starting engine window the current context
     _ENGINE->_currentWindow.makeCurrent();
 
-    // Load default shader programs
-    ShaderManager::linkDefaults();
+    // Build and initialize shaders
+    ShaderManager::setup();
 
     return _ENGINE->_currentWindow;
 }

@@ -68,11 +68,3 @@ void Shader::unmount()
 	glDeleteShader(_id);
 	_id = 0;
 }
-
-void Shader::operator=(const Shader& shader)
-{
-	_id = shader._id;
-	_type = shader._type;
-	_name = shader._name;
-	_src = shader._src;
-}

@@ -34,17 +34,21 @@ void main()
 // Programs
 // ----------------------------------------------------------------------------------------------
 
-ShaderProgram defaultProgram("default", { "tf_vertex", "tf_fragment" });
+ShaderProgram defaultProgram("tf_default", { "tf_vertex", "tf_fragment" });
 
 
-void ShaderManager::linkDefaults()
+void ShaderManager::setup()
 {
+	// Mount shaders
 	ShaderManager::mountShader(vertex);
 	ShaderManager::mountShader(fragment);
 
+	// Link programs
 	ShaderManager::linkProgram(defaultProgram);
 
+	// Unmount shaders
 	ShaderManager::unmountShaders();
 
+	// Set default shader program
 	ShaderManager::useProgram("tf_default");
 }
