@@ -1,10 +1,6 @@
 #pragma once
 #include <common/exceptions/NullPointerException.h>
-
-namespace std {
-	template <typename Signature>
-	class function;
-}
+#include <functional>
 
 /**
  * Asserts that the given pointer is not null.
