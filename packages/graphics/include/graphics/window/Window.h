@@ -1,7 +1,5 @@
 #pragma once
-#include <functional>
 #include <memory>
-#include <graphics/window/InputController.h>
 #include <graphics/Color.h>
 
 struct GLFWwindow;

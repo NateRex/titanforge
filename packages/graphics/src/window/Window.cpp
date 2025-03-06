@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/window/Window.h>
+#include <graphics/window/InputController.h>
 #include <common/Assertions.h>
 
 Window::Window()

@@ -1,9 +1,9 @@
 #pragma once
 #include <map>
-#include <vector>
 #include <functional>
+#include <vector>
 
-struct GLFWwindow;
+class GLFWwindow;
 
 /**
  * An input controller is created upon creation of a window, and handles all user mouse and keyboard

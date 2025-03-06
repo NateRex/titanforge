@@ -1,7 +1,6 @@
 #pragma once
 #include <graphics/window/Window.h>
 #include <mutex>
-#include <string>
 
 class Buffer;
 class Shader;
@@ -44,13 +43,6 @@ public:
 	 * @throws IllegalStateException If the window could not be created
 	 */
 	static Window createWindow();
-
-	/**
-	 * Constructs a new buffer for the current context
-	 * @return A new buffer used to store data to be passed to the GPU
-	 * @throws IllegalStateException If the buffer could not be created
-	 */
-	static Buffer createBuffer();
 	
 	/**
 	 * Renders the next frame for the currently active window context

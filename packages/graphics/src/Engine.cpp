@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
-#include <graphics/Buffer.h>
+#include <graphics/window/InputController.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
@@ -91,12 +91,6 @@ Window Engine::createWindow()
 {
     assertInitialized();
     return Window();
-}
-
-Buffer Engine::createBuffer()
-{
-    assertInitialized();
-    return Buffer();
 }
 
 void Engine::renderFrame()

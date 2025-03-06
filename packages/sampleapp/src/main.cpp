@@ -1,5 +1,6 @@
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
+#include <graphics/Buffer.h>
 #include <graphics/window/InputController.h>
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector3.h>
@@ -34,8 +35,10 @@ int main() {
         window->close();
     });
 
-    // Get example geometry
+    // Send data
+    Buffer buffer = Engine::createBuffer();
     PPolyface geometry = examplePolyface();
+    geometry.buffer(buffer);
 
     // Render loop
     while (window->isOpen())
