@@ -92,12 +92,12 @@ void BufferManager::addBuffer(Buffer& buffer)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
-	if (_BUFFERS.find(buffer._name) != _BUFFERS.end())
+	if (_BUFFERS.find(buffer.name) != _BUFFERS.end())
 	{
 		std::ostringstream oss;
-		oss << "A buffer with this name already exists: " << buffer._name;
+		oss << "A buffer with this name already exists: " << buffer.name;
 		throw IllegalArgumentException(oss.str());
 	}
 
-	_BUFFERS.emplace(buffer._name, buffer);
+	_BUFFERS.emplace(buffer.name, buffer);
 }

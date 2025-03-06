@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)
-	: _vaoId(0), _vboId(0), _name(name)
+	: _vaoId(0), _vboId(0), name(name)
 {
 	
 }

@@ -6,6 +6,8 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 # Executable files
 add_executable(GraphicsTest
+    src/buffers/BufferManagerTest.cpp
+    src/buffers/BufferTest.cpp
     src/primitives/PPolyfaceTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderProgramTest.cpp

@@ -12,6 +12,11 @@ public:
 	friend class BufferBuilder;
 	friend class BufferManager;
 
+	/**
+	 * Unique name of this buffer
+	 */
+	const std::string name;
+
 private:
 
 	/**
@@ -25,11 +30,6 @@ private:
 	 * are explicitly constructed via create().
 	 */
 	unsigned int _vaoId;
-
-	/**
-	 * Unique name of this buffer
-	 */
-	std::string _name;
 
 	/**
 	 * Constructor

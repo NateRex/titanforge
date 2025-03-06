@@ -4,6 +4,7 @@
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
 #include <graphics/shaders/ShaderManager.h>
+#include <graphics/buffers/BufferManager.h>
 #include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
 
@@ -51,8 +52,11 @@ Window Engine::start(bool headlessMode)
     // Make starting engine window the current context
     _ENGINE->_currentWindow.makeCurrent();
 
-    // Build and initialize shaders
+    // Initialize shaders
     ShaderManager::setup();
+
+    // Initialize buffers
+    BufferManager::setup();
 
     return _ENGINE->_currentWindow;
 }
@@ -65,6 +69,9 @@ void Engine::stop()
     {
         return;
     }
+
+    // Clear buffers
+    BufferManager::clear();
 
     // Clear shader programs
     ShaderManager::clear();
