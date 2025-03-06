@@ -6,6 +6,8 @@ find_package(glad CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
+    src/buffers/Buffer.cpp
+    src/buffers/BufferManager.cpp
     src/primitives/PPolyface.cpp
     src/shaders/Defaults.cpp
     src/shaders/Shader.cpp
@@ -13,7 +15,6 @@ add_library(Graphics
     src/shaders/ShaderProgram.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
-    src/Buffer.cpp
     src/Color.cpp
     src/Engine.cpp
 )

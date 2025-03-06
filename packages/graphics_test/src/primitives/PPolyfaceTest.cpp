@@ -1,7 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
-#include <graphics/Buffer.h>
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector3.h>
 
@@ -42,7 +41,7 @@ BOOST_AUTO_TEST_CASE(PPolyface_basics)
 }
 
 /**
- * Tests that the data stored inside a polyface primitive can be injected into a buffer
+ * Tests that buffer data can be obtained from a polyface primitive
  */
 BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 {
@@ -60,6 +59,7 @@ BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 	};
 	PPolyface poly(pts, 4, verts, 16);
 
-	Buffer buffer = Engine::createBuffer();
-	BOOST_REQUIRE_NO_THROW(poly.buffer(buffer));
+	std::vector<float> buffer;
+	poly.buffer(buffer);
+	BOOST_TEST(buffer.size() == 36);
 }

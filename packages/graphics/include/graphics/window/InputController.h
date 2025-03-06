@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
-#include <vector>
 #include <functional>
+#include <vector>
 
 struct GLFWwindow;
 

@@ -1,11 +1,12 @@
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
+#include <graphics/buffers/BufferManager.h>
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector3.h>
 
 /**
- * Create an example polyface
+ * @return An example polyface
  */
 PPolyface examplePolyface()
 {
@@ -25,8 +26,11 @@ PPolyface examplePolyface()
  */
 int main() {
     Engine::start();
+
+    // Configure window
     Window* window = Engine::getCurrentWindow();
     window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+
 
     // Create input listeners
     InputController* inputController = window->getInputController();
@@ -34,12 +38,18 @@ int main() {
         window->close();
     });
 
-    // Get example geometry
+
+    // Create buffer
     PPolyface geometry = examplePolyface();
+    BufferManager::startBuffer("geometry")
+        .add(geometry)
+        .finish();
+
 
     // Render loop
     while (window->isOpen())
     {
+        BufferManager::bind("geometry");
         Engine::renderFrame();
     }
 

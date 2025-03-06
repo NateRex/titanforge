@@ -1,6 +1,5 @@
 #pragma once
-
-class Buffer;
+#include <vector>
 
 /**
  * Interface for all primitives
@@ -12,7 +11,7 @@ public:
 
 	/**
 	 * Store the data of this primitive into the given buffer
-	 * @param buffer Buffer object
+	 * @param buffer Vector containing primitive data
 	 */
-	virtual void buffer(Buffer& buffer) const = 0;
+	virtual void buffer(std::vector<float>& buffer) const = 0;
 };

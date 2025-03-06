@@ -37,6 +37,11 @@ void main()
 ShaderProgram defaultProgram("tf_default", { "tf_vertex", "tf_fragment" });
 
 
+// ----------------------------------------------------------------------------------------------
+// Shader Manager Setup
+// ----------------------------------------------------------------------------------------------
+
+
 void ShaderManager::setup()
 {
 	// Mount shaders

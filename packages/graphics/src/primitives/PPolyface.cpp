@@ -1,5 +1,4 @@
 #include <graphics/primitives/PPolyface.h>
-#include <graphics/Buffer.h>
 #include <geometry/Vector3.h>
 
 PPolyface::PPolyface(const Vector3* pos, int numPos, const int* verts, int numVerts)
@@ -20,11 +19,8 @@ PPolyface::PPolyface(const Polyface& polyface)
 
 }
 
-#pragma warning( push )
-#pragma warning( disable : 6386)
-void PPolyface::buffer(Buffer& buffer) const
+void PPolyface::buffer(std::vector<float>& buffer) const
 {
-	float* flattened = new float[_vertices.size() * 3];
 	for (int i = 0; i < _vertices.size(); ++i)
 	{
 		int vertex = _vertices[i];
@@ -35,13 +31,8 @@ void PPolyface::buffer(Buffer& buffer) const
 		Vector3 pos = _positions[_vertices[i]];
 
 		int idx = i * 3;
-		flattened[idx] = pos.x;
-		flattened[idx + 1] = pos.y;
-		flattened[idx + 2] = pos.z;
+		buffer.push_back(pos.x);
+		buffer.push_back(pos.y);
+		buffer.push_back(pos.z);
 	}
-
-	buffer.addVertices(flattened, _vertices.size() * 3);
-
-	delete[] flattened;
 }
-#pragma warning( pop )

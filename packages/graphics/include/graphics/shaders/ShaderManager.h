@@ -1,10 +1,11 @@
 #pragma once
+#include <iosfwd>
 #include <map>
-#include <string>
 #include <mutex>
 
 class Shader;
 class ShaderProgram;
+
 
 /**
  * The shader manager is responsible for tracking all shaders that have been registered
@@ -43,7 +44,7 @@ public:
 private:
 	
 	/**
-	 * Mutex lock for accessing the global instance
+	 * Mutex lock for manipulating static data
 	 */
 	static std::mutex _MUTEX;
 

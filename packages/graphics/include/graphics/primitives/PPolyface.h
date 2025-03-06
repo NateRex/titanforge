@@ -39,8 +39,8 @@ public:
 
 	/**
 	 * Store the data of this primitive into the given buffer
-	 * @param buffer Buffer object
+	 * @param buffer Vector containing primitive data
 	 */
-	void buffer(Buffer& buffer) const override;
+	void buffer(std::vector<float>& buffer) const override;
 
 };

@@ -1,7 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/Engine.h>
 #include <graphics/window/Window.h>
-#include <graphics/Buffer.h>
 #include <common/exceptions/IllegalStateException.h>
 
 /**
@@ -19,14 +18,6 @@ BOOST_AUTO_TEST_CASE(Engine_createAndSetContext)
 {
 	Window window = Engine::createWindow();
 	BOOST_REQUIRE_NO_THROW(Engine::setCurrentWindow(window));
-}
-
-/**
- * Tests the ability to create a buffer
- */
-BOOST_AUTO_TEST_CASE(Engine_createBuffer)
-{
-	BOOST_REQUIRE_NO_THROW(Engine::createBuffer());
 }
 
 /**
