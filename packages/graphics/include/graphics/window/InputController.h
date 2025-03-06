@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 /**
  * An input controller is created upon creation of a window, and handles all user mouse and keyboard

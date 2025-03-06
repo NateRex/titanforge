@@ -14,9 +14,10 @@ BufferManager::Builder::Builder(const std::string& name) : _name(name)
 
 }
 
-void BufferManager::Builder::add(const IPrimitive& primitive)
+BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 {
 	primitive.buffer(_data);
+	return *this;
 }
 
 void BufferManager::Builder::finish()
@@ -53,21 +54,12 @@ void BufferManager::clear()
 	_BUFFERS.clear();
 }
 
-void BufferManager::addBuffer(Buffer& buffer)
+BufferManager::Builder BufferManager::startBuffer(const std::string& name)
 {
-	std::lock_guard<std::mutex> lock(_MUTEX);
-
-	if (_BUFFERS.find(buffer._name) != _BUFFERS.end())
-	{
-		std::ostringstream oss;
-		oss << "A buffer with this name already exists: " << buffer._name;
-		throw IllegalArgumentException(oss.str());
-	}
-
-	_BUFFERS.emplace(buffer._name, buffer);
+	return BufferManager::Builder(name);
 }
 
-void BufferManager::bindBuffer(const std::string& name)
+void BufferManager::bind(const std::string& name)
 {
 	auto it = _BUFFERS.find(name);
 	if (it == _BUFFERS.end())
@@ -80,7 +72,7 @@ void BufferManager::bindBuffer(const std::string& name)
 	glBindVertexArray(it->second._vaoId);
 }
 
-void BufferManager::removeBuffer(const std::string& name)
+void BufferManager::destroy(const std::string& name)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -94,4 +86,18 @@ void BufferManager::removeBuffer(const std::string& name)
 
 	it->second.destroy();
 	_BUFFERS.erase(name);
+}
+
+void BufferManager::addBuffer(Buffer& buffer)
+{
+	std::lock_guard<std::mutex> lock(_MUTEX);
+
+	if (_BUFFERS.find(buffer._name) != _BUFFERS.end())
+	{
+		std::ostringstream oss;
+		oss << "A buffer with this name already exists: " << buffer._name;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	_BUFFERS.emplace(buffer._name, buffer);
 }

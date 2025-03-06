@@ -26,13 +26,14 @@ public:
 	{
 	public:
 
-		friend class Engine;
+		friend class BufferManager;
 
 		/**
 		 * Adds data from a primitive to this buffer
 		 * @param primitive Primitive to add
+		 * @return This builder instance
 		 */
-		void add(const IPrimitive& primitive);
+		Builder& add(const IPrimitive& primitive);
 
 		/**
 		 * Finalizes and constructs the buffer stored by this builder. The resulting buffer will be
@@ -60,6 +61,31 @@ public:
 
 	};
 
+
+public:
+
+	/**
+	 * Starts construction of a new buffer. Once finalized via finish(), this buffer will be capable of
+	 * being bound for rendering via this manager.
+	 * @param name A unique name to give to the new buffer
+	 * @return A buffer builder instance.
+	 */
+	static Builder startBuffer(const std::string& name);
+
+	/**
+	 * Binds a buffer for rendering
+	 * @param name The name of the buffer to bind. Must be a buffer that was previously constructed
+	 * via this manager.
+	 */
+	static void bind(const std::string& name);
+
+	/**
+	 * Destroys a buffer that is no longer needed. If this buffer was currently bound, it will be
+	 * unbound prior to destroying.
+	 * @param name The name of the buffer to destroy. Must be a buffer that was previously constructed
+	 * via this manager.
+	 */
+	static void destroy(const std::string& name);
 
 private:
 
@@ -107,16 +133,4 @@ private:
 	 */
 	static void addBuffer(Buffer& buffer);
 
-	/**
-	 * Binds a buffer for rendering
-	 * @param name The name of the buffer to bind
-	 */
-	static void bindBuffer(const std::string& name);
-
-	/**
-	 * Destroys a buffer that is no longer needed. If this buffer was currently bound, it
-	 * will be unbound prior to destroying.
-	 * @param name The name of the buffer to destroy
-	 */
-	static void removeBuffer(const std::string& name);
 };

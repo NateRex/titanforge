@@ -9,6 +9,7 @@ class Buffer
 {
 public:
 
+	friend class BufferBuilder;
 	friend class BufferManager;
 
 private:

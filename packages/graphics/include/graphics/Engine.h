@@ -2,8 +2,7 @@
 #include <graphics/window/Window.h>
 #include <mutex>
 
-class Buffer;
-class Shader;
+class BufferBuilder;
 
 /**
  * TitanForge engine responsible for maintaining all allocated resources used to render
