@@ -1,14 +1,12 @@
-#include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/Shader.h>
-#include <graphics/shaders/ShaderProgram.h>
+#include <graphics/shaders/programs/Basic.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
-#include <glad/glad.h>
 #include <sstream>
 
 std::mutex ShaderManager::_MUTEX;
 std::map<std::string, Shader> ShaderManager::_SHADERS;
 std::map<std::string, ShaderProgram> ShaderManager::_PROGRAMS;
+std::string ShaderManager::_ACTIVE = "";
 
 void ShaderManager::mountShader(Shader& shader)
 {
@@ -106,7 +104,9 @@ void ShaderManager::useProgram(const std::string& name)
 		throw IllegalArgumentException(oss.str());
 	}
 
-	glUseProgram(it->second._id);
+	ShaderProgram prgm = it->second;
+	glUseProgram(prgm._id);
+	_ACTIVE = prgm._name;
 }
 
 void ShaderManager::clear()
@@ -122,4 +122,20 @@ void ShaderManager::clear()
 	}
 
 	_PROGRAMS.clear();
+}
+
+void ShaderManager::setup()
+{
+	// Mount shaders
+	ShaderManager::mountShader(basic_shader_vertex);
+	ShaderManager::mountShader(basic_shader_fragment);
+
+	// Link programs
+	ShaderManager::linkProgram(basic_shader_program);
+
+	// Unmount shaders
+	ShaderManager::unmountShaders();
+
+	// Set default shader program
+	ShaderManager::useProgram(basic_shader_program._name);
 }

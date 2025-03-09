@@ -59,6 +59,11 @@ private:
 	static std::map<std::string, ShaderProgram> _PROGRAMS;
 
 	/**
+	 * The name of the currently-active shader program.
+	 */
+	static std::string _ACTIVE;
+
+	/**
 	 * Constructor
 	 */
 	ShaderManager() = delete;
