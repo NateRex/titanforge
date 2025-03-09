@@ -19,20 +19,19 @@ PPolyface::PPolyface(const Polyface& polyface)
 
 }
 
-void PPolyface::buffer(std::vector<float>& buffer) const
+void PPolyface::buffer(std::vector<float>& vertices, std::vector<int>& indices) const
 {
-	for (int i = 0; i < _vertices.size(); ++i)
+	for (auto& p : _vertices)
 	{
-		int vertex = _vertices[i];
-		if (vertex == -1) {
-			continue;
+		vertices.push_back(p.x);
+		vertices.push_back(p.y);
+		vertices.push_back(p.z);
+	}
+	for (auto& i : _indices)
+	{
+		if (i != -1)
+		{
+			indices.push_back(i);
 		}
-
-		Vector3 pos = _positions[_vertices[i]];
-
-		int idx = i * 3;
-		buffer.push_back(pos.x);
-		buffer.push_back(pos.y);
-		buffer.push_back(pos.z);
 	}
 }

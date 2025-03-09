@@ -50,9 +50,14 @@ public:
 		std::string _name;
 
 		/**
-		 * Vector containing the data buffered from primitives
+		 * Vector containing the vertex data obtained from primitives
 		 */
-		std::vector<float> _data;
+		std::vector<float> _vertexData;
+
+		/**
+		 * Vector containing the index data obtained from primitives
+		 */
+		std::vector<int> _indexData;
 
 		/**
 		 * Constructor

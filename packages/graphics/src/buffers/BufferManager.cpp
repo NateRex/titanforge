@@ -16,14 +16,14 @@ BufferManager::Builder::Builder(const std::string& name) : _name(name)
 
 BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 {
-	primitive.buffer(_data);
+	primitive.buffer(_vertexData, _indexData);
 	return *this;
 }
 
 void BufferManager::Builder::finish()
 {
 	Buffer buffer(_name);
-	buffer.create(_data.data(), _data.size());
+	buffer.create(_vertexData.data(), _vertexData.size(), _indexData.data(), _indexData.size());
 	BufferManager::addBuffer(buffer);
 }
 
@@ -70,7 +70,7 @@ void BufferManager::draw(const std::string& name)
 	}
 
 	glBindVertexArray(it->second._vaoId);
-	glDrawArrays(GL_TRIANGLES, 0, it->second._size);
+	glDrawElements(GL_TRIANGLES, it->second._size, GL_UNSIGNED_INT, 0);
 }
 
 void BufferManager::destroy(const std::string& name)

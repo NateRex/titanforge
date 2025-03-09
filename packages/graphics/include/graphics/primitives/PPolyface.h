@@ -12,24 +12,22 @@ public:
 	
 	/**
 	 * Constructor
-	 * @param pos Vertex positions
-	 * @param numPos Number of values in the position array
-	 * @param verts Ordered vertices that make up the facets of this polyface. Each value
-	 * should represents an index into the list of positions. A value of -1 implies the end
-	 * of a facet and the start of another
-	 * @param numVerts Number of values in the vertex array (including -1 values representing the ends
+	 * @param verts Vertex positions
+	 * @param numVerts Number of values in the position array
+	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
+	 * the end of a facet and the start of another
+	 * @param numIndices Number of values in the index array (including -1 values representing the ends
 	 * of facets)
 	 */
-	PPolyface(const Vector3* pos, int numPos, const int* verts, int numVerts);
+	PPolyface(const Vector3* vertices, int numVerts, const int* indices, int numIndices);
 
 	/**
 	 * Constructor
-	 * @param positions Vertex positions
-	 * @param vertices Ordered vertices that make up the facets of this polyface. Each value
-	 * should represents an index into the list of positions. A value of -1 implies the end
-	 * of a facet and the start of another
+	 * @param vertices Vertex positions
+	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
+	 * the end of a facet and the start of another
 	 */
-	PPolyface(const std::vector<Vector3>& positions, const std::vector<int> vertices);
+	PPolyface(const std::vector<Vector3>& vertices, const std::vector<int> indices);
 
 	/**
 	 * Constructor
@@ -38,9 +36,10 @@ public:
 	PPolyface(const Polyface& polyface);
 
 	/**
-	 * Store the data of this primitive into the given buffer
-	 * @param buffer Vector containing primitive data
+	 * Store the data of this primitive into the given buffers
+	 * @param vertices Vector to which the unique vertex positions of this primitive should be appended
+	 * @param indices Vector to which the vertex indices of this primitive should be appended
 	 */
-	void buffer(std::vector<float>& buffer) const override;
+	void buffer(std::vector<float>& vertices, std::vector<int>& indices) const override;
 
 };

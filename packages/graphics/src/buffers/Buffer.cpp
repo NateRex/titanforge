@@ -2,24 +2,32 @@
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)
-	: name(name), _vaoId(0), _vboId(0), _size(0)
+	: name(name), _vboId(0), _eboId(0), _vaoId(0), _size(0)
 {
 	
 }
 
-void Buffer::create(const float* data, unsigned int size)
+void Buffer::create(const float* vertices, unsigned int numVerts, const int* indices, unsigned int numIndices)
 {
+	// Create buffers
 	glGenVertexArrays(1, &_vaoId);
 	glGenBuffers(1, &_vboId);
-
+	glGenBuffers(1, &_eboId);
 	glBindVertexArray(_vaoId);
-	glBindBuffer(GL_ARRAY_BUFFER, _vboId);
 
-	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), data, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	// Load vertex data
+	glBindBuffer(GL_ARRAY_BUFFER, _vboId);
+	glBufferData(GL_ARRAY_BUFFER, numVerts * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	// Load index data
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(int), indices, GL_STATIC_DRAW);
+	
+	// Set attribute pointers
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
 
-	_size = size;
+	_size = numIndices;
 }
 
 void Buffer::destroy()
@@ -30,12 +38,15 @@ void Buffer::destroy()
 	{
 		// Buffer is currently bound. Make sure to unbind it first.
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
 
 	glDeleteVertexArrays(1, &_vaoId);
 	glDeleteBuffers(1, &_vboId);
+	glDeleteBuffers(1, &_eboId);
 
 	_vaoId = 0;
 	_vboId = 0;
+	_eboId = 0;
 }
