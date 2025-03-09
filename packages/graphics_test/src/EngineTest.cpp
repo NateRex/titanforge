@@ -25,5 +25,6 @@ BOOST_AUTO_TEST_CASE(Engine_createAndSetContext)
  */
 BOOST_AUTO_TEST_CASE(Engine_render)
 {
-	BOOST_REQUIRE_NO_THROW(Engine::renderFrame());
+	BOOST_REQUIRE_NO_THROW(Engine::startFrame());
+	BOOST_REQUIRE_NO_THROW(Engine::finishFrame());
 }

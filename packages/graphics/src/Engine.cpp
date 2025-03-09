@@ -100,7 +100,7 @@ Window Engine::createWindow()
     return Window();
 }
 
-void Engine::renderFrame()
+void Engine::startFrame()
 {
     assertInitialized();
 
@@ -114,7 +114,14 @@ void Engine::renderFrame()
     Color clearColor = window._clearColor;
     glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
     glClear(GL_COLOR_BUFFER_BIT);
-    
+}
+
+void Engine::finishFrame()
+{
+    assertInitialized();
+
+    Window window = _ENGINE->_currentWindow;
+
     // Render
     glfwSwapBuffers(window._glfwWindow);
     glfwPollEvents();

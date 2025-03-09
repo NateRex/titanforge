@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 
 /**
- * Tests that a buffer can be constructed, bound, unbound, and destroyed via the manager
+ * Tests that a buffer can be constructed, bound (and drawn), unbound, and destroyed via the manager
  */
 BOOST_AUTO_TEST_CASE(BufferManager_binding)
 {
@@ -15,8 +15,8 @@ BOOST_AUTO_TEST_CASE(BufferManager_binding)
 	GLuint binding1;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*) &binding1);
 
-	// Bind buffer1
-	BufferManager::bind("buffer1");
+	// Bind and draw buffer1
+	BufferManager::draw("buffer1");
 
 	// Verify buffer2 no longer bound
 	GLuint binding2;
@@ -34,11 +34,11 @@ BOOST_AUTO_TEST_CASE(BufferManager_binding)
 }
 
 /**
- * Tests that an exception is thrown if we try to bind a buffer that does not exist
+ * Tests that an exception is thrown if we try to draw a buffer that does not exist
  */
 BOOST_AUTO_TEST_CASE(BufferManager_bindFailure)
 {
-	BOOST_REQUIRE_THROW(BufferManager::bind("does-not-exist"), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(BufferManager::draw("does-not-exist"), IllegalArgumentException);
 }
 
 /**
