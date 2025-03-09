@@ -28,11 +28,11 @@ public:
 
 		/**
 		 * Constructor
-		 * @param pos Polyface positions
-		 * @param verts Polyface vertices
+		 * @param verts Polyface positions
+		 * @param indices Polyface indices
 		 * @param itr Vertex iterator
 		 */
-		Iterator(const std::vector<Vector3>& pos, const std::vector<int>& verts,
+		Iterator(const std::vector<Vector3>& verts, const std::vector<int>& indices,
 			const std::vector<int>::const_iterator& itr);
 
 		/**
@@ -64,12 +64,12 @@ public:
 		/**
 		 * Pointer to the vector of polyface positions
 		 */
-		const std::vector<Vector3>* _pos;
+		const std::vector<Vector3>* _vertices;
 
 		/**
 		 * Pointer to the vector of polyface vertices
 		 */
-		const std::vector<int>* _verts;
+		const std::vector<int>* _indices;
 
 		/**
 		 * Vertex iterator
@@ -88,24 +88,22 @@ public:
 
 	/**
 	 * Constructor
-	 * @param pos Vertex positions
-	 * @param numPos Number of values in the position array
-	 * @param verts Ordered vertices that make up the facets of this polyface. Each value
-	 * should represents an index into the list of positions. A value of -1 implies the end
-	 * of a facet and the start of another
-	 * @param numVerts Number of values in the vertex array (including -1 values representing the ends
+	 * @param verts Vertex positions
+	 * @param numVerts Number of values in the position array
+	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
+	 * the end of a facet and the start of another
+	 * @param numIndices Number of values in the index array (including -1 values representing the ends
 	 * of facets)
 	 */
-	Polyface(const Vector3* pos, int numPos, const int* verts, int numVerts);
+	Polyface(const Vector3* verts, int numVerts, const int* indices, int numIndices);
 
 	/**
 	 * Constructor
-	 * @param positions Vertex positions
-	 * @param vertices Ordered vertices that make up the facets of this polyface. Each value
-	 * should represents an index into the list of positions. A value of -1 implies the end
-	 * of a facet and the start of another
+	 * @param vertices Vertex positions
+	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
+	 * the end of a facet and the start of another
 	 */
-	Polyface(const std::vector<Vector3>& positions, const std::vector<int> vertices);
+	Polyface(const std::vector<Vector3>& vertices, const std::vector<int> indices);
 
 	/**
 	 * Constructor
@@ -139,12 +137,11 @@ protected:
 	/**
 	 * Vertex positions
 	 */
-	std::vector<Vector3> _positions;
+	std::vector<Vector3> _vertices;
 
 	/**
-	 * Ordered vertices that make up the facets of this polyface. Each value should represents
-	 * an index into the list of positions. A value of -1 implies the end of a facet and the
+	 * Indices pointing to the ordered vertices of this polyface. A value of -1 implies the end of a facet and the
 	 * start of another
 	 */
-	std::vector<int> _vertices;
+	std::vector<int> _indices;
 };

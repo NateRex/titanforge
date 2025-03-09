@@ -10,15 +10,17 @@
  */
 PPolyface examplePolyface()
 {
-    Vector3 pts[] = {
-        Vector3(-0.5, -0.5, 0.),
-        Vector3(0.5, -0.5, 0.),
-        Vector3(0., 0.5, 0.)
+    Vector3 vertices[] = {
+        Vector3(0.5f,  0.5f, 0.0f),     // top right
+        Vector3(0.5f, -0.5f, 0.0f),     // bottom right
+        Vector3(-0.5f, -0.5f, 0.0f),    // bottom left
+        Vector3(-0.5f,  0.5f, 0.0f)     // top left 
     };
-    int verts[] = {
-        0, 1, 2
+    int indices[] = {
+        0, 1, 3, -1,                    // first triangle
+        1, 2, 3                         // second triangle
     };
-    return PPolyface(pts, 3, verts, 3);
+    return PPolyface(vertices, 4, indices, 7);
 }
 
 /**

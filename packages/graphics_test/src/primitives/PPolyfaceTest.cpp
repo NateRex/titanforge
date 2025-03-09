@@ -59,7 +59,9 @@ BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 	};
 	PPolyface poly(pts, 4, verts, 16);
 
-	std::vector<float> buffer;
-	poly.buffer(buffer);
-	BOOST_TEST(buffer.size() == 36);
+	std::vector<float> vertexBuffer;
+	std::vector<int> indexBuffer;
+	poly.buffer(vertexBuffer, indexBuffer);
+	BOOST_TEST(vertexBuffer.size() == 12);
+	BOOST_TEST(indexBuffer.size() == 12);
 }
