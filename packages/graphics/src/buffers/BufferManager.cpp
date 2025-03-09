@@ -59,7 +59,7 @@ BufferManager::Builder BufferManager::startBuffer(const std::string& name)
 	return BufferManager::Builder(name);
 }
 
-void BufferManager::bind(const std::string& name)
+void BufferManager::draw(const std::string& name)
 {
 	auto it = _BUFFERS.find(name);
 	if (it == _BUFFERS.end())
@@ -70,6 +70,7 @@ void BufferManager::bind(const std::string& name)
 	}
 
 	glBindVertexArray(it->second._vaoId);
+	glDrawArrays(GL_TRIANGLES, 0, it->second._size);
 }
 
 void BufferManager::destroy(const std::string& name)

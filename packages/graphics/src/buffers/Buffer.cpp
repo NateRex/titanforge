@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)
-	: _vaoId(0), _vboId(0), name(name)
+	: name(name), _vaoId(0), _vboId(0), _size(0)
 {
 	
 }
@@ -18,6 +18,8 @@ void Buffer::create(const float* data, unsigned int size)
 	glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), data, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	_size = size;
 }
 
 void Buffer::destroy()

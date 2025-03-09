@@ -49,8 +49,11 @@ int main() {
     // Render loop
     while (window->isOpen())
     {
-        BufferManager::bind("geometry");
-        Engine::renderFrame();
+        Engine::startFrame();
+
+        BufferManager::draw("geometry");
+
+        Engine::finishFrame();
     }
 
     Engine::stop();

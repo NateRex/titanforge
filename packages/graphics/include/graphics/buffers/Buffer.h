@@ -32,6 +32,12 @@ private:
 	unsigned int _vaoId;
 
 	/**
+	 * The number of vertices held inside this buffer. Will be zero until the OpenGL resources for this
+	 * buffer are explicitly constructed via create().
+	 */
+	unsigned int _size;
+
+	/**
 	 * Constructor
 	 * @param name The unique name of the buffer
 	 */

@@ -38,6 +38,7 @@ public:
 		/**
 		 * Finalizes and constructs the buffer stored by this builder. The resulting buffer will be
 		 * registered in the buffer manager, and can be bound and rendered via the graphics engine.
+		 * @return The buffer that was created
 		 */
 		void finish();
 
@@ -73,11 +74,11 @@ public:
 	static Builder startBuffer(const std::string& name);
 
 	/**
-	 * Binds a buffer for rendering
-	 * @param name The name of the buffer to bind. Must be a buffer that was previously constructed
+	 * Draws a buffer to the current rendering context
+	 * @param name The name of the buffer to draw. Must be a buffer that was previously constructed
 	 * via this manager.
 	 */
-	static void bind(const std::string& name);
+	static void draw(const std::string& name);
 
 	/**
 	 * Destroys a buffer that is no longer needed. If this buffer was currently bound, it will be

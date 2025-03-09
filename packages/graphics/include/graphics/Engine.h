@@ -44,9 +44,16 @@ public:
 	static Window createWindow();
 	
 	/**
-	 * Renders the next frame for the currently active window context
+	 * Performs initialization logic at the start of a new frame. This includes the processing of user inputs, as well
+	 * as clearing the window.
 	 */
-	static void renderFrame();
+	static void startFrame();
+
+	/**
+	 * Performs finalization logic for rendering a frame. This includes the swapping of the front and back buffers, as
+	 * well as the polling for OpenGL events.
+	 */
+	static void finishFrame();
 
 private:
 
