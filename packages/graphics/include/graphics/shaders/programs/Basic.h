@@ -11,16 +11,17 @@ Shader basic_shader_vertex(GL_VERTEX_SHADER, "tf_basic_vertex", R"(
 #version 330 core
 
 // Inputs
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 vert_Pos;
+layout (location = 1) in vec4 vert_Color;
 
 // Outputs
 out vec4 gl_Position;
-out vec4 color;
+out vec4 frag_Color;
 
 void main()
 {
-	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-	color = vec4(0.5, 0.0, 0.0, 1.0);
+	frag_Color = vert_Color;
+	gl_Position = vec4(vert_Pos, 1.0);
 }
 )");
 
@@ -31,15 +32,15 @@ void main()
 Shader basic_shader_fragment(GL_FRAGMENT_SHADER, "tf_basic_fragment", R"(
 #version 330 core
 
-// Uniforms
-uniform vec4 color;
+// Inputs
+in vec4 frag_Color;
 
 // Outputs
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = color;
+    FragColor = frag_Color;
 } 
 )");
 

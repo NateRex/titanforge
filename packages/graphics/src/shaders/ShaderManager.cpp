@@ -96,15 +96,12 @@ void ShaderManager::linkProgram(ShaderProgram& prgm)
 
 void ShaderManager::useProgram(const std::string& name)
 {
-	auto it = _PROGRAMS.find(name);
-	if (it == _PROGRAMS.end())
+	if (name == _ACTIVE)
 	{
-		std::ostringstream oss;
-		oss << "No shader program found with name: " << name;
-		throw IllegalArgumentException(oss.str());
+		return;
 	}
 
-	ShaderProgram prgm = it->second;
+	ShaderProgram prgm = assertProgramExists(name);
 	glUseProgram(prgm._id);
 	_ACTIVE = prgm._name;
 }
@@ -122,6 +119,33 @@ void ShaderManager::clear()
 	}
 
 	_PROGRAMS.clear();
+}
+
+ShaderProgram ShaderManager::assertProgramExists(const std::string& programName)
+{
+	auto it = _PROGRAMS.find(programName);
+	if (it == _PROGRAMS.end())
+	{
+		std::ostringstream oss;
+		oss << "No shader program found with name: " << programName;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	return it->second;
+}
+
+int ShaderManager::getUniformLocation(const std::string& programName, const std::string& variableName)
+{
+	ShaderProgram prgm = assertProgramExists(programName);
+	GLint loc = glGetUniformLocation(prgm._id, variableName.c_str());
+	if (loc < 0)
+	{
+		std::ostringstream oss;
+		oss << "Could not find uniform " << variableName << " in program " << programName;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	return loc;
 }
 
 void ShaderManager::setup()

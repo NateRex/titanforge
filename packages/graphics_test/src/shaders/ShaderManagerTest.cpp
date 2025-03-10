@@ -32,11 +32,14 @@ BOOST_AUTO_TEST_CASE(ShaderManager_linkAndUse)
 {
 	Shader shader = createExampleShader("ShaderManagerTest_Shader3");
 	ShaderProgram prgm("ShaderManagerTest_Prgm1", { "ShaderManagerTest_Shader3" });
-	
+
 	ShaderManager::mountShader(shader);
 	BOOST_REQUIRE_NO_THROW(ShaderManager::linkProgram(prgm));
 	ShaderManager::unmountShaders();
 
+	BOOST_REQUIRE_NO_THROW(ShaderManager::useProgram(prgm.getName()));
+
+	// calling use a second time results in no-op
 	BOOST_REQUIRE_NO_THROW(ShaderManager::useProgram(prgm.getName()));
 }
 

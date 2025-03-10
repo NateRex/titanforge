@@ -9,6 +9,7 @@ add_library(Graphics
     src/buffers/Buffer.cpp
     src/buffers/BufferManager.cpp
     src/primitives/PPolyface.cpp
+    src/primitives/PrimitiveAttributes.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/shaders/ShaderProgram.cpp
@@ -26,8 +27,8 @@ target_include_directories(
 
 # Linked libraries
 target_link_libraries(Graphics
-    PRIVATE glfw
-    PRIVATE glad::glad
+    PUBLIC glfw
+    PUBLIC glad::glad
     PRIVATE Common::Common
     PRIVATE Geometry::Geometry)
 

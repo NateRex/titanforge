@@ -9,13 +9,24 @@
 // BufferManager::Builder
 // ------------------------------------------------------------------------------------------------------------------
 
-BufferManager::Builder::Builder(const std::string& name) : _name(name)
+BufferManager::Builder::Builder(const std::string& name) : _name(name), _attributes(false)
 {
 
 }
 
 BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 {
+	if (_vertexData.size() > 0)
+	{
+		if (_attributes != primitive.getAttributes())
+		{
+			throw new IllegalArgumentException("Primitives of a single buffer must have matching attributes");
+		}
+	}
+	else {
+		_attributes = primitive.getAttributes();
+	}
+
 	primitive.buffer(_vertexData, _indexData);
 	return *this;
 }
@@ -23,7 +34,7 @@ BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 void BufferManager::Builder::finish()
 {
 	Buffer buffer(_name);
-	buffer.create(_vertexData.data(), _vertexData.size(), _indexData.data(), _indexData.size());
+	buffer.create(_attributes, _vertexData.data(), _vertexData.size(), _indexData.data(), _indexData.size());
 	BufferManager::addBuffer(buffer);
 }
 
