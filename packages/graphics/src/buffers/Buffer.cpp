@@ -1,4 +1,5 @@
 #include <graphics/buffers/Buffer.h>
+#include <graphics/primitives/PrimitiveAttributes.h>
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)
@@ -7,7 +8,13 @@ Buffer::Buffer(const std::string& name)
 	
 }
 
-void Buffer::create(const float* vertices, unsigned int numVerts, const int* indices, unsigned int numIndices)
+unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
+{
+	return attributes.hasColor ? 7 : 3;
+}
+
+void Buffer::create(const PrimitiveAttributes& attributes, const float* vertices, unsigned int numVerts,
+		const int* indices, unsigned int numIndices)
 {
 	// Create buffers
 	glGenVertexArrays(1, &_vaoId);
@@ -23,9 +30,18 @@ void Buffer::create(const float* vertices, unsigned int numVerts, const int* ind
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(int), indices, GL_STATIC_DRAW);
 	
-	// Set attribute pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+	unsigned int stride = computeStride(attributes);
+
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);
+
+	// Color attribute (if present)
+	if (attributes.hasColor)
+	{
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+	}
 
 	_size = numIndices;
 }

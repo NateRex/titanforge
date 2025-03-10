@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+class PrimitiveAttributes;
+
 /**
  * A buffer capable of being loaded with vertex array data to be sent to the GPU
  * @author Nathaniel Rex
@@ -38,7 +40,7 @@ private:
 	unsigned int _vaoId;
 
 	/**
-	 * The number of vertices held inside this buffer. Will be zero until the OpenGL resources for this
+	 * The number of indices held inside this buffer. Will be zero until the OpenGL resources for this
 	 * buffer are explicitly constructed via create().
 	 */
 	unsigned int _size;
@@ -50,13 +52,22 @@ private:
 	Buffer(const std::string& name);
 
 	/**
+	 * Computes the stride of a buffer given the attributes of a primitive
+	 * @param attributes The primitive attributes
+	 * @return The buffer stride
+	 */
+	static unsigned int computeStride(const PrimitiveAttributes& attributes);
+
+	/**
 	 * Creates the OpenGL resources for this buffer, loading them with the given data.
-	 * @param vertices Array of unique vertex positions for this buffer
-	 * @param numVerts The number of vertex values
+	 * @param attributes Primitive attributes
+	 * @param vertexData Array of vertex data for this buffer
+	 * @param numValues The number of values in the vertex data array
 	 * @param indices Array containing the vertex indices of this buffer
 	 * @param numIndices The number of indices
 	 */
-	void create(const float* vertices, unsigned int numVerts, const int* indices, unsigned int numIndices);
+	void create(const PrimitiveAttributes& attributes, const float* vertexData, unsigned int numValues,
+			const int* indices, unsigned int numIndices);
 
 	/**
 	 * Destroys this buffer, freeing its resources

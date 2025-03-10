@@ -27,13 +27,21 @@ public:
 	static void stop();
 
 	/**
+	 * @return The time (in double seconds) since the engine has been started
+	 * @throws @throws IllegalStateException if the engine has not been started
+	 */
+	static double getTime();
+
+	/**
 	 * @return The window representing the current context
+	 * @throws IllegalStateException if the engine has not been started
 	 */
 	static Window* getCurrentWindow();
 
 	/**
 	 * Makes a given window the new current context
 	 * @param window Window instance 
+	 * @throws IllegalStateException if the engine has not been started
 	 */
 	static void setCurrentWindow(Window& window);
 
@@ -46,12 +54,14 @@ public:
 	/**
 	 * Performs initialization logic at the start of a new frame. This includes the processing of user inputs, as well
 	 * as clearing the window.
+	 * @throws IllegalStateException if the engine has not been started
 	 */
 	static void startFrame();
 
 	/**
 	 * Performs finalization logic for rendering a frame. This includes the swapping of the front and back buffers, as
 	 * well as the polling for OpenGL events.
+	 * @throws IllegalStateException if the engine has not been started
 	 */
 	static void finishFrame();
 

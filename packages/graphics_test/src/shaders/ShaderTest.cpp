@@ -10,7 +10,7 @@
  */
 BOOST_AUTO_TEST_CASE(Shader_basics)
 {
-	Shader shader = createExampleShader("ShaderTest_Shader1");
+	Shader shader = createExampleVertexShader("ShaderTest_Shader1");
 	BOOST_TEST(shader.getName() == "ShaderTest_Shader1");
 	BOOST_TEST(shader.getSrc().length() > 0);
 }

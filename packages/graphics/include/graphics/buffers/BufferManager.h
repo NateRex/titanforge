@@ -1,5 +1,6 @@
 #pragma once
 #include <iosfwd>
+#include <graphics/primitives/PrimitiveAttributes.h>
 #include <map>
 #include <vector>
 #include <mutex>
@@ -32,6 +33,8 @@ public:
 		 * Adds data from a primitive to this buffer
 		 * @param primitive Primitive to add
 		 * @return This builder instance
+		 * @throws IllegalArgumentException if the primitive does not have matching attributes with primitives already
+		 * added to this buffer
 		 */
 		Builder& add(const IPrimitive& primitive);
 
@@ -48,6 +51,11 @@ public:
 		 * Buffer name
 		 */
 		std::string _name;
+
+		/**
+		 * Attributes shared by all primitives stored in this buffer
+		 */
+		PrimitiveAttributes _attributes;
 
 		/**
 		 * Vector containing the vertex data obtained from primitives
