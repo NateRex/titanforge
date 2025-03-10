@@ -12,7 +12,7 @@ PPolyface::PPolyface(const Vector3* vertices, int numVerts, const int* indices, 
 	}
 }
 
-PPolyface::PPolyface(const std::vector<Vector3>& positions, const std::vector<int> vertices, const std::vector<Color> colors)
+PPolyface::PPolyface(const std::vector<Vector3>& positions, const std::vector<int>& vertices, const std::vector<Color>& colors)
 	: Polyface(positions, vertices), _colors(colors)
 {
 

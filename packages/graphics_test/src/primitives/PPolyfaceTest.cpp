@@ -12,7 +12,7 @@
  * @param colors (Optional) Vector in which to store colors
  */
 void getSampleData(std::vector<Vector3>& vertices, std::vector<int>& indices,
-		std::vector<Color>& colors = std::vector<Color>())
+		std::vector<Color>& colors)
 {
 	vertices.push_back(Vector3(-1, -1, 0));
 	vertices.push_back(Vector3(-1, 1, 0));
@@ -41,7 +41,8 @@ BOOST_AUTO_TEST_CASE(PPolyface_basics)
 {
 	std::vector<Vector3> vertices;
 	std::vector<int> indices;
-	getSampleData(vertices, indices);
+	std::vector<Color> colors;
+	getSampleData(vertices, indices, colors);
 
 	// Test using raw pointers
 	PPolyface p(vertices.data(), vertices.size(), indices.data(), indices.size());
@@ -49,7 +50,7 @@ BOOST_AUTO_TEST_CASE(PPolyface_basics)
 	BOOST_TEST(p.getNumFacets() == 2);
 
 	// Test using vectors
-	p = PPolyface(vertices, indices);
+	p = PPolyface(vertices.data(), vertices.size(), indices.data(), indices.size());
 	BOOST_TEST(p.getNumVertices() == 6);
 	BOOST_TEST(p.getNumFacets() == 2);
 
@@ -70,7 +71,7 @@ BOOST_AUTO_TEST_CASE(PPolyface_attributes)
 	getSampleData(vertices, indices, colors);
 
 	// Without color
-	PPolyface poly(vertices, indices);
+	PPolyface poly(vertices.data(), vertices.size(), indices.data(), indices.size());
 	PrimitiveAttributes attributes = poly.getAttributes();
 	BOOST_TEST(!attributes.hasColor);
 
@@ -91,7 +92,7 @@ BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 	getSampleData(vertices, indices, colors);
 
 	// Without color
-	PPolyface poly(vertices, indices);
+	PPolyface poly(vertices.data(), vertices.size(), indices.data(), indices.size());
 	std::vector<float> vBuffer;
 	std::vector<int> iBuffer;
 	poly.buffer(vBuffer, iBuffer);

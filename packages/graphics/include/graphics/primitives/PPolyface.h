@@ -31,11 +31,11 @@ public:
 	 * @param vertices Vertex positions
 	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
 	 * the end of a facet and the start of another
-	 * @param colors (Optional) Colors for each index. When present, the number of colors is expected
-	 * to match the number of indices.
+	 * @param colors Colors for each index. Can be empty. When containing values, the number of colors
+	 * is expected to match the number of indices.
 	 */
-	PPolyface(const std::vector<Vector3>& vertices, const std::vector<int> indices,
-			const std::vector<Color> colors = std::vector<Color>());
+	PPolyface(const std::vector<Vector3>& vertices, const std::vector<int>& indices,
+			const std::vector<Color>& colors);
 
 	/**
 	 * Constructor
