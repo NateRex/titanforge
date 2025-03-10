@@ -27,8 +27,8 @@ target_include_directories(
 
 # Linked libraries
 target_link_libraries(Graphics
-    PUBLIC glfw
-    PUBLIC glad::glad
+    PRIVATE glfw
+    PRIVATE glad::glad
     PRIVATE Common::Common
     PRIVATE Geometry::Geometry)
 

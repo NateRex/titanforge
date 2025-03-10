@@ -5,7 +5,6 @@
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector3.h>
-#include <glad/glad.h>
 
 /**
  * @return An example polyface
