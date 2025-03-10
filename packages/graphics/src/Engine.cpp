@@ -82,6 +82,12 @@ void Engine::stop()
     delete _ENGINE;
 }
 
+double Engine::getTime()
+{
+    assertInitialized();
+    return glfwGetTime();
+}
+
 Window* Engine::getCurrentWindow()
 {
     assertInitialized();

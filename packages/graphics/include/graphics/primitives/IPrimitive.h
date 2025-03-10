@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+class PrimitiveAttributes;
+
 /**
  * Interface for all primitives
  * @author Nathaniel Rex
@@ -10,9 +12,14 @@ class IPrimitive
 public:
 
 	/**
+	 * @return The set of attributes defining what data is contained by this primitive
+	 */
+	virtual PrimitiveAttributes getAttributes() const = 0;
+
+	/**
 	 * Store the data of this primitive into the given buffers
-	 * @param vertices Vector to which the unique vertex positions of this primitive should be appended
+	 * @param vertexData Vector in which the data for each unique vertex should be stored.
 	 * @param indices Vector to which the vertex indices of this primitive should be appended
 	 */
-	virtual void buffer(std::vector<float>& vertices, std::vector<int>& indices) const = 0;
+	virtual void buffer(std::vector<float>& vertexData, std::vector<int>& indices) const = 0;
 };

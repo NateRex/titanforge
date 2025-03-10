@@ -41,6 +41,23 @@ public:
 	 */
 	static void useProgram(const std::string& name);
 
+	/**
+	 * Sets the value for a uniform variable located in a shader program. This method will cause that
+	 * shader program to become active if it wasn't already.
+	 * @param programName The name of shader program containing the variable
+	 * @param variableName The name of the uniform variable
+	 * @param setFunc GLFW function used to set the variable. This is type specific. For a full list of
+	 * the methods available, see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glUniform.xhtml
+	 * @param values Values to apply to the uniform variable
+	 */
+	template <typename Func, typename ...Args>
+	static void setUniform(const std::string& programName, const std::string& variableName, Func setFunc, Args... args)
+	{
+		useProgram(programName);
+		int variableLoc = getUniformLocation(programName, variableName);
+		setFunc(variableLoc, args...);
+	}
+
 private:
 	
 	/**
@@ -57,6 +74,11 @@ private:
 	 * Map containing all shader programs that have been linked and are ready-for-use
 	 */
 	static std::map<std::string, ShaderProgram> _PROGRAMS;
+
+	/**
+	 * The name of the currently-active shader program.
+	 */
+	static std::string _ACTIVE;
 
 	/**
 	 * Constructor
@@ -85,4 +107,21 @@ private:
 	 * Unmounts all shaders, and deletes all previously-created shader programs
 	 */
 	static void clear();
+
+	/**
+	 * Asserts that a shader program with the given name exists within this manager
+	 * @param programName The name of the program to search for
+	 * @return The shader program, if it exists
+	 * @throws IllegalArgumentException if the program does not exist
+	 */
+	static ShaderProgram assertProgramExists(const std::string& programName);
+
+	/**
+	 * Fetches the uniform variable location within a shader program stored by this manager
+	 * @param programName The name of the shader program
+	 * @param variableName The name of the uniform variable
+	 * @return The variable location
+	 * @throws IllegalArgumentException if either the program or uniform variable does not exist
+	 */
+	static int getUniformLocation(const std::string& programName, const std::string& variableName);
 };

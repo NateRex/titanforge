@@ -1,14 +1,12 @@
-#include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/Shader.h>
-#include <graphics/shaders/ShaderProgram.h>
+#include <graphics/shaders/programs/Basic.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
-#include <glad/glad.h>
 #include <sstream>
 
 std::mutex ShaderManager::_MUTEX;
 std::map<std::string, Shader> ShaderManager::_SHADERS;
 std::map<std::string, ShaderProgram> ShaderManager::_PROGRAMS;
+std::string ShaderManager::_ACTIVE = "";
 
 void ShaderManager::mountShader(Shader& shader)
 {
@@ -98,15 +96,14 @@ void ShaderManager::linkProgram(ShaderProgram& prgm)
 
 void ShaderManager::useProgram(const std::string& name)
 {
-	auto it = _PROGRAMS.find(name);
-	if (it == _PROGRAMS.end())
+	if (name == _ACTIVE)
 	{
-		std::ostringstream oss;
-		oss << "No shader program found with name: " << name;
-		throw IllegalArgumentException(oss.str());
+		return;
 	}
 
-	glUseProgram(it->second._id);
+	ShaderProgram prgm = assertProgramExists(name);
+	glUseProgram(prgm._id);
+	_ACTIVE = prgm._name;
 }
 
 void ShaderManager::clear()
@@ -122,4 +119,47 @@ void ShaderManager::clear()
 	}
 
 	_PROGRAMS.clear();
+}
+
+ShaderProgram ShaderManager::assertProgramExists(const std::string& programName)
+{
+	auto it = _PROGRAMS.find(programName);
+	if (it == _PROGRAMS.end())
+	{
+		std::ostringstream oss;
+		oss << "No shader program found with name: " << programName;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	return it->second;
+}
+
+int ShaderManager::getUniformLocation(const std::string& programName, const std::string& variableName)
+{
+	ShaderProgram prgm = assertProgramExists(programName);
+	GLint loc = glGetUniformLocation(prgm._id, variableName.c_str());
+	if (loc < 0)
+	{
+		std::ostringstream oss;
+		oss << "Could not find uniform " << variableName << " in program " << programName;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	return loc;
+}
+
+void ShaderManager::setup()
+{
+	// Mount shaders
+	ShaderManager::mountShader(basic_shader_vertex);
+	ShaderManager::mountShader(basic_shader_fragment);
+
+	// Link programs
+	ShaderManager::linkProgram(basic_shader_program);
+
+	// Unmount shaders
+	ShaderManager::unmountShaders();
+
+	// Set default shader program
+	ShaderManager::useProgram(basic_shader_program._name);
 }

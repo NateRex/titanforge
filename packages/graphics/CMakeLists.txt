@@ -9,7 +9,7 @@ add_library(Graphics
     src/buffers/Buffer.cpp
     src/buffers/BufferManager.cpp
     src/primitives/PPolyface.cpp
-    src/shaders/Defaults.cpp
+    src/primitives/PrimitiveAttributes.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/shaders/ShaderProgram.cpp

@@ -9,6 +9,7 @@ add_executable(GraphicsTest
     src/buffers/BufferManagerTest.cpp
     src/buffers/BufferTest.cpp
     src/primitives/PPolyfaceTest.cpp
+    src/primitives/PrimitiveAttributesTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderProgramTest.cpp
     src/shaders/ShaderTest.cpp
