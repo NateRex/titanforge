@@ -20,7 +20,7 @@ BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 	{
 		if (_attributes != primitive.getAttributes())
 		{
-			throw new IllegalArgumentException("Primitives of a single buffer must have matching attributes");
+			throw IllegalArgumentException("Primitives of a single buffer must have matching attributes");
 		}
 	}
 	else {
