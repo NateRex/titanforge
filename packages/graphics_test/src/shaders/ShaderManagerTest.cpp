@@ -4,13 +4,14 @@
 #include <graphics/shaders/ShaderProgram.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
  * Tests the ability to mount and unmount shaders
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_mount)
 {
-	Shader shader = createExampleShader("ShaderManagerTest_Shader1");
+	Shader shader = createExampleVertexShader("ShaderManagerTest_Shader1");
 	BOOST_REQUIRE_NO_THROW(ShaderManager::mountShader(shader));
 	BOOST_REQUIRE_NO_THROW(ShaderManager::unmountShaders());
 }
@@ -20,7 +21,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_mount)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotMountTwice)
 {
-	Shader shader = createExampleShader("ShaderManagerTest_Shader2");
+	Shader shader = createExampleVertexShader("ShaderManagerTest_Shader2");
 	BOOST_REQUIRE_NO_THROW(ShaderManager::mountShader(shader));
 	BOOST_REQUIRE_THROW(ShaderManager::mountShader(shader), IllegalArgumentException);
 }
@@ -30,7 +31,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_cannotMountTwice)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_linkAndUse)
 {
-	Shader shader = createExampleShader("ShaderManagerTest_Shader3");
+	Shader shader = createExampleVertexShader("ShaderManagerTest_Shader3");
 	ShaderProgram prgm("ShaderManagerTest_Prgm1", { "ShaderManagerTest_Shader3" });
 
 	ShaderManager::mountShader(shader);
@@ -48,7 +49,7 @@ BOOST_AUTO_TEST_CASE(ShaderManager_linkAndUse)
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotLinkTwice)
 {
-	Shader shader = createExampleShader("ShaderManagerTest_Shader4");
+	Shader shader = createExampleVertexShader("ShaderManagerTest_Shader4");
 	ShaderProgram prgm("ShaderManagerTest_Prgm2", { "ShaderManagerTest_Shader4" });
 
 	ShaderManager::mountShader(shader);
@@ -65,4 +66,47 @@ BOOST_AUTO_TEST_CASE(ShaderManager_mustMountShadersToLink)
 {
 	ShaderProgram prgm("ShaderManagerTest_Prgm3", { "does-not-exist" });
 	BOOST_REQUIRE_THROW(ShaderManager::linkProgram(prgm), IllegalArgumentException);
+}
+
+/**
+ * Tests the ability to set a uniform value
+ */
+BOOST_AUTO_TEST_CASE(ShaderManager_setUniform)
+{
+	Shader shader1 = createExampleVertexShader("ShaderManagerTest_Shader5");
+	Shader shader2 = createExampleFragmentShader("ShaderManagerTest_Shader6");
+	ShaderProgram prgm("ShaderManagerTest_Prgm4", { "ShaderManagerTest_Shader5", "ShaderManagerTest_Shader6"});
+
+	ShaderManager::mountShader(shader1);
+	ShaderManager::mountShader(shader2);
+	ShaderManager::linkProgram(prgm);
+	ShaderManager::unmountShaders();
+
+	BOOST_REQUIRE_NO_THROW(ShaderManager::setUniform("ShaderManagerTest_Prgm4", "color",
+		glUniform4f, 0.1f, 0.2f, 0.3f, 0.4f));
+}
+
+/**
+ * Tests that we cannot set the uniform value of a shader program that does not exist
+ */
+BOOST_AUTO_TEST_CASE(ShaderManager_setUniformMissingProgram)
+{
+	BOOST_REQUIRE_THROW(ShaderManager::setUniform("does-not-exist", "uniformVariable",
+		glUniform4f, 0.1f, 0.2f, 0.3f, 0.4f), IllegalArgumentException);
+}
+
+/**
+ * Tests that we cannot set the value of a uniform variable that does not exist inside of a shader program
+ */
+BOOST_AUTO_TEST_CASE(ShaderManager_setUniformMissingVariable)
+{
+	Shader shader = createExampleVertexShader("ShaderManagerTest_Shader7");
+	ShaderProgram prgm("ShaderManagerTest_Prgm5", { "ShaderManagerTest_Shader7" });
+
+	ShaderManager::mountShader(shader);
+	ShaderManager::linkProgram(prgm);
+	ShaderManager::unmountShaders();
+
+	BOOST_REQUIRE_THROW(ShaderManager::setUniform("ShaderManagerTest_Prgm5", "does-not-exist",
+		glUniform4f, 0.1f, 0.2f, 0.3f, 0.4f), IllegalArgumentException);
 }
