@@ -72,7 +72,7 @@ void Engine::stop()
 
     // Clear managers
     BufferManager::clear();
-    TextureManager::setup();
+    TextureManager::clear();
     ShaderManager::clear();
 
     // Terminate GLFW
