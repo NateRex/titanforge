@@ -11,23 +11,23 @@ public:
 
 	friend class TextureManager;
 
+	/**
+	 * Unique name of this texture
+	 */
+	const std::string name;
+
+	/**
+	 * Relative path to the image file that will be used to generate the texture.
+	 * This path is relative to the directory containing the currently running executable.
+	 */
+	const std::string imagePath;
+
 private:
 
 	/**
 	 * GLFW id of this texture
 	 */
 	unsigned int _id;
-
-	/**
-	 * Unique name of this texture
-	 */
-	const std::string _name;
-
-	/**
-	 * Relative path to the image file that will be used to generate the texture.
-	 * This path is relative to the directory containing the currently running executable.
-	 */
-	const std::string _imagePath;
 
 	/**
 	 * Constructor

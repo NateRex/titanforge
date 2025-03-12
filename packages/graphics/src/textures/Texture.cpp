@@ -1,24 +1,28 @@
 #include <graphics/textures/Texture.h>
 #include <graphics/textures/ImageLoader.h>
 #include <common/exceptions/InstantiationException.h>
+#include <common/Utils.h>
 #include <glad/glad.h>
 #include <sstream>
 
 Texture::Texture(const std::string& name, const std::string& imagePath)
-	: _id(0), _name(name), _imagePath(imagePath)
+	: _id(0), name(name), imagePath(imagePath)
 {
 	
 }
 
 void Texture::create()
 {
+	// Resolve image path
+	std::string fullPath = resolvePath(imagePath);
+
 	// Load image
 	int width, height, channels;
-	unsigned char* data = stbi_load(_imagePath.c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(fullPath.c_str(), &width, &height, &channels, 0);
 	if (!data)
 	{
 		std::ostringstream oss;
-		oss << "Failed to load texture image: " << _imagePath;
+		oss << "Failed to load texture image: " << imagePath;
 		throw InstantiationException(oss.str());
 	}
 
