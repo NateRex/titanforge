@@ -40,10 +40,10 @@ This document contains instructions on how to build TitanForge on your machine.
 
 ## 🚀 Running
 
-After compiling, if a module produces an executable file, it will be located in a `Debug` folder within the that module's build directory. To run the executable, execute a command like so:
+After compiling, all libraries and executables generated will be located within a `bin` folder within the that module's build directory. To run the executable, execute a command like so:
 
 ```
-.\.build\<module>\Debug\<executable>.exe
+./.build/packages/<module>/bin/<executable>.exe
 ```
 
 This method works for both unit test modules, as well as applications such as `sampleapp`.

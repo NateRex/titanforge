@@ -26,7 +26,7 @@ float deg2Rad(float deg)
     return deg * PI / 180.;
 }
 
-std::string getExecutablePath()
+std::string resolvePath(const std::string& relPath)
 {
     char path[260];
 
@@ -50,6 +50,6 @@ std::string getExecutablePath()
 
 #endif
 
-    std::filesystem::path filePath(path);
-    return filePath.parent_path().string();
+    std::filesystem::path execPath(path);
+    return execPath.parent_path().append(relPath).string();
 }

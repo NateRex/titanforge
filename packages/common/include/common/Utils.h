@@ -27,10 +27,12 @@ float rad2Deg(float rad);
 float deg2Rad(float deg);
 
 /**
- * @return The absolute path to the folder containing this executable
- * @throws IllegalStateException On failure to obtain the path
+ * Resolves a relative path to the directory containing this executable
+ * @param relPath The relative path
+ * @return The absolute path to the same file or directory
+ * @throws IllegalStateException On failure to obtain the path to this executable
  */
-std::string getExecutablePath();
+std::string resolvePath(const std::string& relPath);
 
 /**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function

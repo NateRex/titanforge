@@ -24,18 +24,18 @@ private:
 	const std::string _name;
 
 	/**
-	 * The path to the file containing the imagery for this texture. This is relative to
-	 * the path stored in the ASSETS_FOLDER environment variable.
+	 * Relative path to the image file that will be used to generate the texture.
+	 * This path is relative to the directory containing the currently running executable.
 	 */
-	const std::string _relPath;
+	const std::string _imagePath;
 
 	/**
 	 * Constructor
 	 * @param name A unique name that can be used to refer to this texture in the future
-	 * @param relPath Path to the image file that will be used to generate the texture. This must
-	 * be relative to the path stored in the ASSETS_FOLDER environment variable.
+	 * @param imagePath Relative path to the image file that will be used to generate the texture.
+	 * This path is relative to the directory containing the currently running executable.
 	 */
-	Texture(const std::string& name, const std::string& imageFile);
+	Texture(const std::string& name, const std::string& imagePath);
 
 	/**
 	 * Creates the OpenGL resources for this texture

@@ -4,8 +4,8 @@
 #include <glad/glad.h>
 #include <sstream>
 
-Texture::Texture(const std::string& name, const std::string& relPath)
-	: _id(0), _name(name), _relPath(relPath)
+Texture::Texture(const std::string& name, const std::string& imagePath)
+	: _id(0), _name(name), _imagePath(imagePath)
 {
 	
 }
@@ -14,11 +14,11 @@ void Texture::create()
 {
 	// Load image
 	int width, height, channels;
-	unsigned char* data = stbi_load(_relPath.c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(_imagePath.c_str(), &width, &height, &channels, 0);
 	if (!data)
 	{
 		std::ostringstream oss;
-		oss << "Failed to load texture image: " << _relPath;
+		oss << "Failed to load texture image: " << _imagePath;
 		throw InstantiationException(oss.str());
 	}
 
