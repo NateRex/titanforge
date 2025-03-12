@@ -47,6 +47,17 @@ BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
 }
 
 /**
+ * Tests getExecutablePath
+ */
+BOOST_AUTO_TEST_CASE(Utils_getExecutablePath)
+{
+    std::string execPath = getExecutablePath();
+    std::cout << "==============================" << std::endl;
+    std::cout << execPath << std::endl;
+    std::cout << "==============================" << std::endl;
+}
+
+/**
  * Tests getOrDefault
  */
 BOOST_AUTO_TEST_CASE(Utils_getOrDefault)

@@ -1,6 +1,15 @@
 #include <common/Utils.h>
 #include <common/Constants.h>
+#include <common/exceptions/IllegalStateException.h>
 #include <cmath>
+#include <filesystem>
+
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__linux__) || defined(__APPLE__)
+#include <unistd.h>
+#include <limits.h>
+#endif
 
 bool equals(float a, float b, float tol)
 {
@@ -15,4 +24,29 @@ float rad2Deg(float rad)
 float deg2Rad(float deg)
 {
     return deg * PI / 180.;
+}
+
+std::string getExecutablePath()
+{
+    char path[260];
+
+#ifdef _WIN32
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+
+#elif defined(__linux__)
+    ssize_t count = readlink("/proc/self/exe", path, PATH_MAX);
+    if (count == -1) {
+        throw IllegalStateException("Failed to get executable path");
+    }
+    path[count] = '\0';  // Ensure null termination
+
+#elif defined(__APPLE__)
+    uint32_t size = sizeof(path);
+    if (_NSGetExecutablePath(path, &size) != 0) {
+        throw IllegalStateException("Failed to get executable path");
+    }
+
+#endif
+
+    return std::string(path);
 }

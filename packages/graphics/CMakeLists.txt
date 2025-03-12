@@ -16,6 +16,7 @@ add_library(Graphics
     src/shaders/ShaderProgram.cpp
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
+    src/textures/TextureManager.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Color.cpp
@@ -36,11 +37,11 @@ target_link_libraries(Graphics
     PRIVATE Common::Common
     PRIVATE Geometry::Geometry)
 
-# Library installation
-install(
-    TARGETS Graphics
-    EXPORT GraphicsConfig
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION lib
-    INCLUDES DESTINATION include)
+# Outputs
+set_target_properties(Graphics PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
+)

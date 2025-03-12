@@ -4,20 +4,21 @@
 #include <glad/glad.h>
 #include <sstream>
 
-Texture::Texture(const char* imageFile): _imageFile(imageFile), _id(0)
+Texture::Texture(const std::string& name, const std::string& relPath)
+	: _id(0), _name(name), _relPath(relPath)
 {
-
+	
 }
 
 void Texture::create()
 {
 	// Load image
 	int width, height, channels;
-	unsigned char* data = stbi_load(_imageFile.c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(_relPath.c_str(), &width, &height, &channels, 0);
 	if (!data)
 	{
 		std::ostringstream oss;
-		oss << "Failed to load texture image: " << _imageFile;
+		oss << "Failed to load texture image: " << _relPath;
 		throw InstantiationException(oss.str());
 	}
 
@@ -37,4 +38,10 @@ void Texture::create()
 
 	// Free the image data
 	stbi_image_free(data);
+}
+
+void Texture::destroy()
+{
+	glDeleteTextures(1, &_id);
+	_id = 0;
 }

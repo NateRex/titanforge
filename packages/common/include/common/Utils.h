@@ -1,4 +1,5 @@
 #pragma once
+#include <iosfwd>
 #include <iostream>
 #include <type_traits>
 
@@ -24,6 +25,12 @@ float rad2Deg(float rad);
  * @return Angle in radians
  */
 float deg2Rad(float deg);
+
+/**
+ * @return The absolute path to the current executable
+ * @throws IllegalStateException On failure to obtain the executable path
+ */
+std::string getExecutablePath();
 
 /**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
