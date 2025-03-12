@@ -27,8 +27,8 @@ float rad2Deg(float rad);
 float deg2Rad(float deg);
 
 /**
- * @return The absolute path to the current executable
- * @throws IllegalStateException On failure to obtain the executable path
+ * @return The absolute path to the folder containing this executable
+ * @throws IllegalStateException On failure to obtain the path
  */
 std::string getExecutablePath();
 

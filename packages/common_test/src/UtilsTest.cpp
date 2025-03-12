@@ -52,9 +52,7 @@ BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
 BOOST_AUTO_TEST_CASE(Utils_getExecutablePath)
 {
     std::string execPath = getExecutablePath();
-    std::cout << "==============================" << std::endl;
-    std::cout << execPath << std::endl;
-    std::cout << "==============================" << std::endl;
+    BOOST_TEST(execPath.substr(execPath.length() - 3) == "bin");
 }
 
 /**

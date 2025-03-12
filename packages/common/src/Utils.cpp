@@ -38,7 +38,9 @@ std::string getExecutablePath()
     if (count == -1) {
         throw IllegalStateException("Failed to get executable path");
     }
-    path[count] = '\0';  // Ensure null termination
+
+    // Ensure null termination
+    path[count] = '\0';
 
 #elif defined(__APPLE__)
     uint32_t size = sizeof(path);
@@ -48,5 +50,6 @@ std::string getExecutablePath()
 
 #endif
 
-    return std::string(path);
+    std::filesystem::path filePath(path);
+    return filePath.parent_path().string();
 }
