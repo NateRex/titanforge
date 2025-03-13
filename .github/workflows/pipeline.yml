@@ -80,13 +80,6 @@ jobs:
       - name: Execute Commands
         run: ./.github/scripts/runTest.sh ./.build/packages/common_test/bin/CommonTest
 
-      - name: Upload Artifact -> common-tests-valgrind-log
-        uses: actions/upload-artifact@v4
-        with:
-          name: common-tests-valgrind-log
-          path: valgrind.log
-          retention-days: 1
-
 
   # Geometry Tests
   geometry-tests:
@@ -110,13 +103,6 @@ jobs:
 
       - name: Execute Commands
         run: ./.github/scripts/runTest.sh ./.build/packages/geometry_test/bin/GeometryTest
-
-      - name: Upload Artifact -> geometry-tests-valgrind-log
-        uses: actions/upload-artifact@v4
-        with:
-          name: geometry-tests-valgrind-log
-          path: valgrind.log
-          retention-days: 1
 
 
   # Graphics Tests
@@ -144,10 +130,3 @@ jobs:
           Xvfb :99 -screen 0 1024x768x16 &
           export DISPLAY=:99
           ./.github/scripts/runTest.sh ./.build/packages/graphics_test/bin/GraphicsTest
-
-      - name: Upload Artifact -> graphics-tests-valgrind-log
-        uses: actions/upload-artifact@v4
-        with:
-          name: graphics-tests-valgrind-log
-          path: valgrind.log
-          retention-days: 1

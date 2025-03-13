@@ -31,10 +31,10 @@ std::string resolvePath(const std::string& relPath)
     char path[260];
 
 #ifdef _WIN32
-    GetModuleFileNameA(NULL, path, MAX_PATH);
+    GetModuleFileNameA(NULL, path, 260);
 
 #elif defined(__linux__)
-    ssize_t count = readlink("/proc/self/exe", path, PATH_MAX);
+    ssize_t count = readlink("/proc/self/exe", path, 259);
     if (count == -1) {
         throw IllegalStateException("Failed to get executable path");
     }

@@ -46,6 +46,14 @@ void Texture::create()
 
 void Texture::destroy()
 {
+	GLint boundId;
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundId);
+	if (boundId == _id)
+	{
+		// Texture is currently bound. Make sure to unbind it first.
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	glDeleteTextures(1, &_id);
 	_id = 0;
 }

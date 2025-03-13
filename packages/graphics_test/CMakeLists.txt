@@ -19,6 +19,7 @@ add_executable(GraphicsTest
     src/shaders/ShaderProgramTest.cpp
     src/shaders/ShaderTest.cpp
     src/testutils/TestUtils.cpp
+    src/textures/ImageLoaderTest.cpp
     src/textures/TextureManagerTest.cpp
     src/textures/TextureTest.cpp
     src/window/InputControllerTest.cpp
