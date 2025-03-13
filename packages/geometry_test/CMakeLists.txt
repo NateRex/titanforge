@@ -20,9 +20,9 @@ add_executable(GeometryTest
 
 # Linked libraries
 target_link_libraries(GeometryTest
-    PRIVATE Boost::unit_test_framework
-    PRIVATE Common::Common
-    PRIVATE Geometry::Geometry)
+    PUBLIC Boost::unit_test_framework
+    PUBLIC Common::Common
+    PUBLIC Geometry::Geometry)
 
 # Outputs
 set_target_properties(GeometryTest PROPERTIES

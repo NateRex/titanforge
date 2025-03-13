@@ -22,8 +22,8 @@ add_executable(CommonTest
 
 # Linked libraries
 target_link_libraries(CommonTest
-    PRIVATE Boost::unit_test_framework
-    PRIVATE Common::Common)
+    PUBLIC Boost::unit_test_framework
+    PUBLIC Common::Common)
 
 # Outputs
 set_target_properties(CommonTest PROPERTIES

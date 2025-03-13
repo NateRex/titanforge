@@ -35,10 +35,10 @@ target_include_directories(
 
 # Linked libraries
 target_link_libraries(GraphicsTest
-    PRIVATE Boost::unit_test_framework
-    PRIVATE Common::Common
-    PRIVATE Geometry::Geometry
-    PRIVATE Graphics::Graphics)
+    PUBLIC Boost::unit_test_framework
+    PUBLIC Common::Common
+    PUBLIC Geometry::Geometry
+    PUBLIC Graphics::Graphics)
 
 # Outputs
 set_target_properties(GraphicsTest PROPERTIES
