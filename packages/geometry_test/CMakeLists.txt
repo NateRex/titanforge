@@ -1,5 +1,10 @@
 project(GeometryTest CXX)
 
+set(CMAKE_BUILD_TYPE Debug)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+endif()
+
 # Dependencies
 enable_testing()
 find_package(Boost REQUIRED COMPONENTS unit_test_framework)
