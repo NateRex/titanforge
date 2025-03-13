@@ -4,6 +4,7 @@
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
 #include <graphics/shaders/ShaderManager.h>
+#include <graphics/textures/TextureManager.h>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
@@ -52,10 +53,9 @@ Window Engine::start(bool headlessMode)
     // Make starting engine window the current context
     _ENGINE->_currentWindow.makeCurrent();
 
-    // Initialize shaders
+    // Initialize managers
     ShaderManager::setup();
-
-    // Initialize buffers
+    TextureManager::setup();
     BufferManager::setup();
 
     return _ENGINE->_currentWindow;
@@ -70,10 +70,9 @@ void Engine::stop()
         return;
     }
 
-    // Clear buffers
+    // Clear managers
     BufferManager::clear();
-
-    // Clear shader programs
+    TextureManager::clear();
     ShaderManager::clear();
 
     // Terminate GLFW

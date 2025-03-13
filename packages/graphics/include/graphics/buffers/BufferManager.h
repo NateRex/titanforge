@@ -83,6 +83,7 @@ public:
 	 * being bound for rendering via this manager.
 	 * @param name A unique name to give to the new buffer
 	 * @return A buffer builder instance.
+	 * @throws IllegalArgumentException If a buffer with that name already exists
 	 */
 	static Builder startBuffer(const std::string& name);
 
@@ -90,6 +91,7 @@ public:
 	 * Draws a buffer to the current rendering context
 	 * @param name The name of the buffer to draw. Must be a buffer that was previously constructed
 	 * via this manager.
+	 * @throws IllegalArgumentException If no buffer with that name exists
 	 */
 	static void draw(const std::string& name);
 
@@ -98,6 +100,7 @@ public:
 	 * unbound prior to destroying.
 	 * @param name The name of the buffer to destroy. Must be a buffer that was previously constructed
 	 * via this manager.
+	 * @throws IllegalArgumentException If no buffer with that name exists
 	 */
 	static void destroy(const std::string& name);
 

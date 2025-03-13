@@ -47,6 +47,18 @@ BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
 }
 
 /**
+ * Tests resolvePath
+ */
+BOOST_AUTO_TEST_CASE(Utils_resolvePath)
+{
+    std::string path = resolvePath("one/2/myFile.txt");
+    BOOST_TEST(path.find("bin") != std::string::npos);
+    BOOST_TEST(path.find("one") != std::string::npos);
+    BOOST_TEST(path.find("2") != std::string::npos);
+    BOOST_TEST(path.find("myFile.txt") != std::string::npos);
+}
+
+/**
  * Tests getOrDefault
  */
 BOOST_AUTO_TEST_CASE(Utils_getOrDefault)

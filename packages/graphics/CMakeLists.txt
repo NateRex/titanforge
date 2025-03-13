@@ -3,6 +3,7 @@ project(Graphics CXX)
 # Dependencies
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
+find_package(Stb REQUIRED)
 
 # Library files
 add_library(Graphics
@@ -13,6 +14,9 @@ add_library(Graphics
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/shaders/ShaderProgram.cpp
+    src/textures/ImageLoader.cpp
+    src/textures/Texture.cpp
+    src/textures/TextureManager.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
     src/Color.cpp
@@ -21,9 +25,10 @@ add_library(Graphics
 add_library(Graphics::Graphics ALIAS Graphics)
 
 # Include directories
-target_include_directories(
-    Graphics PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                    $<INSTALL_INTERFACE:include>)
+target_include_directories(Graphics
+    PRIVATE ${Stb_INCLUDE_DIR}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PUBLIC $<INSTALL_INTERFACE:include>)
 
 # Linked libraries
 target_link_libraries(Graphics
@@ -32,11 +37,11 @@ target_link_libraries(Graphics
     PRIVATE Common::Common
     PRIVATE Geometry::Geometry)
 
-# Library installation
-install(
-    TARGETS Graphics
-    EXPORT GraphicsConfig
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION lib
-    INCLUDES DESTINATION include)
+# Outputs
+set_target_properties(Graphics PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/bin"
+    ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
+)

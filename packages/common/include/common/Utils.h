@@ -1,4 +1,5 @@
 #pragma once
+#include <iosfwd>
 #include <iostream>
 #include <type_traits>
 
@@ -24,6 +25,14 @@ float rad2Deg(float rad);
  * @return Angle in radians
  */
 float deg2Rad(float deg);
+
+/**
+ * Resolves a relative path to the directory containing this executable
+ * @param relPath The relative path
+ * @return The absolute path to the same file or directory
+ * @throws IllegalStateException On failure to obtain the path to this executable
+ */
+std::string resolvePath(const std::string& relPath);
 
 /**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
