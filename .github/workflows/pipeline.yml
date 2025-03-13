@@ -129,4 +129,5 @@ jobs:
         run: |
           Xvfb :99 -screen 0 1024x768x16 &
           export DISPLAY=:99
+          cat packages/graphics_test/valgrind.supp >> /usr/local/libexec/valgrind/default.supp
           ./.github/scripts/runTest.sh ./.build/packages/graphics_test/bin/GraphicsTest

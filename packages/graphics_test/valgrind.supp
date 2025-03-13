@@ -1,0 +1,6 @@
+{
+   ignore_imageloader
+   Memcheck:Leak
+   ...
+   obj:*ImageLoader*
+}
