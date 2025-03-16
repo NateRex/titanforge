@@ -36,6 +36,8 @@ unsigned int Shader::compileSource(int type, const char* source)
 		oss << "Shader " << type << " compilation failed for " << _name << ": " << infoLog;
 		throw InstantiationException(oss.str());
 	}
+
+	return id;
 }
 
 void Shader::link(const char* vertexShader, const char* fragmentShader)

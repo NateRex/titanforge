@@ -17,7 +17,6 @@ add_executable(GraphicsTest
     src/primitives/PrimitiveAttributesTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderTest.cpp
-    src/testutils/TestUtils.cpp
     src/textures/ImageLoaderTest.cpp
     src/textures/TextureManagerTest.cpp
     src/textures/TextureTest.cpp
