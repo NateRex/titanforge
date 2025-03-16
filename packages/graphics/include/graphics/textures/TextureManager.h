@@ -66,7 +66,7 @@ private:
 
 	/**
 	 * Constructor
-	 * @param mgr Buffer manager to copy from
+	 * @param mgr Texture manager to copy from
 	 */
 	TextureManager(TextureManager&& mgr) = delete;
 

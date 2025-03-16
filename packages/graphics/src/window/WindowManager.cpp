@@ -12,7 +12,6 @@ void WindowManager::setup()
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
-	// Currently, this method does nothing. However, this may change in the future.
 }
 
 void WindowManager::refresh()
@@ -45,7 +44,7 @@ void WindowManager::clear()
 
 Window* WindowManager::create(const std::string& name, unsigned int width, unsigned int height)
 {
-	std::unique_lock<std::mutex> lock(_MUTEX);
+	std::lock_guard<std::mutex> lock(_MUTEX);
 
 	if (_OPEN_WINDOWS.find(name) != _OPEN_WINDOWS.end())
 	{
@@ -57,14 +56,6 @@ Window* WindowManager::create(const std::string& name, unsigned int width, unsig
 	Window win(name);
 	win.create(width, height);
 	auto [it, inserted] = _OPEN_WINDOWS.emplace(name, win);
-
-	lock.unlock();
-
-	if (_OPEN_WINDOWS.size() == 1)
-	{
-		// This is the only window, make it the current rendering target
-		WindowManager::setCurrent(name);
-	}
 
 	return &it->second;
 }

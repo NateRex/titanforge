@@ -16,8 +16,8 @@ public:
 	friend class Engine;
 
 	/**
-	 * Creates a new window. This window will automatically be set as the target of the current rendering context
-	 * if no other windows previously existed.
+	 * Creates a new window. By default, this window will not be made the target of the current rendering context. That
+	 * must be explicitly done via a call to setCurrent().
 	 * @param name Unique name for the window
 	 * @param width (Optional) Starting width (in pixels). Defaults to 800.
 	 * @param height (Optional) Starting height (in pixels). Defaults to 600.
@@ -71,13 +71,13 @@ private:
 
 	/**
 	 * Constructor
-	 * @param mgr Shader manager to copy from
+	 * @param mgr Window manager to copy from
 	 */
 	WindowManager(const WindowManager& mgr) = delete;
 
 	/**
 	 * Constructor
-	 * @param mgr Shader manager to copy from
+	 * @param mgr Window manager to copy from
 	 */
 	WindowManager(WindowManager&& mgr) = delete;
 
