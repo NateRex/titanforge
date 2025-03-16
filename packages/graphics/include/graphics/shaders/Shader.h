@@ -2,66 +2,50 @@
 #include <string>
 
 /**
- * A shader capable of being compiled and linked into a shader program
+ * A shader program, managed by the shader manager
  * @author Nathaniel Rex
  */
-class Shader
-{
+class Shader {
 public:
 
-	friend class ShaderManager;
-
-	/**
-	 * Constructor
-	 * @param type Shader type. For possible types, see
-	 * https://registry.khronos.org/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
-	 * @param name Unique name of this shader
-	 * @param source Shader source code
-	 */
-	Shader(int type, const std::string& name, const std::string& source);
-
-	/**
-	 * @return The unique name of this shader
-	 */
-	const std::string getName() const;
-
-	/**
-	 * @return The source code for this shader
-	 */
-	const std::string getSrc() const;
+    friend class ShaderManager;
 
 private:
 
-	/**
-	 * GLFW id. Will be zero when this shader is not currently mounted.
+    /**
+	 * GLFW id. Will be zero until this program has been linked.
 	 */
 	unsigned int _id;
 
 	/**
-	 * Shader type
+	 * Unique name of this shader program
 	 */
-	unsigned int _type;
+	const std::string _name;
 
-	/**
-	 * Unique name of this shader
-	 */
-	std::string _name;
+    /**
+     * Constructor
+     * @param name The unique name of this shader
+     */
+    Shader(const std::string& name);
 
-	/**
-	 * Source code
-	 */
-	std::string _src;
+    /**
+     * Compiles shader code for use in linking.
+     * @param type The shader type
+     * @param source Shader source code
+     * @return The ID of the compiled shader. Must be destroyed via glDeleteShader when no longer needed.
+     */
+    unsigned int compileSource(int type, const char* source);
 
-	/**
-	 * Initializes and compiles this shader. Does nothing if this shader has already been compiled.
-	 * This creates the resources necessary to link this shader as part of one or more shader programs.
-	 * @throws InstantiationException on failure to compile the shader
-	 */
-	void mount();
+    /**
+     * Links this shader program for use by OpenGL, using the given source code.
+     * @param vertexShader Vertex shader source code
+     * @param fragmentShader Fragment shader source code
+     * @throws InstantiationException On failure to compile or link the shader
+     */
+    void link(const char* vertexShader, const char* fragmentShader);
 
-	/**
-	 * Releases all resources for this shader. After calling this method, this shader may not be linked
-	 * as part of a shader program unless it is re-mounted.
-	 */
-	void unmount();
+    /**
+     * Destroys this shader program and releases all of its resources.
+     */
+    void destroy();
 };

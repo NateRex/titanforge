@@ -13,7 +13,6 @@ add_library(Graphics
     src/primitives/PrimitiveAttributes.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
-    src/shaders/ShaderProgram.cpp
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureManager.cpp
