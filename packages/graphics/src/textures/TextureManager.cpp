@@ -1,7 +1,6 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <common/exceptions/NullPointerException.h>
 #include <sstream>
 
 std::mutex TextureManager::_MUTEX;
@@ -51,7 +50,7 @@ Texture TextureManager::get(const std::string& name)
 	{
 		std::ostringstream oss;
 		oss << "A texture with this name does not exist: " << name;
-		throw NullPointerException(oss.str());
+		throw IllegalArgumentException(oss.str());
 	}
 
 	return it->second;

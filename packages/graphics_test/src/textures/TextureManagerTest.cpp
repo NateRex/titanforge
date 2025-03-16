@@ -2,7 +2,6 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <common/exceptions/NullPointerException.h>
 
 /**
  *  Tests that a texture can be constructed, fetched, and destroyed via the manager
@@ -30,7 +29,7 @@ BOOST_AUTO_TEST_CASE(TextureManager_cannotCreateDuplicates)
  */
 BOOST_AUTO_TEST_CASE(TextureManager_cannotFetchMissing)
 {
-	BOOST_REQUIRE_THROW(TextureManager::get("does-not-exist"), NullPointerException);
+	BOOST_REQUIRE_THROW(TextureManager::get("does-not-exist"), IllegalArgumentException);
 }
 
 /**

@@ -28,7 +28,7 @@ public:
 	 * Get the data for a texture that was previously created via this manager
 	 * @param name The name of the texture
 	 * @return The texture
-	 * @throws NullPointerException on failure to find the texture
+	 * @throws IllegalArgumentException If a texture with that name could not be found
 	 */
 	static Texture get(const std::string& name);
 
@@ -36,7 +36,7 @@ public:
 	 * Destroys a texture that is no longer needed.
 	 * @param name The name of the texture to destroy. Must be a texture that was previously constructed
 	 * via this manager.
-	 * @throws
+	 * @throws IllegalArgumentException If a texture with that name could not be found
 	 */
 	static void destroy(const std::string& name);
 

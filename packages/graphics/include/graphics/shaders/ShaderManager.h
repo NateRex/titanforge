@@ -4,12 +4,9 @@
 #include <mutex>
 
 class Shader;
-class ShaderProgram;
-
 
 /**
- * The shader manager is responsible for tracking all shaders that have been registered
- * for use with the graphics engine
+ * The shader manager is responsible for tracking all shaders that have been registered for use
  * @author Nathaniel Rex
  */
 class ShaderManager
@@ -19,44 +16,26 @@ public:
 	friend class Engine;
 
 	/**
-	 * Mounts and compiles a new shader for use in linking
-	 * @param shader Shader
+	 * Links and registers a new shader program for use in this manager
+	 * @param name Unique name for the shader
+	 * @param vertexShader Vertex shader source code
+	 * @param fragmentShader Fragment shader source code
 	 */
-	static void mountShader(Shader& shader);
+	static void create(const char* name, const char* vertexShader, const char* fragmentShader);
 
 	/**
-	 * Unmounts all shaders
-	 */
-	static void unmountShaders();
-
-	/**
-	 * Links and stores a new shader program for use via the one or more of the shaders currently mounted.
-	 * @param prgm The shader program
-	 */
-	static void linkProgram(ShaderProgram& prgm);
-
-	/**
-	 * Updates the shader program used for rendering
+	 * Updates the current shader program used for rendering
 	 * @param name The name of the program
+	 * @throws IllegalArgumentException if a program with that name could not be found
 	 */
-	static void useProgram(const std::string& name);
+	static void use(const char* name);
 
 	/**
-	 * Sets the value for a uniform variable located in a shader program. This method will cause that
-	 * shader program to become active if it wasn't already.
-	 * @param programName The name of shader program containing the variable
-	 * @param variableName The name of the uniform variable
-	 * @param setFunc GLFW function used to set the variable. This is type specific. For a full list of
-	 * the methods available, see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glUniform.xhtml
-	 * @param values Values to apply to the uniform variable
+	 * Destroys a shader program held by this manager, releasing all of its resources
+	 * @param name The name of the shader program
+	 * @throws IllegalArgumentException if a program with that name could not be found
 	 */
-	template <typename Func, typename ...Args>
-	static void setUniform(const std::string& programName, const std::string& variableName, Func setFunc, Args... args)
-	{
-		useProgram(programName);
-		int variableLoc = getUniformLocation(programName, variableName);
-		setFunc(variableLoc, args...);
-	}
+	static void destroy(const char* name);
 
 private:
 	
@@ -66,19 +45,9 @@ private:
 	static std::mutex _MUTEX;
 
 	/**
-	 * Map containing all shaders currently mounted and ready for linking
+	 * Map containing all shaders that have been created
 	 */
 	static std::map<std::string, Shader> _SHADERS;
-
-	/**
-	 * Map containing all shader programs that have been linked and are ready-for-use
-	 */
-	static std::map<std::string, ShaderProgram> _PROGRAMS;
-
-	/**
-	 * The name of the currently-active shader program.
-	 */
-	static std::string _ACTIVE;
 
 	/**
 	 * Constructor
@@ -104,24 +73,7 @@ private:
 	static void setup();
 
 	/**
-	 * Unmounts all shaders, and deletes all previously-created shader programs
+	 * Clears and deletes all shaders held by this manager
 	 */
 	static void clear();
-
-	/**
-	 * Asserts that a shader program with the given name exists within this manager
-	 * @param programName The name of the program to search for
-	 * @return The shader program, if it exists
-	 * @throws IllegalArgumentException if the program does not exist
-	 */
-	static ShaderProgram assertProgramExists(const std::string& programName);
-
-	/**
-	 * Fetches the uniform variable location within a shader program stored by this manager
-	 * @param programName The name of the shader program
-	 * @param variableName The name of the uniform variable
-	 * @return The variable location
-	 * @throws IllegalArgumentException if either the program or uniform variable does not exist
-	 */
-	static int getUniformLocation(const std::string& programName, const std::string& variableName);
 };

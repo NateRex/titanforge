@@ -3,39 +3,22 @@
 #include <glad/glad.h>
 #include <sstream>
 
-Shader::Shader(int type, const std::string& name, const std::string& source)
-	: _id(0), _type(type), _name(name), _src(source)
+Shader::Shader(const char* name)
+	: _id(0), _name(name)
 {
 
 }
 
-const std::string Shader::getName() const
+unsigned int Shader::compileSource(int type, const char* source)
 {
-	return _name;
-}
-
-const std::string Shader::getSrc() const
-{
-	return _src;
-}
-
-void Shader::mount()
-{
-	if (_id != 0)
-	{
-		// Shader already mounted
-		return;
-	}
-
-	unsigned int id = glCreateShader(_type);
+	unsigned int id = glCreateShader(type);
 	if (id == 0)
 	{
-		throw InstantiationException("Failed to construct GL shader");
+		throw InstantiationException("Failed to construct shader");
 	}
 
 	// Load shader source
-	const char* src = _src.c_str();
-	glShaderSource(id, 1, &src, NULL);
+	glShaderSource(id, 1, &source, NULL);
 
 	// Compile
 	glCompileShader(id);
@@ -50,21 +33,60 @@ void Shader::mount()
 		glDeleteShader(id);
 
 		std::ostringstream oss;
-		oss << "Shader compilation failed (" << _name << "): " << infoLog;
+		oss << "Shader " << type << " compilation failed for " << _name << ": " << infoLog;
+		throw InstantiationException(oss.str());
+	}
+}
+
+void Shader::link(const char* vertexShader, const char* fragmentShader)
+{
+	unsigned int vId = compileSource(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fId = compileSource(GL_FRAGMENT_SHADER, fragmentShader);
+
+	// Create program
+	_id = glCreateProgram();
+	if (_id == 0)
+	{
+		std::ostringstream oss;
+		oss << "Failed to construct shader program: " << _name;
 		throw InstantiationException(oss.str());
 	}
 
-	_id = id;
+	// Attach shaders and link
+	glAttachShader(_id, vId);
+	glAttachShader(_id, fId);
+	glLinkProgram(_id);
+
+	// Detach shaders
+	glDeleteShader(vId);
+	glDeleteShader(fId);
+
+	// Check for errors
+	int success;
+	char infoLog[512];
+	glGetProgramiv(_id, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(_id, 512, NULL, infoLog);
+		glDeleteProgram(_id);
+
+		_id = 0;
+
+		std::ostringstream oss;
+		oss << "Linking failed for shader program " << _name << ": " << infoLog;
+		throw InstantiationException(oss.str());
+	}
 }
 
-void Shader::unmount()
+void Shader::destroy()
 {
-	if (_id == 0)
+	GLint boundProgram = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &boundProgram);
+	if (boundProgram == _id)
 	{
-		// Shader not currently mounted
-		return;
+		// Program is currently in use. Make sure to unbind it first.
+		glUseProgram(0);
 	}
 
-	glDeleteShader(_id);
+	glDeleteProgram(_id);
 	_id = 0;
 }
