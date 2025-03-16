@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <sstream>
 
-Shader::Shader(const char* name)
+Shader::Shader(const std::string& name)
 	: _id(0), _name(name)
 {
 

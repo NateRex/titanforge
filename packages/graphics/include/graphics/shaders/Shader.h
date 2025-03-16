@@ -20,13 +20,13 @@ private:
 	/**
 	 * Unique name of this shader program
 	 */
-	const char* _name;
+	const std::string _name;
 
     /**
      * Constructor
      * @param name The unique name of this shader
      */
-    Shader(const char* name);
+    Shader(const std::string& name);
 
     /**
      * Compiles shader code for use in linking.
