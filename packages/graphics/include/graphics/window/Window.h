@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include <graphics/Color.h>
 
 struct GLFWwindow;
@@ -13,7 +14,13 @@ class Window
 {
 public:
 
+    friend class WindowManager;
     friend class Engine;
+
+    /**
+     * The unique name of this window
+     */
+    const std::string name;
 
     /**
      * @return The input controller
@@ -21,14 +28,10 @@ public:
     InputController* getInputController();
 
     /**
-     * @return True if this window is currently open. Returns false otherwise.
+     * @return True if this window is open. Returns false if the window has been closed, and
+     * therefore destroyed.
      */
     bool isOpen() const;
-
-    /**
-     * Closes the window
-     */
-    void close();
 
     /**
      * Sets the background (clear) color
@@ -39,7 +42,8 @@ public:
 private:
 
     /**
-     * A pointer to the GLFW window object
+     * A pointer to the GLFW window object. Will be null until this window is constructed explicitly via
+     * create()
      */
     GLFWwindow* _glfwWindow;
 
@@ -55,16 +59,24 @@ private:
 
     /**
      * Constructor.
+     * @param name Unique name to associate with this window
      */
-    Window();
+    Window(const std::string& name);
 
     /**
-     * Makes this window the target of the current rendering context
+     * Creates the OpenGL resources for this window
+     * @param width Starting width of the window (in pixels).
+     * @param height Starting height of the window (in pixels).
      */
-    void makeCurrent();
+    void create(unsigned int width, unsigned int height);
 
     /**
-     * Callback method that is triggered whenever the window is resized
+     * Destroys this window, freeing its resources
+     */
+    void destroy();
+
+    /**
+     * Callback method that is triggered whenever a window is resized
      * @param window The GLFW window pointer
      * @param width New window width (in pixels)
      * @param height New window height (in pixels)

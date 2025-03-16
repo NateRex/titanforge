@@ -10,17 +10,17 @@ public:
 
     friend class ShaderManager;
 
+    /**
+     * Unique name of this shader program
+     */
+    const std::string name;
+
 private:
 
     /**
 	 * GLFW id. Will be zero until this program has been linked.
 	 */
 	unsigned int _id;
-
-	/**
-	 * Unique name of this shader program
-	 */
-	const std::string _name;
 
     /**
      * Constructor

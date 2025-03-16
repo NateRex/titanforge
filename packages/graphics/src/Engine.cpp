@@ -125,9 +125,8 @@ void Engine::finishFrame()
 {
     assertInitialized();
 
-    Window window = _ENGINE->_currentWindow;
-
     // Render
+    Window window = _ENGINE->_currentWindow;
     glfwSwapBuffers(window._glfwWindow);
     glfwPollEvents();
 }

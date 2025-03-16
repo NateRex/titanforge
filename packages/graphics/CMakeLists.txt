@@ -18,6 +18,7 @@ add_library(Graphics
     src/textures/TextureManager.cpp
     src/window/InputController.cpp
     src/window/Window.cpp
+    src/window/WindowManager.cpp
     src/Color.cpp
     src/Engine.cpp
 )

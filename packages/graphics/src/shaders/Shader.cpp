@@ -4,7 +4,7 @@
 #include <sstream>
 
 Shader::Shader(const std::string& name)
-	: _id(0), _name(name)
+	: _id(0), name(name)
 {
 
 }
@@ -33,7 +33,7 @@ unsigned int Shader::compileSource(int type, const char* source)
 		glDeleteShader(id);
 
 		std::ostringstream oss;
-		oss << "Shader " << type << " compilation failed for " << _name << ": " << infoLog;
+		oss << "Shader " << type << " compilation failed for " << name << ": " << infoLog;
 		throw InstantiationException(oss.str());
 	}
 
@@ -50,7 +50,7 @@ void Shader::link(const char* vertexShader, const char* fragmentShader)
 	if (_id == 0)
 	{
 		std::ostringstream oss;
-		oss << "Failed to construct shader program: " << _name;
+		oss << "Failed to construct shader program: " << name;
 		throw InstantiationException(oss.str());
 	}
 
@@ -74,7 +74,7 @@ void Shader::link(const char* vertexShader, const char* fragmentShader)
 		_id = 0;
 
 		std::ostringstream oss;
-		oss << "Linking failed for shader program " << _name << ": " << infoLog;
+		oss << "Linking failed for shader program " << name << ": " << infoLog;
 		throw InstantiationException(oss.str());
 	}
 }

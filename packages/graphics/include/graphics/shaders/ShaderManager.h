@@ -21,7 +21,7 @@ public:
 	 * @param vertexShader Vertex shader source code
 	 * @param fragmentShader Fragment shader source code
 	 */
-	static void create(const char* name, const char* vertexShader, const char* fragmentShader);
+	static void create(const std::string& name, const char* vertexShader, const char* fragmentShader);
 
 	/**
 	 * Updates the current shader program used for rendering
