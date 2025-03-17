@@ -112,9 +112,6 @@ void Engine::finishFrame()
     Window* window = WindowManager::getCurrent();
     glfwSwapBuffers(window->_glfwWindow);
     glfwPollEvents();
-
-    // Update window manager state
-    WindowManager::refresh();
 }
 
 void Engine::assertInitialized()

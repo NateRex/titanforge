@@ -36,7 +36,6 @@ void Window::destroy()
         glfwMakeContextCurrent(nullptr);
     }
 
-    glfwSetWindowShouldClose(_glfwWindow, true);
     glfwDestroyWindow(_glfwWindow);
     _glfwWindow = nullptr;
 }
@@ -48,7 +47,7 @@ InputController* Window::getInputController()
 
 bool Window::isOpen() const
 {
-    return _glfwWindow != nullptr;
+    return !glfwWindowShouldClose(_glfwWindow);
 }
 
 void Window::setBackgroundColor(const Color color)

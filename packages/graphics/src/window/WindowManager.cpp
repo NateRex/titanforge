@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 
 std::mutex WindowManager::_MUTEX;
-std::map<std::string, Window> WindowManager::_OPEN_WINDOWS;
+std::map<std::string, Window> WindowManager::_ALL_WINDOWS;
 Window* WindowManager::_CURRENT_WINDOW = nullptr;
 
 void WindowManager::setup()
@@ -15,39 +15,23 @@ void WindowManager::setup()
 
 }
 
-void WindowManager::refresh()
-{
-	std::lock_guard<std::mutex> lock(_MUTEX);
-
-	for (auto it = _OPEN_WINDOWS.begin(); it != _OPEN_WINDOWS.end(); ) {
-		if (glfwWindowShouldClose(it->second._glfwWindow))
-		{
-			it->second.destroy();
-			it = _OPEN_WINDOWS.erase(it);
-		}
-		else {
-			it++;
-		}
-	}
-}
-
 void WindowManager::clear()
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
-	for (auto& entry : _OPEN_WINDOWS)
+	for (auto& entry : _ALL_WINDOWS)
 	{
 		entry.second.destroy();
 	}
 
-	_OPEN_WINDOWS.clear();
+	_ALL_WINDOWS.clear();
 }
 
 Window* WindowManager::create(const std::string& name, unsigned int width, unsigned int height)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
-	if (_OPEN_WINDOWS.find(name) != _OPEN_WINDOWS.end())
+	if (_ALL_WINDOWS.find(name) != _ALL_WINDOWS.end())
 	{
 		std::ostringstream oss;
 		oss << "A window with this name already exists: " << name;
@@ -56,15 +40,15 @@ Window* WindowManager::create(const std::string& name, unsigned int width, unsig
 
 	Window win(name);
 	win.create(width, height);
-	auto [it, inserted] = _OPEN_WINDOWS.emplace(name, win);
+	auto [it, inserted] = _ALL_WINDOWS.emplace(name, win);
 
 	return &it->second;
 }
 
 Window* WindowManager::get(const std::string& name)
 {
-	auto it = _OPEN_WINDOWS.find(name);
-	if (it == _OPEN_WINDOWS.end())
+	auto it = _ALL_WINDOWS.find(name);
+	if (it == _ALL_WINDOWS.end())
 	{
 		std::ostringstream oss;
 		oss << "A window with this name does not exist: " << name;
@@ -94,4 +78,20 @@ void WindowManager::setCurrent(const std::string& name)
 	glViewport(0, 0, width, height);
 
 	_CURRENT_WINDOW = window;
+}
+
+void WindowManager::destroy(const std::string& name)
+{
+	std::lock_guard<std::mutex> lock(_MUTEX);
+
+	auto it = _ALL_WINDOWS.find(name);
+	if (it == _ALL_WINDOWS.end())
+	{
+		std::ostringstream oss;
+		oss << "A window with this name does not exist: " << name;
+		throw IllegalArgumentException(oss.str());
+	}
+
+	it->second.destroy();
+	_ALL_WINDOWS.erase(name);
 }

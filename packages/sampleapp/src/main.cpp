@@ -47,7 +47,6 @@ int main() {
         .add(geometry)
         .finish();
 
-
     // Render loop
     while (window->isOpen())
     {

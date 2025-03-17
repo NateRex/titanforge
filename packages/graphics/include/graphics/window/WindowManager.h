@@ -46,6 +46,13 @@ public:
 	 */
 	static void setCurrent(const std::string& name);
 
+	/**
+	 * Destroys a window and releases all of its resources
+	 * @param name The name of the window previously created via this manager
+	 * @throws IllegalArgumentException if a window with that name could not be found
+	 */
+	static void destroy(const std::string& name);
+
 private:
 
 	/**
@@ -56,7 +63,7 @@ private:
 	/**
 	 * Map containing all windows that have been created and are currently open
 	 */
-	static std::map<std::string, Window> _OPEN_WINDOWS;
+	static std::map<std::string, Window> _ALL_WINDOWS;
 
 	/**
 	 * The window that is currently the target of the rendering context. Will
@@ -85,13 +92,6 @@ private:
 	 * Initializes this window manager
 	 */
 	static void setup();
-
-	/**
-	 * Iterates over all the windows of this manager, and checks for any that have been closed by the user.
-	 * Closed windows will be destroyed and removed from this manager. Ideally, this method should be called at the
-	 * very end of each animation frame.
-	 */
-	static void refresh();
 
 	/**
 	 * Clears and deletes all windows held by this manager
