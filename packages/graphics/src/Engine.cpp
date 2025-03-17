@@ -10,11 +10,7 @@
 #include <common/exceptions/IllegalStateException.h>
 
 std::mutex Engine::_MUTEX;
-
-Engine::Engine()
-{
-
-}
+bool Engine::_INITIALIZED = false;
 
 void Engine::start(bool headlessMode)
 {
@@ -41,7 +37,8 @@ void Engine::start(bool headlessMode)
 
     // Initialize starting window
     WindowManager::setup();
-    WindowManager::create("tf_default_window");
+    Window* window = WindowManager::create("tf_default_window");
+    glfwMakeContextCurrent(window->_glfwWindow);
 
     // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -60,6 +57,8 @@ void Engine::start(bool headlessMode)
 
     // Initialize buffers
     BufferManager::setup();
+
+    _INITIALIZED = true;
 }
 
 void Engine::stop()
@@ -75,9 +74,12 @@ void Engine::stop()
     BufferManager::clear();
     TextureManager::clear();
     ShaderManager::clear();
+    WindowManager::clear();
 
     // Terminate GLFW
     glfwTerminate();
+
+    _INITIALIZED = false;
 }
 
 double Engine::getTime()

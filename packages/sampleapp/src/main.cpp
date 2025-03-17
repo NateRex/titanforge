@@ -1,4 +1,5 @@
 #include <graphics/Engine.h>
+#include <graphics/window/WindowManager.h>
 #include <graphics/window/Window.h>
 #include <graphics/window/InputController.h>
 #include <graphics/buffers/BufferManager.h>
@@ -37,16 +38,8 @@ int main() {
     Engine::start();
 
     // Configure window
-    Window* window = Engine::getCurrentWindow();
+    Window* window = WindowManager::getCurrent();
     window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
-
-
-    // Create input listeners
-    InputController* inputController = window->getInputController();
-    inputController->addListener(256, [&window]() {
-        window->close();
-    });
-
 
     // Create buffer
     PPolyface geometry = examplePolyface();

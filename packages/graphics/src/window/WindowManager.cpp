@@ -7,6 +7,7 @@
 
 std::mutex WindowManager::_MUTEX;
 std::map<std::string, Window> WindowManager::_OPEN_WINDOWS;
+Window* WindowManager::_CURRENT_WINDOW = nullptr;
 
 void WindowManager::setup()
 {
