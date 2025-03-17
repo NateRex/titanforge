@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/Engine.h>
-#include <graphics/window/Window.h>
+#include <graphics/windows/Window.h>
 #include <graphics/primitives/PPolyface.h>
 #include <graphics/primitives/PrimitiveAttributes.h>
 #include <geometry/Vector3.h>

@@ -1,29 +1,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/Engine.h>
-#include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
+#include <graphics/windows/Window.h>
+#include <graphics/windows/InputController.h>
+#include <graphics/windows/WindowManager.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/textures/TextureManager.h>
 #include <graphics/buffers/BufferManager.h>
-#include <graphics/shaders/Shader.h>
 #include <common/exceptions/IllegalStateException.h>
 
 std::mutex Engine::_MUTEX;
-Engine* Engine::_ENGINE = nullptr;
+bool Engine::_INITIALIZED = false;
 
-Engine::Engine()
-{
-
-}
-
-Window Engine::start(bool headlessMode)
+void Engine::start(bool headlessMode)
 {
     std::lock_guard<std::mutex> lock(_MUTEX);
 
-    if (_ENGINE != nullptr)
+    if (_INITIALIZED)
     {
-        return _ENGINE->_currentWindow;
+        return;
     }
 
     // Init GLFW
@@ -40,9 +35,10 @@ Window Engine::start(bool headlessMode)
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     }
 
-    // Create engine instance and starting window
-    _ENGINE = new Engine();
-    glfwMakeContextCurrent(_ENGINE->_currentWindow._glfwWindow);
+    // Initialize starting window
+    WindowManager::setup();
+    Window* window = WindowManager::create("tf_default_window");
+    glfwMakeContextCurrent(window->_glfwWindow);
 
     // Init GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -50,22 +46,26 @@ Window Engine::start(bool headlessMode)
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    // Make starting engine window the current context
-    _ENGINE->_currentWindow.makeCurrent();
+    // Set current window
+    WindowManager::setCurrent("tf_default_window");
 
-    // Initialize managers
+    // Initialize shaders
     ShaderManager::setup();
+
+    // Initialize textures
     TextureManager::setup();
+
+    // Initialize buffers
     BufferManager::setup();
 
-    return _ENGINE->_currentWindow;
+    _INITIALIZED = true;
 }
 
 void Engine::stop()
 {
     std::lock_guard<std::mutex> lock(_MUTEX);
 
-    if (_ENGINE == nullptr)
+    if (!_INITIALIZED)
     {
         return;
     }
@@ -74,11 +74,12 @@ void Engine::stop()
     BufferManager::clear();
     TextureManager::clear();
     ShaderManager::clear();
+    WindowManager::clear();
 
     // Terminate GLFW
     glfwTerminate();
 
-    delete _ENGINE;
+    _INITIALIZED = false;
 }
 
 double Engine::getTime()
@@ -87,36 +88,18 @@ double Engine::getTime()
     return glfwGetTime();
 }
 
-Window* Engine::getCurrentWindow()
-{
-    assertInitialized();
-    return &_ENGINE->_currentWindow;
-}
-
-void Engine::setCurrentWindow(Window& window)
-{
-    _ENGINE->_currentWindow = window;
-    window.makeCurrent();
-}
-
-Window Engine::createWindow()
-{
-    assertInitialized();
-    return Window();
-}
-
 void Engine::startFrame()
 {
     assertInitialized();
 
-    Window window = _ENGINE->_currentWindow;
+    Window* window = WindowManager::getCurrent();
 
     // Process input
-    InputController* inputController = window.getInputController();
+    InputController* inputController = window->getInputController();
     inputController->processInput();
 
     // Clear
-    Color clearColor = window._clearColor;
+    Color clearColor = window->_clearColor;
     glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
     glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -125,16 +108,15 @@ void Engine::finishFrame()
 {
     assertInitialized();
 
-    Window window = _ENGINE->_currentWindow;
-
     // Render
-    glfwSwapBuffers(window._glfwWindow);
+    Window* window = WindowManager::getCurrent();
+    glfwSwapBuffers(window->_glfwWindow);
     glfwPollEvents();
 }
 
 void Engine::assertInitialized()
 {
-    if (_ENGINE == nullptr)
+    if (!_INITIALIZED)
     {
         throw IllegalStateException("Graphics engine has not been initialized");
     }

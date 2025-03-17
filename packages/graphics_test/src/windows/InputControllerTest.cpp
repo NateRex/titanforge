@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/Engine.h>
-#include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
+#include <graphics/windows/WindowManager.h>
+#include <graphics/windows/Window.h>
+#include <graphics/windows/InputController.h>
 #include <GLFW/glfw3.h>
 
 /**
@@ -9,7 +9,7 @@
  */
 BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
 {
-    Window* window = Engine::getCurrentWindow();
+    Window* window = WindowManager::getCurrent();
     InputController* controller = window->getInputController();
     
     BOOST_TEST(!controller->isKeyPressed(GLFW_KEY_0));
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
  */
 BOOST_AUTO_TEST_CASE(InputController_listeners)
 {
-    Window* window = Engine::getCurrentWindow();
+    Window* window = WindowManager::getCurrent();
     InputController* controller = window->getInputController();
     
     // Add listener

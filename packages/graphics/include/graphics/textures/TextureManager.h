@@ -20,9 +20,10 @@ public:
 	 * @param name A unique name that can be used to refer to this texture in the future
 	 * @param imagePath Relative path to the image file that will be used to generate the texture.
 	 * This path is relative to the directory containing the currently running executable.
+	 * @return The created texture
 	 * @throws IllegalArgumentException If a texture with that name already exists
 	 */
-	static Texture create(const std::string& name, const std::string& imagePath);
+	static Texture* create(const std::string& name, const std::string& imagePath);
 
 	/**
 	 * Get the data for a texture that was previously created via this manager
@@ -30,7 +31,7 @@ public:
 	 * @return The texture
 	 * @throws IllegalArgumentException If a texture with that name could not be found
 	 */
-	static Texture get(const std::string& name);
+	static Texture* get(const std::string& name);
 
 	/**
 	 * Destroys a texture that is no longer needed.
@@ -65,7 +66,7 @@ private:
 
 	/**
 	 * Constructor
-	 * @param mgr Buffer manager to copy from
+	 * @param mgr Texture manager to copy from
 	 */
 	TextureManager(TextureManager&& mgr) = delete;
 

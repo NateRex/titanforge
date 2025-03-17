@@ -8,7 +8,7 @@
 std::mutex ShaderManager::_MUTEX;
 std::map<std::string, Shader> ShaderManager::_SHADERS;
 
-void ShaderManager::create(const char* name, const char* vertexShader, const char* fragmentShader)
+void ShaderManager::create(const std::string& name, const char* vertexShader, const char* fragmentShader)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 

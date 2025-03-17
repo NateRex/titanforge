@@ -1,8 +1,5 @@
 #pragma once
-#include <graphics/window/Window.h>
 #include <mutex>
-
-class BufferBuilder;
 
 /**
  * TitanForge engine responsible for maintaining all allocated resources used to render
@@ -17,9 +14,8 @@ public:
 	 * Initialize the TitanForge graphics library for use
 	 * @param headlessMode Boolean flag that, when true, prevents windows from opening by setting the GLFW window hint
 	 * 'GLFW_VISIBLE'. Defaults to false.
-	 * @return The starting window context
 	 */
-	static Window start(bool headlessMode = false);
+	static void start(bool headlessMode = false);
 
 	/**
 	 * De-initialize the TitanForge graphics library and clear up all resources
@@ -31,25 +27,6 @@ public:
 	 * @throws @throws IllegalStateException if the engine has not been started
 	 */
 	static double getTime();
-
-	/**
-	 * @return The window representing the current context
-	 * @throws IllegalStateException if the engine has not been started
-	 */
-	static Window* getCurrentWindow();
-
-	/**
-	 * Makes a given window the new current context
-	 * @param window Window instance 
-	 * @throws IllegalStateException if the engine has not been started
-	 */
-	static void setCurrentWindow(Window& window);
-
-	/**
-	 * @return A new window
-	 * @throws IllegalStateException If the window could not be created
-	 */
-	static Window createWindow();
 	
 	/**
 	 * Performs initialization logic at the start of a new frame. This includes the processing of user inputs, as well
@@ -73,19 +50,26 @@ private:
 	static std::mutex _MUTEX;
 
 	/**
-	 * The global engine instance
+	 * Boolean flag that, when true, indicates that the engine has been initialized
 	 */
-	static Engine* _ENGINE;
-
-	/**
-	 * Window representing the current context
-	 */
-	Window _currentWindow;
+	static bool _INITIALIZED;
 
 	/**
 	 * Constructor
 	 */
-	Engine();
+	Engine() = delete;
+
+	/**
+	 * Constructor
+	 * @param engine Engine to copy from
+	 */
+	Engine(const Engine& engine) = delete;
+
+	/**
+	 * Constructor
+	 * @param engine Engine to copy from
+	 */
+	Engine(Engine&& engine) = delete;
 
 	/**
 	 * Helper method that asserts the engine has been initialized. This method should be called

@@ -1,21 +1,43 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
-#include <common/Assertions.h>
+#include <graphics/windows/Window.h>
+#include <graphics/windows/InputController.h>
+#include <common/exceptions/InstantiationException.h>
+#include <sstream>
 
-Window::Window()
-    : _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
+Window::Window(const std::string& name)
+    : _glfwWindow(nullptr), name(name), _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
+{
+
+}
+
+void Window::create(unsigned int width, unsigned int height)
 {
     // Create window
     _glfwWindow = glfwCreateWindow(800, 600, "TitanForge", NULL, NULL);
-    assertNotNull(_glfwWindow, "Failed to create GLFW window");
+    if (!_glfwWindow)
+    {
+        std::ostringstream oss;
+        oss << "Could not create window: " << name;
+        throw InstantiationException(oss.str());
+    }
 
     // Create the input controller
     _inputController = std::shared_ptr<InputController>(new InputController(_glfwWindow));
 
     // Set resize callback
     glfwSetFramebufferSizeCallback(_glfwWindow, onResize);
+}
+
+void Window::destroy()
+{
+    if (glfwGetCurrentContext() == _glfwWindow)
+    {
+        glfwMakeContextCurrent(nullptr);
+    }
+
+    glfwDestroyWindow(_glfwWindow);
+    _glfwWindow = nullptr;
 }
 
 InputController* Window::getInputController()
@@ -28,23 +50,9 @@ bool Window::isOpen() const
     return !glfwWindowShouldClose(_glfwWindow);
 }
 
-void Window::close()
-{
-    glfwSetWindowShouldClose(_glfwWindow, true);
-}
-
 void Window::setBackgroundColor(const Color color)
 {
     _clearColor = color;
-}
-
-void Window::makeCurrent()
-{
-    glfwMakeContextCurrent(_glfwWindow);
-
-    int width, height;
-    glfwGetWindowSize(_glfwWindow, &width, &height);
-    glViewport(0, 0, width, height);
 }
 
 void Window::onResize(GLFWwindow* window, int width, int height)

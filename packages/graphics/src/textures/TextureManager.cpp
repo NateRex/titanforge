@@ -25,7 +25,7 @@ void TextureManager::clear()
 	_TEXTURES.clear();
 }
 
-Texture TextureManager::create(const std::string& name, const std::string& imagePath)
+Texture* TextureManager::create(const std::string& name, const std::string& imagePath)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -38,12 +38,12 @@ Texture TextureManager::create(const std::string& name, const std::string& image
 
 	Texture tex(name, imagePath);
 	tex.create();
-	_TEXTURES.emplace(name, tex);
+	auto [it, inserted] = _TEXTURES.emplace(name, tex);
 
-	return tex;
+	return &it->second;
 }
 
-Texture TextureManager::get(const std::string& name)
+Texture* TextureManager::get(const std::string& name)
 {
 	auto it = _TEXTURES.find(name);
 	if (it == _TEXTURES.end())
@@ -53,7 +53,7 @@ Texture TextureManager::get(const std::string& name)
 		throw IllegalArgumentException(oss.str());
 	}
 
-	return it->second;
+	return &it->second;
 }
 
 void TextureManager::destroy(const std::string& name)
