@@ -87,6 +87,11 @@ Polyface::Polyface(const Polyface& polyface)
 
 }
 
+int Polyface::getNumPositions() const
+{
+	return _vertices.size();
+}
+
 int Polyface::getNumVertices() const
 {
 	int count = 0;

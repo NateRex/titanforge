@@ -22,6 +22,16 @@ void assertNotNull(const T* obj, const char* errMsg, const std::function<void()>
 }
 
 /**
+ * Asserts that a value is equal to an expected value
+ * @param value Value to test
+ * @param expected Expected value
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if values are not equal
+ */
+void assertEquals(float value, float expected,
+		const char* errMsg = "Value was not equal to expected constant");
+
+/**
  * Asserts that a value is greater than some constant
  * @param value Value to test
  * @param lowerBound Lower bound

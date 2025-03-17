@@ -9,7 +9,7 @@
 // BufferManager::Builder
 // ------------------------------------------------------------------------------------------------------------------
 
-BufferManager::Builder::Builder(const std::string& name) : _name(name), _attributes(false)
+BufferManager::Builder::Builder(const std::string& name) : _name(name)
 {
 
 }

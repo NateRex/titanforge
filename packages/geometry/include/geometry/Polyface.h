@@ -118,6 +118,12 @@ public:
 	int getNumVertices() const;
 
 	/**
+	 * @return The number of unique vertex positions in this polyface. Vertex positions shared by multiple
+	 * facets will be counted once.
+	 */
+	int getNumPositions() const;
+
+	/**
 	 * @return The total number of facets in this polyface.
 	 */
 	int getNumFacets() const;
