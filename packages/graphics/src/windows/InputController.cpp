@@ -1,4 +1,4 @@
-#include <graphics/window/InputController.h>
+#include <graphics/windows/InputController.h>
 #include <GLFW/glfw3.h>
 #include <common/Assertions.h>
 

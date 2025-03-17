@@ -9,7 +9,7 @@
 BOOST_AUTO_TEST_CASE(TextureManager_basics)
 {
 	BOOST_REQUIRE_NO_THROW(TextureManager::create("texture", "assets/container.jpg"));
-	BOOST_REQUIRE_NO_THROW(TextureManager::get("texture"));
+	BOOST_TEST(TextureManager::get("texture") != nullptr);
 	BOOST_REQUIRE_NO_THROW(TextureManager::destroy("texture"));
 }
 

@@ -8,9 +8,9 @@
  */
 BOOST_AUTO_TEST_CASE(Texture_basics)
 {
-	Texture texture = TextureManager::create("texture", "assets/container.jpg");
-	BOOST_TEST(texture.name == "texture");
-	BOOST_TEST(texture.imagePath == "assets/container.jpg");
+	Texture* texture = TextureManager::create("texture", "assets/container.jpg");
+	BOOST_TEST(texture->name == "texture");
+	BOOST_TEST(texture->imagePath == "assets/container.jpg");
 
 	BOOST_REQUIRE_NO_THROW(TextureManager::destroy("texture"));
 }

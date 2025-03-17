@@ -20,8 +20,9 @@ add_executable(GraphicsTest
     src/textures/ImageLoaderTest.cpp
     src/textures/TextureManagerTest.cpp
     src/textures/TextureTest.cpp
-    src/window/InputControllerTest.cpp
-    src/window/WindowTest.cpp
+    src/windows/InputControllerTest.cpp
+    src/windows/WindowManagerTest.cpp
+    src/windows/WindowTest.cpp
     src/ColorTest.cpp
     src/EngineTest.cpp
     src/main.cpp

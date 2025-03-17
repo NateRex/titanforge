@@ -16,9 +16,9 @@ add_library(Graphics
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureManager.cpp
-    src/window/InputController.cpp
-    src/window/Window.cpp
-    src/window/WindowManager.cpp
+    src/windows/InputController.cpp
+    src/windows/Window.cpp
+    src/windows/WindowManager.cpp
     src/Color.cpp
     src/Engine.cpp
 )

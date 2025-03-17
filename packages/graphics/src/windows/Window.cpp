@@ -1,12 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
+#include <graphics/windows/Window.h>
+#include <graphics/windows/InputController.h>
 #include <common/exceptions/InstantiationException.h>
 #include <sstream>
 
 Window::Window(const std::string& name)
-    : _glfwWindow(nullptr), _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
+    : _glfwWindow(nullptr), name(name), _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
 {
 
 }

@@ -1,5 +1,5 @@
-#include <graphics/window/WindowManager.h>
-#include <graphics/window/Window.h>
+#include <graphics/windows/WindowManager.h>
+#include <graphics/windows/Window.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <sstream>
 #include <glad/glad.h>

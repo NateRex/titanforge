@@ -1,7 +1,7 @@
 #include <graphics/Engine.h>
-#include <graphics/window/WindowManager.h>
-#include <graphics/window/Window.h>
-#include <graphics/window/InputController.h>
+#include <graphics/windows/WindowManager.h>
+#include <graphics/windows/Window.h>
+#include <graphics/windows/InputController.h>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/primitives/PPolyface.h>
