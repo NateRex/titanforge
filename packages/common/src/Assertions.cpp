@@ -1,28 +1,40 @@
 #include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
-void assertGreaterThan(float value, float lowerBound, const char* errMsg) {
+void assertEquals(float value, float expected, const char* errMsg)
+{
+	if (value != expected)
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
+
+void assertGreaterThan(float value, float lowerBound, const char* errMsg)
+{
 	if (value <= lowerBound)
 	{
 		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertGreaterThanOrEqual(float value, float lowerBound, const char* errMsg) {
+void assertGreaterThanOrEqual(float value, float lowerBound, const char* errMsg)
+{
 	if (value < lowerBound)
 	{
 		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertLessThan(float value, float upperBound, const char* errMsg) {
+void assertLessThan(float value, float upperBound, const char* errMsg)
+{
 	if (value >= upperBound)
 	{
 		throw IllegalArgumentException(errMsg);
 	}
 }
 
-void assertLessThanOrEqual(float value, float upperBound, const char* errMsg) {
+void assertLessThanOrEqual(float value, float upperBound, const char* errMsg)
+{
 	if (value > upperBound)
 	{
 		throw IllegalArgumentException(errMsg);

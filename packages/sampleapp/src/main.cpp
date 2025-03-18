@@ -3,8 +3,10 @@
 #include <graphics/windows/Window.h>
 #include <graphics/windows/InputController.h>
 #include <graphics/buffers/BufferManager.h>
+#include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/primitives/PPolyface.h>
+#include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 
 /**
@@ -13,9 +15,9 @@
 PPolyface examplePolyface()
 {
     Vector3 vertices[] = {
-        Vector3(0.6f,  0.5f, 0.0f),     // top right
+        Vector3(0.5f,  0.5f, 0.0f),     // top right
         Vector3(0.5f, -0.5f, 0.0f),     // bottom right
-        Vector3(-0.6f, -0.5f, 0.0f),    // bottom left
+        Vector3(-0.5f, -0.5f, 0.0f),    // bottom left
         Vector3(-0.5f,  0.5f, 0.0f)     // top left 
     };
     Color colors[] = {
@@ -24,11 +26,17 @@ PPolyface examplePolyface()
         Color::fromFloats(0.0f, 0.0f, 1.0f, 1.0f),
         Color::fromFloats(1.0f, 1.0f, 1.0f, 1.0f)
     };
+    Vector2 texCoords[] = {
+        Vector2(1, 1),
+        Vector2(1, 0),
+        Vector2(0, 0),
+        Vector2(0, 1)
+    };
     int indices[] = {
         0, 1, 3, -1,                    // first triangle
         1, 2, 3                         // second triangle
     };
-    return PPolyface(vertices, 4, indices, 7, colors);
+    return PPolyface(vertices, 4, indices, 7, colors, texCoords);
 }
 
 /**
@@ -40,6 +48,9 @@ int main() {
     // Configure window
     Window* window = WindowManager::getCurrent();
     window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+
+    // Create textures
+    TextureManager::create("box", "assets/container.jpg");
 
     // Create buffer
     PPolyface geometry = examplePolyface();
@@ -53,6 +64,7 @@ int main() {
         Engine::startFrame();
 
         // Draw geometry
+        TextureManager::bind("box");
         BufferManager::draw("geometry");
 
         Engine::finishFrame();

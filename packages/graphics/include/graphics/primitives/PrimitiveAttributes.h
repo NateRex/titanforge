@@ -9,15 +9,26 @@ class PrimitiveAttributes
 public:
 
 	/**
-	 * Flag that, when true, indicates that this primitive contains color values
+	 * Flag that, when true, indicates that the primitive contains color values
 	 */
 	bool hasColor;
 
 	/**
+	 * Flag that, when true, indicates that the primitive contains texture coordinates
+	 */
+	bool hasTextureCoords;
+
+	/**
+	 * Constructor. All attribute flags will be initially set to false.
+	 */
+	PrimitiveAttributes();
+
+	/**
 	 * Constructor
 	 * @param hasColor True if the primitive contains color data. False otherwise.
+	 * @param hasTextureCoords True if the primitive contains texture coordinate data. False otherwise.
 	 */
-	PrimitiveAttributes(bool hasColor);
+	PrimitiveAttributes(bool hasColor, bool hasTextureCoords);
 
 	/**
 	 * Operator that compares this set of attributes to another, and tests for equality

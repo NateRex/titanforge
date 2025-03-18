@@ -22,6 +22,16 @@ BOOST_AUTO_TEST_CASE(Assertions_notNull)
 }
 
 /**
+ * Tests assertEquals
+ */
+BOOST_AUTO_TEST_CASE(Assertions_assertEquals)
+{
+	BOOST_REQUIRE_NO_THROW(assertEquals(1, 1));
+	BOOST_REQUIRE_THROW(assertEquals(2, 1), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(assertEquals(1, 2), IllegalArgumentException);
+}
+
+/**
  * Tests assertGreaterThan
  */
 BOOST_AUTO_TEST_CASE(Assertions_greaterThan)

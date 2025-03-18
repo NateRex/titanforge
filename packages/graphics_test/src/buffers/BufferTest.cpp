@@ -2,6 +2,7 @@
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
 #include <graphics/primitives/PPolyface.h>
+#include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 #include <graphics/Color.h>
 #include <common/exceptions/IllegalArgumentException.h>
@@ -30,12 +31,24 @@ BOOST_AUTO_TEST_CASE(Buffer_attributesMustMatch)
 		Color::fromFloats(0, 1, 0, 1),
 		Color::fromFloats(0, 0, 1, 1)
 	};
+	Vector2 texCoords[] = {
+		Vector2(0, 0),
+		Vector2(0.5, 1),
+		Vector2(1, 0)
+	};
 	int indices[] = {
 		0, 1, 2
 	};
 
-	PPolyface p1(verts, 3, indices, 3);				// no color
-	PPolyface p2(verts, 3, indices, 3, colors);		// color
+	// Start builder with no attributes
+	PPolyface p1(verts, 3, indices, 3);
 	BufferManager::Builder builder = BufferManager::startBuffer("test-buffer").add(p1);
+
+	// Cannot add primitive containing colors
+	PPolyface p2(verts, 3, indices, 3, colors);
 	BOOST_REQUIRE_THROW(builder.add(p2), IllegalArgumentException);
+
+	// Cannot add primitive containing texture coordinates
+	PPolyface p3(verts, 3, indices, 3, nullptr, texCoords);
+	BOOST_REQUIRE_THROW(builder.add(p3), IllegalArgumentException);
 }

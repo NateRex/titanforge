@@ -1,7 +1,8 @@
 project(SampleApp CXX)
 
 # Executable files
-add_executable(SampleApp src/main.cpp)
+add_executable(SampleApp
+    src/main.cpp)
 
 # Linked libraries
 target_link_libraries(SampleApp
@@ -16,3 +17,4 @@ set_target_properties(SampleApp PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
 )
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/assets" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin")

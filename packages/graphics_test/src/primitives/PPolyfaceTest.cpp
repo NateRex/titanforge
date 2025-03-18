@@ -3,35 +3,45 @@
 #include <graphics/windows/Window.h>
 #include <graphics/primitives/PPolyface.h>
 #include <graphics/primitives/PrimitiveAttributes.h>
+#include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 
 /**
- * Helper method for getting sample data that can be used to construct a PPolyface
- * @param vertices Vector in which to store vertex positions
- * @param indices Vector in which to store vertex indices
- * @param colors (Optional) Vector in which to store colors
+ * Helper method for constructing a sample polyface primitive for use in tests. This polyface
+ * will contain 4 unique positions with 2 triangular facets referencing those positions.
+ * @param includeColor True if the primitive should define colors for each vertex position. False otherwise.
+ * @param includeTexCoords True if the primitive should define texture coordinates for each vertex position.
+ * False otherwise.
+ * @return The resulting polyface primitive
  */
-void getSampleData(std::vector<Vector3>& vertices, std::vector<int>& indices,
-		std::vector<Color>& colors)
+PPolyface createExample(bool includeColor, bool includeTexCoords)
 {
-	vertices.push_back(Vector3(-1, -1, 0));
-	vertices.push_back(Vector3(-1, 1, 0));
-	vertices.push_back(Vector3(1, 1, 0));
-	vertices.push_back(Vector3(1, -1, 0));
+	const Vector3 verts[] = {
+		Vector3(-1, -1, 0),
+		Vector3(-1, 1, 0),
+		Vector3(1, 1, 0),
+		Vector3(1, -1, 0)
+	};
+	const int indices[] = {
+		0, 1, 2, -1,
+		0, 2, 3, -1
+	};
+	const Color colors[] = {
+		Color::fromFloats(1, 0, 0, 1),
+		Color::fromFloats(0, 1, 0, 1),
+		Color::fromFloats(0, 0, 1, 1),
+		Color::fromFloats(1, 1, 0, 1)
+	};
+	const Vector2 texCoords[] = {
+		Vector2(0, 0),
+		Vector2(0, 1),
+		Vector2(1, 1),
+		Vector2(1, 0)
+	};
 
-	colors.push_back(Color::fromFloats(1, 0, 0, 1));
-	colors.push_back(Color::fromFloats(0, 1, 0, 1));
-	colors.push_back(Color::fromFloats(0, 0, 1, 1));
-	colors.push_back(Color::fromFloats(1, 1, 0, 1));
-
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-	indices.push_back(-1);
-	indices.push_back(0);
-	indices.push_back(2);
-	indices.push_back(3);
-	indices.push_back(-1);
+	return PPolyface(verts, 4, indices, 8,
+		includeColor ? colors : nullptr,
+		includeTexCoords ? texCoords : nullptr);
 }
 
 /**
@@ -39,25 +49,15 @@ void getSampleData(std::vector<Vector3>& vertices, std::vector<int>& indices,
  */
 BOOST_AUTO_TEST_CASE(PPolyface_basics)
 {
-	std::vector<Vector3> vertices;
-	std::vector<int> indices;
-	std::vector<Color> colors;
-	getSampleData(vertices, indices, colors);
-
-	// Test using raw pointers
-	PPolyface p(vertices.data(), vertices.size(), indices.data(), indices.size());
-	BOOST_TEST(p.getNumVertices() == 6);
-	BOOST_TEST(p.getNumFacets() == 2);
-
-	// Test using vectors
-	p = PPolyface(vertices.data(), vertices.size(), indices.data(), indices.size());
+	// Test using raw constructor
+	PPolyface p = createExample(false, false);
 	BOOST_TEST(p.getNumVertices() == 6);
 	BOOST_TEST(p.getNumFacets() == 2);
 
 	// Test using existing polyface
 	PPolyface p2(p);
-	BOOST_TEST(p2.getNumVertices() == 6);
-	BOOST_TEST(p2.getNumFacets() == 2);
+	BOOST_TEST(p2.getNumVertices() == p.getNumVertices());
+	BOOST_TEST(p2.getNumFacets() == p.getNumFacets());
 }
 
 /**
@@ -65,20 +65,17 @@ BOOST_AUTO_TEST_CASE(PPolyface_basics)
  */
 BOOST_AUTO_TEST_CASE(PPolyface_attributes)
 {
-	std::vector<Vector3> vertices;
-	std::vector<Color> colors;
-	std::vector<int> indices;
-	getSampleData(vertices, indices, colors);
-
-	// Without color
-	PPolyface poly(vertices.data(), vertices.size(), indices.data(), indices.size());
-	PrimitiveAttributes attributes = poly.getAttributes();
+	// Without attributes
+	PPolyface p = createExample(false, false);
+	PrimitiveAttributes attributes = p.getAttributes();
 	BOOST_TEST(!attributes.hasColor);
+	BOOST_TEST(!attributes.hasTextureCoords);
 
-	// With color
-	poly = PPolyface(vertices, indices, colors);
-	attributes = poly.getAttributes();
+	// With attributes
+	p = createExample(true, true);
+	attributes = p.getAttributes();
 	BOOST_TEST(attributes.hasColor);
+	BOOST_TEST(attributes.hasTextureCoords);
 }
 
 /**
@@ -86,24 +83,27 @@ BOOST_AUTO_TEST_CASE(PPolyface_attributes)
  */
 BOOST_AUTO_TEST_CASE(PPolyface_buffer)
 {
-	std::vector<Vector3> vertices;
-	std::vector<Color> colors;
-	std::vector<int> indices;
-	getSampleData(vertices, indices, colors);
-
-	// Without color
-	PPolyface poly(vertices.data(), vertices.size(), indices.data(), indices.size());
+	// Without attributes
+	PPolyface p = createExample(false, false);
 	std::vector<float> vBuffer;
 	std::vector<int> iBuffer;
-	poly.buffer(vBuffer, iBuffer);
+	p.buffer(vBuffer, iBuffer);
 	BOOST_TEST(vBuffer.size() == 12);
 	BOOST_TEST(iBuffer.size() == 6);
 
 	// With color
-	poly = PPolyface(vertices, indices, colors);
+	p = createExample(true, false);
 	vBuffer.clear();
 	iBuffer.clear();
-	poly.buffer(vBuffer, iBuffer);
+	p.buffer(vBuffer, iBuffer);
 	BOOST_TEST(vBuffer.size() == 28);
+	BOOST_TEST(iBuffer.size() == 6);
+
+	// With color and texture coordinates
+	p = createExample(true, true);
+	vBuffer.clear();
+	iBuffer.clear();
+	p.buffer(vBuffer, iBuffer);
+	BOOST_TEST(vBuffer.size() == 36);
 	BOOST_TEST(iBuffer.size() == 6);
 }
