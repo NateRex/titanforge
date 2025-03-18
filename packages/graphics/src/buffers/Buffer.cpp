@@ -10,7 +10,18 @@ Buffer::Buffer(const std::string& name)
 
 unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
 {
-	return attributes.hasColor ? 7 : 3;
+	unsigned int stride = 3;
+
+	if (attributes.hasColor)
+	{
+		stride += 4;
+	}
+	if (attributes.hasTextureCoords)
+	{
+		stride += 2;
+	}
+
+	return stride;
 }
 
 void Buffer::create(const PrimitiveAttributes& attributes, const float* vertices, unsigned int numVerts,
@@ -30,17 +41,29 @@ void Buffer::create(const PrimitiveAttributes& attributes, const float* vertices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(int), indices, GL_STATIC_DRAW);
 	
+	unsigned int attribIdx = 0;
 	unsigned int stride = computeStride(attributes);
+	long long offset = 0;
 
 	// Position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*) 0);
+	glVertexAttribPointer(attribIdx++, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*) offset);
 	glEnableVertexAttribArray(0);
+	offset += 3;
 
 	// Color attribute (if present)
 	if (attributes.hasColor)
 	{
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(attribIdx++, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
 		glEnableVertexAttribArray(1);
+		offset += 4;
+	}
+
+	// Texture attribute (if present)
+	if (attributes.hasTextureCoords)
+	{
+		glVertexAttribPointer(attribIdx++, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		offset += 2;
 	}
 
 	_size = numIndices;

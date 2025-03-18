@@ -34,6 +34,13 @@ public:
 	static Texture* get(const std::string& name);
 
 	/**
+	 * Binds a texture previously created via this manager for use in shaders
+	 * @param name The name of the texture
+	 * @throws IllegalArgumentException If a texture with that name could not be found
+	 */
+	static void bind(const std::string& name);
+
+	/**
 	 * Destroys a texture that is no longer needed.
 	 * @param name The name of the texture to destroy. Must be a texture that was previously constructed
 	 * via this manager.
@@ -79,4 +86,12 @@ private:
 	 * Clears and deletes all textures held by the buffer manager
 	 */
 	static void clear();
+
+	/**
+	 * Helper method that asserts a texture with the given name exists in this manager
+	 * @param name The name of the texture to search for
+	 * @return A pointer to the texture, if found
+	 * @throws IllegalArgumentException If a texture with that name could not be found
+	 */
+	static Texture* assertExists(const std::string& name);
 };

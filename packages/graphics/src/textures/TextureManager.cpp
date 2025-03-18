@@ -1,6 +1,7 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 #include <sstream>
 
 std::mutex TextureManager::_MUTEX;
@@ -45,21 +46,26 @@ Texture* TextureManager::create(const std::string& name, const std::string& imag
 
 Texture* TextureManager::get(const std::string& name)
 {
-	auto it = _TEXTURES.find(name);
-	if (it == _TEXTURES.end())
-	{
-		std::ostringstream oss;
-		oss << "A texture with this name does not exist: " << name;
-		throw IllegalArgumentException(oss.str());
-	}
+	return assertExists(name);
+}
 
-	return &it->second;
+void TextureManager::bind(const std::string& name)
+{
+	Texture* tex = assertExists(name);
+	glBindTexture(GL_TEXTURE_2D, tex->_id);
 }
 
 void TextureManager::destroy(const std::string& name)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
+	Texture* tex = assertExists(name);
+	tex->destroy();
+	_TEXTURES.erase(name);
+}
+
+Texture* TextureManager::assertExists(const std::string& name)
+{
 	auto it = _TEXTURES.find(name);
 	if (it == _TEXTURES.end())
 	{
@@ -67,7 +73,5 @@ void TextureManager::destroy(const std::string& name)
 		oss << "No texture found with name: " << name;
 		throw IllegalArgumentException(oss.str());
 	}
-
-	it->second.destroy();
-	_TEXTURES.erase(name);
+	return &it->second;
 }

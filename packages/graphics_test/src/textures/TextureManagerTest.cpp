@@ -4,12 +4,13 @@
 #include <common/exceptions/IllegalArgumentException.h>
 
 /**
- *  Tests that a texture can be constructed, fetched, and destroyed via the manager
+ *  Tests that a texture can be constructed, fetched, bound, and destroyed via the manager
  */
 BOOST_AUTO_TEST_CASE(TextureManager_basics)
 {
 	BOOST_REQUIRE_NO_THROW(TextureManager::create("texture", "assets/container.jpg"));
 	BOOST_TEST(TextureManager::get("texture") != nullptr);
+	BOOST_REQUIRE_NO_THROW(TextureManager::bind("texture"));
 	BOOST_REQUIRE_NO_THROW(TextureManager::destroy("texture"));
 }
 
@@ -30,6 +31,14 @@ BOOST_AUTO_TEST_CASE(TextureManager_cannotCreateDuplicates)
 BOOST_AUTO_TEST_CASE(TextureManager_cannotFetchMissing)
 {
 	BOOST_REQUIRE_THROW(TextureManager::get("does-not-exist"), IllegalArgumentException);
+}
+
+/**
+ * Tests that an exception is thrown if we try to bind a texture that does not exist
+ */
+BOOST_AUTO_TEST_CASE(TextureManager_cannotBindMissing)
+{
+	BOOST_REQUIRE_THROW(TextureManager::bind("does-not-exist"), IllegalArgumentException);
 }
 
 /**
