@@ -43,7 +43,7 @@ namespace Shaders {
 
 		void main()
 		{
-			FragColor = texture(uTexture, frag_TexCoord);
+			FragColor = texture(uTexture, frag_TexCoord) * frag_Color;
 		} 
 		)";
 };

@@ -55,8 +55,12 @@ void ShaderManager::destroy(const char* name)
 
 void ShaderManager::setup()
 {
-	ShaderManager::create("tf_basic", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
+	// Enable transparency
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Create built-in shaders
+	ShaderManager::create("tf_basic", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
 	ShaderManager::use("tf_basic");
 }
 
