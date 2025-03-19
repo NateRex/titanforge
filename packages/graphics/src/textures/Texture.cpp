@@ -11,11 +11,6 @@ Texture::Texture(const std::string& name, const std::string& imagePath)
 	
 }
 
-void Texture::bind() const
-{
-	glBindTexture(GL_TEXTURE_2D, _id);
-}
-
 void Texture::create()
 {
 	// Resolve image path

@@ -1,4 +1,5 @@
 #include <graphics/shaders/Shader.h>
+#include <graphics/buffers/Buffer.h>
 #include <common/exceptions/InstantiationException.h>
 #include <glad/glad.h>
 #include <sstream>
@@ -9,9 +10,12 @@ Shader::Shader(const std::string& name)
 
 }
 
-void Shader::use() const
+void Shader::draw(const Buffer* buffer) const
 {
-	glUseProgram(_id);
+	use();
+
+	glBindVertexArray(buffer->_vaoId);
+	glDrawElements(GL_TRIANGLES, buffer->_size, GL_UNSIGNED_INT, 0);
 }
 
 unsigned int Shader::compileSource(int type, const char* source)
@@ -82,6 +86,11 @@ void Shader::link(const char* vertexShader, const char* fragmentShader)
 		oss << "Linking failed for shader program " << name << ": " << infoLog;
 		throw InstantiationException(oss.str());
 	}
+}
+
+void Shader::use() const
+{
+	glUseProgram(_id);
 }
 
 void Shader::destroy()

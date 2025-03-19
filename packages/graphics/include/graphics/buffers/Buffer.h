@@ -11,6 +11,7 @@ class Buffer
 {
 public:
 
+	friend class Shader;
 	friend class BufferBuilder;
 	friend class BufferManager;
 
@@ -18,11 +19,6 @@ public:
 	 * Unique name of this buffer
 	 */
 	const std::string name;
-
-	/**
-	 * Draws this buffer using the shader program currently in-use
-	 */
-	void draw() const;
 
 private:
 

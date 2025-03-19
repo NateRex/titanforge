@@ -1,5 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/shaders/Shader.h>
+#include <graphics/buffers/BufferManager.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/shaders/glsl/Basic.h>
 #include <common/exceptions/InstantiationException.h>
@@ -16,13 +17,35 @@ BOOST_AUTO_TEST_CASE(Shader_basics)
 }
 
 /**
- * Tests that a shader can be constructed, used, and destroyed via the manager
+ * Tests that a buffer can be drawn using a shader
  */
-BOOST_AUTO_TEST_CASE(Shader_use)
+BOOST_AUTO_TEST_CASE(Shader_draw)
 {
-	Shader* shader = ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
-	BOOST_REQUIRE_NO_THROW(shader->use());
-	BOOST_REQUIRE_NO_THROW(ShaderManager::destroy("shader"));
+	// Create buffers
+	Buffer* buffer1 = BufferManager::startBuffer("buffer1").finish();
+	Buffer* buffer2 = BufferManager::startBuffer("buffer2").finish();
+
+	// At this point, buffer2 should be bound
+	GLuint binding1;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding1);
+
+	// Draw buffer1
+	Shader* shader = ShaderManager::get("tf_basic");
+	shader->draw(buffer1);
+
+	// Verify buffer2 no longer bound
+	GLuint binding2;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding2);
+	BOOST_TEST(binding1 != binding2);
+
+	// Destroy both buffers
+	BufferManager::destroy("buffer1");
+	BufferManager::destroy("buffer2");
+
+	// Verify no buffer is bound
+	GLuint binding3;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding3);
+	BOOST_TEST(binding3 == 0);
 }
 
 /**
