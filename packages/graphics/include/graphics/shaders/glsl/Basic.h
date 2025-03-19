@@ -44,7 +44,7 @@ namespace Shaders {
 
 		void main()
 		{
-			FragColor = mix(texture(texture1, frag_TexCoord), texture(texture2, frag_TexCoord), 0.2);
+			FragColor = mix(texture(texture1, frag_TexCoord), texture(texture2, frag_TexCoord), 0.2) * frag_Color;
 		} 
 		)";
 };
