@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/shaders/Shader.h>
 #include <graphics/buffers/BufferManager.h>
+#include <graphics/textures/TextureManager.h>
+#include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/shaders/glsl/Basic.h>
 #include <common/exceptions/InstantiationException.h>
@@ -46,6 +47,19 @@ BOOST_AUTO_TEST_CASE(Shader_draw)
 	GLuint binding3;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding3);
 	BOOST_TEST(binding3 == 0);
+}
+
+/**
+ * Tests the ability to set a texture uniform
+ */
+BOOST_AUTO_TEST_CASE(Shader_setUniformTexture)
+{	
+	Shader* shader = ShaderManager::get("tf_basic");
+
+	Texture* texture = TextureManager::create("texture", "assets/container.jpg");
+	BOOST_REQUIRE_NO_THROW(shader->setUniform("texture1", 0, texture));
+
+	TextureManager::destroy("texture");
 }
 
 /**
