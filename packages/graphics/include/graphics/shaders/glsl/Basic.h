@@ -5,7 +5,7 @@ namespace Shaders {
 	/**
 	 * Source code for the vertex shader of the 'basic' program
 	 */
-	constexpr char* BASIC_VERTEX = R"(
+	constexpr const char* BASIC_VERTEX = R"(
 		#version 330 core
 
 		// Inputs
@@ -28,7 +28,7 @@ namespace Shaders {
 	/**
 	 * Source code for the fragment shader of the 'basic' program
 	 */
-	constexpr char* BASIC_FRAGMENT = R"(
+	constexpr const char* BASIC_FRAGMENT = R"(
 		#version 330 core
 
 		// Inputs
