@@ -31,11 +31,11 @@ BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
 	return *this;
 }
 
-void BufferManager::Builder::finish()
+Buffer* BufferManager::Builder::finish()
 {
 	Buffer buffer(_name);
 	buffer.create(_attributes, _vertexData.data(), _vertexData.size(), _indexData.data(), _indexData.size());
-	BufferManager::addBuffer(buffer);
+	return BufferManager::addBuffer(buffer);
 }
 
 
@@ -65,12 +65,7 @@ void BufferManager::clear()
 	_BUFFERS.clear();
 }
 
-BufferManager::Builder BufferManager::startBuffer(const std::string& name)
-{
-	return BufferManager::Builder(name);
-}
-
-void BufferManager::draw(const std::string& name)
+Buffer* BufferManager::get(const std::string& name)
 {
 	auto it = _BUFFERS.find(name);
 	if (it == _BUFFERS.end())
@@ -80,8 +75,12 @@ void BufferManager::draw(const std::string& name)
 		throw IllegalArgumentException(oss.str());
 	}
 
-	glBindVertexArray(it->second._vaoId);
-	glDrawElements(GL_TRIANGLES, it->second._size, GL_UNSIGNED_INT, 0);
+	return &it->second;
+}
+
+BufferManager::Builder BufferManager::startBuffer(const std::string& name)
+{
+	return BufferManager::Builder(name);
 }
 
 void BufferManager::destroy(const std::string& name)
@@ -100,7 +99,7 @@ void BufferManager::destroy(const std::string& name)
 	_BUFFERS.erase(name);
 }
 
-void BufferManager::addBuffer(Buffer& buffer)
+Buffer* BufferManager::addBuffer(Buffer& buffer)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -111,5 +110,6 @@ void BufferManager::addBuffer(Buffer& buffer)
 		throw IllegalArgumentException(oss.str());
 	}
 
-	_BUFFERS.emplace(buffer.name, buffer);
+	auto [it, inserted] = _BUFFERS.emplace(buffer.name, buffer);
+	return &it->second;
 }

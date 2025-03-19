@@ -6,14 +6,46 @@
 #include <geometry/Vector3.h>
 #include <graphics/Color.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
  * Tests construction and destruction of a buffer via the buffer manager
  */
 BOOST_AUTO_TEST_CASE(Buffer_basics)
 {
-	BOOST_REQUIRE_NO_THROW(BufferManager::startBuffer("test-buffer").finish());
+	Buffer* buffer = BufferManager::startBuffer("test-buffer").finish();
+	BOOST_TEST(buffer->name == "test-buffer");
 	BOOST_REQUIRE_NO_THROW(BufferManager::destroy("test-buffer"));
+}
+
+/**
+ * Tests that a buffer can be constructed, bound (and drawn), unbound, and destroyed via the manager
+ */
+BOOST_AUTO_TEST_CASE(BufferManager_binding)
+{
+	Buffer* buffer1 = BufferManager::startBuffer("buffer1").finish();
+	Buffer* buffer2 = BufferManager::startBuffer("buffer2").finish();
+
+	// At this point, buffer2 should be bound
+	GLuint binding1;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding1);
+
+	// Draw buffer1
+	buffer1->draw();
+
+	// Verify buffer2 no longer bound
+	GLuint binding2;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding2);
+	BOOST_TEST(binding1 != binding2);
+
+	// Destroy both buffers
+	BufferManager::destroy("buffer1");
+	BufferManager::destroy("buffer2");
+
+	// Verify no buffer is bound
+	GLuint binding3;
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding3);
+	BOOST_TEST(binding3 == 0);
 }
 
 /**

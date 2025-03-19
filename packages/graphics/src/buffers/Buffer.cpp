@@ -8,6 +8,12 @@ Buffer::Buffer(const std::string& name)
 	
 }
 
+void Buffer::draw()
+{
+	glBindVertexArray(_vaoId);
+	glDrawElements(GL_TRIANGLES, _size, GL_UNSIGNED_INT, 0);
+}
+
 unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
 {
 	unsigned int stride = 3;

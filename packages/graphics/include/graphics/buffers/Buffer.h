@@ -19,6 +19,11 @@ public:
 	 */
 	const std::string name;
 
+	/**
+	 * Draws this buffer using the shader program currently in-use
+	 */
+	void draw();
+
 private:
 
 	/**
