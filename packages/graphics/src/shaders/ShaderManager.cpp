@@ -8,7 +8,7 @@
 std::mutex ShaderManager::_MUTEX;
 std::map<std::string, Shader> ShaderManager::_SHADERS;
 
-void ShaderManager::create(const std::string& name, const char* vertexShader, const char* fragmentShader)
+Shader* ShaderManager::create(const std::string& name, const char* vertexShader, const char* fragmentShader)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -21,10 +21,11 @@ void ShaderManager::create(const std::string& name, const char* vertexShader, co
 
 	Shader shader(name);
 	shader.link(vertexShader, fragmentShader);
-	_SHADERS.emplace(name, shader);
+	auto [it, inserted] = _SHADERS.emplace(name, shader);
+	return &it->second;
 }
 
-void ShaderManager::use(const char* name)
+Shader* ShaderManager::get(const std::string& name)
 {
 	auto it = _SHADERS.find(name);
 	if (it == _SHADERS.end())
@@ -34,10 +35,10 @@ void ShaderManager::use(const char* name)
 		throw IllegalArgumentException(oss.str());
 	}
 
-	glUseProgram(it->second._id);
+	return &it->second;
 }
 
-void ShaderManager::destroy(const char* name)
+void ShaderManager::destroy(const std::string& name)
 {
 	std::lock_guard<std::mutex> lock(_MUTEX);
 
@@ -55,8 +56,9 @@ void ShaderManager::destroy(const char* name)
 
 void ShaderManager::setup()
 {
-	ShaderManager::create("tf_basic", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
-	ShaderManager::use("tf_basic");
+	Shader* basic = ShaderManager::create("tf_basic", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
+	
+	basic->use();
 }
 
 void ShaderManager::clear()

@@ -9,6 +9,11 @@ Shader::Shader(const std::string& name)
 
 }
 
+void Shader::use()
+{
+	glUseProgram(_id);
+}
+
 unsigned int Shader::compileSource(int type, const char* source)
 {
 	unsigned int id = glCreateShader(type);

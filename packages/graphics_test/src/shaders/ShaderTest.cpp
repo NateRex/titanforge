@@ -6,11 +6,22 @@
 #include <glad/glad.h>
 
 /**
- * Tests construction and destruction of a shader via the shader manager
+ * Tests the basic constructors and accessors of a shader
  */
 BOOST_AUTO_TEST_CASE(Shader_basics)
 {
-	BOOST_REQUIRE_NO_THROW(ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT));
+	Shader* shader = ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
+	BOOST_TEST(shader->name == "shader");
+	BOOST_REQUIRE_NO_THROW(ShaderManager::destroy("shader"));
+}
+
+/**
+ * Tests that a shader can be constructed, used, and destroyed via the manager
+ */
+BOOST_AUTO_TEST_CASE(Shader_use)
+{
+	Shader* shader = ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
+	BOOST_REQUIRE_NO_THROW(shader->use());
 	BOOST_REQUIRE_NO_THROW(ShaderManager::destroy("shader"));
 }
 

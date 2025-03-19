@@ -15,6 +15,11 @@ public:
      */
     const std::string name;
 
+    /**
+     * Activates this shader as the current shader program used for rendering
+     */
+    void use();
+
 private:
 
     /**

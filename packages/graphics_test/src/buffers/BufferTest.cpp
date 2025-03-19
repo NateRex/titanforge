@@ -9,7 +9,7 @@
 #include <glad/glad.h>
 
 /**
- * Tests construction and destruction of a buffer via the buffer manager
+ * Tests the basic constructors and accessors of a buffer
  */
 BOOST_AUTO_TEST_CASE(Buffer_basics)
 {
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(Buffer_basics)
 /**
  * Tests that a buffer can be constructed, bound (and drawn), unbound, and destroyed via the manager
  */
-BOOST_AUTO_TEST_CASE(BufferManager_binding)
+BOOST_AUTO_TEST_CASE(Buffer_draw)
 {
 	Buffer* buffer1 = BufferManager::startBuffer("buffer1").finish();
 	Buffer* buffer2 = BufferManager::startBuffer("buffer2").finish();
