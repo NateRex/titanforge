@@ -25,11 +25,12 @@ public:
     void draw(const Buffer* buffer) const;
 
     /**
-     * Sets a uniform texture
-     * @param uniform Uniform variable name
+     * Sets a uniform texture.
+     * @param name Uniform variable name
+     * @param textureUnit Texture unit. Must be a value between 0 and 15.
      * @param texture Texture
      */
-    void setUniform(const char* uniform, const Texture* texture) const;
+    void setUniform(const char* name, unsigned int textureUnit, const Texture* texture) const;
 
 private:
 
