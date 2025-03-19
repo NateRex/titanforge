@@ -121,3 +121,10 @@ void Engine::assertInitialized()
         throw IllegalStateException("Graphics engine has not been initialized");
     }
 }
+
+void Engine::applyGlobalGLSettings()
+{
+    // Enable alpha channel for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}

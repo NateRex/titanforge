@@ -77,4 +77,8 @@ private:
 	 */
 	static void assertInitialized();
 
+	/**
+	 * Applies constant global OpenGL settings
+	 */
+	static void applyGlobalGLSettings();
 };
