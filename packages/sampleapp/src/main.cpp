@@ -2,8 +2,11 @@
 #include <graphics/windows/WindowManager.h>
 #include <graphics/windows/Window.h>
 #include <graphics/windows/InputController.h>
+#include <graphics/buffers/Buffer.h>
 #include <graphics/buffers/BufferManager.h>
+#include <graphics/textures/Texture.h>
 #include <graphics/textures/TextureManager.h>
+#include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector2.h>
@@ -49,23 +52,26 @@ int main() {
     Window* window = WindowManager::getCurrent();
     window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
 
-    // Create textures
-    TextureManager::create("box", "assets/container.jpg");
+    // Textures
+    Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
+    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png", true);
 
-    // Create buffer
-    PPolyface geometry = examplePolyface();
-    BufferManager::startBuffer("geometry")
-        .add(geometry)
+    // Buffers
+    Buffer* buffer = BufferManager::startBuffer("geometry")
+        .add(examplePolyface())
         .finish();
+
+    // Shaders
+    Shader* shader = ShaderManager::get("tf_basic");
+    shader->setUniform("texture1", 0, boxTexture);
+    shader->setUniform("texture2", 1, faceTexture);
 
     // Render loop
     while (window->isOpen())
     {
         Engine::startFrame();
 
-        // Draw geometry
-        TextureManager::bind("box");
-        BufferManager::draw("geometry");
+        shader->draw(buffer);
 
         Engine::finishFrame();
     }

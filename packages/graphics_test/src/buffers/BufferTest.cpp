@@ -6,13 +6,15 @@
 #include <geometry/Vector3.h>
 #include <graphics/Color.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
- * Tests construction and destruction of a buffer via the buffer manager
+ * Tests the basic constructors and accessors of a buffer
  */
 BOOST_AUTO_TEST_CASE(Buffer_basics)
 {
-	BOOST_REQUIRE_NO_THROW(BufferManager::startBuffer("test-buffer").finish());
+	Buffer* buffer = BufferManager::startBuffer("test-buffer").finish();
+	BOOST_TEST(buffer->name == "test-buffer");
 	BOOST_REQUIRE_NO_THROW(BufferManager::destroy("test-buffer"));
 }
 

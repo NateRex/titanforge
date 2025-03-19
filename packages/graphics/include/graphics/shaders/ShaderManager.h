@@ -20,22 +20,26 @@ public:
 	 * @param name Unique name for the shader
 	 * @param vertexShader Vertex shader source code
 	 * @param fragmentShader Fragment shader source code
+	 * @return The new shader program
+	 * @throws IllegalArgumentException if a shader with that name already exists
+	 * @throws InstantiationException on failure to compile or link the shader
 	 */
-	static void create(const std::string& name, const char* vertexShader, const char* fragmentShader);
+	static Shader* create(const std::string& name, const char* vertexShader, const char* fragmentShader);
 
 	/**
-	 * Updates the current shader program used for rendering
-	 * @param name The name of the program
+	 * Fetches a shader program by name
+	 * @param name The name of the shader previously created via this manager
+	 * @return The shader
 	 * @throws IllegalArgumentException if a program with that name could not be found
 	 */
-	static void use(const char* name);
+	static Shader* get(const std::string& name);
 
 	/**
 	 * Destroys a shader program held by this manager, releasing all of its resources
 	 * @param name The name of the shader program
 	 * @throws IllegalArgumentException if a program with that name could not be found
 	 */
-	static void destroy(const char* name);
+	static void destroy(const std::string& name);
 
 private:
 	

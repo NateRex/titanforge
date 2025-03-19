@@ -6,12 +6,12 @@
 #include <glad/glad.h>
 
 /**
- * Tests that a shader can be constructed, used, and destroyed via the manager
+ * Tests the ability to create and fetch a shader
  */
-BOOST_AUTO_TEST_CASE(ShaderManager_basics)
+BOOST_AUTO_TEST_CASE(ShaderManager_createAndFetch)
 {
-	BOOST_REQUIRE_NO_THROW(ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT));
-	BOOST_REQUIRE_NO_THROW(ShaderManager::use("shader"));
+	ShaderManager::create("shader", Shaders::BASIC_VERTEX, Shaders::BASIC_FRAGMENT);
+	BOOST_TEST(ShaderManager::get("shader") != nullptr);
 	BOOST_REQUIRE_NO_THROW(ShaderManager::destroy("shader"));
 }
 
@@ -28,11 +28,11 @@ BOOST_AUTO_TEST_CASE(ShaderManager_cannotCreateDuplicates)
 }
 
 /**
- * Tests that an exception is thrown if we try to use a shader that does not exist
+ * Tests that an exception is thrown if we try to fetch a shader that does not exist
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_cannotUseMissing)
 {
-	BOOST_REQUIRE_THROW(ShaderManager::use("does-not-exist"), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(ShaderManager::get("does-not-exist"), IllegalArgumentException);
 }
 
 /**

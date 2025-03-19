@@ -5,7 +5,7 @@ namespace Shaders {
 	/**
 	 * Source code for the vertex shader of the 'basic' program
 	 */
-	constexpr char* BASIC_VERTEX = R"(
+	constexpr const char* BASIC_VERTEX = R"(
 		#version 330 core
 
 		// Inputs
@@ -28,7 +28,7 @@ namespace Shaders {
 	/**
 	 * Source code for the fragment shader of the 'basic' program
 	 */
-	constexpr char* BASIC_FRAGMENT = R"(
+	constexpr const char* BASIC_FRAGMENT = R"(
 		#version 330 core
 
 		// Inputs
@@ -36,14 +36,15 @@ namespace Shaders {
 		in vec2 frag_TexCoord;
 
 		// Uniforms
-		uniform sampler2D uTexture;
+		uniform sampler2D texture1;
+		uniform sampler2D texture2;
 
 		// Outputs
 		out vec4 FragColor;
 
 		void main()
 		{
-			FragColor = texture(uTexture, frag_TexCoord);
+			FragColor = mix(texture(texture1, frag_TexCoord), texture(texture2, frag_TexCoord), 0.2) * frag_Color;
 		} 
 		)";
 };

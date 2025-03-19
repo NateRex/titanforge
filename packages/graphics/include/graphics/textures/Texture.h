@@ -9,6 +9,7 @@ class Texture
 {
 public:
 
+	friend class Shader;
 	friend class TextureManager;
 
 	/**
@@ -39,8 +40,9 @@ private:
 
 	/**
 	 * Creates the OpenGL resources for this texture
+	 * @param flip Boolean flag that, when true, will cause the imagery to be flipped
 	 */
-	void create();
+	void create(bool flip);
 
 	/**
 	 * Destroys this texture, freeing its resources

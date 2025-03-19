@@ -1,44 +1,23 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/buffers/BufferManager.h>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <glad/glad.h>
 
 /**
- * Tests that a buffer can be constructed, bound (and drawn), unbound, and destroyed via the manager
+ * Tests the ability to create and fetch a buffer
  */
-BOOST_AUTO_TEST_CASE(BufferManager_binding)
+BOOST_AUTO_TEST_CASE(BufferManager_createAndFetch)
 {
-	BufferManager::startBuffer("buffer1").finish();
-	BufferManager::startBuffer("buffer2").finish();
-
-	// At this point, buffer2 should be bound
-	GLuint binding1;
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*) &binding1);
-
-	// Bind and draw buffer1
-	BufferManager::draw("buffer1");
-
-	// Verify buffer2 no longer bound
-	GLuint binding2;
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*) &binding2);
-	BOOST_TEST(binding1 != binding2);
-
-	// Destroy both buffers
-	BufferManager::destroy("buffer1");
-	BufferManager::destroy("buffer2");
-	
-	// Verify no buffer is bound
-	GLuint binding3;
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*) &binding3);
-	BOOST_TEST(binding3 == 0);
+	BufferManager::startBuffer("test-buffer").finish();
+	BOOST_TEST(BufferManager::get("test-buffer") != nullptr);
+	BOOST_REQUIRE_NO_THROW(BufferManager::destroy("test-buffer"));
 }
 
 /**
- * Tests that an exception is thrown if we try to draw a buffer that does not exist
+ * Tests that an exception is thrown if we try to fetch a buffer that does not exist
  */
-BOOST_AUTO_TEST_CASE(BufferManager_bindFailure)
+BOOST_AUTO_TEST_CASE(BufferManager_fetchFailure)
 {
-	BOOST_REQUIRE_THROW(BufferManager::draw("does-not-exist"), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(BufferManager::get("does-not-exist"), IllegalArgumentException);
 }
 
 /**

@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+class Buffer;
+class Texture;
+
 /**
  * A shader program, managed by the shader manager
  * @author Nathaniel Rex
@@ -14,6 +17,20 @@ public:
      * Unique name of this shader program
      */
     const std::string name;
+
+    /**
+     * Draws a buffer using this shader program
+     * @param buffer The buffer to draw
+     */
+    void draw(const Buffer* buffer) const;
+
+    /**
+     * Sets a uniform texture.
+     * @param name Uniform variable name
+     * @param textureUnit Texture unit. Must be a value between 0 and 15.
+     * @param texture Texture
+     */
+    void setUniform(const char* name, unsigned int textureUnit, const Texture* texture) const;
 
 private:
 
@@ -43,6 +60,11 @@ private:
      * @throws InstantiationException On failure to compile or link the shader
      */
     void link(const char* vertexShader, const char* fragmentShader);
+
+    /**
+     * Activates this shader as the current shader program used for rendering
+     */
+    void use() const;
 
     /**
      * Destroys this shader program and releases all of its resources.

@@ -20,10 +20,12 @@ public:
 	 * @param name A unique name that can be used to refer to this texture in the future
 	 * @param imagePath Relative path to the image file that will be used to generate the texture.
 	 * This path is relative to the directory containing the currently running executable.
+	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped. Defaults
+	 * to false.
 	 * @return The created texture
 	 * @throws IllegalArgumentException If a texture with that name already exists
 	 */
-	static Texture* create(const std::string& name, const std::string& imagePath);
+	static Texture* create(const std::string& name, const std::string& imagePath, bool flip = false);
 
 	/**
 	 * Get the data for a texture that was previously created via this manager
@@ -32,13 +34,6 @@ public:
 	 * @throws IllegalArgumentException If a texture with that name could not be found
 	 */
 	static Texture* get(const std::string& name);
-
-	/**
-	 * Binds a texture previously created via this manager for use in shaders
-	 * @param name The name of the texture
-	 * @throws IllegalArgumentException If a texture with that name could not be found
-	 */
-	static void bind(const std::string& name);
 
 	/**
 	 * Destroys a texture that is no longer needed.

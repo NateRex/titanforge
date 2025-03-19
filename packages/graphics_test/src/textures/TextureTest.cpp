@@ -4,7 +4,7 @@
 #include <common/exceptions/InstantiationException.h>
 
 /**
- * Tests construction and destruction of a texture using the texture manager
+ * Tests the basic constructors and accessors of a texture
  */
 BOOST_AUTO_TEST_CASE(Texture_basics)
 {

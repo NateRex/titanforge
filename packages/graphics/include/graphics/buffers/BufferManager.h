@@ -43,7 +43,7 @@ public:
 		 * registered in the buffer manager, and can be bound and rendered via the graphics engine.
 		 * @return The buffer that was created
 		 */
-		void finish();
+		Buffer* finish();
 
 	private:
 
@@ -88,12 +88,12 @@ public:
 	static Builder startBuffer(const std::string& name);
 
 	/**
-	 * Draws a buffer to the current rendering context
-	 * @param name The name of the buffer to draw. Must be a buffer that was previously constructed
-	 * via this manager.
-	 * @throws IllegalArgumentException If no buffer with that name exists
+	 * Retrieves a buffer previously created by this manager
+	 * @param name The name of the buffer. Must be a buffer previously created via this manager
+	 * @return The buffer
+	 * @throws IllegalArgumnentException If no buffer with that name exists
 	 */
-	static void draw(const std::string& name);
+	static Buffer* get(const std::string& name);
 
 	/**
 	 * Destroys a buffer that is no longer needed. If this buffer was currently bound, it will be
@@ -147,7 +147,8 @@ private:
 	 * Registers a newly constructed builder with this manager. Upon doing so, the buffer
 	 * can be bound and rendered via the graphics engine.
 	 * @param buffer The buffer to register
+	 * @return A pointer to the newly registered buffer
 	 */
-	static void addBuffer(Buffer& buffer);
+	static Buffer* addBuffer(Buffer& buffer);
 
 };
