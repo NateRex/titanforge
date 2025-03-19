@@ -53,7 +53,8 @@ int main() {
     window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
 
     // Textures
-    Texture* texture = TextureManager::create("box", "assets/container.jpg");
+    Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
+    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png");
 
     // Buffers
     Buffer* buffer = BufferManager::startBuffer("geometry")
@@ -62,7 +63,8 @@ int main() {
 
     // Shaders
     Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("uTexture", 0, texture);
+    shader->setUniform("texture1", 0, boxTexture);
+    shader->setUniform("texture2", 1, faceTexture);
 
     // Render loop
     while (window->isOpen())

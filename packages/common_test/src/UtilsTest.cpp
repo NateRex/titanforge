@@ -59,6 +59,17 @@ BOOST_AUTO_TEST_CASE(Utils_resolvePath)
 }
 
 /**
+ * Tests checkSuffix
+ */
+BOOST_AUTO_TEST_CASE(Utils_checkSuffix)
+{
+    BOOST_TEST(!checkSuffix("abc", "abcd"));
+    BOOST_TEST(!checkSuffix("abc", "ab"));
+    BOOST_TEST(checkSuffix("abc", "abc"));
+    BOOST_TEST(checkSuffix("abcdefg", "fg"));
+}
+
+/**
  * Tests getOrDefault
  */
 BOOST_AUTO_TEST_CASE(Utils_getOrDefault)

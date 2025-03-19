@@ -53,3 +53,12 @@ std::string resolvePath(const std::string& relPath)
     std::filesystem::path execPath(path);
     return execPath.parent_path().append(relPath).string();
 }
+
+bool checkSuffix(const std::string& str, const std::string& suffix)
+{
+    if (str.length() < suffix.length()) {
+        return false;
+    }
+
+    return str.substr(str.length() - suffix.length()) == suffix;
+}

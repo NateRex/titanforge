@@ -35,6 +35,14 @@ float deg2Rad(float deg);
 std::string resolvePath(const std::string& relPath);
 
 /**
+ * Determines if a string ends with the given substring
+ * @param str String value
+ * @param suffix Suffix value to check for
+ * @return True if the string value ends with the given suffix. Returns false otherwise.
+ */
+bool checkSuffix(const std::string& str, const std::string& suffix);
+
+/**
  * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
  * does nothing.
  * @param <T> The pointer type

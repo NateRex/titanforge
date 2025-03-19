@@ -37,7 +37,8 @@ void Texture::create()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Load image data
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	unsigned int glRgb = checkSuffix(imagePath, ".png") ? GL_RGBA : GL_RGB;
+	glTexImage2D(GL_TEXTURE_2D, 0, glRgb, width, height, 0, glRgb, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// Free the image data

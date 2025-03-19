@@ -36,14 +36,15 @@ namespace Shaders {
 		in vec2 frag_TexCoord;
 
 		// Uniforms
-		uniform sampler2D uTexture;
+		uniform sampler2D texture1;
+		uniform sampler2D texture2;
 
 		// Outputs
 		out vec4 FragColor;
 
 		void main()
 		{
-			FragColor = texture(uTexture, frag_TexCoord) * frag_Color;
+			FragColor = mix(texture(texture1, frag_TexCoord), texture(texture2, frag_TexCoord), 0.2);
 		} 
 		)";
 };
