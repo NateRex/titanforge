@@ -8,7 +8,7 @@ Buffer::Buffer(const std::string& name)
 	
 }
 
-void Buffer::draw()
+void Buffer::draw() const
 {
 	glBindVertexArray(_vaoId);
 	glDrawElements(GL_TRIANGLES, _size, GL_UNSIGNED_INT, 0);

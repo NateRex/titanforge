@@ -22,7 +22,7 @@ public:
 	/**
 	 * Draws this buffer using the shader program currently in-use
 	 */
-	void draw();
+	void draw() const;
 
 private:
 

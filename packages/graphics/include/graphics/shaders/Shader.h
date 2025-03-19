@@ -18,7 +18,7 @@ public:
     /**
      * Activates this shader as the current shader program used for rendering
      */
-    void use();
+    void use() const;
 
 private:
 

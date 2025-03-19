@@ -9,6 +9,7 @@ class Texture
 {
 public:
 
+	friend class Shader;
 	friend class TextureManager;
 
 	/**

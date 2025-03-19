@@ -9,7 +9,7 @@ Shader::Shader(const std::string& name)
 
 }
 
-void Shader::use()
+void Shader::use() const
 {
 	glUseProgram(_id);
 }

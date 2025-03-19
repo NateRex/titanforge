@@ -49,11 +49,6 @@ Texture* TextureManager::get(const std::string& name)
 	return assertExists(name);
 }
 
-void TextureManager::bind(const std::string& name)
-{
-	Texture* tex = assertExists(name);
-	glBindTexture(GL_TEXTURE_2D, tex->_id);
-}
 
 void TextureManager::destroy(const std::string& name)
 {
