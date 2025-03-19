@@ -11,13 +11,14 @@ Texture::Texture(const std::string& name, const std::string& imagePath)
 	
 }
 
-void Texture::create()
+void Texture::create(bool flip)
 {
 	// Resolve image path
 	std::string fullPath = resolvePath(imagePath);
 
 	// Load image
 	int width, height, channels;
+	stbi_set_flip_vertically_on_load(flip);
 	unsigned char* data = stbi_load(fullPath.c_str(), &width, &height, &channels, 0);
 	if (!data)
 	{

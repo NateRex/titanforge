@@ -54,7 +54,7 @@ int main() {
 
     // Textures
     Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
-    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png");
+    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png", true);
 
     // Buffers
     Buffer* buffer = BufferManager::startBuffer("geometry")
