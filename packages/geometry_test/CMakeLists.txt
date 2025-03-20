@@ -13,6 +13,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GeometryTest
     src/main.cpp
     src/Matrix3Test.cpp
+    src/Matrix4Test.cpp
     src/PolyfaceTest.cpp
     src/Vector2Test.cpp
     src/Vector3Test.cpp
