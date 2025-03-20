@@ -5,7 +5,7 @@
 #include <math.h>
 #include <string>
 
-const Matrix3 Matrix3::IDENTITY(1, 0, 0, 0, 1, 0, 0, 0, 1);
+const Matrix3 Matrix3::IDENTITY;
 
 Matrix3::Matrix3()
 {
@@ -91,7 +91,6 @@ bool Matrix3::equalTo(const Matrix3& other, float tol) const
 			return false;
 		}
 	}
-	
 	return true;
 }
 
@@ -119,6 +118,7 @@ bool Matrix3::inverse(Matrix3* result)
 
 		return true;
 	}
+
 	_didComputeInverse = true;
 
 	float t00 = _m[8] * _m[4] - _m[5] * _m[7];
@@ -193,16 +193,6 @@ float Matrix3::operator[](int i) const
 	return _m[i];
 }
 
-bool Matrix3::operator==(const Matrix3& other) const
-{
-	return equalTo(other);
-}
-
-bool Matrix3::operator!=(const Matrix3& other) const
-{
-	return !equalTo(other);
-}
-
 Matrix3& Matrix3::operator=(const Matrix3& other)
 {
 	setValues(other);
@@ -214,6 +204,16 @@ Matrix3& Matrix3::operator=(const Matrix3& other)
 	}
 
 	return *this;
+}
+
+bool Matrix3::operator==(const Matrix3& other) const
+{
+	return equalTo(other);
+}
+
+bool Matrix3::operator!=(const Matrix3& other) const
+{
+	return !equalTo(other);
 }
 
 void Matrix3::setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
