@@ -2,6 +2,7 @@
 #include <geometry/Matrix3.h>
 #include <geometry/Vector3.h>
 #include <common/Utils.h>
+#include <common/Constants.h>
 
 /**
  * Tests the basic constructors and accessors of the class
@@ -37,24 +38,40 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromRowsAndColumns)
 }
 
 /**
- * Tests construction of a matrix using rotation angles
+ * Tests construction of a matrix using rotation angles around an arbitrary axis
  */
-BOOST_AUTO_TEST_CASE(Matrix3_fromRotations)
+BOOST_AUTO_TEST_CASE(Matrix3_fromArbitraryAxisRotation)
+{
+	BOOST_TEST(Matrix3::fromRotation(Vector3(1., 0., 0.), PI) == Matrix3::fromXRotation(PI));
+	BOOST_TEST(Matrix3::fromRotation(Vector3(0., 1., 0.), PI) == Matrix3::fromYRotation(PI));
+	BOOST_TEST(Matrix3::fromRotation(Vector3(0., 0., 1.), PI) == Matrix3::fromZRotation(PI));
+
+	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662, 0.2, 0.722), deg2Rad(45));
+	Vector3 v(-1., 2., 4.);
+
+	rot.multiply(v, &v);
+	BOOST_TEST(Vector3(-0.653, -0.815, 4.461).equalTo(v, 1.0e-3));
+}
+
+/**
+ * Tests construction of a matrix using rotation angles around the three major axes
+ */
+BOOST_AUTO_TEST_CASE(Matrix3_fromMajorAxisRotations)
 {
 	Matrix3 rot;
 	Vector3 v;
 
 	Matrix3::fromXRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(0, 0, 1), &v);
-	BOOST_TEST(v.equalTo(Vector3(0, -1, 0), 1.0e-6));
+	rot.multiply(Vector3(0., 0., 1.), &v);
+	BOOST_TEST(v.equalTo(Vector3(0., -1., 0.), 1.0e-6));
 
 	Matrix3::fromYRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(1, 0, 0), &v);
-	BOOST_TEST(v.equalTo(Vector3(0, 0, -1), 1.0e-6));
+	rot.multiply(Vector3(1., 0., 0.), &v);
+	BOOST_TEST(v.equalTo(Vector3(0., 0., -1.), 1.0e-6));
 
 	Matrix3::fromZRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(0, 1, 0), &v);
-	BOOST_TEST(v.equalTo(Vector3(-1, 0, 0), 1.0e-6));
+	rot.multiply(Vector3(0., 1., 0.), &v);
+	BOOST_TEST(v.equalTo(Vector3(-1., 0., 0.), 1.0e-6));
 }
 
 /**

@@ -49,6 +49,32 @@ Matrix3 Matrix3::fromColumns(const Vector3& c0, const Vector3& c1, const Vector3
 	return r;
 }
 
+Matrix3 Matrix3::fromRotation(const Vector3& axis, float radians, Matrix3* result)
+{
+	float c = cos(radians);
+	float s = sin(radians);
+	float omc = 1 - c;
+	float x = axis.x;
+	float y = axis.y;
+	float z = axis.z;
+	float xy = axis.x * axis.y;
+	float xz = axis.x * axis.z;
+	float yz = axis.y * axis.z;
+
+	Matrix3& r = getOrDefault(result, Matrix3());
+	r.setValues(
+		c + x * x * omc,
+		xy * omc - z * s,
+		xz * omc + y * s,
+		xy * omc + z * s,
+		c + y * y * omc,
+		yz * omc - x * s,
+		xz * omc - y * s,
+		yz * omc + x * s,
+		c + z * z * omc);
+	return r;
+}
+
 Matrix3 Matrix3::fromXRotation(float radians, Matrix3* result)
 {
 	float c = cos(radians);
