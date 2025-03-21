@@ -11,6 +11,9 @@
 #include <graphics/primitives/PPolyface.h>
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
+#include <geometry/Matrix3.h>
+#include <geometry/Matrix4.h>
+#include <common/Utils.h>
 
 /**
  * @return An example polyface
@@ -43,6 +46,17 @@ PPolyface examplePolyface()
 }
 
 /**
+ * @return An example 4x4 transformation matrix
+ */
+Matrix4 getTransform()
+{
+    Matrix3 rot = Matrix3::fromZRotation(deg2Rad(90.f));
+    Matrix4 m = Matrix4::fromRotation(rot);
+    m.multiply(Matrix4::fromScaling(0.5, 0.5, 0.5), &m);
+    return m;
+}
+
+/**
  * Main entrypoint for the application
  */
 int main() {
@@ -65,6 +79,7 @@ int main() {
     Shader* shader = ShaderManager::get("tf_basic");
     shader->setUniform("texture1", 0, boxTexture);
     shader->setUniform("texture2", 1, faceTexture);
+    shader->setUniform("transform", getTransform());
 
     // Render loop
     while (window->isOpen())

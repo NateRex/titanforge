@@ -6,6 +6,7 @@ add_executable(SampleApp
 
 # Linked libraries
 target_link_libraries(SampleApp
+    PRIVATE Common::Common
     PRIVATE Geometry::Geometry
     PRIVATE Graphics::Graphics)
 

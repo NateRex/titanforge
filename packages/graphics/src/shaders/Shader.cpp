@@ -40,7 +40,7 @@ void Shader::setUniform(const char* name, const Matrix4& matrix) const
 	use();
 
 	int loc = getUniformLocation(name);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, matrix.getValues());
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
 unsigned int Shader::compileSource(int type, const char* source)
