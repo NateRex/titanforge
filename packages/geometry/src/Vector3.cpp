@@ -59,6 +59,7 @@ Vector3 Vector3::normalize(Vector3* result) const
     float mag = getMagnitude();
 
     Vector3& r = getOrDefault(result, Vector3());
+
     if (isZero())
     {
         r.x = 0;
@@ -78,6 +79,7 @@ Vector3 Vector3::normalize(Vector3* result) const
 Vector3 Vector3::scale(float value, Vector3* result) const
 {
     Vector3& r = getOrDefault(result, Vector3());
+
     r.x = x * value;
     r.y = y * value;
     r.z = z * value;
@@ -87,6 +89,7 @@ Vector3 Vector3::scale(float value, Vector3* result) const
 Vector3 Vector3::minus(const Vector3& other, Vector3* result) const
 {
     Vector3& r = getOrDefault(result, Vector3());
+
     r.x = x - other.x;
     r.y = y - other.y;
     r.z = z - other.z;

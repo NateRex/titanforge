@@ -26,6 +26,8 @@ Matrix4::Matrix4(const Matrix4& other)
 Matrix4::~Matrix4()
 {
 	safeDelete(_inverse);
+	_inverse = nullptr;
+	_didComputeInverse = false;
 }
 
 Matrix4 Matrix4::fromScaling(float scalar, Matrix4* result)
@@ -59,9 +61,9 @@ Matrix4 Matrix4::fromTranslation(const Vector3& v, Matrix4* result)
 {
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		0., 0., 0., v.x,
-		0., 0., 0., v.y,
-		0., 0., 0., v.z,
+		1., 0., 0., v.x,
+		0., 1., 0., v.y,
+		0., 0., 1., v.z,
 		0., 0., 0., 1.);
 	return r;
 }
@@ -178,22 +180,11 @@ Vector3 Matrix4::transformDirection(const Vector3& v, Vector3* result) const
 	float x = _m[0] * v.x + _m[1] * v.y + _m[2] * v.z;
 	float y = _m[4] * v.x + _m[5] * v.y + _m[6] * v.z;
 	float z = _m[8] * v.x + _m[9] * v.y + _m[10] * v.z;
-	float w = _m[12] * v.x + _m[13] * v.y + _m[14] * v.z;
 
 	Vector3& r = getOrDefault(result, Vector3());
-
-	if (equals(w, 0., 1.0e-6))
-	{
-		r.x = 0.;
-		r.y = 0.;
-		r.z = 0.;
-	}
-	else
-	{
-		r.x = x / w;
-		r.y = y / w;
-		r.z = z / w;
-	}
+	r.x = x;
+	r.y = y;
+	r.z = z;
 
 	return r;
 }
@@ -266,7 +257,7 @@ void Matrix4::setValues(const Matrix4& other)
 {
 	clearInverse();
 
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		_m[i] = other._m[i];
 	}

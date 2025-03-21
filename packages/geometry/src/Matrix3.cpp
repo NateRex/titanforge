@@ -25,6 +25,8 @@ Matrix3::Matrix3(const Matrix3& other)
 Matrix3::~Matrix3()
 {
 	safeDelete(_inverse);
+	_inverse = nullptr;
+	_didComputeInverse = false;
 }
 
 Matrix3 Matrix3::fromRows(const Vector3& r0, const Vector3& r1, const Vector3& r2, Matrix3* result)
