@@ -162,3 +162,68 @@ BOOST_AUTO_TEST_CASE(Matrix4_inverse)
 	BOOST_TEST(!hasInverse);
 	BOOST_TEST(cached == inv);
 }
+
+/**
+ * Tests the ability to transform a position vector
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_transformPosition)
+{
+	Matrix4 m(
+		2., 0., 0., 5.,
+		0., 3., 0., -4.,
+		0., 0., 1., 3.,
+		0., 0., 0., 1.);
+	Vector3 v(1., 2., 3.);
+
+	Vector3 expected(7., 2., 6.);
+
+	Vector3 result;
+	m.transformPosition(v, &result);
+	BOOST_TEST(result.equalTo(expected, 1.0e-3));
+}
+
+/**
+ * Tests the ability to transform a direction vector
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_transformDirection)
+{
+	Matrix4 m(
+		2., 0., 0., 5.,
+		0., 3., 0., -4.,
+		0., 0., 1., 3.,
+		0., 0., 0., 1.);
+	Vector3 v(1., 2., 3.);
+
+	Vector3 expected(2., 6., 3.);
+
+	Vector3 result;
+	m.transformDirection(v, &result);
+	BOOST_TEST(result.equalTo(expected, 1.0e-3));
+}
+
+/**
+ * Tests multiplication of a matrix with another matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_matrixMultiplication)
+{
+	Matrix4 m1(
+		2., 1., 3., 4.,
+		1., 2., 4., 3.,
+		3., 4., 1., 2.,
+		4., 3., 2., 1.);
+	Matrix4 m2(
+		1., 3., 2., 4.,
+		4., 2., 1., 3.,
+		3., 1., 4., 2.,
+		2., 4., 3., 1.);
+
+	Matrix4 expected(
+		23., 27., 29., 21.,
+		27., 23., 29., 21.,
+		26., 26., 20., 28.,
+		24., 24., 22., 30.);
+
+	Matrix4 result;
+	m1.multiply(m2, &result);
+	BOOST_TEST(result.equalTo(expected, 1.0e-3));
+}
