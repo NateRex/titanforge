@@ -76,5 +76,5 @@ BOOST_AUTO_TEST_CASE(Matrix4_translation)
 	BOOST_TEST(v.equalTo(origin));
 
 	t.transformPosition(origin, &v);		// translation
-	BOOST_TEST(v.equalTo(Vector3(origin.x - 10, origin.y + 20, origin.y - 30)));
+	BOOST_TEST(v.equalTo(Vector3(origin.x - 10, origin.y + 20, origin.z - 30)));
 }
