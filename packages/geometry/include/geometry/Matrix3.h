@@ -99,6 +99,11 @@ public:
 	static Matrix3 fromZRotation(float radians, Matrix3* result = nullptr);
 
 	/**
+	 * @return The raw data for this matrix
+	 */
+	const float* getValues() const;
+
+	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
 	 */
 	bool isIdentity() const;

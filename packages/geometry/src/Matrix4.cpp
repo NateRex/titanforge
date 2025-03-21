@@ -68,6 +68,11 @@ Matrix4 Matrix4::fromScaling(float x, float y, float z, Matrix4* result)
 	return r;
 }
 
+const float* Matrix4::getValues() const
+{
+	return _m;
+}
+
 bool Matrix4::isIdentity() const
 {
 	return equalTo(Matrix4::IDENTITY);

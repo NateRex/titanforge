@@ -16,6 +16,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_basics)
 	for (int i = 0; i < 9; i++)
 	{
 		BOOST_TEST(m[i] == i + 1);
+		BOOST_TEST(m.getValues()[i] == i + 1);
 	}
 
 	Matrix3 m2 = Matrix3(m);

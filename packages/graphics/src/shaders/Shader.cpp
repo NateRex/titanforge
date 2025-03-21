@@ -1,7 +1,9 @@
 #include <graphics/shaders/Shader.h>
 #include <graphics/buffers/Buffer.h>
 #include <graphics/textures/Texture.h>
+#include <geometry/Matrix4.h>
 #include <common/Assertions.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
 #include <glad/glad.h>
 #include <sstream>
@@ -28,7 +30,17 @@ void Shader::setUniform(const char* name, unsigned int textureUnit, const Textur
 
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(GL_TEXTURE_2D, texture->_id);
-	glUniform1i(glGetUniformLocation(_id, name), textureUnit);
+
+	int loc = getUniformLocation(name);
+	glUniform1i(loc, textureUnit);
+}
+
+void Shader::setUniform(const char* name, const Matrix4& matrix) const
+{
+	use();
+
+	int loc = getUniformLocation(name);
+	glUniformMatrix4fv(loc, 1, GL_FALSE, matrix.getValues());
 }
 
 unsigned int Shader::compileSource(int type, const char* source)
@@ -118,4 +130,17 @@ void Shader::destroy()
 
 	glDeleteProgram(_id);
 	_id = 0;
+}
+
+int Shader::getUniformLocation(const char* variableName) const
+{
+	int loc = glGetUniformLocation(_id, variableName);
+	if (loc < 0)
+	{
+		std::ostringstream oss;
+		oss << "Could not find uniform variable: " << variableName;
+		throw IllegalArgumentException(oss.str());
+	}
+		
+	return loc;
 }

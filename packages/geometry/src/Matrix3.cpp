@@ -107,6 +107,11 @@ Matrix3 Matrix3::fromZRotation(float radians, Matrix3* result)
 	return r;
 }
 
+const float* Matrix3::getValues() const
+{
+	return _m;
+}
+
 bool Matrix3::isIdentity() const
 {
 	return equalTo(Matrix3::IDENTITY);

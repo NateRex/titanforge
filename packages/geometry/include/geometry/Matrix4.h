@@ -88,6 +88,11 @@ public:
 	static Matrix4 fromScaling(float x, float y, float z, Matrix4* result = nullptr);
 
 	/**
+	 * @return The raw data for this matrix
+	 */
+	const float* getValues() const;
+
+	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
 	 */
 	bool isIdentity() const;

@@ -4,6 +4,8 @@
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/shaders/glsl/Basic.h>
+#include <geometry/Matrix4.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
 #include <glad/glad.h>
 
@@ -60,6 +62,24 @@ BOOST_AUTO_TEST_CASE(Shader_setUniformTexture)
 	BOOST_REQUIRE_NO_THROW(shader->setUniform("texture1", 0, texture));
 
 	TextureManager::destroy("texture");
+}
+
+/**
+ * Tests the ability to set a 4x4 matrix uniform
+ */
+BOOST_AUTO_TEST_CASE(Shader_setUniformMatrix4)
+{
+	Shader* shader = ShaderManager::get("tf_basic");
+	BOOST_REQUIRE_NO_THROW(shader->setUniform("transform", Matrix4::IDENTITY));
+}
+
+/**
+ * Tests that an exception is thrown trying to set a uniform variable that does not exist
+ */
+BOOST_AUTO_TEST_CASE(Shader_missingUniformException)
+{
+	Shader* shader = ShaderManager::get("tf_basic");
+	BOOST_REQUIRE_THROW(shader->setUniform("does-not-exist", Matrix4::IDENTITY), IllegalArgumentException);
 }
 
 /**
