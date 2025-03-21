@@ -53,6 +53,7 @@ Vector2 Vector2::normalize(Vector2* result) const
     float mag = getMagnitude();
     
     Vector2& r = getOrDefault(result, Vector2());
+
     if (isZero())
     {
         r.x = 0;
@@ -70,6 +71,7 @@ Vector2 Vector2::normalize(Vector2* result) const
 Vector2 Vector2::scale(float value, Vector2* result) const
 {
     Vector2& r = getOrDefault(result, Vector2());
+
     r.x = x * value;
     r.y = y * value;
     return r;
@@ -78,6 +80,7 @@ Vector2 Vector2::scale(float value, Vector2* result) const
 Vector2 Vector2::minus(const Vector2& other, Vector2* result) const
 {
     Vector2& r = getOrDefault(result, Vector2());
+
     r.x = x - other.x;
     r.y = y - other.y;
     return r;

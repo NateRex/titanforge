@@ -2,6 +2,7 @@
 #include <iosfwd>
 #include <iostream>
 #include <type_traits>
+#include <utility>
 
 /**
  * Tests that two values are equal, within tolerance.
@@ -73,7 +74,7 @@ T& getOrDefault(T* ptr, T def)
     if (ptr != nullptr) {
         return *ptr;
     }
-	return ptr != nullptr ? *ptr : def;
+    return ptr != nullptr ? *ptr : def;
 }
 
 /**

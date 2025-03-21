@@ -113,7 +113,7 @@ public:
 	 * Computes the inverse of this matrix
 	 * @param Result matrix in which to store the result. This matrix will be unchanged if
 	 * the inverse does not exist.
-	 * @return An optional value containing the inverse, if it exists.
+	 * @return A boolean value indicating whether or not the inverse exists.
 	 */
 	bool inverse(Matrix3* result);
 

@@ -3,6 +3,7 @@ project(Geometry CXX)
 # Library files
 add_library(Geometry
     src/Matrix3.cpp
+    src/Matrix4.cpp
     src/Polyface.cpp
     src/Vector2.cpp
     src/Vector3.cpp)
