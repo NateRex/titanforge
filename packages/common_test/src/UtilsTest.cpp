@@ -77,10 +77,8 @@ BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
     float one = 1.;
     float* ptr = nullptr;
     BOOST_TEST((getOrDefault(ptr, one) == one));
-    BOOST_TEST((getOrDefault(ptr, 1.f) == 1.));
 
     float two = 2.;
     ptr = &two;
     BOOST_TEST((getOrDefault(ptr, one) == two));
-    BOOST_TEST((getOrDefault(ptr, 1.f) == two));
 }

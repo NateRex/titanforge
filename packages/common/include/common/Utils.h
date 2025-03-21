@@ -69,22 +69,12 @@ T* safeDelete(T* ptr)
  * @return The dereferenced pointer, or the default value if the pointer was null
  */
 template <typename T>
-T& getOrDefault(T* ptr, T& def) {
-    return ptr != nullptr ? *ptr : def;
-}
-
-/**
- * Attempts to dereference the given pointer. If that pointer is null, this method returns a copy of the
- * default value. If the pointer is non-null, this method returns the dereferenced pointer.
- * @param <T> The value type
- * @param ptr Pointer to dereference
- * @param def Default value to return if the pointer is null
- * @return The dereferenced pointer, or the default value if the pointer was null
- */
-template <typename T>
-T&& getOrDefault(T* ptr, T&& def)
+T& getOrDefault(T* ptr, T def)
 {
-    return ptr != nullptr ? std::forward<T>(*ptr) : std::forward<T>(def);
+    if (ptr != nullptr) {
+        return *ptr;
+    }
+    return ptr != nullptr ? *ptr : def;
 }
 
 /**
