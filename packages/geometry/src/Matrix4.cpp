@@ -30,18 +30,13 @@ Matrix4::~Matrix4()
 	_didComputeInverse = false;
 }
 
-Matrix4 Matrix4::fromScaling(float scalar, Matrix4* result)
-{
-	return Matrix4::fromScaling(scalar, scalar, scalar, result);
-}
-
-Matrix4 Matrix4::fromScaling(float x, float y, float z, Matrix4* result)
+Matrix4 Matrix4::fromTranslation(const Vector3& v, Matrix4* result)
 {
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		x, 0., 0., 0.,
-		0., y, 0., 0.,
-		0., 0., z, 0.,
+		1., 0., 0., v.x,
+		0., 1., 0., v.y,
+		0., 0., 1., v.z,
 		0., 0., 0., 1.);
 	return r;
 }
@@ -57,13 +52,18 @@ Matrix4 Matrix4::fromRotation(const Matrix3& rot, Matrix4* result)
 	return r;
 }
 
-Matrix4 Matrix4::fromTranslation(const Vector3& v, Matrix4* result)
+Matrix4 Matrix4::fromScaling(float scalar, Matrix4* result)
+{
+	return Matrix4::fromScaling(scalar, scalar, scalar, result);
+}
+
+Matrix4 Matrix4::fromScaling(float x, float y, float z, Matrix4* result)
 {
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		1., 0., 0., v.x,
-		0., 1., 0., v.y,
-		0., 0., 1., v.z,
+		x, 0., 0., 0.,
+		0., y, 0., 0.,
+		0., 0., z, 0.,
 		0., 0., 0., 1.);
 	return r;
 }

@@ -51,15 +51,17 @@ Matrix3 Matrix3::fromColumns(const Vector3& c0, const Vector3& c1, const Vector3
 
 Matrix3 Matrix3::fromRotation(const Vector3& axis, float radians, Matrix3* result)
 {
+	Vector3 normalized = axis.normalize();
+
 	float c = cos(radians);
 	float s = sin(radians);
 	float omc = 1 - c;
-	float x = axis.x;
-	float y = axis.y;
-	float z = axis.z;
-	float xy = axis.x * axis.y;
-	float xz = axis.x * axis.z;
-	float yz = axis.y * axis.z;
+	float x = normalized.x;
+	float y = normalized.y;
+	float z = normalized.z;
+	float xy = x * y;
+	float xz = x * z;
+	float yz = y * z;
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(
