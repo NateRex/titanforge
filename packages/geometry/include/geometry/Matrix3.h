@@ -66,6 +66,15 @@ public:
 	static Matrix3 fromColumns(const Vector3& c0, const Vector3& c1, const Vector3& c2, Matrix3* result = nullptr);
 
 	/**
+	 * Construct a matrix representing a rotation about a given axis
+	 * @param axis Direction vector to rotate about
+	 * @param radians Angle of rotation, in radians
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The rotation matrix
+	 */
+	static Matrix3 fromRotation(const Vector3& axis, float radians, Matrix3* result = nullptr);
+
+	/**
 	 * Constructs a matrix representing a rotation about the X-axis
 	 * @param radians Angle of rotation, in radians
 	 * @param (Optional) Matrix in which to store the results
@@ -88,6 +97,11 @@ public:
 	 * @return The rotation matrix
 	 */
 	static Matrix3 fromZRotation(float radians, Matrix3* result = nullptr);
+
+	/**
+	 * @return The raw data for this matrix
+	 */
+	const float* getValues() const;
 
 	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.

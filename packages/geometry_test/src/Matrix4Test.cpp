@@ -16,6 +16,7 @@ BOOST_AUTO_TEST_CASE(Matrix4_basics)
 	for (int i = 0; i < 16; i++)
 	{
 		BOOST_TEST(m[i] == i + 1);
+		BOOST_TEST(m.getValues()[i] == i + 1);
 	}
 
 	Matrix4 m2 = Matrix4(m);

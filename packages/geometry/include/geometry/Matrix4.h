@@ -54,6 +54,22 @@ public:
 	~Matrix4();
 
 	/**
+	 * Constructs a transformation matrix representing a translation
+	 * @param v Vector representing the translation
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The transformation matrix
+	 */
+	static Matrix4 fromTranslation(const Vector3& v, Matrix4* result = nullptr);
+
+	/**
+	 * Constructs a transformation matrix representing a rotation
+	 * @param rot 3x3 rotation matrix
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The transformation matrix
+	 */
+	static Matrix4 fromRotation(const Matrix3& rot, Matrix4* result = nullptr);
+
+	/**
 	 * Constructs a transformation matrix representing a uniform scaling
 	 * @param scalar Value representing the scale magnitude
 	 * @param (Optional) Matrix in which to store the results
@@ -72,20 +88,9 @@ public:
 	static Matrix4 fromScaling(float x, float y, float z, Matrix4* result = nullptr);
 
 	/**
-	 * Constructs a transformation matrix representing a rotation
-	 * @param rot 3x3 rotation matrix
-	 * @param (Optional) Matrix in which to store the results
-	 * @return The transformation matrix
+	 * @return The raw data for this matrix
 	 */
-	static Matrix4 fromRotation(const Matrix3& rot, Matrix4* result = nullptr);
-
-	/**
-	 * Constructs a transformation matrix representing a translation
-	 * @param v Vector representing the translation
-	 * @param (Optional) Matrix in which to store the results
-	 * @return The transformation matrix
-	 */
-	static Matrix4 fromTranslation(const Vector3& v, Matrix4* result = nullptr);
+	const float* getValues() const;
 
 	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.

@@ -3,6 +3,7 @@
 
 class Buffer;
 class Texture;
+class Matrix4;
 
 /**
  * A shader program, managed by the shader manager
@@ -31,6 +32,13 @@ public:
      * @param texture Texture
      */
     void setUniform(const char* name, unsigned int textureUnit, const Texture* texture) const;
+
+    /**
+     * Sets uniform 4x4 matrix.
+     * @param name Uniform variable name
+     * @param matrix Matrix value
+     */
+    void setUniform(const char* name, const Matrix4& matrix) const;
 
 private:
 
@@ -70,4 +78,12 @@ private:
      * Destroys this shader program and releases all of its resources.
      */
     void destroy();
+
+    /**
+     * Helper method that obtains the location of a uniform variable in this shader program (assuming it's bound),
+     * asserting that the variable exists in the process.
+     * @param variableName The name of the variable
+     * @return The variable location
+     */
+    int getUniformLocation(const char* variableName) const;
 };

@@ -13,13 +13,16 @@ namespace Shaders {
 		layout (location = 1) in vec4 vert_Color;
 		layout (location = 2) in vec2 vert_TexCoord;
 
+		// Uniforms
+		uniform mat4 transform;
+
 		// Outputs
 		out vec4 frag_Color;
 		out vec2 frag_TexCoord;
 
 		void main()
 		{
-			gl_Position = vec4(vert_Pos, 1.0);
+			gl_Position = transform * vec4(vert_Pos, 1.0f);
 			frag_Color = vert_Color;
 			frag_TexCoord = vert_TexCoord;
 		}
