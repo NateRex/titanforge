@@ -191,19 +191,25 @@ Vector3 Matrix4::transformDirection(const Vector3& v, Vector3* result) const
 
 Matrix4 Matrix4::multiply(const Matrix4& m, Matrix4* result) const
 {
-	float data[16] = { 0 };
-
-	for (int r = 0; r < 4; r++)
-	{
-		for (int c = 0; c < 4; ++c)
-		{
-			data[r * 4 + c] = _m[r * 4] * m._m[c] + _m[r * 5] * m._m[4 + c] + _m[r * 6] * m._m[8 + c] + _m[r * 7] * m._m[12 + c];
-		}
-	}
+	float m00 = _m[0] * m._m[0] + _m[1] * m._m[4] + _m[2] * m._m[8] + _m[3] * m._m[12];
+	float m01 = _m[0] * m._m[1] + _m[1] * m._m[5] + _m[2] * m._m[9] + _m[3] * m._m[13];
+	float m02 = _m[0] * m._m[2] + _m[1] * m._m[6] + _m[2] * m._m[10] + _m[3] * m._m[14];
+	float m03 = _m[0] * m._m[3] + _m[1] * m._m[7] + _m[2] * m._m[11] + _m[3] * m._m[15];
+	float m10 = _m[4] * m._m[0] + _m[5] * m._m[4] + _m[6] * m._m[8] + _m[7] * m._m[12];
+	float m11 = _m[4] * m._m[1] + _m[5] * m._m[5] + _m[6] * m._m[9] + _m[7] * m._m[13];
+	float m12 = _m[4] * m._m[2] + _m[5] * m._m[6] + _m[6] * m._m[10] + _m[7] * m._m[14];
+	float m13 = _m[4] * m._m[3] + _m[5] * m._m[7] + _m[6] * m._m[11] + _m[7] * m._m[15];
+	float m20 = _m[8] * m._m[0] + _m[9] * m._m[4] + _m[10] * m._m[8] + _m[11] * m._m[12];
+	float m21 = _m[8] * m._m[1] + _m[9] * m._m[5] + _m[10] * m._m[9] + _m[11] * m._m[13];
+	float m22 = _m[8] * m._m[2] + _m[9] * m._m[6] + _m[10] * m._m[10] + _m[11] * m._m[14];
+	float m23 = _m[8] * m._m[3] + _m[9] * m._m[7] + _m[10] * m._m[11] + _m[11] * m._m[15];
+	float m30 = _m[12] * m._m[0] + _m[13] * m._m[4] + _m[14] * m._m[8] + _m[15] * m._m[12];
+	float m31 = _m[12] * m._m[1] + _m[13] * m._m[5] + _m[14] * m._m[9] + _m[15] * m._m[13];
+	float m32 = _m[12] * m._m[2] + _m[13] * m._m[6] + _m[14] * m._m[10] + _m[15] * m._m[14];
+	float m33 = _m[12] * m._m[3] + _m[13] * m._m[7] + _m[14] * m._m[11] + _m[15] * m._m[15];
 
 	Matrix4& r = getOrDefault(result, Matrix4());
-	r.setValues(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9],
-		data[10], data[11], data[12], data[13], data[14], data[15]);
+	r.setValues(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 
 	return r;
 }

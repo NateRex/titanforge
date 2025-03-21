@@ -62,16 +62,18 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromRotations)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_identity)
 {
-	BOOST_TEST(Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(2, 0, 0, 0, 1, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 2, 0, 0, 1, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 2, 0, 1, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 2, 1, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 0, 2, 0, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 0, 1, 2, 0, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 0, 1, 0, 2, 0, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 0, 1, 0, 0, 2, 1).isIdentity());
-	BOOST_TEST(!Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 2).isIdentity());
+	float v[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+	BOOST_TEST(Matrix3(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8])
+		.isIdentity());
+
+	for (int i = 0; i < 9; i++)
+	{
+		v[i] += 1;
+
+		BOOST_TEST(!Matrix3(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]).isIdentity());
+
+		v[i] -= 1;
+	}
 }
 
 /**
@@ -79,30 +81,24 @@ BOOST_AUTO_TEST_CASE(Matrix3_identity)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_equalTo)
 {
-	Matrix3 m(1, 2, 3, 4, 5, 6, 7, 8, 9);
-
-	// Strict checks
+	float v[9] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+	Matrix3 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
 	BOOST_TEST(m == m);
-	BOOST_TEST(m != Matrix3(1.1, 2, 3, 4, 5, 6, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2.1, 3, 4, 5, 6, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3.1, 4, 5, 6, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4.1, 5, 6, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4, 5.1, 6, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4, 5, 6.1, 7, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4, 5, 6, 7.1, 8, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4, 5, 6, 7, 8.1, 9));
-	BOOST_TEST(m != Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9.1));
 
-	// Checks within tolerance
-	BOOST_TEST(m.equalTo(Matrix3(1.1, 2, 3, 4, 5, 6, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2.1, 3, 4, 5, 6, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3.1, 4, 5, 6, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4.1, 5, 6, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4, 5.1, 6, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6.1, 7, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7.1, 8, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7, 8.1, 9), 0.2));
-	BOOST_TEST(m.equalTo(Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9.1), 0.2));
+	Matrix3 m2;
+	for (int i = 0; i < 9; i++)
+	{
+		v[i] += 0.1;
+		m2 = Matrix3(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
+
+		// Strict comparison
+		BOOST_TEST(m != m2);
+
+		// Comparison w/ tolerance
+		BOOST_TEST(m.equalTo(m2, 0.2));
+
+		v[i] -= 0.1;
+	}
 }
 
 /**

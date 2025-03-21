@@ -78,3 +78,87 @@ BOOST_AUTO_TEST_CASE(Matrix4_translation)
 	t.transformPosition(origin, &v);		// translation
 	BOOST_TEST(v.equalTo(Vector3(origin.x - 10, origin.y + 20, origin.z - 30)));
 }
+
+/**
+ * Tests the method to check if a matrix is the identity matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_identity)
+{
+	float v[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+	Matrix4 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+	BOOST_TEST(m.isIdentity());
+
+	for (int i = 0; i < 16; i++)
+	{
+		v[i] += 1;
+
+		BOOST_TEST(!Matrix4(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15])
+			.isIdentity());
+
+		v[i] -= 1;
+	}
+}
+
+/**
+ * Tests the method that compares two matrices for equality
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_equalTo)
+{
+	float v[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	Matrix4 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+	BOOST_TEST(m == m);
+
+	Matrix4 m2;
+	for (int i = 0; i < 16; i++)
+	{
+		v[i] += 0.1;
+		m2 = Matrix4(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+
+		// Strict comparison
+		BOOST_TEST(m != m2);
+
+		// Comparison w/ tolerance
+		BOOST_TEST(m.equalTo(m2, 0.2));
+
+		v[i] -= 0.1;
+	}
+}
+
+/**
+ * Tests the ability to obtain the transpose of a matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_transpose)
+{
+	Matrix4 m(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+	m.transpose(&m);
+	BOOST_TEST(m.equalTo(Matrix4(1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16)));
+}
+
+/**
+ * Tests the ability to obtain the inverse of a matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_inverse)
+{
+	Matrix4 m(0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0);
+	Matrix4 inv;
+	bool hasInverse = m.inverse(&inv);
+	BOOST_TEST(hasInverse);
+	BOOST_TEST(inv.multiply(m).equalTo(Matrix4::IDENTITY, 1.0e-6));
+
+	// Obtain cached value
+	Matrix4 cached;
+	hasInverse = m.inverse(&cached);
+	BOOST_TEST(hasInverse);
+	BOOST_TEST(cached == inv);
+
+	// Inverse does not exist. Value remains unchanged.
+	m = Matrix4(1, 2, 3, 4, 2, 4, 6, 8, 3, 6, 9, 12, 4, 8, 12, 16);
+	hasInverse = m.inverse(&inv);
+	BOOST_TEST(!hasInverse);
+	BOOST_TEST(inv == cached);
+
+	// Obtain cached value (no inverse, so matrix is left unchanged)
+	m.inverse(&cached);
+	BOOST_TEST(!hasInverse);
+	BOOST_TEST(cached == inv);
+}
