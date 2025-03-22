@@ -17,7 +17,7 @@ public:
 	virtual PrimitiveAttributes getAttributes() const = 0;
 
 	/**
-	 * Store the data of this primitive into the given buffers
+	 * Transforms the data of this primitive into world space, and stores it in the given buffers
 	 * @param vertexData Vector in which the data for each unique vertex should be stored.
 	 * @param indices Vector to which the vertex indices of this primitive should be appended
 	 */

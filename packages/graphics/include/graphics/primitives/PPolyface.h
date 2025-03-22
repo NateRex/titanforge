@@ -15,7 +15,7 @@ public:
 	
 	/**
 	 * Constructor
-	 * @param verts Vertex positions
+	 * @param verts Vertex positions, in local space.
 	 * @param numVerts Number of values in the position array
 	 * @param indices Indices pointing to the ordered vertices of this polyface. A value of -1 implies
 	 * the end of a facet and the start of another
@@ -31,7 +31,8 @@ public:
 
 	/**
 	 * Constructor
-	 * @param polyface Polyface to copy data from
+	 * @param polyface Polyface to copy data from. The data of this polyface is assumed to be represented in local
+	 * space.
 	 * @param colors (Optional) Array of colors for each vertex position. When present, the number of values
 	 * is expected to match the number of unique vertices in the polyface.
 	 * @param texCoords (Optional) Array of texture coordinates for each vertex position. When present, the number of
@@ -50,7 +51,7 @@ public:
 	PrimitiveAttributes getAttributes() const override;
 
 	/**
-	 * Store the data of this primitive into the given buffers
+	 * Transforms the data of this primitive into world space, and stores it in the given buffers
 	 * @param vertexData Vector in which the data for each unique vertex should be stored.
 	 * @param indices Vector to which the vertex indices of this primitive should be appended
 	 */

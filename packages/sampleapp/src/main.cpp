@@ -46,6 +46,22 @@ PPolyface examplePolyface()
 }
 
 /**
+ * @return Model matrix
+ */
+Matrix4 getModelMatrix()
+{
+    return Matrix4::fromXRotation(deg2Rad(-55.f));
+}
+
+/**
+ * @return View matrix
+ */
+Matrix4 getViewMatrix()
+{
+    return Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f));
+}
+
+/**
  * @return An example 4x4 transformation matrix
  */
 Matrix4 getTransform()
