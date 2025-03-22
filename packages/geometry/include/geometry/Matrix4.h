@@ -70,6 +70,39 @@ public:
 	static Matrix4 fromRotation(const Matrix3& rot, Matrix4* result = nullptr);
 
 	/**
+	 * Construct a matrix representing a rotation about a given axis
+	 * @param axis Direction vector to rotate about
+	 * @param radians Angle of rotation, in radians
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The rotation matrix
+	 */
+	static Matrix4 fromRotation(const Vector3& axis, float radians, Matrix4* result = nullptr);
+
+	/**
+	 * Constructs a matrix representing a rotation about the X-axis
+	 * @param radians Angle of rotation, in radians
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The rotation matrix
+	 */
+	static Matrix4 fromXRotation(float radians, Matrix4* result = nullptr);
+
+	/**
+	 * Constructs a matrix representing a rotation about the Y-axis
+	 * @param radians Angle of rotation, in radians
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The rotation matrix
+	 */
+	static Matrix4 fromYRotation(float radians, Matrix4* result = nullptr);
+
+	/**
+	 * Constructs a matrix representing a rotation about the Z-axis
+	 * @param radians Angle of rotation, in radians
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The rotation matrix
+	 */
+	static Matrix4 fromZRotation(float radians, Matrix4* result = nullptr);
+
+	/**
 	 * Constructs a transformation matrix representing a uniform scaling
 	 * @param scalar Value representing the scale magnitude
 	 * @param (Optional) Matrix in which to store the results
