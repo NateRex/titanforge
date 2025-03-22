@@ -123,7 +123,22 @@ BOOST_AUTO_TEST_CASE(Matrix4_translation)
  */
 BOOST_AUTO_TEST_CASE(Matrix4_orthographic)
 {
+	Matrix4 m = Matrix4::fromOrthographic(4, 3, 0.1, 100);
 
+	float exp[16] = {
+		0.5f, 0.f, 0.f, 0.f,
+		0.f, 0.6667f, 0.f, 0.f,
+		0.f, 0.f, -.02002f, -1.002f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	for (int i = 0; i < 16; i++)
+	{
+		BOOST_TEST(equals(m[i], exp[i], 1.0e-4));
+	}
+
+	Vector3 v(1.f, 1.f, 1.f);
+	BOOST_TEST(m.transformPosition(v).equalTo(Vector3(0.5f, 0.6667f, -1.022f), 1.0e-4));
+	BOOST_TEST(m.transformDirection(v).equalTo(Vector3(0.5, 0.6667, -0.02002), 1.0e-4));
 }
 
 /**
