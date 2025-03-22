@@ -62,13 +62,11 @@ Matrix4 getViewMatrix()
 }
 
 /**
- * @return An example 4x4 transformation matrix
+ * @return Projection matrix
  */
-Matrix4 getTransform()
+Matrix4 getProjectionMatrix()
 {
-    Matrix4 m = Matrix4::fromTranslation(Vector3(0.5f, -0.5f, 0.f));
-    m.multiply(Matrix4::fromRotation(Vector3(0.f, 0.f, 1.f), Engine::getTime()), &m);
-    return m;
+    return Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f);
 }
 
 /**
@@ -94,13 +92,15 @@ int main() {
     Shader* shader = ShaderManager::get("tf_basic");
     shader->setUniform("texture1", 0, boxTexture);
     shader->setUniform("texture2", 1, faceTexture);
+    shader->setUniform("model", getModelMatrix());
+    shader->setUniform("view", getViewMatrix());
+    shader->setUniform("proj", getProjectionMatrix());
 
     // Render loop
     while (window->isOpen())
     {
         Engine::startFrame();
 
-        shader->setUniform("transform", getTransform());
         shader->draw(buffer);
 
         Engine::finishFrame();

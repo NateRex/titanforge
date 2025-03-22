@@ -6,14 +6,14 @@
 /**
  * Test fixture capable of executing code before and after all tests
  */
-class GlobalFixture
+class GlobalTestFixture
 {
 public:
 
     /**
      * Code to run before all tests
      */
-    GlobalFixture()
+    GlobalTestFixture()
     {
         Engine::start(true);
     }
@@ -21,9 +21,9 @@ public:
     /**
      * Code to run after all tests
      */
-    ~GlobalFixture() {
+    ~GlobalTestFixture() {
         Engine::stop();
     }
 };
 
-BOOST_GLOBAL_FIXTURE(GlobalFixture);
+BOOST_GLOBAL_FIXTURE(GlobalTestFixture);

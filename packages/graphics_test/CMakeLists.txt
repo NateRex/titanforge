@@ -17,6 +17,7 @@ add_executable(GraphicsTest
     src/primitives/PrimitiveAttributesTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderTest.cpp
+    src/testutils/ShaderTestUtils.cpp
     src/textures/ImageLoaderTest.cpp
     src/textures/TextureManagerTest.cpp
     src/textures/TextureTest.cpp
@@ -27,6 +28,12 @@ add_executable(GraphicsTest
     src/EngineTest.cpp
     src/main.cpp
 )
+
+# Include directories
+target_include_directories(GraphicsTest
+    PRIVATE ${Stb_INCLUDE_DIR}
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PUBLIC $<INSTALL_INTERFACE:include>)
 
 # Linked libraries
 target_link_libraries(GraphicsTest

@@ -14,7 +14,9 @@ namespace Shaders {
 		layout (location = 2) in vec2 vert_TexCoord;
 
 		// Uniforms
-		uniform mat4 transform;
+		uniform mat4 model;
+		uniform mat4 view;
+		uniform mat4 proj;
 
 		// Outputs
 		out vec4 frag_Color;
@@ -22,7 +24,7 @@ namespace Shaders {
 
 		void main()
 		{
-			gl_Position = transform * vec4(vert_Pos, 1.0f);
+			gl_Position = proj * view * model * vec4(vert_Pos, 1.0f);
 			frag_Color = vert_Color;
 			frag_TexCoord = vert_TexCoord;
 		}
