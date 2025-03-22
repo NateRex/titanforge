@@ -50,9 +50,8 @@ PPolyface examplePolyface()
  */
 Matrix4 getTransform()
 {
-    Matrix3 rot = Matrix3::fromZRotation(deg2Rad(90.f));
-    Matrix4 m = Matrix4::fromRotation(rot);
-    m.multiply(Matrix4::fromScaling(0.5, 0.5, 0.5), &m);
+    Matrix4 m = Matrix4::fromTranslation(Vector3(0.5f, -0.5f, 0.f));
+    m.multiply(Matrix4::fromRotation(Vector3(0.f, 0.f, 1.f), Engine::getTime()), &m);
     return m;
 }
 
@@ -79,13 +78,13 @@ int main() {
     Shader* shader = ShaderManager::get("tf_basic");
     shader->setUniform("texture1", 0, boxTexture);
     shader->setUniform("texture2", 1, faceTexture);
-    shader->setUniform("transform", getTransform());
 
     // Render loop
     while (window->isOpen())
     {
         Engine::startFrame();
 
+        shader->setUniform("transform", getTransform());
         shader->draw(buffer);
 
         Engine::finishFrame();

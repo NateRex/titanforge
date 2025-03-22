@@ -2,6 +2,7 @@
 #include <geometry/Matrix4.h>
 #include <geometry/Matrix3.h>
 #include <geometry/Vector3.h>
+#include <common/Constants.h>
 #include <common/Utils.h>
 
 /**
@@ -45,9 +46,9 @@ BOOST_AUTO_TEST_CASE(Matrix4_scaling)
 }
 
 /**
- * Tests construction of a rotation transformation
+ * Tests construction of a rotation transformation from a 3x3 matrix
  */
-BOOST_AUTO_TEST_CASE(Matrix4_rotation)
+BOOST_AUTO_TEST_CASE(Matrix4_rotationFromMatrix)
 {
 	Matrix3 rot;
 	Matrix4 t;
@@ -62,6 +63,39 @@ BOOST_AUTO_TEST_CASE(Matrix4_rotation)
 	Matrix4::fromRotation(rot, &t);
 	t.transformDirection(Vector3(1, 0, 0), &v);
 	BOOST_TEST(v.equalTo(Vector3(0, 0, -1), 1.0e-6));
+}
+
+/**
+ * Tests construction of rotation transformations using raw data values
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_rotationFromValues)
+{
+	auto compare = [](const Matrix3& m1, const Matrix4& m2)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				BOOST_TEST(m1[i * 3 + j] == m2[i * 4 + j]);
+			}
+		}
+	};
+
+	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662, 0.2, 0.722), PI);
+	Matrix4 trans = Matrix4::fromRotation(Vector3(0.662, 0.2, 0.722), PI);
+	compare(rot, trans);
+
+	Matrix3::fromXRotation(PI, &rot);
+	Matrix4::fromXRotation(PI, &trans);
+	compare(rot, trans);
+
+	Matrix3::fromYRotation(PI, &rot);
+	Matrix4::fromYRotation(PI, &trans);
+	compare(rot, trans);
+
+	Matrix3::fromZRotation(PI, &rot);
+	Matrix4::fromZRotation(PI, &trans);
+	compare(rot, trans);
 }
 
 /**

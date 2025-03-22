@@ -52,6 +52,26 @@ Matrix4 Matrix4::fromRotation(const Matrix3& rot, Matrix4* result)
 	return r;
 }
 
+Matrix4 Matrix4::fromRotation(const Vector3& axis, float radians, Matrix4* result)
+{
+	return Matrix4::fromRotation(Matrix3::fromRotation(axis, radians), result);
+}
+
+Matrix4 Matrix4::fromXRotation(float radians, Matrix4* result)
+{
+	return Matrix4::fromRotation(Matrix3::fromXRotation(radians), result);
+}
+
+Matrix4 Matrix4::fromYRotation(float radians, Matrix4* result)
+{
+	return Matrix4::fromRotation(Matrix3::fromYRotation(radians), result);
+}
+
+Matrix4 Matrix4::fromZRotation(float radians, Matrix4* result)
+{
+	return Matrix4::fromRotation(Matrix3::fromZRotation(radians), result);
+}
+
 Matrix4 Matrix4::fromScaling(float scalar, Matrix4* result)
 {
 	return Matrix4::fromScaling(scalar, scalar, scalar, result);
