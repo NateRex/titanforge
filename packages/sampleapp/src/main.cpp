@@ -9,9 +9,7 @@
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/primitives/TriangulatedPolyface.h>
-#include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
-#include <geometry/Matrix3.h>
 #include <geometry/Matrix4.h>
 #include <common/Utils.h>
 

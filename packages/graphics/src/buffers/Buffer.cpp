@@ -8,22 +8,6 @@ Buffer::Buffer(const std::string& name)
 	
 }
 
-unsigned int Buffer::computeStride(const VertexAttributes& attributes)
-{
-	unsigned int stride = 3;
-
-	if (attributes.hasColor)
-	{
-		stride += 4;
-	}
-	if (attributes.hasTexture)
-	{
-		stride += 2;
-	}
-
-	return stride;
-}
-
 void Buffer::create(const VertexAttributes& attributes, const float* vertices, unsigned int numVerts,
 		const int* indices, unsigned int numIndices)
 {
@@ -41,7 +25,7 @@ void Buffer::create(const VertexAttributes& attributes, const float* vertices, u
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(int), indices, GL_STATIC_DRAW);
 	
-	unsigned int stride = computeStride(attributes);
+	int stride = attributes.getStride();
 	long long offset = 0;
 
 	// Position attribute

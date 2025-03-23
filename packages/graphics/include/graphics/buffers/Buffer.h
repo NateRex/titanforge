@@ -53,13 +53,6 @@ private:
 	Buffer(const std::string& name);
 
 	/**
-	 * Computes the stride of a buffer given the vertex attributes of a primitive
-	 * @param attributes The vertex attributes
-	 * @return The buffer stride
-	 */
-	static unsigned int computeStride(const VertexAttributes& attributes);
-
-	/**
 	 * Creates the OpenGL resources for this buffer, loading them with the given data.
 	 * @param attributes Vertex attributes
 	 * @param vertexData Array of vertex data for this buffer
