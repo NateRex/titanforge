@@ -26,14 +26,14 @@ struct VertexAttributes
 	/**
 	 * Operator that compares this set of attributes to another and tests for equality
 	 * @param other The set of attributes to compare to
-	 * @return True if this set of primitive attributes is equal to the one given. Returns false otherwise.
+	 * @return True if this set of vertex attributes are equal to the one given. Returns false otherwise.
 	 */
 	bool operator==(const VertexAttributes& other) const;
 
 	/**
 	 * Operator that compares this set of attributes to another and tests for inequality
 	 * @param other The set of attributes to compare to
-	 * @return True if this set of primitive attributes is not equal to the one given. Returns false otherwise.
+	 * @return True if this set of vertex attributes are not equal to the one given. Returns false otherwise.
 	 */
 	bool operator!=(const VertexAttributes& other) const;
 };

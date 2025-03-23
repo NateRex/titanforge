@@ -1,6 +1,5 @@
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
-#include <graphics/primitives/Primitive.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <sstream>

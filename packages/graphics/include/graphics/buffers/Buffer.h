@@ -53,8 +53,8 @@ private:
 	Buffer(const std::string& name);
 
 	/**
-	 * Computes the stride of a buffer given the attributes of a primitive
-	 * @param attributes The primitive attributes
+	 * Computes the stride of a buffer given the vertex attributes of a primitive
+	 * @param attributes The vertex attributes
 	 * @return The buffer stride
 	 */
 	static unsigned int computeStride(const VertexAttributes& attributes);
