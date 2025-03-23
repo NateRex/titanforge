@@ -44,7 +44,7 @@ Buffer* BufferManager::Builder::finish()
 // ------------------------------------------------------------------------------------------------------------------
 
 std::mutex BufferManager::_MUTEX;
-std::map<std::string, Buffer> BufferManager::_BUFFERS;
+std::unordered_map<std::string, Buffer> BufferManager::_BUFFERS;
 
 void BufferManager::setup()
 {

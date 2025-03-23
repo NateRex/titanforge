@@ -1,7 +1,7 @@
 #pragma once
 #include <iosfwd>
 #include <mutex>
-#include <map>
+#include <unordered_map>
 
 class Texture;
 
@@ -53,7 +53,7 @@ private:
 	/**
 	 * Map containing all textures that have been created
 	 */
-	static std::map<std::string, Texture> _TEXTURES;
+	static std::unordered_map<std::string, Texture> _TEXTURES;
 
 	/**
 	 * Constructor

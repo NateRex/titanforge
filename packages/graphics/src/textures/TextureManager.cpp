@@ -5,7 +5,7 @@
 #include <sstream>
 
 std::mutex TextureManager::_MUTEX;
-std::map<std::string, Texture> TextureManager::_TEXTURES;
+std::unordered_map<std::string, Texture> TextureManager::_TEXTURES;
 
 void TextureManager::setup()
 {

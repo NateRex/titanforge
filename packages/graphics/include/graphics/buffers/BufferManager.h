@@ -1,7 +1,7 @@
 #pragma once
 #include <iosfwd>
 #include <graphics/primitives/Primitive.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <mutex>
 
@@ -113,7 +113,7 @@ private:
 	/**
 	 * Map containing all buffers that have been created
 	 */
-	static std::map<std::string, Buffer> _BUFFERS;
+	static std::unordered_map<std::string, Buffer> _BUFFERS;
 
 	/**
 	 * Constructor

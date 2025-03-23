@@ -1,6 +1,6 @@
 #pragma once
 #include <iosfwd>
-#include <map>
+#include <unordered_map>
 #include <mutex>
 
 class Window;
@@ -63,7 +63,7 @@ private:
 	/**
 	 * Map containing all windows that have been created and are currently open
 	 */
-	static std::map<std::string, Window> _ALL_WINDOWS;
+	static std::unordered_map<std::string, Window> _ALL_WINDOWS;
 
 	/**
 	 * The window that is currently the target of the rendering context. Will
