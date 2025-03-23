@@ -1,6 +1,6 @@
 #pragma once
 #include <iosfwd>
-#include <map>
+#include <unordered_map>
 #include <mutex>
 
 class Shader;
@@ -51,7 +51,7 @@ private:
 	/**
 	 * Map containing all shaders that have been created
 	 */
-	static std::map<std::string, Shader> _SHADERS;
+	static std::unordered_map<std::string, Shader> _SHADERS;
 
 	/**
 	 * Constructor

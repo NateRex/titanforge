@@ -4,12 +4,17 @@
 #include <common/Utils.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <string>
+#include <math.h>
 
 const Matrix4 Matrix4::IDENTITY;
 
 Matrix4::Matrix4()
 {
-	setValues(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+	setValues(
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f);
 }
 
 Matrix4::Matrix4(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
@@ -34,10 +39,10 @@ Matrix4 Matrix4::fromTranslation(const Vector3& v, Matrix4* result)
 {
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		1., 0., 0., v.x,
-		0., 1., 0., v.y,
-		0., 0., 1., v.z,
-		0., 0., 0., 1.);
+		1.f, 0.f, 0.f, v.x,
+		0.f, 1.f, 0.f, v.y,
+		0.f, 0.f, 1.f, v.z,
+		0.f, 0.f, 0.f, 1.f);
 	return r;
 }
 
@@ -81,10 +86,41 @@ Matrix4 Matrix4::fromScaling(float x, float y, float z, Matrix4* result)
 {
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		x, 0., 0., 0.,
-		0., y, 0., 0.,
-		0., 0., z, 0.,
-		0., 0., 0., 1.);
+		x, 0.f, 0.f, 0.f,
+		0.f, y, 0.f, 0.f,
+		0.f, 0.f, z, 0.f,
+		0.f, 0.f, 0.f, 1.f);
+	return r;
+}
+
+Matrix4 Matrix4::fromOrthographic(float width, float height, float near, float far, Matrix4* result)
+{
+	float r = width / 2.0f;
+	float l = -r;
+	float t = height / 2.0f;
+	float b = -t;
+
+	Matrix4& res = getOrDefault(result, Matrix4());
+	res.setValues(
+		2.0f / (r - l), 0.f, 0.f, -(r + l) / (r - l),
+		0.f, 2.0f / (t - b), 0.f, -(t + b) / (t - b),
+		0.f, 0.f, -2.0f / (far - near), -(far + near) / (far - near),
+		0.f, 0.f, 0.f, 1.f);
+
+	return res;
+}
+
+Matrix4 Matrix4::fromPerspective(float fov, float aspect, float near, float far, Matrix4* result)
+{
+	float tanHalfFov = tan(fov / 2.0f);
+
+	Matrix4& r = getOrDefault(result, Matrix4());
+	r.setValues(
+		1.0f / (aspect * tanHalfFov), 0.f, 0.f, 0.f,
+		0.f, 1.0f / tanHalfFov, 0.f, 0.f,
+		0.f, 0.f, -(far + near) / (far - near), -2.f * far * near / (far - near),
+		0.f, 0.f, -1.0f, 0.f);
+
 	return r;
 }
 

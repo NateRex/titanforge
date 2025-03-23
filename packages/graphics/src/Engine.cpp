@@ -46,6 +46,8 @@ void Engine::start(bool headlessMode)
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
+    applyGlobalGLSettings();
+
     // Set current window
     WindowManager::setCurrent("tf_default_window");
 
@@ -101,7 +103,7 @@ void Engine::startFrame()
     // Clear
     Color clearColor = window->_clearColor;
     glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Engine::finishFrame()
@@ -127,4 +129,7 @@ void Engine::applyGlobalGLSettings()
     // Enable alpha channel for transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
 }

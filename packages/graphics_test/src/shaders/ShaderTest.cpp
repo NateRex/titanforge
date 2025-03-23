@@ -1,4 +1,5 @@
 #include <boost/test/unit_test.hpp>
+#include <graphics_test/testutils/ShaderTestFixture.h>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
@@ -8,6 +9,8 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
 #include <glad/glad.h>
+
+BOOST_AUTO_TEST_SUITE(ShaderTestSuite, *boost::unit_test::fixture<ShaderTestFixture>())
 
 /**
  * Tests the basic constructors and accessors of a shader
@@ -33,7 +36,7 @@ BOOST_AUTO_TEST_CASE(Shader_draw)
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&binding1);
 
 	// Draw buffer1
-	Shader* shader = ShaderManager::get("tf_basic");
+	Shader* shader = ShaderManager::get("test");
 	shader->draw(buffer1);
 
 	// Verify buffer2 no longer bound
@@ -56,7 +59,7 @@ BOOST_AUTO_TEST_CASE(Shader_draw)
  */
 BOOST_AUTO_TEST_CASE(Shader_setUniformTexture)
 {	
-	Shader* shader = ShaderManager::get("tf_basic");
+	Shader* shader = ShaderManager::get("test");
 
 	Texture* texture = TextureManager::create("texture", "assets/container.jpg");
 	BOOST_REQUIRE_NO_THROW(shader->setUniform("texture1", 0, texture));
@@ -69,8 +72,8 @@ BOOST_AUTO_TEST_CASE(Shader_setUniformTexture)
  */
 BOOST_AUTO_TEST_CASE(Shader_setUniformMatrix4)
 {
-	Shader* shader = ShaderManager::get("tf_basic");
-	BOOST_REQUIRE_NO_THROW(shader->setUniform("transform", Matrix4::IDENTITY));
+	Shader* shader = ShaderManager::get("test");
+	BOOST_REQUIRE_NO_THROW(shader->setUniform("matrix1", Matrix4::IDENTITY));
 }
 
 /**
@@ -78,7 +81,7 @@ BOOST_AUTO_TEST_CASE(Shader_setUniformMatrix4)
  */
 BOOST_AUTO_TEST_CASE(Shader_missingUniformException)
 {
-	Shader* shader = ShaderManager::get("tf_basic");
+	Shader* shader = ShaderManager::get("test");
 	BOOST_REQUIRE_THROW(shader->setUniform("does-not-exist", Matrix4::IDENTITY), IllegalArgumentException);
 }
 
@@ -100,3 +103,5 @@ BOOST_AUTO_TEST_CASE(Shader_compilationFailure)
 	BOOST_REQUIRE_THROW(ShaderManager::create("shader", invalidVertex, Shaders::BASIC_FRAGMENT),
 			InstantiationException);
 }
+
+BOOST_AUTO_TEST_SUITE_END()

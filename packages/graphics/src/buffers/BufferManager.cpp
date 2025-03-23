@@ -1,6 +1,5 @@
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
-#include <graphics/primitives/IPrimitive.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <sstream>
@@ -14,17 +13,17 @@ BufferManager::Builder::Builder(const std::string& name) : _name(name)
 
 }
 
-BufferManager::Builder& BufferManager::Builder::add(const IPrimitive& primitive)
+BufferManager::Builder& BufferManager::Builder::add(const Primitive& primitive)
 {
 	if (_vertexData.size() > 0)
 	{
-		if (_attributes != primitive.getAttributes())
+		if (_attributes != primitive.getVertexAttributes())
 		{
 			throw IllegalArgumentException("Primitives of a single buffer must have matching attributes");
 		}
 	}
 	else {
-		_attributes = primitive.getAttributes();
+		_attributes = primitive.getVertexAttributes();
 	}
 
 	primitive.buffer(_vertexData, _indexData);
@@ -44,7 +43,7 @@ Buffer* BufferManager::Builder::finish()
 // ------------------------------------------------------------------------------------------------------------------
 
 std::mutex BufferManager::_MUTEX;
-std::map<std::string, Buffer> BufferManager::_BUFFERS;
+std::unordered_map<std::string, Buffer> BufferManager::_BUFFERS;
 
 void BufferManager::setup()
 {

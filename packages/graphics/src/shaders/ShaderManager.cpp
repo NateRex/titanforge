@@ -6,7 +6,7 @@
 #include <sstream>
 
 std::mutex ShaderManager::_MUTEX;
-std::map<std::string, Shader> ShaderManager::_SHADERS;
+std::unordered_map<std::string, Shader> ShaderManager::_SHADERS;
 
 Shader* ShaderManager::create(const std::string& name, const char* vertexShader, const char* fragmentShader)
 {

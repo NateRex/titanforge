@@ -8,51 +8,85 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/primitives/PPolyface.h>
-#include <geometry/Vector2.h>
+#include <graphics/primitives/TriangulatedPolyface.h>
 #include <geometry/Vector3.h>
-#include <geometry/Matrix3.h>
 #include <geometry/Matrix4.h>
 #include <common/Utils.h>
 
 /**
  * @return An example polyface
  */
-PPolyface examplePolyface()
+TriangulatedPolyface examplePolyface()
 {
-    Vector3 vertices[] = {
-        Vector3(0.5f,  0.5f, 0.0f),     // top right
-        Vector3(0.5f, -0.5f, 0.0f),     // bottom right
-        Vector3(-0.5f, -0.5f, 0.0f),    // bottom left
-        Vector3(-0.5f,  0.5f, 0.0f)     // top left 
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
-    Color colors[] = {
-        Color::fromFloats(1.0f, 0.0f, 0.0f, 1.0f),
-        Color::fromFloats(0.0f, 1.0f, 0.0f, 1.0f),
-        Color::fromFloats(0.0f, 0.0f, 1.0f, 1.0f),
-        Color::fromFloats(1.0f, 1.0f, 1.0f, 1.0f)
-    };
-    Vector2 texCoords[] = {
-        Vector2(1, 1),
-        Vector2(1, 0),
-        Vector2(0, 0),
-        Vector2(0, 1)
-    };
-    int indices[] = {
-        0, 1, 3, -1,                    // first triangle
-        1, 2, 3                         // second triangle
-    };
-    return PPolyface(vertices, 4, indices, 7, colors, texCoords);
+
+    return TriangulatedPolyface(vertices, 180, { false, true });
 }
 
 /**
- * @return An example 4x4 transformation matrix
+ * @return Model matrix
  */
-Matrix4 getTransform()
+Matrix4 getModelMatrix()
 {
-    Matrix4 m = Matrix4::fromTranslation(Vector3(0.5f, -0.5f, 0.f));
-    m.multiply(Matrix4::fromRotation(Vector3(0.f, 0.f, 1.f), Engine::getTime()), &m);
-    return m;
+    return Matrix4::fromRotation(Vector3(0.5f, 1.0f, 0.f), Engine::getTime() * deg2Rad(50.f));
+}
+
+/**
+ * @return View matrix
+ */
+Matrix4 getViewMatrix()
+{
+    return Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f));
+}
+
+/**
+ * @return Projection matrix
+ */
+Matrix4 getProjectionMatrix()
+{
+    return Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f);
 }
 
 /**
@@ -67,7 +101,6 @@ int main() {
 
     // Textures
     Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
-    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png", true);
 
     // Buffers
     Buffer* buffer = BufferManager::startBuffer("geometry")
@@ -76,15 +109,17 @@ int main() {
 
     // Shaders
     Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("texture1", 0, boxTexture);
-    shader->setUniform("texture2", 1, faceTexture);
+    shader->setUniform("tex", 0, boxTexture);
+    shader->setUniform("model", getModelMatrix());
+    shader->setUniform("view", getViewMatrix());
+    shader->setUniform("proj", getProjectionMatrix());
 
     // Render loop
     while (window->isOpen())
     {
         Engine::startFrame();
 
-        shader->setUniform("transform", getTransform());
+        shader->setUniform("model", getModelMatrix());
         shader->draw(buffer);
 
         Engine::finishFrame();

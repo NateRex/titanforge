@@ -13,7 +13,11 @@ BOOST_AUTO_TEST_CASE(Matrix4_basics)
 	Matrix4 m;
 	BOOST_TEST(m.isIdentity());
 
-	m = Matrix4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+	m = Matrix4(
+		1.f, 2.f, 3.f, 4.f,
+		5.f, 6.f, 7.f, 8.f,
+		9.f, 10.f, 11.f, 12.f,
+		13.f, 14.f, 15.f, 16.f);
 	for (int i = 0; i < 16; i++)
 	{
 		BOOST_TEST(m[i] == i + 1);
@@ -29,7 +33,7 @@ BOOST_AUTO_TEST_CASE(Matrix4_basics)
  */
 BOOST_AUTO_TEST_CASE(Matrix4_scaling)
 {
-	Vector3 v(2.2, -3.3, 4.4);
+	Vector3 v(2.2f, -3.3f, 4.4f);
 	Vector3 result;
 
 	Matrix4 uniform = Matrix4::fromScaling(-5);
@@ -38,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Matrix4_scaling)
 	BOOST_TEST(result.y == v.y * -5);
 	BOOST_TEST(result.z == v.z * -5);
 
-	Matrix4 nonUniform = Matrix4::fromScaling(2, -3, 4);
+	Matrix4 nonUniform = Matrix4::fromScaling(2.f, -3.f, 4.f);
 	nonUniform.transformDirection(v, &result);
 	BOOST_TEST(result.x == v.x * 2);
 	BOOST_TEST(result.y == v.y * -3);
@@ -61,8 +65,8 @@ BOOST_AUTO_TEST_CASE(Matrix4_rotationFromMatrix)
 
 	Matrix3::fromYRotation(deg2Rad(90), &rot);
 	Matrix4::fromRotation(rot, &t);
-	t.transformDirection(Vector3(1, 0, 0), &v);
-	BOOST_TEST(v.equalTo(Vector3(0, 0, -1), 1.0e-6));
+	t.transformDirection(Vector3(1.f, 0.f, 0.f), &v);
+	BOOST_TEST(v.equalTo(Vector3(0.f, 0.f, -1.f), 1.0e-6));
 }
 
 /**
@@ -81,8 +85,8 @@ BOOST_AUTO_TEST_CASE(Matrix4_rotationFromValues)
 		}
 	};
 
-	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662, 0.2, 0.722), PI);
-	Matrix4 trans = Matrix4::fromRotation(Vector3(0.662, 0.2, 0.722), PI);
+	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662f, 0.2f, 0.722f), PI);
+	Matrix4 trans = Matrix4::fromRotation(Vector3(0.662f, 0.2f, 0.722f), PI);
 	compare(rot, trans);
 
 	Matrix3::fromXRotation(PI, &rot);
@@ -115,20 +119,79 @@ BOOST_AUTO_TEST_CASE(Matrix4_translation)
 }
 
 /**
+ * Tests construction of a matrix representing an orthographic projection
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_orthographic)
+{
+	Matrix4 m = Matrix4::fromOrthographic(4, 3, 0.1, 100);
+
+	float exp[16] = {
+		0.5f, 0.f, 0.f, 0.f,
+		0.f, 0.6667f, 0.f, 0.f,
+		0.f, 0.f, -.02002f, -1.002f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	for (int i = 0; i < 16; i++)
+	{
+		BOOST_TEST(equals(m[i], exp[i], 1.0e-4));
+	}
+
+	Vector3 v(1.f, 1.f, 1.f);
+	BOOST_TEST(m.transformPosition(v).equalTo(Vector3(0.5f, 0.6667f, -1.022f), 1.0e-4));
+	BOOST_TEST(m.transformDirection(v).equalTo(Vector3(0.5, 0.6667, -0.02002), 1.0e-4));
+}
+
+/**
+ * Tests construction of a matrix representing a perspective projection
+ */
+BOOST_AUTO_TEST_CASE(Matrix4_perspective)
+{
+	Matrix4 m = Matrix4::fromPerspective(deg2Rad(90.f), 16.f / 9.f, 0.1f, 100.f);
+	
+	float exp[16] = {
+		0.5625f, 0.f, 0.f, 0.f,
+		0.f, 1.0f, 0.f, 0.f,
+		0.f, 0.f, -1.002f, -0.2002f,
+		0.f, 0.f, -1.f, 0.f
+	};
+	for (int i = 0; i < 16; i++)
+	{
+		BOOST_TEST(equals(m[i], exp[i], 1.0e-4));
+	}
+
+	Vector3 v(1.f, 1.f, 1.f);
+	BOOST_TEST(m.transformPosition(v).equalTo(Vector3(-0.5625f, -1.f, 1.2022f), 1.0e-4));
+	BOOST_TEST(m.transformDirection(v).equalTo(Vector3(0.5625f, 1.f, -1.002f), 1.0e-4));
+}
+
+/**
  * Tests the method to check if a matrix is the identity matrix
  */
 BOOST_AUTO_TEST_CASE(Matrix4_identity)
 {
-	float v[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-	Matrix4 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+	float v[16] = {
+		1.f, 0.f, 0.f, 0.f,
+		0.f, 1.f, 0.f, 0.f,
+		0.f, 0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f, 1.f
+	};
+	Matrix4 m(
+		v[0], v[1], v[2], v[3],
+		v[4], v[5], v[6], v[7],
+		v[8], v[9], v[10], v[11],
+		v[12], v[13], v[14], v[15]);
+
 	BOOST_TEST(m.isIdentity());
 
 	for (int i = 0; i < 16; i++)
 	{
 		v[i] += 1;
 
-		BOOST_TEST(!Matrix4(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15])
-			.isIdentity());
+		BOOST_TEST(!Matrix4(
+			v[0], v[1], v[2], v[3],
+			v[4], v[5], v[6], v[7],
+			v[8], v[9], v[10], v[11],
+			v[12], v[13], v[14], v[15]).isIdentity());
 
 		v[i] -= 1;
 	}
@@ -139,15 +202,29 @@ BOOST_AUTO_TEST_CASE(Matrix4_identity)
  */
 BOOST_AUTO_TEST_CASE(Matrix4_equalTo)
 {
-	float v[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-	Matrix4 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+	float v[16] = {
+		1.f, 2.f, 3.f, 4.f,
+		5.f, 6.f, 7.f, 8.f,
+		9.f, 10.f, 11.f, 12.f,
+		13.f, 14.f, 15.f, 16.f
+	};
+	Matrix4 m(
+		v[0], v[1], v[2], v[3],
+		v[4], v[5], v[6], v[7],
+		v[8], v[9], v[10], v[11],
+		v[12], v[13], v[14], v[15]);
+
 	BOOST_TEST(m == m);
 
 	Matrix4 m2;
 	for (int i = 0; i < 16; i++)
 	{
 		v[i] += 0.1;
-		m2 = Matrix4(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10], v[11], v[12], v[13], v[14], v[15]);
+		m2 = Matrix4(
+			v[0], v[1], v[2], v[3],
+			v[4], v[5], v[6], v[7],
+			v[8], v[9], v[10], v[11],
+			v[12], v[13], v[14], v[15]);
 
 		// Strict comparison
 		BOOST_TEST(m != m2);
@@ -164,9 +241,17 @@ BOOST_AUTO_TEST_CASE(Matrix4_equalTo)
  */
 BOOST_AUTO_TEST_CASE(Matrix4_transpose)
 {
-	Matrix4 m(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+	Matrix4 m(
+		1.f, 2.f, 3.f, 4.f,
+		5.f, 6.f, 7.f, 8.f,
+		9.f, 10.f, 11.f, 12.f,
+		13.f, 14.f, 15.f, 16.f);
 	m.transpose(&m);
-	BOOST_TEST(m.equalTo(Matrix4(1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 16)));
+	BOOST_TEST(m.equalTo(Matrix4(
+		1.f, 5.f, 9.f, 13.f,
+		2.f, 6.f, 10.f, 14.f,
+		3.f, 7.f, 11.f, 15.f,
+		4.f, 8.f, 12.f, 16.f)));
 }
 
 /**
@@ -204,13 +289,13 @@ BOOST_AUTO_TEST_CASE(Matrix4_inverse)
 BOOST_AUTO_TEST_CASE(Matrix4_transformPosition)
 {
 	Matrix4 m(
-		2., 0., 0., 5.,
-		0., 3., 0., -4.,
-		0., 0., 1., 3.,
-		0., 0., 0., 1.);
-	Vector3 v(1., 2., 3.);
+		2.f, 0.f, 0.f, 5.f,
+		0.f, 3.f, 0.f, -4.f,
+		0.f, 0.f, 1.f, 3.f,
+		0.f, 0.f, 0.f, 1.f);
+	Vector3 v(1., 2.f, 3.f);
 
-	Vector3 expected(7., 2., 6.);
+	Vector3 expected(7.f, 2.f, 6.f);
 
 	Vector3 result;
 	m.transformPosition(v, &result);
@@ -223,13 +308,13 @@ BOOST_AUTO_TEST_CASE(Matrix4_transformPosition)
 BOOST_AUTO_TEST_CASE(Matrix4_transformDirection)
 {
 	Matrix4 m(
-		2., 0., 0., 5.,
-		0., 3., 0., -4.,
-		0., 0., 1., 3.,
-		0., 0., 0., 1.);
-	Vector3 v(1., 2., 3.);
+		2.f, 0.f, 0.f, 5.f,
+		0.f, 3.f, 0.f, -4.f,
+		0.f, 0.f, 1.f, 3.f,
+		0.f, 0.f, 0.f, 1.f);
+	Vector3 v(1.f, 2.f, 3.f);
 
-	Vector3 expected(2., 6., 3.);
+	Vector3 expected(2.f, 6.f, 3.f);
 
 	Vector3 result;
 	m.transformDirection(v, &result);
@@ -242,21 +327,21 @@ BOOST_AUTO_TEST_CASE(Matrix4_transformDirection)
 BOOST_AUTO_TEST_CASE(Matrix4_matrixMultiplication)
 {
 	Matrix4 m1(
-		2., 1., 3., 4.,
-		1., 2., 4., 3.,
-		3., 4., 1., 2.,
-		4., 3., 2., 1.);
+		2.f, 1.f, 3.f, 4.f,
+		1.f, 2.f, 4.f, 3.f,
+		3.f, 4.f, 1.f, 2.f,
+		4.f, 3.f, 2.f, 1.f);
 	Matrix4 m2(
-		1., 3., 2., 4.,
-		4., 2., 1., 3.,
-		3., 1., 4., 2.,
-		2., 4., 3., 1.);
+		1.f, 3.f, 2.f, 4.f,
+		4.f, 2.f, 1.f, 3.f,
+		3.f, 1.f, 4.f, 2.f,
+		2.f, 4.f, 3.f, 1.f);
 
 	Matrix4 expected(
-		23., 27., 29., 21.,
-		27., 23., 29., 21.,
-		26., 26., 20., 28.,
-		24., 24., 22., 30.);
+		23.f, 27.f, 29.f, 21.f,
+		27.f, 23.f, 29.f, 21.f,
+		26.f, 26.f, 20.f, 28.f,
+		24.f, 24.f, 22.f, 30.f);
 
 	Matrix4 result;
 	m1.multiply(m2, &result);

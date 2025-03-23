@@ -121,6 +121,28 @@ public:
 	static Matrix4 fromScaling(float x, float y, float z, Matrix4* result = nullptr);
 
 	/**
+	 * Constructs a transformation matrix representing an orthographic projection
+	 * @param width Frustum width
+	 * @param height Frustum height
+	 * @param near Near plane distance
+	 * @param far Far plane distance
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The transformation matrix
+	 */
+	static Matrix4 fromOrthographic(float width, float height, float near, float far, Matrix4* result = nullptr);
+
+	/**
+	 * Constructs a transformation matrix representing a perspective projection
+	 * @param fov Field-of-view angle (radians)
+	 * @param aspect Aspect ratio
+	 * @param near Near plane distance
+	 * @param far Far plane distance
+	 * @param (Optional) Matrix in which to store the results
+	 * @return The transformation matrix
+	 */
+	static Matrix4 fromPerspective(float fov, float aspect, float near, float far, Matrix4* result = nullptr);
+
+	/**
 	 * @return The raw data for this matrix
 	 */
 	const float* getValues() const;

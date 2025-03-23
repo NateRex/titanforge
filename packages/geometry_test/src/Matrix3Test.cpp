@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_basics)
 	Matrix3 m;
 	BOOST_TEST(m.isIdentity());
 
-	m = Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9);
+	m = Matrix3(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
 	for (int i = 0; i < 9; i++)
 	{
 		BOOST_TEST(m[i] == i + 1);
@@ -28,13 +28,13 @@ BOOST_AUTO_TEST_CASE(Matrix3_basics)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_fromRowsAndColumns)
 {
-	Matrix3 expected = Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9);
+	Matrix3 expected = Matrix3(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
 
 	Matrix3 m;
-	Matrix3::fromRows(Vector3(1, 2, 3), Vector3(4, 5, 6), Vector3(7, 8, 9), &m);
+	Matrix3::fromRows(Vector3(1.f, 2.f, 3.f), Vector3(4.f, 5.f, 6.f), Vector3(7.f, 8.f, 9.f), &m);
 	BOOST_TEST(m == expected);
 
-	Matrix3::fromColumns(Vector3(1, 4, 7), Vector3(2, 5, 8), Vector3(3, 6, 9), &m);
+	Matrix3::fromColumns(Vector3(1.f, 4.f, 7.f), Vector3(2.f, 5.f, 8.f), Vector3(3.f, 6.f, 9.f), &m);
 	BOOST_TEST(m == expected);
 }
 
@@ -43,15 +43,15 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromRowsAndColumns)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_fromArbitraryAxisRotation)
 {
-	BOOST_TEST(Matrix3::fromRotation(Vector3(1., 0., 0.), PI) == Matrix3::fromXRotation(PI));
-	BOOST_TEST(Matrix3::fromRotation(Vector3(0., 1., 0.), PI) == Matrix3::fromYRotation(PI));
-	BOOST_TEST(Matrix3::fromRotation(Vector3(0., 0., 1.), PI) == Matrix3::fromZRotation(PI));
+	BOOST_TEST(Matrix3::fromRotation(Vector3(1.f, 0.f, 0.f), PI) == Matrix3::fromXRotation(PI));
+	BOOST_TEST(Matrix3::fromRotation(Vector3(0.f, 1.f, 0.f), PI) == Matrix3::fromYRotation(PI));
+	BOOST_TEST(Matrix3::fromRotation(Vector3(0.f, 0.f, 1.f), PI) == Matrix3::fromZRotation(PI));
 
-	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662, 0.2, 0.722), deg2Rad(45));
-	Vector3 v(-1., 2., 4.);
+	Matrix3 rot = Matrix3::fromRotation(Vector3(0.662f, 0.2f, 0.722f), deg2Rad(45.f));
+	Vector3 v(-1.f, 2.f, 4.f);
 
 	rot.multiply(v, &v);
-	BOOST_TEST(Vector3(-0.653, -0.815, 4.461).equalTo(v, 1.0e-3));
+	BOOST_TEST(Vector3(-0.653f, -0.815f, 4.461f).equalTo(v, 1.0e-3));
 }
 
 /**
@@ -62,17 +62,17 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromMajorAxisRotations)
 	Matrix3 rot;
 	Vector3 v;
 
-	Matrix3::fromXRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(0., 0., 1.), &v);
-	BOOST_TEST(v.equalTo(Vector3(0., -1., 0.), 1.0e-6));
+	Matrix3::fromXRotation(deg2Rad(90.f), &rot);
+	rot.multiply(Vector3(0.f, 0.f, 1.f), &v);
+	BOOST_TEST(v.equalTo(Vector3(0.f, -1.f, 0.f), 1.0e-6));
 
 	Matrix3::fromYRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(1., 0., 0.), &v);
-	BOOST_TEST(v.equalTo(Vector3(0., 0., -1.), 1.0e-6));
+	rot.multiply(Vector3(1.f, 0.f, 0.f), &v);
+	BOOST_TEST(v.equalTo(Vector3(0.f, 0.f, -1.f), 1.0e-6));
 
 	Matrix3::fromZRotation(deg2Rad(90), &rot);
-	rot.multiply(Vector3(0., 1., 0.), &v);
-	BOOST_TEST(v.equalTo(Vector3(-1., 0., 0.), 1.0e-6));
+	rot.multiply(Vector3(0.f, 1.f, 0.f), &v);
+	BOOST_TEST(v.equalTo(Vector3(-1.f, 0.f, 0.f), 1.0e-6));
 }
 
 /**
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromMajorAxisRotations)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_identity)
 {
-	float v[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+	float v[9] = { 1.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 1.f };
 	BOOST_TEST(Matrix3(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8])
 		.isIdentity());
 
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_identity)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_equalTo)
 {
-	float v[9] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+	float v[9] = { 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f };
 	Matrix3 m(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]);
 	BOOST_TEST(m == m);
 
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_equalTo)
 		BOOST_TEST(m != m2);
 
 		// Comparison w/ tolerance
-		BOOST_TEST(m.equalTo(m2, 0.2));
+		BOOST_TEST(m.equalTo(m2, 0.2f));
 
 		v[i] -= 0.1;
 	}
@@ -124,9 +124,9 @@ BOOST_AUTO_TEST_CASE(Matrix3_equalTo)
  */
 BOOST_AUTO_TEST_CASE(Matrix3_transpose)
 {
-	Matrix3 m(1, 2, 3, 4, 5, 6, 7, 8, 9);
+	Matrix3 m(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
 	m.transpose(&m);
-	BOOST_TEST(m.equalTo(Matrix3(1, 4, 7, 2, 5, 8, 3, 6, 9)));
+	BOOST_TEST(m.equalTo(Matrix3(1.f, 4.f, 7.f, 2.f, 5.f, 8.f, 3.f, 6.f, 9.f)));
 }
 
 /**
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_transpose)
 BOOST_AUTO_TEST_CASE(Matrix3_inverse)
 {
 	// Get inverse
-	Matrix3 m(0, 1, 0, 0, 0, 1, 1, 0, 0);
+	Matrix3 m(0.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 0.f);
 	Matrix3 inv;
 	bool hasInverse = m.inverse(&inv);
 	BOOST_TEST(hasInverse);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_inverse)
 	BOOST_TEST(cached == inv);
 
 	// Inverse does not exist. Value remains unchanged.
-	m = Matrix3(1, 2, 0, 3, -1, 2, -2, 3, -2);
+	m = Matrix3(1.f, 2.f, 0.f, 3.f, -1.f, 2.f, -2.f, 3.f, -2.f);
 	hasInverse = m.inverse(&inv);
 	BOOST_TEST(!hasInverse);
 	BOOST_TEST(inv == cached);
@@ -165,12 +165,12 @@ BOOST_AUTO_TEST_CASE(Matrix3_inverse)
 BOOST_AUTO_TEST_CASE(Matrix3_vectorMultiplication)
 {
 	Matrix3 m(
-		1.5, 2.0, 3.1,
-		3.2, 4.5, 5.6,
-		6.1, 7.2, 8.3);
-	Vector3 v(2.1, 3.0, 4.2);
+		1.5f, 2.0f, 3.1f,
+		3.2f, 4.5f, 5.6f,
+		6.1f, 7.2f, 8.3f);
+	Vector3 v(2.1f, 3.0f, 4.2f);
 
-	Vector3 expected(22.17, 43.74, 69.27);
+	Vector3 expected(22.17f, 43.74f, 69.27f);
 
 	Vector3 result;
 	m.multiply(v, &result);
@@ -183,18 +183,18 @@ BOOST_AUTO_TEST_CASE(Matrix3_vectorMultiplication)
 BOOST_AUTO_TEST_CASE(Matrix3_matrixMultiplication)
 {
 	Matrix3 m1(
-		1.5, 2.0, 3.1,
-		3.2, 4.5, 5.6,
-		6.1, 7.2, 8.3);
+		1.5f, 2.0f, 3.1f,
+		3.2f, 4.5f, 5.6f,
+		6.1f, 7.2f, 8.3f);
 	Matrix3 m2(
-		2.1, 1.3, 3.4,
-		3.0, 4.2, 5.1,
-		6.2, 7.4, 8.5);
+		2.1f, 1.3f, 3.4f,
+		3.0f, 4.2f, 5.1f,
+		6.2f, 7.4f, 8.5f);
 
 	Matrix3 expected(
-		28.37, 33.29, 41.65,
-		54.94, 64.50, 81.43,
-		85.87, 99.59, 128.01);
+		28.37f, 33.29f, 41.65f,
+		54.94f, 64.50f, 81.43f,
+		85.87f, 99.59f, 128.01f);
 
 	Matrix3 result;
 	m1.multiply(m2, &result);

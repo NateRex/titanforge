@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 
 std::mutex WindowManager::_MUTEX;
-std::map<std::string, Window> WindowManager::_ALL_WINDOWS;
+std::unordered_map<std::string, Window> WindowManager::_ALL_WINDOWS;
 Window* WindowManager::_CURRENT_WINDOW = nullptr;
 
 void WindowManager::setup()
