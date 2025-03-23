@@ -46,6 +46,8 @@ void Engine::start(bool headlessMode)
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
+    applyGlobalGLSettings();
+
     // Set current window
     WindowManager::setCurrent("tf_default_window");
 

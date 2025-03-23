@@ -20,50 +20,51 @@
  */
 TriangulatedPolyface examplePolyface()
 {
-    Vector3 vertices[] = {
-        Vector3(-0.5f, -0.5f, -0.5f),   // 0: far bottom left
-        Vector3(0.5f, -0.5f, -0.5f),    // 1: far bottom right
-        Vector3(0.5f, 0.5f, -0.5f),     // 2: far top right
-        Vector3(-0.5f, 0.5f, -0.5f),    // 3: far top left
-        Vector3(-0.5f, -0.5f, 0.5f),    // 4: near bottom left
-        Vector3(0.5f, -0.5f, 0.5f),     // 5: near bottom right
-        Vector3(0.5f, 0.5f, 0.5f),      // 6: near top right
-        Vector3(-0.5f, 0.5f, 0.5f),     // 7: near top left
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
-    Vector2 texCoords[] = {
-        Vector2(0, 0),
-        Vector2(1, 0),
-        Vector2(1, 1),
-        Vector2(0, 1),
-        Vector2(0, 1),
-        Vector2()
-    };
-    int indices[] = {
-        // Back face
-        0, 1, 2, -1,
-        2, 3, 0, -1,
-        
-        // Left face
-        0, 4, 7, -1,
-        7, 3, 0, -1,
 
-        // Front face
-        4, 5, 6, -1,
-        6, 7, 4, -1,
-
-        // Right face
-        1, 5, 6, -1,
-        6, 2, 0, -1,
-
-        // Top face
-        7, 3, 2, -1,
-        2, 6, 7, -1,
-
-        // Bottom face
-        4, 5, 1, -1,
-        1, 0, 4, -1
-    };
-    return TriangulatedPolyface(vertices, 8, indices, 48, {false, true});
+    return TriangulatedPolyface(vertices, 180, { false, true });
 }
 
 /**
@@ -71,7 +72,7 @@ TriangulatedPolyface examplePolyface()
  */
 Matrix4 getModelMatrix()
 {
-    return Matrix4::fromXRotation(deg2Rad(-55.f));
+    return Matrix4::fromRotation(Vector3(0.5f, 1.0f, 0.f), Engine::getTime() * deg2Rad(50.f));
 }
 
 /**
@@ -120,6 +121,7 @@ int main() {
     {
         Engine::startFrame();
 
+        shader->setUniform("model", getModelMatrix());
         shader->draw(buffer);
 
         Engine::finishFrame();
