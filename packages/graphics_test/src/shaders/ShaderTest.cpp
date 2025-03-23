@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics_test/testutils/ShaderTestUtils.h>
+#include <graphics_test/testutils/ShaderTestFixture.h>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>

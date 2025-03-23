@@ -1,4 +1,4 @@
-#include <graphics_test/testutils/ShaderTestUtils.h>
+#include <graphics_test/testutils/ShaderTestFixture.h>
 #include <graphics/shaders/ShaderManager.h>
 
 ShaderTestFixture::ShaderTestFixture()
