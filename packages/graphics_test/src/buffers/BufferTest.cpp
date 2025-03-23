@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
-#include <graphics/primitives/TriangulatedPolyface.h>
+#include <graphics/primitives/Primitive.h>
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 #include <graphics/Color.h>
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Buffer_attributesMustMatch)
 		0.f, 1.f, 0.f,
 		1.f, 0.f, 0.f
 	};
-	TriangulatedPolyface p1(v1, 9, { false, false });
+	Primitive p1(v1, 9, { false, false });
 	BufferManager::Builder builder = BufferManager::startBuffer("test-buffer").add(p1);
 
 	// Cannot add primitive containing colors
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(Buffer_attributesMustMatch)
 		0.f, 1.f, 0.f, 1.f, 0.f, 0.f, 1.f,
 		1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f
 	};
-	TriangulatedPolyface p2(v2, 21, { true, false });
+	Primitive p2(v2, 21, { true, false });
 	BOOST_REQUIRE_THROW(builder.add(p2), IllegalArgumentException);
 
 	// Cannot add primitive containing texture coordinates
@@ -47,6 +47,6 @@ BOOST_AUTO_TEST_CASE(Buffer_attributesMustMatch)
 		0.f, 1.f, 0.f, 0.5f, 1.f,
 		1.f, 0.f, 0.f, 1.f, 0.f
 	};
-	TriangulatedPolyface p3(v3, 15, { false, true });
+	Primitive p3(v3, 15, { false, true });
 	BOOST_REQUIRE_THROW(builder.add(p3), IllegalArgumentException);
 }
