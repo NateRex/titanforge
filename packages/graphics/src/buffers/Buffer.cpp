@@ -1,5 +1,5 @@
 #include <graphics/buffers/Buffer.h>
-#include <graphics/primitives/PrimitiveAttributes.h>
+#include <graphics/primitives/Primitive.h>
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)
@@ -8,7 +8,7 @@ Buffer::Buffer(const std::string& name)
 	
 }
 
-unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
+unsigned int Buffer::computeStride(const VertexAttributes& attributes)
 {
 	unsigned int stride = 3;
 
@@ -16,7 +16,7 @@ unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
 	{
 		stride += 4;
 	}
-	if (attributes.hasTextureCoords)
+	if (attributes.hasTexture)
 	{
 		stride += 2;
 	}
@@ -24,7 +24,7 @@ unsigned int Buffer::computeStride(const PrimitiveAttributes& attributes)
 	return stride;
 }
 
-void Buffer::create(const PrimitiveAttributes& attributes, const float* vertices, unsigned int numVerts,
+void Buffer::create(const VertexAttributes& attributes, const float* vertices, unsigned int numVerts,
 		const int* indices, unsigned int numIndices)
 {
 	// Create buffers
@@ -58,7 +58,7 @@ void Buffer::create(const PrimitiveAttributes& attributes, const float* vertices
 	}
 
 	// Texture attribute (if present)
-	if (attributes.hasTextureCoords)
+	if (attributes.hasTexture)
 	{
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
 		glEnableVertexAttribArray(2);

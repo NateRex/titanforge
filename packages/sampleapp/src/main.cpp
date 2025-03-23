@@ -21,28 +21,49 @@
 PPolyface examplePolyface()
 {
     Vector3 vertices[] = {
-        Vector3(0.5f,  0.5f, 0.0f),     // top right
-        Vector3(0.5f, -0.5f, 0.0f),     // bottom right
-        Vector3(-0.5f, -0.5f, 0.0f),    // bottom left
-        Vector3(-0.5f,  0.5f, 0.0f)     // top left 
-    };
-    Color colors[] = {
-        Color::fromFloats(1.0f, 0.0f, 0.0f, 1.0f),
-        Color::fromFloats(0.0f, 1.0f, 0.0f, 1.0f),
-        Color::fromFloats(0.0f, 0.0f, 1.0f, 1.0f),
-        Color::fromFloats(1.0f, 1.0f, 1.0f, 1.0f)
+        Vector3(-0.5f, -0.5f, -0.5f),   // 0: far bottom left
+        Vector3(0.5f, -0.5f, -0.5f),    // 1: far bottom right
+        Vector3(0.5f, 0.5f, -0.5f),     // 2: far top right
+        Vector3(-0.5f, 0.5f, -0.5f),    // 3: far top left
+        Vector3(-0.5f, -0.5f, 0.5f),    // 4: near bottom left
+        Vector3(0.5f, -0.5f, 0.5f),     // 5: near bottom right
+        Vector3(0.5f, 0.5f, 0.5f),      // 6: near top right
+        Vector3(-0.5f, 0.5f, 0.5f),     // 7: near top left
     };
     Vector2 texCoords[] = {
-        Vector2(1, 1),
-        Vector2(1, 0),
         Vector2(0, 0),
-        Vector2(0, 1)
+        Vector2(1, 0),
+        Vector2(1, 1),
+        Vector2(0, 1),
+        Vector2(0, 1),
+        Vector2()
     };
     int indices[] = {
-        0, 1, 3, -1,                    // first triangle
-        1, 2, 3                         // second triangle
+        // Back face
+        0, 1, 2, -1,
+        2, 3, 0, -1,
+        
+        // Left face
+        0, 4, 7, -1,
+        7, 3, 0, -1,
+
+        // Front face
+        4, 5, 6, -1,
+        6, 7, 4, -1,
+
+        // Right face
+        1, 5, 6, -1,
+        6, 2, 0, -1,
+
+        // Top face
+        7, 3, 2, -1,
+        2, 6, 7, -1,
+
+        // Bottom face
+        4, 5, 1, -1,
+        1, 0, 4, -1
     };
-    return PPolyface(vertices, 4, indices, 7, colors, texCoords);
+    return PPolyface(vertices, 8, indices, 48, nullptr, texCoords);
 }
 
 /**
@@ -81,7 +102,6 @@ int main() {
 
     // Textures
     Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
-    Texture* faceTexture = TextureManager::create("face", "assets/awesomeface.png", true);
 
     // Buffers
     Buffer* buffer = BufferManager::startBuffer("geometry")
@@ -90,8 +110,7 @@ int main() {
 
     // Shaders
     Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("texture1", 0, boxTexture);
-    shader->setUniform("texture2", 1, faceTexture);
+    shader->setUniform("tex", 0, boxTexture);
     shader->setUniform("model", getModelMatrix());
     shader->setUniform("view", getViewMatrix());
     shader->setUniform("proj", getProjectionMatrix());

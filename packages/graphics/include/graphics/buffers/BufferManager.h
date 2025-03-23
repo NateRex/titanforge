@@ -1,12 +1,11 @@
 #pragma once
 #include <iosfwd>
-#include <graphics/primitives/PrimitiveAttributes.h>
+#include <graphics/primitives/Primitive.h>
 #include <map>
 #include <vector>
 #include <mutex>
 
 class Buffer;
-class IPrimitive;
 
 /**
  * The buffer manager is responsible for tracking all buffers that have been created
@@ -36,7 +35,7 @@ public:
 		 * @throws IllegalArgumentException if the primitive does not have matching attributes with primitives already
 		 * added to this buffer
 		 */
-		Builder& add(const IPrimitive& primitive);
+		Builder& add(const Primitive& primitive);
 
 		/**
 		 * Finalizes and constructs the buffer stored by this builder. The resulting buffer will be
@@ -55,7 +54,7 @@ public:
 		/**
 		 * Attributes shared by all primitives stored in this buffer
 		 */
-		PrimitiveAttributes _attributes;
+		VertexAttributes _attributes;
 
 		/**
 		 * Vector containing the vertex data obtained from primitives

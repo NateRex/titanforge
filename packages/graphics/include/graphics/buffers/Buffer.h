@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class PrimitiveAttributes;
+struct VertexAttributes;
 
 /**
  * A buffer capable of being loaded with vertex array data to be sent to the GPU
@@ -57,17 +57,17 @@ private:
 	 * @param attributes The primitive attributes
 	 * @return The buffer stride
 	 */
-	static unsigned int computeStride(const PrimitiveAttributes& attributes);
+	static unsigned int computeStride(const VertexAttributes& attributes);
 
 	/**
 	 * Creates the OpenGL resources for this buffer, loading them with the given data.
-	 * @param attributes Primitive attributes
+	 * @param attributes Vertex attributes
 	 * @param vertexData Array of vertex data for this buffer
 	 * @param numValues The number of values in the vertex data array
 	 * @param indices Array containing the vertex indices of this buffer
 	 * @param numIndices The number of indices
 	 */
-	void create(const PrimitiveAttributes& attributes, const float* vertexData, unsigned int numValues,
+	void create(const VertexAttributes& attributes, const float* vertexData, unsigned int numValues,
 			const int* indices, unsigned int numIndices);
 
 	/**
