@@ -14,7 +14,6 @@ add_executable(GraphicsTest
     src/buffers/BufferManagerTest.cpp
     src/buffers/BufferTest.cpp
     src/primitives/PrimitiveTest.cpp
-    src/primitives/TriangulatedPolyfaceTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderTest.cpp
     src/testutils/GlobalTestFixture.cpp

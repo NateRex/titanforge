@@ -40,13 +40,55 @@ struct VertexAttributes
 
 
 /**
- * Abstract class for all primitives
+ * A primitive in the form of a triangulated polyface, containing both geometry and styling. This is the parent
+ * class to all other primitives.
  * @author Nathaniel Rex
  */
 class Primitive
 {
-
 public:
+
+	friend class BufferManager;
+
+	/**
+	 * Constructs a primitive from an array of vertices representing a triangulated polyface.
+	 * @param vertices Vertex array. Each vertex is represented using a minimum of 3 values. The inclusion of other vertex
+	 * attributes implies a larger number of values per vertex.
+	 * @param verticesSize The number of values in the array
+	 * @param vertexAttributes The attributes included with each vertex
+	 * Defaults to false.
+	 */
+	Primitive(const float* vertices, int verticesSize, const VertexAttributes& vertexAttributes);
+
+	/**
+	 * Constructs a primitive from an array of vertices and an array of indices that together represent a triangulated polyface.
+	 * @param vertices Vertex array. Each vertex is represented using a minimum of 3 values. The inclusion of other vertex
+	 * attributes implies a larger number of values per vertex.
+	 * @param verticesSize The number of values in the vertex array
+	 * @param indicesSize Index array defining the ordering of vertices. The values in the index array refer to individual vertices,
+	 * not accounting for stride. For example, if the vertex array contains six values representing two points
+	 * (each with three components), valid index values are 0 or 1.
+	 * @param numIndices The number of values in the index array
+	 * @param vertexAttributes The attributes included with each vertex
+	 */
+	Primitive(const float* vertices, int verticesSize, const int* indices, int indicesSize,
+		const VertexAttributes& vertexAttributes);
+
+	/**
+	 * Constructs a primitive from an existing object
+	 * @param primitive Existing primitive
+	 */
+	Primitive(const Primitive& primitive);
+
+	/**
+	 * Destructor
+	 */
+	~Primitive();
+
+	/**
+	 * @return The total number of vertices across all facets of this primitive
+	 */
+	int getSize() const;
 
 	/**
 	 * @return The set of attributes defining what data is included for each vertex on this primitive
@@ -58,19 +100,35 @@ public:
 	 * @param vertexData Vector in which the data for each unique vertex should be stored.
 	 * @param indices Vector to which the vertex indices of this primitive should be appended
 	 */
-	virtual void buffer(std::vector<float>& vertexData, std::vector<int>& indices) const = 0;
+	void buffer(std::vector<float>& vertexData, std::vector<int>& indices) const;
 
 protected:
+
+	/**
+	 * Vertex data. Each vertex is represented using a minimum of 3 values. The inclusion of other vertex
+	 * attributes implies a larger number of values per vertex.
+	 */
+	float* _vertices;
+
+	/**
+	 * The number of values in the vertex array
+	 */
+	int _verticesSize;
+
+	/**
+	 * Index array defining the ordering of vertices. The values in the index array refer to individual vertices,
+	 * not accounting for stride. For example, if the vertex array contains six values representing two points
+	 * (each with three components), valid index values are 0 or 1.
+	 */
+	int* _indices;
+
+	/**
+	 * The number of values in the index array
+	 */
+	int _indicesSize;
 
 	/**
 	 * The set of attributes defining what data is included for each vertex on this primitive
 	 */
 	const VertexAttributes _vertexAttributes;
-
-	/**
-	 * Constructor
-	 * @param vertexAttributes The set of attributes defining what data is included for each
-	 * vertex on this primitive
-	 */
-	Primitive(const VertexAttributes& vertexAttributes);
 };
