@@ -4,6 +4,7 @@
 #include <common/Utils.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <string>
+#include <math.h>
 
 const Matrix4 Matrix4::IDENTITY;
 
