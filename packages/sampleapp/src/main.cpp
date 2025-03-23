@@ -8,7 +8,7 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/primitives/PPolyface.h>
+#include <graphics/primitives/TriangulatedPolyface.h>
 #include <geometry/Vector2.h>
 #include <geometry/Vector3.h>
 #include <geometry/Matrix3.h>
@@ -18,7 +18,7 @@
 /**
  * @return An example polyface
  */
-PPolyface examplePolyface()
+TriangulatedPolyface examplePolyface()
 {
     Vector3 vertices[] = {
         Vector3(-0.5f, -0.5f, -0.5f),   // 0: far bottom left
@@ -63,7 +63,7 @@ PPolyface examplePolyface()
         4, 5, 1, -1,
         1, 0, 4, -1
     };
-    return PPolyface(vertices, 8, indices, 48, nullptr, texCoords);
+    return TriangulatedPolyface(vertices, 8, indices, 48, {false, true});
 }
 
 /**

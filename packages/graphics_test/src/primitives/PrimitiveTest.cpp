@@ -30,3 +30,22 @@ BOOST_AUTO_TEST_CASE(VertexAttributes_equalsChecks)
 	a2 = { false, true };
 	BOOST_TEST(a1 != a2);
 }
+
+/**
+ * Tests the ability to get the stride of vertices, given the attributes included with each
+ * vertex
+ */
+BOOST_AUTO_TEST_CASE(VertexAttributes_stride)
+{
+	VertexAttributes a = { false, false };
+	BOOST_TEST(a.getStride() == 3);
+
+	a = { true, false };
+	BOOST_TEST(a.getStride() == 7);
+
+	a = { false, true };
+	BOOST_TEST(a.getStride() == 5);
+
+	a = { true, true };
+	BOOST_TEST(a.getStride() == 9);
+}
