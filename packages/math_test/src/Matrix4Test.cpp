@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
-#include <geometry/Matrix4.h>
-#include <geometry/Matrix3.h>
-#include <geometry/Vector3.h>
+#include <math/Matrix4.h>
+#include <math/Matrix3.h>
+#include <math/Vector3.h>
 #include <common/Constants.h>
 #include <common/Utils.h>
 

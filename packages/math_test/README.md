@@ -1,5 +1,5 @@
-# Geometry
+# Math Test
 
-This library contains code for modeling 2D and 3D geometry.
+This code contains unit tests for `math` module code.
 
 For instructions on how to build and run this code, please refer to the [parent README](../../README.md).

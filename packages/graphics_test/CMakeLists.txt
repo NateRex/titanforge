@@ -39,7 +39,7 @@ target_include_directories(GraphicsTest
 target_link_libraries(GraphicsTest
     PUBLIC Boost::unit_test_framework
     PUBLIC Common::Common
-    PUBLIC Geometry::Geometry
+    PUBLIC Math::Math
     PUBLIC Graphics::Graphics)
 
 # Outputs

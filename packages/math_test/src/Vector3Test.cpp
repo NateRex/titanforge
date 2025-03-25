@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
-#include <geometry/Vector3.h>
-#include <geometry/Vector2.h>
+#include <math/Vector3.h>
+#include <math/Vector2.h>
 #include <common/Utils.h>
 
 /**

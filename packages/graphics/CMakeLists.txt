@@ -34,7 +34,7 @@ target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
     PRIVATE Common::Common
-    PRIVATE Geometry::Geometry)
+    PRIVATE Math::Math)
 
 # Outputs
 set_target_properties(Graphics PROPERTIES

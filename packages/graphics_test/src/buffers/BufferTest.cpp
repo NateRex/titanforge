@@ -2,8 +2,8 @@
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
 #include <graphics/objects/Mesh.h>
-#include <geometry/Vector2.h>
-#include <geometry/Vector3.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <graphics/Color.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
