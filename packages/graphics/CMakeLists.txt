@@ -9,7 +9,7 @@ find_package(Stb REQUIRED)
 add_library(Graphics
     src/buffers/Buffer.cpp
     src/buffers/BufferManager.cpp
-    src/primitives/Primitive.cpp
+    src/objects/Mesh.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/textures/ImageLoader.cpp

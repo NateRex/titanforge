@@ -1,5 +1,5 @@
 #include <graphics/buffers/Buffer.h>
-#include <graphics/primitives/Primitive.h>
+#include <graphics/objects/Mesh.h>
 #include <glad/glad.h>
 
 Buffer::Buffer(const std::string& name)

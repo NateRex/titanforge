@@ -8,7 +8,7 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/primitives/Primitive.h>
+#include <graphics/objects/Mesh.h>
 #include <geometry/Vector3.h>
 #include <geometry/Matrix4.h>
 #include <common/Utils.h>
@@ -16,7 +16,7 @@
 /**
  * @return An example polyface
  */
-Primitive examplePolyface()
+Mesh examplePolyface()
 {
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -62,7 +62,7 @@ Primitive examplePolyface()
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    return Primitive(vertices, 180, { false, true });
+    return Mesh(vertices, 180, { false, true });
 }
 
 /**

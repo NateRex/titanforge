@@ -1,6 +1,6 @@
 #pragma once
 #include <iosfwd>
-#include <graphics/primitives/Primitive.h>
+#include <graphics/objects/Mesh.h>
 #include <unordered_map>
 #include <vector>
 #include <mutex>
@@ -19,7 +19,7 @@ public:
 	
 
 	/**
-	 * Builder class used to construct a buffer containing the data for one or more primitives.
+	 * Builder class used to construct a buffer containing the data for one or more meshes.
 	 * @author Nathaniel Rex
 	 */
 	class Builder
@@ -29,13 +29,13 @@ public:
 		friend class BufferManager;
 
 		/**
-		 * Adds data from a primitive to this buffer
-		 * @param primitive Primitive to add
+		 * Adds data from a mesh to this buffer
+		 * @param mesh Mesh to add
 		 * @return This builder instance
-		 * @throws IllegalArgumentException if the primitive does not have matching attributes with primitives already
+		 * @throws IllegalArgumentException if the mesh does not have matching attributes with meshes already
 		 * added to this buffer
 		 */
-		Builder& add(const Primitive& primitive);
+		Builder& add(const Mesh& mesh);
 
 		/**
 		 * Finalizes and constructs the buffer stored by this builder. The resulting buffer will be
@@ -52,17 +52,17 @@ public:
 		std::string _name;
 
 		/**
-		 * Attributes shared by all primitives stored in this buffer
+		 * Attributes shared by all meshes stored in this buffer
 		 */
 		VertexAttributes _attributes;
 
 		/**
-		 * Vector containing the vertex data obtained from primitives
+		 * Vector containing the vertex data obtained from meshes
 		 */
 		std::vector<float> _vertexData;
 
 		/**
-		 * Vector containing the index data obtained from primitives
+		 * Vector containing the index data obtained from meshes
 		 */
 		std::vector<int> _indexData;
 

@@ -13,20 +13,20 @@ BufferManager::Builder::Builder(const std::string& name) : _name(name)
 
 }
 
-BufferManager::Builder& BufferManager::Builder::add(const Primitive& primitive)
+BufferManager::Builder& BufferManager::Builder::add(const Mesh& mesh)
 {
 	if (_vertexData.size() > 0)
 	{
-		if (_attributes != primitive.getVertexAttributes())
+		if (_attributes != mesh.getVertexAttributes())
 		{
-			throw IllegalArgumentException("Primitives of a single buffer must have matching attributes");
+			throw IllegalArgumentException("Meshes of a single buffer must have matching attributes");
 		}
 	}
 	else {
-		_attributes = primitive.getVertexAttributes();
+		_attributes = mesh.getVertexAttributes();
 	}
 
-	primitive.buffer(_vertexData, _indexData);
+	mesh.buffer(_vertexData, _indexData);
 	return *this;
 }
 
