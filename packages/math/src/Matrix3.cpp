@@ -1,5 +1,5 @@
-#include <geometry/Matrix3.h>
-#include <geometry/Vector3.h>
+#include <math/Matrix3.h>
+#include <math/Vector3.h>
 #include <common/Utils.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <math.h>

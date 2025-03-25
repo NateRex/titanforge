@@ -81,30 +81,6 @@ jobs:
         run: ./.github/scripts/runTest.sh ./.build/packages/common_test/bin/CommonTest
 
 
-  # Geometry Tests
-  geometry-tests:
-    name: 🧪 Geometry Tests
-    runs-on: ubuntu-latest
-    container: natejrex/cmake
-    needs:
-      - build
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
-
-      - name: Download Artifact -> build
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: .build
-
-      - name: Execute Commands
-        run: ./.github/scripts/runTest.sh ./.build/packages/geometry_test/bin/GeometryTest
-
-
   # Graphics Tests
   graphics-tests:
     name: 🧪 Graphics Tests
@@ -130,3 +106,26 @@ jobs:
           Xvfb :99 -screen 0 1024x768x16 &
           export DISPLAY=:99
           ./.github/scripts/runTest.sh ./.build/packages/graphics_test/bin/GraphicsTest
+
+  # Math Tests
+  math-tests:
+    name: 🧪 Math Tests
+    runs-on: ubuntu-latest
+    container: natejrex/cmake
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Download Artifact -> build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: .build
+
+      - name: Execute Commands
+        run: ./.github/scripts/runTest.sh ./.build/packages/math_test/bin/MathTest

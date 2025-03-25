@@ -1,5 +1,5 @@
-#include <geometry/Vector2.h>
-#include <geometry/Vector3.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/Utils.h>
 #include <math.h>
 

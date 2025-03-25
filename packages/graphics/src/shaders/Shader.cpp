@@ -1,7 +1,7 @@
 #include <graphics/shaders/Shader.h>
 #include <graphics/buffers/Buffer.h>
 #include <graphics/textures/Texture.h>
-#include <geometry/Matrix4.h>
+#include <math/Matrix4.h>
 #include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>

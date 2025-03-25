@@ -1,24 +1,24 @@
-project(Geometry CXX)
+project(Math CXX)
 
 # Library files
-add_library(Geometry
+add_library(Math
     src/Matrix3.cpp
     src/Matrix4.cpp
     src/Vector2.cpp
     src/Vector3.cpp)
-add_library(Geometry::Geometry ALIAS Geometry)
+add_library(Math::Math ALIAS Math)
 
 # Include directories
 target_include_directories(
-    Geometry PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    Math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                     $<INSTALL_INTERFACE:include>)
 
 # Linked libraries
-target_link_libraries(Geometry
+target_link_libraries(Math
     PRIVATE Common::Common)
 
 # Outputs
-set_target_properties(Geometry PROPERTIES
+set_target_properties(Math PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}/bin"
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}/bin"
