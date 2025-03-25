@@ -1,4 +1,4 @@
-#include <graphics/primitives/Primitive.h>
+#include <graphics/objects/Mesh.h>
 
 // ------------------------------------------------------------------------------------------------------------------
 // VertexAttributes
@@ -40,7 +40,7 @@ bool VertexAttributes::operator!=(const VertexAttributes& other) const
 #include <algorithm>
 #include <numeric>
 
-Primitive::Primitive(const float* vertices, int verticesSize, const VertexAttributes& vertexAttributes)
+Mesh::Mesh(const float* vertices, int verticesSize, const VertexAttributes& vertexAttributes)
 	: _vertexAttributes(vertexAttributes)
 {
 	// Copy vertices
@@ -55,7 +55,7 @@ Primitive::Primitive(const float* vertices, int verticesSize, const VertexAttrib
 	std::iota(_indices, _indices + _indicesSize, 0);
 }
 
-Primitive::Primitive(const float* vertices, int verticesSize, const int* indices, int indicesSize,
+Mesh::Mesh(const float* vertices, int verticesSize, const int* indices, int indicesSize,
 		const VertexAttributes& vertexAttributes)
 	: _vertexAttributes(vertexAttributes)
 {
@@ -70,13 +70,13 @@ Primitive::Primitive(const float* vertices, int verticesSize, const int* indices
 	std::copy(indices, indices + indicesSize, _indices);
 }
 
-Primitive::Primitive(const Primitive& primitive)
-	: Primitive(primitive._vertices, primitive._verticesSize, primitive._indices, primitive._indicesSize, primitive._vertexAttributes)
+Mesh::Mesh(const Mesh& mesh)
+	: Mesh(mesh._vertices, mesh._verticesSize, mesh._indices, mesh._indicesSize, mesh._vertexAttributes)
 {
 
 }
 
-Primitive::~Primitive()
+Mesh::~Mesh()
 {
 	delete[] _vertices;
 	delete[] _indices;
@@ -85,17 +85,17 @@ Primitive::~Primitive()
 	_indices = nullptr;
 }
 
-int Primitive::getSize() const
+int Mesh::getSize() const
 {
 	return _indicesSize;
 }
 
-const VertexAttributes Primitive::getVertexAttributes() const
+const VertexAttributes Mesh::getVertexAttributes() const
 {
 	return _vertexAttributes;
 }
 
-void Primitive::buffer(std::vector<float>& vertexData, std::vector<int>& indices) const
+void Mesh::buffer(std::vector<float>& vertexData, std::vector<int>& indices) const
 {
 	vertexData.insert(vertexData.end(), _vertices, _vertices + _verticesSize);
 	indices.insert(indices.end(), _indices, _indices + _indicesSize);

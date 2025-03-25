@@ -2,7 +2,7 @@
 #include <vector>
 
 /**
- * Set of flags used to describe the data included with each vertex in a primitive.
+ * Set of flags used to describe the data included with each vertex in a mesh.
  * @author Nathaniel Rex
  */
 struct VertexAttributes
@@ -40,28 +40,27 @@ struct VertexAttributes
 
 
 /**
- * A primitive in the form of a triangulated polyface, containing both geometry and styling. This is the parent
- * class to all other primitives.
+ * A mesh in the form of a triangulated polyface, containing both geometry and attributes used for rendering.
  * @author Nathaniel Rex
  */
-class Primitive
+class Mesh
 {
 public:
 
 	friend class BufferManager;
 
 	/**
-	 * Constructs a primitive from an array of vertices representing a triangulated polyface.
+	 * Constructs a mesh from an array of vertices representing a triangulated polyface.
 	 * @param vertices Vertex array. Each vertex is represented using a minimum of 3 values. The inclusion of other vertex
 	 * attributes implies a larger number of values per vertex.
 	 * @param verticesSize The number of values in the array
 	 * @param vertexAttributes The attributes included with each vertex
 	 * Defaults to false.
 	 */
-	Primitive(const float* vertices, int verticesSize, const VertexAttributes& vertexAttributes);
+	Mesh(const float* vertices, int verticesSize, const VertexAttributes& vertexAttributes);
 
 	/**
-	 * Constructs a primitive from an array of vertices and an array of indices that together represent a triangulated polyface.
+	 * Constructs a mesh from an array of vertices and an array of indices that together represent a triangulated polyface.
 	 * @param vertices Vertex array. Each vertex is represented using a minimum of 3 values. The inclusion of other vertex
 	 * attributes implies a larger number of values per vertex.
 	 * @param verticesSize The number of values in the vertex array
@@ -71,34 +70,34 @@ public:
 	 * @param numIndices The number of values in the index array
 	 * @param vertexAttributes The attributes included with each vertex
 	 */
-	Primitive(const float* vertices, int verticesSize, const int* indices, int indicesSize,
+	Mesh(const float* vertices, int verticesSize, const int* indices, int indicesSize,
 		const VertexAttributes& vertexAttributes);
 
 	/**
-	 * Constructs a primitive from an existing object
-	 * @param primitive Existing primitive
+	 * Constructs a mesh from an existing object
+	 * @param Mesh Existing mesh
 	 */
-	Primitive(const Primitive& primitive);
+	Mesh(const Mesh& mesh);
 
 	/**
 	 * Destructor
 	 */
-	~Primitive();
+	~Mesh();
 
 	/**
-	 * @return The total number of vertices across all facets of this primitive
+	 * @return The total number of vertices across all facets of this mesh
 	 */
 	int getSize() const;
 
 	/**
-	 * @return The set of attributes defining what data is included for each vertex on this primitive
+	 * @return The set of attributes defining what data is included for each vertex on this mesh
 	 */
 	const VertexAttributes getVertexAttributes() const;
 
 	/**
-	 * Stores the data of this primitive in the given buffers
+	 * Stores the data of this mesh in the given buffers
 	 * @param vertexData Vector in which the data for each unique vertex should be stored.
-	 * @param indices Vector to which the vertex indices of this primitive should be appended
+	 * @param indices Vector to which the vertex indices of this mesh should be appended
 	 */
 	void buffer(std::vector<float>& vertexData, std::vector<int>& indices) const;
 
@@ -128,7 +127,7 @@ protected:
 	int _indicesSize;
 
 	/**
-	 * The set of attributes defining what data is included for each vertex on this primitive
+	 * The set of attributes defining what data is included for each vertex on this mesh
 	 */
 	const VertexAttributes _vertexAttributes;
 };
