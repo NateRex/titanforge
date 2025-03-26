@@ -1,6 +1,11 @@
 #include <graphics/Color.h>
 #include <common/Assertions.h>
 
+Color::Color() : Color(0.f, 0.f, 0.f, 1.f)
+{
+
+}
+
 Color::Color(float r, float g, float b, float a) : red(r), green(g), blue(b), alpha(a)
 {
 	assertInRange(r, 0, 1);
@@ -9,12 +14,7 @@ Color::Color(float r, float g, float b, float a) : red(r), green(g), blue(b), al
 	assertInRange(a, 0, 1);
 }
 
-Color::Color(const Color& color): red(color.red), green(color.green), blue(color.blue), alpha(color.alpha)
+Color::Color(const Color& color): Color(color.red, color.green, color.blue, color.alpha)
 {
 
-}
-
-Color Color::fromFloats(float r, float g, float b, float a)
-{
-	return Color(r, g, b, a);
 }
