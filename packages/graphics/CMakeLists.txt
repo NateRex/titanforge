@@ -10,6 +10,7 @@ add_library(Graphics
     src/buffers/Buffer.cpp
     src/buffers/BufferManager.cpp
     src/entities/Mesh.cpp
+    src/geometry/Geometry.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/textures/ImageLoader.cpp
