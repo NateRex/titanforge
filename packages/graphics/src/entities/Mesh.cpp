@@ -1,4 +1,4 @@
-#include <graphics/objects/Mesh.h>
+#include <graphics/entities/Mesh.h>
 
 // ------------------------------------------------------------------------------------------------------------------
 // VertexAttributes

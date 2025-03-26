@@ -1,9 +1,8 @@
 #pragma once
+#include <math/Vector2.h>
+#include <math/Vector3.h>
+#include <graphics/Color.h>
 #include <vector>
-
-class Vector2;
-class Vector3;
-class Color;
 
 /**
  * Base class for all geometry, used to represent a mesh, line, or point. Contains vertex attributes
@@ -18,11 +17,6 @@ public:
 	 * Constructor
 	 */
 	Geometry();
-
-	/**
-	 * @return The total number of indexed vertices in this geometry
-	 */
-	unsigned int size() const;
 
 	/**
 	 * Sets the vertex positions of this geometry.
@@ -40,20 +34,37 @@ public:
 	void setIndices(const unsigned int* indices, unsigned int numIndices);
 
 	/**
+	 * @return The total number of indexed vertices in this geometry
+	 */
+	unsigned int size() const;
+
+	/**
 	 * Sets the color for each vertex in this geometry.
-	 * @param colors An array where every 4 values represent the r, g, b, and a components of a color. 
+	 * @param colors An array where every 4 values represent the r, g, b, and a components of a color. Each value
+	 * should be in the range 0 to 1.
 	 * @param numColors The number of colors in the array. This is expected to match the number of
 	 * vertices in this geometry.
 	 */
 	void setColors(const float* colors, unsigned int numColors);
 
 	/**
+	 * @return True if this geometry contains per-vertex colors. Returns false otherwise.
+	 */
+	bool hasColors() const;
+
+	/**
 	 * Sets the texture coordinate for each vertex in this geometry.
-	 * @param uvs An array where every 2 values represents the u and v components of a texture coordinate.
+	 * @param uvs An array where every 2 values represents the u and v components of a texture coordinate. Each
+	 * value should be in the range 0 to 1.
 	 * @param numUVs The number of texture coordinates in the array. This is expected to match the number of
 	 * vertices in this geometry.
 	 */
 	void setTextureCoords(const float* uvs, unsigned int numUVs);
+
+	/**
+	 * @return True if this geometry contains per-vertex texture coordinates. Returns false otherwise.
+	 */
+	bool hasTextureCoords() const;
 
 private:
 

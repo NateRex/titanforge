@@ -1,17 +1,10 @@
 #include <graphics/geometry/Geometry.h>
-#include <graphics/Color.h>
-#include <math/Vector2.h>
-#include <math/Vector3.h>
+#include <common/Assertions.h>
 #include <numeric>
 
 Geometry::Geometry()
 {
 
-}
-
-unsigned int Geometry::size() const
-{
-	return _indices.size();
 }
 
 void Geometry::setVertices(const float* vertices, unsigned int numVertices)
@@ -39,6 +32,11 @@ void Geometry::setIndices(const unsigned int* indices, unsigned int numIndices)
 	_indices.assign(indices, indices + numIndices);
 }
 
+unsigned int Geometry::size() const
+{
+	return _indices.size();
+}
+
 void Geometry::setColors(const float* colors, unsigned int numColors)
 {
 	_colors.clear();
@@ -50,6 +48,11 @@ void Geometry::setColors(const float* colors, unsigned int numColors)
 	}
 }
 
+bool Geometry::hasColors() const
+{
+	return _colors.size() > 0;
+}
+
 void Geometry::setTextureCoords(const float* uvs, unsigned int numUVs)
 {
 	_uvs.clear();
@@ -57,6 +60,13 @@ void Geometry::setTextureCoords(const float* uvs, unsigned int numUVs)
 	unsigned int len = numUVs * 2;
 	for (int i = 0; i < len; i += 2)
 	{
+		assertInRange(uvs[i], 0.f, 1.f, true, "UV coordinate must be between 0 and 1");
+		assertInRange(uvs[i + 1], 0.f, 1.f, true, "UV coordinate must be between 0 and 1");
 		_uvs.push_back(Vector2(uvs[i], uvs[i + 1]));
 	}
+}
+
+bool Geometry::hasTextureCoords() const
+{
+	return _uvs.size() > 0;
 }
