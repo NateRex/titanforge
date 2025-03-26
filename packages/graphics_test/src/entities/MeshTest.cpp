@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/objects/Mesh.h>
+#include <graphics/entities/Mesh.h>
 #include <common/Utils.h>
 
 // ------------------------------------------------------------------------------------------------------------------

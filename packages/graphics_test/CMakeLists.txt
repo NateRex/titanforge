@@ -13,7 +13,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/buffers/BufferManagerTest.cpp
     src/buffers/BufferTest.cpp
-    src/objects/MeshTest.cpp
+    src/entities/MeshTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderTest.cpp
     src/testutils/GlobalTestFixture.cpp

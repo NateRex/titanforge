@@ -8,7 +8,7 @@
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
-#include <graphics/objects/Mesh.h>
+#include <graphics/entities/Mesh.h>
 #include <math/Vector3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>

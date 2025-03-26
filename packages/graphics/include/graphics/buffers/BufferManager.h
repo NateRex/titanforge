@@ -1,6 +1,6 @@
 #pragma once
 #include <iosfwd>
-#include <graphics/objects/Mesh.h>
+#include <graphics/entities/Mesh.h>
 #include <unordered_map>
 #include <vector>
 #include <mutex>

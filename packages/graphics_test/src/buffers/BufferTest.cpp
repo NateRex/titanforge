@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/buffers/BufferManager.h>
 #include <graphics/buffers/Buffer.h>
-#include <graphics/objects/Mesh.h>
+#include <graphics/entities/Mesh.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <graphics/Color.h>
