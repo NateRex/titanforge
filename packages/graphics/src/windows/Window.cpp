@@ -6,7 +6,7 @@
 #include <sstream>
 
 Window::Window(const std::string& name)
-    : _glfwWindow(nullptr), name(name), _clearColor(Color::fromFloats(0.f, 0.f, 0.f, 0.f))
+    : _glfwWindow(nullptr), name(name), _clearColor(Color(0.f, 0.f, 0.f, 0.f))
 {
 
 }

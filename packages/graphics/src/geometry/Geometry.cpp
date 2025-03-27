@@ -1,72 +1,134 @@
 #include <graphics/geometry/Geometry.h>
+#include <graphics/Color.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/Assertions.h>
+#include <common/Utils.h>
 #include <numeric>
+#include <cstring>
 
 Geometry::Geometry()
 {
 
 }
 
+Geometry::~Geometry()
+{
+	delete[] _vertices;
+	delete[] _indices;
+	delete[] _colors;
+	delete[] _uvs;
+
+	_vertices = nullptr;
+	_indices = nullptr;
+	_colors = nullptr;
+	_uvs = nullptr;
+
+	_numVertices = 0;
+	_numIndices = 0;
+	_numColors = 0;
+	_numUVs = 0;
+}
+
+GeometryPtr Geometry::create()
+{
+	return std::shared_ptr<Geometry>(new Geometry());
+}
+
 void Geometry::setVertices(const float* vertices, unsigned int numVertices)
 {
-	_vertices.clear();
+	assertNotNull(vertices, "Vertices cannot be null when applied to a geometry");
 
-	unsigned int len = numVertices * 3;
-	for (int i = 0; i < len; i += 3)
+	delete[] _vertices;
+	_vertices = new Vector3[numVertices];
+	_numVertices = numVertices;
+
+	for (int i = 0; i < numVertices; i++)
 	{
-		_vertices.push_back(Vector3(vertices[i], vertices[i + 1], vertices[i + 2]));
+		int idx = i * 3;
+		_vertices[i] = Vector3(vertices[idx], vertices[idx + 1], vertices[idx + 2]);
 	}
 
 	// If indices have not been set yet, initialize them to match the number of vertices.
 	// They can always be updated later by the caller.
-	if (_indices.size() == 0)
+	if (_indices == nullptr)
 	{
-		_indices.resize(numVertices);
-		std::iota(_indices.begin(), _indices.end(), 0);
+		_indices = new unsigned int[numVertices];
+		_numIndices = numVertices;
+		std::iota(_indices, _indices + numVertices, 0);
 	}
 }
 
 void Geometry::setIndices(const unsigned int* indices, unsigned int numIndices)
-{
-	_indices.clear();
-	_indices.assign(indices, indices + numIndices);
+{	
+	assertNotNull(indices, "Indices cannot be null when applied to a geometry");
+
+	delete[] _indices;
+	_indices = new unsigned int[numIndices];
+	_numIndices = numIndices;
+
+	std::memcpy(_indices, indices, numIndices * sizeof(unsigned int));
 }
 
 unsigned int Geometry::size() const
 {
-	return _indices.size();
+	return _numIndices;
 }
 
 void Geometry::setColors(const float* colors, unsigned int numColors)
 {
-	_colors.clear();
-	
-	unsigned int len = numColors * 4;
-	for (int i = 0; i < len; i += 4)
+	assertNotNull(colors, "Colors cannot be null when applied to a geometry");
+
+	delete[] _colors;
+	_colors = new Color[numColors];
+	_numColors = numColors;
+
+	for (int i = 0; i < numColors; i++)
 	{
-		_colors.push_back(Color::fromFloats(colors[i], colors[i + 1], colors[i + 2], colors[i + 3]));
+		int idx = i * 4;
+		_colors[i] = Color(colors[idx], colors[idx + 1], colors[idx + 2], colors[idx + 3]);
 	}
+}
+
+void Geometry::removeColors()
+{
+	delete[] _colors;
+	_colors = nullptr;
+	_numColors = 0;
 }
 
 bool Geometry::hasColors() const
 {
-	return _colors.size() > 0;
+	return _colors != nullptr;
 }
 
 void Geometry::setTextureCoords(const float* uvs, unsigned int numUVs)
 {
-	_uvs.clear();
+	assertNotNull(uvs, "Texture coordinates cannot be null when applied to a geometry");
 
-	unsigned int len = numUVs * 2;
-	for (int i = 0; i < len; i += 2)
+	delete[] _uvs;
+	_uvs = new Vector2[numUVs];
+	_numUVs = numUVs;
+
+	for (int i = 0; i < numUVs; i++)
 	{
+		int idx = i * 2;
+
 		assertInRange(uvs[i], 0.f, 1.f, true, "UV coordinate must be between 0 and 1");
 		assertInRange(uvs[i + 1], 0.f, 1.f, true, "UV coordinate must be between 0 and 1");
-		_uvs.push_back(Vector2(uvs[i], uvs[i + 1]));
+
+		_uvs[i] = Vector2(uvs[idx], uvs[idx + 1]);
 	}
+}
+
+void Geometry::removeTextureCoords()
+{
+	delete[] _uvs;
+	_uvs = nullptr;
+	_numUVs = 0;
 }
 
 bool Geometry::hasTextureCoords() const
 {
-	return _uvs.size() > 0;
+	return _uvs != nullptr;
 }

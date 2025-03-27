@@ -1,11 +1,14 @@
 #pragma once
-#include <math/Vector2.h>
-#include <math/Vector3.h>
-#include <graphics/Color.h>
-#include <vector>
+#include <memory>
+
+class Vector2;
+class Vector3;
+class Color;
+
+using GeometryPtr = std::shared_ptr<class Geometry>;
 
 /**
- * Base class for all geometry, used to represent a mesh, line, or point. Contains vertex attributes
+ * Base class for all geometry, which defines an object, line, or point in local space. Contains vertex attributes
  * such as position, color, texture coordinates, and unit normals.
  * @author Nathaniel Rex
  */
@@ -14,21 +17,25 @@ class Geometry
 public:
 
 	/**
-	 * Constructor
+	 * Destructor
 	 */
-	Geometry();
+	~Geometry();
+
+	/**
+	 * Constructs a new geometry instance
+	 */
+	static GeometryPtr create();
 
 	/**
 	 * Sets the vertex positions of this geometry.
-	 * @param vertices An array where every 3 values represents the x, y, and z components of a vertex
+	 * @param vertices An array where every 3 values represents the x, y, and z components of a vertex.
 	 * @param numVertices The number of vertices in the array
 	 */
 	void setVertices(const float* vertices, unsigned int numVertices);
 
 	/**
 	 * Sets the vertex indices of this geometry.
-	 * @param indices An array whose values point to vertices, defining the ordering of positions for
-	 * this geometry.
+	 * @param indices An array whose values point to vertices, defining the ordering of positions for this geometry.
 	 * @param numIndices The number of indices in the array
 	 */
 	void setIndices(const unsigned int* indices, unsigned int numIndices);
@@ -48,6 +55,11 @@ public:
 	void setColors(const float* colors, unsigned int numColors);
 
 	/**
+	 * Removes vertex colors from this geometry, if currently present.
+	 */
+	void removeColors();
+
+	/**
 	 * @return True if this geometry contains per-vertex colors. Returns false otherwise.
 	 */
 	bool hasColors() const;
@@ -62,6 +74,11 @@ public:
 	void setTextureCoords(const float* uvs, unsigned int numUVs);
 
 	/**
+	 * Removes vertex texture coordinates from this geometry, if currently present.
+	 */
+	void removeTextureCoords();
+
+	/**
 	 * @return True if this geometry contains per-vertex texture coordinates. Returns false otherwise.
 	 */
 	bool hasTextureCoords() const;
@@ -71,22 +88,47 @@ private:
 	/**
 	 * Vertex positions. These positions may be referenced by one or more indices.
 	 */
-	std::vector<Vector3> _vertices;
+	Vector3* _vertices = nullptr;
+
+	/**
+	 * Number of vertex positions.
+	 */
+	unsigned int _numVertices = 0;
 
 	/**
 	 * Ordered vertex indices. These values point to positions in the vertices list.
 	 */
-	std::vector<unsigned int> _indices;
+	unsigned int* _indices = nullptr;
 
 	/**
-	 * Vertex colors. Can be empty, implying no per-vertex coloring. When not empty,
+	 * Number of vertex indices.
+	 */
+	unsigned int _numIndices = 0;
+
+	/**
+	 * Vertex colors. Can be null, implying no per-vertex coloring. When not empty,
 	 * the size of this list should be equal to the number of vertices.
 	 */
-	std::vector<Color> _colors;
+	Color* _colors = nullptr;
 
 	/**
-	 * Texture coordinates. Can be empty, implying no per-vertex texture mapping. When not
+	 * Number of colors
+	 */
+	unsigned int _numColors = 0;
+
+	/**
+	 * Texture coordinates. Can be null, implying no per-vertex texture mapping. When not
 	 * empty, the size of this list should be equal to the number of vertices.
 	 */
-	std::vector<Vector2> _uvs;
+	Vector2* _uvs = nullptr;
+
+	/**
+	 * Number of texture coordinates.
+	 */
+	unsigned int _numUVs = 0;
+
+	/**
+	 * Constructor
+	 */
+	Geometry();
 };

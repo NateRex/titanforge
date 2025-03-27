@@ -30,7 +30,7 @@ Matrix4::Matrix4(const Matrix4& other)
 
 Matrix4::~Matrix4()
 {
-	safeDelete(_inverse);
+	delete _inverse;
 	_inverse = nullptr;
 	_didComputeInverse = false;
 }
@@ -290,7 +290,10 @@ Matrix4& Matrix4::operator=(const Matrix4& other)
 {
 	setValues(other);
 	_didComputeInverse = false;
-	_inverse = safeDelete(_inverse);
+	
+	delete _inverse;
+	_inverse = nullptr;
+
 	if (other._inverse != nullptr)
 	{
 		setInverse(new Matrix4(*other._inverse));
@@ -333,12 +336,13 @@ void Matrix4::setValues(const Matrix4& other)
 void Matrix4::clearInverse()
 {
 	_didComputeInverse = false;
-	_inverse = safeDelete(_inverse);
+	delete _inverse;
+	_inverse = nullptr;
 }
 
 void Matrix4::setInverse(Matrix4* inv)
 {
 	_didComputeInverse = true;
-	safeDelete(_inverse);
+	delete _inverse;
 	_inverse = inv;
 }

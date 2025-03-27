@@ -24,7 +24,7 @@ Matrix3::Matrix3(const Matrix3& other)
 
 Matrix3::~Matrix3()
 {
-	safeDelete(_inverse);
+	delete _inverse;
 	_inverse = nullptr;
 	_didComputeInverse = false;
 }
@@ -232,7 +232,10 @@ Matrix3& Matrix3::operator=(const Matrix3& other)
 {
 	setValues(other);
 	_didComputeInverse = other._didComputeInverse;
-	_inverse = safeDelete(_inverse);
+
+	delete _inverse;
+	_inverse = nullptr;
+
 	if (other._inverse != nullptr)
 	{
 		setInverse(new Matrix3(*other._inverse));
@@ -273,12 +276,13 @@ void Matrix3::setValues(const Matrix3& other)
 void Matrix3::clearInverse()
 {
 	_didComputeInverse = false;
-	_inverse = safeDelete(_inverse);
+	delete _inverse;
+	_inverse = nullptr;
 }
 
 void Matrix3::setInverse(Matrix3* inv)
 {
 	_didComputeInverse = true;
-	safeDelete(_inverse);
+	delete _inverse;
 	_inverse = inv;
 }

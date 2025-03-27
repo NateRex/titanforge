@@ -21,5 +21,5 @@ BOOST_AUTO_TEST_CASE(Window_basics)
 BOOST_AUTO_TEST_CASE(Window_backgroundColor)
 {
 	Window* win = WindowManager::getCurrent();
-	BOOST_REQUIRE_NO_THROW(win->setBackgroundColor(Color::fromFloats(0.f, 0.f, 0.f, 1.f)));
+	BOOST_REQUIRE_NO_THROW(win->setBackgroundColor(Color(0.f, 0.f, 0.f, 1.f)));
 }

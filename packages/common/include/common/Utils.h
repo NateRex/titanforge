@@ -44,40 +44,6 @@ std::string resolvePath(const std::string& relPath);
 bool checkSuffix(const std::string& str, const std::string& suffix);
 
 /**
- * Performs a null-check on the given pointer. If non-null, the pointer is deleted. Otherwise, this function
- * does nothing.
- * @param <T> The pointer type
- * @param ptr Possibly null pointer
- * @return The nullptr
- */
-template <typename T>
-T* safeDelete(T* ptr)
-{
-	if (ptr != nullptr)
-    {
-        delete ptr;
-    }
-    return nullptr;
-}
-
-/**
- * Performs a null-check on the given array. If non-null, the array is deleted. Otherwise, this function does
- * nothing.
- * @param <T> The pointer type
- * @param array The possibly null array
- * @return The nullptr
- */
-template <typename T>
-T* safeDeleteArray(T* ptr)
-{
-    if (ptr != nullptr)
-    {
-        delete[] ptr;
-    }
-    return nullptr;
-}
-
-/**
  * Attempts to dereference the given pointer. If that pointer is null, this method returns a copy of the
  * default value. If the pointer is non-null, this method returns the dereferenced pointer.
  * @param <T> The value type

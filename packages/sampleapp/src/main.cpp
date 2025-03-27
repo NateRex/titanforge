@@ -97,7 +97,7 @@ int main() {
 
     // Configure window
     Window* window = WindowManager::getCurrent();
-    window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+    window->setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 
     // Textures
     Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
