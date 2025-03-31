@@ -9,7 +9,9 @@ find_package(Stb REQUIRED)
 add_library(Graphics
     src/buffers/Buffer.cpp
     src/buffers/BufferManager.cpp
+    src/entities/Entity.cpp
     src/entities/Mesh.cpp
+    src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp

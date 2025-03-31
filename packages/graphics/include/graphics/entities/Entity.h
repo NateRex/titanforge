@@ -1,13 +1,12 @@
 #pragma once
-#include <graphics/geometry/Geometry.h>
+#include <graphics/entities/EntityPtr.h>
+#include <math/Vector3.h>
 #include <math/Matrix3.h>
 
-using EntityPtr = std::shared_ptr<class Entity>;
-
 /**
- * Base class for all entities that can be added to the scene. This class wraps geometry and material needed for
- * rendering. An entity can have one or more children, whose position, rotation, and scaling will be relative to
- * its parent.
+ * Base class for all entities that can be added to the scene. Contains a set of properties and methods for manipulating
+ * the object in 3D space. An entity can have one or more children, whose position, rotation, and scaling will be relative
+ * to its parent.
  * @author Nathaniel Rex
  */
 class Entity
@@ -16,36 +15,72 @@ class Entity
 public:
 
 	/**
+	 * Position
+	 */
+	Vector3 position;
+
+	/**
+	 * Rotation
+	 */
+	Matrix3 rotation;
+
+	/**
+	 * Scaling
+	 */
+	Vector3 scale;
+
+	/**
 	 * Constructs a new entity instance
-	 * @param geometry Geometry
 	 */
-	static EntityPtr create(GeometryPtr geometry);
-
-private:
+	static EntityPtr create();
 
 	/**
-	 * Geometry
+	 * Sets the position of this entity relative to its parent.
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
 	 */
-	const GeometryPtr _geometry;
+	void setPosition(float x, float y, float z);
 
 	/**
-	 * World position
+	 * Applies additional translation of this entity relative to its parent
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
 	 */
-	Vector3 _position;
+	void addPosition(float x, float y, float z);
 
 	/**
-	 * World rotation
+	 * Sets the rotation of this entity relative to its parent, using a rotation matrix.
+	 * @param rot Rotation matrix
 	 */
-	Matrix3 _rotation;
+	void setRotation(const Matrix3& rot);
 
 	/**
-	 * World scaling
+	 * Applies additional rotation to this entity relative to its parent, using a rotation matrix.
 	 */
-	Vector3 _scale;
+	void addRotation(const Matrix3& rot);
+
+	/**
+	 * Sets the scaling of this entity relative to its parent.
+	 * @param x Scaling in the x direction
+	 * @param y Scaling in the y direction
+	 * @param z Scaling in the z direction
+	 */
+	void setScaling(float x, float y, float z);
+
+	/**
+	 * Applies additional scaling to this entity relative to its parent.
+	 * @param x Scaling in the x direction
+	 * @param y Scaling in the y direction
+	 * @param z Scaling in the z direction
+	 */
+	void addScaling(float x, float y, float z);
+
+protected:
 
 	/**
 	 * Constructor
-	 * @param geometry Geometry
 	 */
-	Entity(GeometryPtr geometry);
+	Entity();
 };

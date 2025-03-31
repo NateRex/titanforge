@@ -1,11 +1,9 @@
 #pragma once
-#include <memory>
+#include <graphics/geometry/GeometryPtr.h>
 
 class Vector2;
 class Vector3;
 class Color;
-
-using GeometryPtr = std::shared_ptr<class Geometry>;
 
 /**
  * Base class for all geometry, which defines an object, line, or point in local space. Contains vertex attributes
@@ -83,7 +81,7 @@ public:
 	 */
 	bool hasTextureCoords() const;
 
-private:
+protected:
 
 	/**
 	 * Vertex positions. These positions may be referenced by one or more indices.
