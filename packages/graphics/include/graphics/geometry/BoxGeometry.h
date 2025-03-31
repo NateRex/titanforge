@@ -17,7 +17,7 @@ public:
 	 * @param height Height of the box along the y axis
 	 * @param depth Depth of the box along the z axis
 	 */
-	BoxGeometryPtr create(float length, float height, float depth);
+	static BoxGeometryPtr create(float length, float height, float depth);
 
 private:
 	
