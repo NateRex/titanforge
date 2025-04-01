@@ -1,5 +1,5 @@
 #pragma once
-#include <graphics/geometry/GeometryPtr.h>
+#include <graphics/geometry/pointers/GeometryPtr.h>
 
 class Vector2;
 class Vector3;

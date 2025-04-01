@@ -1,7 +1,7 @@
 #pragma once
-#include <graphics/entities/MeshPtr.h>
+#include <graphics/entities/pointers/MeshPtr.h>
 #include <graphics/entities/Entity.h>
-#include <graphics/geometry/GeometryPtr.h>
+#include <graphics/geometry/pointers/GeometryPtr.h>
 
 /**
  * A triangulated polyface mesh

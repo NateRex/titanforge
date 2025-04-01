@@ -1,3 +1,4 @@
+#pragma once
 
 /**
  * Enumerated type describing types of entities
