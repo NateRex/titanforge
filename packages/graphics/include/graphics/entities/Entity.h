@@ -1,5 +1,5 @@
 #pragma once
-#include <graphics/entities/EntityPtr.h>
+#include <graphics/entities/EntityType.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
 
@@ -28,11 +28,6 @@ public:
 	 * Scaling
 	 */
 	Vector3 scale;
-
-	/**
-	 * Constructs a new entity instance
-	 */
-	static EntityPtr create();
 
 	/**
 	 * Sets the position of this entity relative to its parent.
@@ -80,7 +75,13 @@ public:
 protected:
 
 	/**
-	 * Constructor
+	 * Entity type
 	 */
-	Entity();
+	const EntityType _type;
+
+	/**
+	 * Constructor
+	 * @param type Entity type
+	 */
+	Entity(EntityType type);
 };

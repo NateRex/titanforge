@@ -1,13 +1,8 @@
 #include <graphics/entities/Entity.h>
 
-Entity::Entity(): scale(1.f, 1.f, 1.f)
+Entity::Entity(EntityType type): _type(type), scale(1.f, 1.f, 1.f)
 {
 
-}
-
-EntityPtr Entity::create()
-{
-	return std::shared_ptr<Entity>(new Entity());
 }
 
 void Entity::setPosition(float x, float y, float z)
