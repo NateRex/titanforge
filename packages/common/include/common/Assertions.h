@@ -22,6 +22,22 @@ void assertNotNull(const T* obj, const char* errMsg, const std::function<void()>
 }
 
 /**
+ * Asserts that the given value is true
+ * @param value Value to test
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if value is not true
+ */
+void assertTrue(bool value, const char* errMsg = "Value was not true");
+
+/**
+ * Asserts that the given value is false
+ * @param value Value to test
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if value is not false
+ */
+void assertFalse(bool value, const char* errMsg = "Value was not false");
+
+/**
  * Asserts that a value is equal to an expected value
  * @param value Value to test
  * @param expected Expected value

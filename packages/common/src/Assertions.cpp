@@ -1,6 +1,22 @@
 #include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
+void assertTrue(bool value, const char* errMsg)
+{
+	if (!value)
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
+
+void assertFalse(bool value, const char* errMsg)
+{
+	if (value)
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
+
 void assertEquals(float value, float expected, const char* errMsg)
 {
 	if (value != expected)

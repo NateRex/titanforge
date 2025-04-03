@@ -13,6 +13,7 @@ add_library(Graphics
     src/entities/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
+    src/geometry/GeometryAttributes.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/textures/ImageLoader.cpp

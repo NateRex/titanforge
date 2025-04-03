@@ -1,6 +1,7 @@
 #pragma once
+#include <graphics/geometry/pointers/GeometryPtr.h>
+#include <graphics/geometry/GeometryAttributes.h>
 #include <iosfwd>
-#include <graphics/entities/MeshOld.h>
 #include <unordered_map>
 #include <vector>
 #include <mutex>
@@ -29,13 +30,13 @@ public:
 		friend class BufferManager;
 
 		/**
-		 * Adds data from a mesh to this buffer
-		 * @param mesh Mesh to add
+		 * Adds data from a geometry to this buffer
+		 * @param geometry Geometry to add
 		 * @return This builder instance
 		 * @throws IllegalArgumentException if the mesh does not have matching attributes with meshes already
 		 * added to this buffer
 		 */
-		Builder& add(const Mesh& mesh);
+		Builder& add(const GeometryPtr mesh);
 
 		/**
 		 * Finalizes and constructs the buffer stored by this builder. The resulting buffer will be
@@ -54,7 +55,7 @@ public:
 		/**
 		 * Attributes shared by all meshes stored in this buffer
 		 */
-		VertexAttributes _attributes;
+		GeometryAttributes _attributes;
 
 		/**
 		 * Vector containing the vertex data obtained from meshes

@@ -1,5 +1,7 @@
 #include <graphics/geometry/Geometry.h>
+#include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/Color.h>
+#include <graphics/buffers/Buffer.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Assertions.h>
@@ -18,11 +20,13 @@ Geometry::~Geometry()
 	delete[] _indices;
 	delete[] _colors;
 	delete[] _uvs;
+	delete _buffer;
 
 	_vertices = nullptr;
 	_indices = nullptr;
 	_colors = nullptr;
 	_uvs = nullptr;
+	_buffer = nullptr;
 
 	_numVertices = 0;
 	_numIndices = 0;
@@ -97,11 +101,6 @@ void Geometry::removeColors()
 	_numColors = 0;
 }
 
-bool Geometry::hasColors() const
-{
-	return _colors != nullptr;
-}
-
 void Geometry::setTextureCoords(const float* uvs, unsigned int numUVs)
 {
 	assertNotNull(uvs, "Texture coordinates cannot be null when applied to a geometry");
@@ -128,7 +127,60 @@ void Geometry::removeTextureCoords()
 	_numUVs = 0;
 }
 
-bool Geometry::hasTextureCoords() const
+const GeometryAttributes Geometry::getAttributes() const
 {
-	return _uvs != nullptr;
+	return {
+		_colors != nullptr,
+		_uvs != nullptr
+	};
+}
+
+Buffer* Geometry::getBuffer()
+{
+	if (_buffer == nullptr)
+	{
+		createBuffer();
+	}
+
+	return _buffer;
+}
+
+void Geometry::createBuffer()
+{
+	GeometryAttributes attribs = getAttributes();
+	assertNotNull(_vertices, "Geometry must contain vertex positions to render");
+	assertNotNull(_indices, "Geometry must contain vertex indices to render");
+	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors on a geometry must match the number of vertices");
+	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates on a geometry must match the number of vertices");
+
+	// Interleave vertex data
+	unsigned int vSize = _numVertices * attribs.getStride();
+	float* vData = new float[vSize];
+	unsigned int idx = 0;
+	for (int i = 0; i < _numVertices; i++)
+	{
+		Vector3 p = _vertices[i];
+		vData[idx++] = p.x;
+		vData[idx++] = p.y;
+		vData[idx++] = p.z;
+
+		if (attribs.colors)
+		{
+			Color c = _colors[i];
+			vData[idx++] = c.red;
+			vData[idx++] = c.green;
+			vData[idx++] = c.blue;
+			vData[idx++] = c.alpha;
+		}
+
+		if (attribs.uvs)
+		{
+			Vector2 uv = _uvs[i];
+			vData[idx++] = uv.x;
+			vData[idx++] = uv.y;
+		}
+	}
+
+	delete _buffer;
+	_buffer = new Buffer();
 }

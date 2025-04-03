@@ -4,6 +4,8 @@
 class Vector2;
 class Vector3;
 class Color;
+class GeometryAttributes;
+class Buffer;
 
 /**
  * Base class for all geometry, which defines an object, line, or point in local space. Contains vertex attributes
@@ -58,11 +60,6 @@ public:
 	void removeColors();
 
 	/**
-	 * @return True if this geometry contains per-vertex colors. Returns false otherwise.
-	 */
-	bool hasColors() const;
-
-	/**
 	 * Sets the texture coordinate for each vertex in this geometry.
 	 * @param uvs An array where every 2 values represents the u and v components of a texture coordinate. Each
 	 * value should be in the range 0 to 1.
@@ -77,9 +74,15 @@ public:
 	void removeTextureCoords();
 
 	/**
-	 * @return True if this geometry contains per-vertex texture coordinates. Returns false otherwise.
+	 * @return An object describing the attributes that make up this geometry
 	 */
-	bool hasTextureCoords() const;
+	const GeometryAttributes getAttributes() const;
+
+	/**
+	 * @return The GPU buffer for this geometry, creating it if it does not yet exist. This method should typically only
+	 * be called by the renderer.
+	 */
+	Buffer* getBuffer();
 
 protected:
 
@@ -126,7 +129,17 @@ protected:
 	unsigned int _numUVs = 0;
 
 	/**
+	 * The GPU buffer for this geometry. Will not be constructed until the first time this geometry is rendered.
+	 */
+	Buffer* _buffer = nullptr;
+
+	/**
 	 * Constructor
 	 */
 	Geometry();
+
+	/**
+	 * Constructs and stores the GPU buffer for this geometry using the attributes currently set on this geometry
+	 */
+	void createBuffer();
 };

@@ -14,7 +14,9 @@ add_executable(GraphicsTest
     src/buffers/BufferManagerTest.cpp
     src/buffers/BufferTest.cpp
     src/entities/EntityTest.cpp
+    src/entities/MeshTest.cpp
     src/geometry/BoxGeometryTest.cpp
+    src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp
     src/shaders/ShaderManagerTest.cpp
     src/shaders/ShaderTest.cpp

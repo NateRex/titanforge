@@ -22,6 +22,17 @@ BOOST_AUTO_TEST_CASE(Assertions_notNull)
 }
 
 /**
+ * Tests assertTrue and assertFalse functions
+ */
+BOOST_AUTO_TEST_CASE(Assertions_trueVsFalse)
+{
+	BOOST_REQUIRE_NO_THROW(assertTrue(true));
+	BOOST_REQUIRE_THROW(assertTrue(false), IllegalArgumentException);
+	BOOST_REQUIRE_NO_THROW(assertFalse(false));
+	BOOST_REQUIRE_THROW(assertFalse(true), IllegalArgumentException);
+}
+
+/**
  * Tests assertEquals
  */
 BOOST_AUTO_TEST_CASE(Assertions_assertEquals)

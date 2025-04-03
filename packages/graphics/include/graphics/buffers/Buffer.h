@@ -1,8 +1,6 @@
 #pragma once
 #include <string>
 
-struct VertexAttributes;
-
 /**
  * A buffer capable of being loaded with vertex array data to be sent to the GPU
  * @author Nathaniel Rex
