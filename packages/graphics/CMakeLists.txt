@@ -19,8 +19,8 @@ add_library(Graphics
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
-    src/materials/MeshMaterial.cpp
     src/textures/Texture.cpp
     src/textures/TextureManager.cpp
     src/Color.cpp

@@ -1,12 +1,12 @@
 #pragma once
 #include <graphics/materials/Material.h>
-#include <graphics/materials/pointers/MeshMaterialPtr.h>
+#include <graphics/materials/pointers/BasicMaterialPtr.h>
 
 /**
- * Material for drawing mesh geometries
+ * Material for drawing geometries in a flat or wireframe way.
  * @author Nathaniel Rex
  */
-class MeshMaterial : public Material
+class BasicMaterial : public Material
 {
 public:
 
@@ -24,7 +24,7 @@ private:
 	 * @param useVertexColors Flag that, when true, forces the use of colors specified on geometry vertices
 	 * (when available)
 	 */
-	MeshMaterial(const Color& color, const Texture* texture, bool useVertexColors);
+	BasicMaterial(const Color& color, const Texture* texture, bool useVertexColors);
 
 public:
 
@@ -47,7 +47,7 @@ public:
 		/**
 		 * @return A material constructed from the data stored in this builder
 		 */
-		MeshMaterialPtr build() const;
+		BasicMaterialPtr build() const;
 
 	protected:
 
