@@ -7,7 +7,13 @@ find_package(Stb REQUIRED)
 
 # Library files
 add_library(Graphics
-    src/buffers/Buffer.cpp
+    src/core/shaders/Shader.cpp
+    src/core/shaders/ShaderManager.cpp
+    src/core/windows/InputController.cpp
+    src/core/windows/Window.cpp
+    src/core/windows/WindowManager.cpp
+    src/core/Buffer.cpp
+    src/core/ImageLoader.cpp
     src/entities/Entity.cpp
     src/entities/Mesh.cpp
     src/geometry/BoxGeometry.cpp
@@ -15,14 +21,8 @@ add_library(Graphics
     src/geometry/GeometryAttributes.cpp
     src/materials/Material.cpp
     src/materials/MeshMaterial.cpp
-    src/shaders/Shader.cpp
-    src/shaders/ShaderManager.cpp
-    src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureManager.cpp
-    src/windows/InputController.cpp
-    src/windows/Window.cpp
-    src/windows/WindowManager.cpp
     src/Color.cpp
     src/Engine.cpp
 )
