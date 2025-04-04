@@ -1,5 +1,5 @@
 #include <graphics/textures/Texture.h>
-#include <graphics/textures/ImageLoader.h>
+#include <graphics/core/ImageLoader.h>
 #include <common/exceptions/InstantiationException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>

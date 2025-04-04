@@ -1,6 +1,6 @@
-#include <graphics/shaders/ShaderManager.h>
-#include <graphics/shaders/Shader.h>
-#include <graphics/shaders/glsl/Basic.h>
+#include <graphics/core/shaders/ShaderManager.h>
+#include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/glsl/Basic.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <sstream>

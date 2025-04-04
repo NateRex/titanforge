@@ -1,10 +1,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/Engine.h>
-#include <graphics/windows/Window.h>
-#include <graphics/windows/InputController.h>
-#include <graphics/windows/WindowManager.h>
-#include <graphics/shaders/ShaderManager.h>
+#include <graphics/core/windows/Window.h>
+#include <graphics/core/windows/InputController.h>
+#include <graphics/core/windows/WindowManager.h>
+#include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/textures/TextureManager.h>
 #include <common/exceptions/IllegalStateException.h>
 

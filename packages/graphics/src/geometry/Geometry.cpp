@@ -1,7 +1,7 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/Color.h>
-#include <graphics/buffers/Buffer.h>
+#include <graphics/core/Buffer.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Assertions.h>
