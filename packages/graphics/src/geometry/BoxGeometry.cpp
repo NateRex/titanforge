@@ -41,25 +41,31 @@ void BoxGeometry::createFace(unsigned int* vCount, unsigned int* iCount, int fix
 	Vector3 position;
 	float* p[3] = { &position.x, &position.y, &position.z };
 
-	// Vertices and UV coordinates
+	// Point 1
 	*p[fixedAxis] = fixedValue;
 	*p[axis1] = start1;
 	*p[axis2] = start2;
 	_uvs[*vCount] = { 0.f, 0.f };
-	_vertices[(*vCount)++] = position;
-	*p[axis1] *= -1;
-	_uvs[*vCount] = { 1.f, 0.f };
-	_vertices[(*vCount)++] = position;
-	*p[axis2] *= -1;
-	_uvs[*vCount] = { 1.f, 1.f };
-	_vertices[(*vCount)++] = position;
-	*p[axis1] *= -1;
-	_uvs[*vCount] = { 0.f, 1.f };
+	_indices[(*iCount)++] = *vCount;
 	_vertices[(*vCount)++] = position;
 
-	// Indices
-	_indices[(*iCount)++] = *vCount - 3;
-	_indices[(*iCount)++] = *vCount - 2;
-	_indices[(*iCount)++] = *vCount - 1;
+	// Point 2
+	*p[axis1] *= -1;
+	_uvs[*vCount] = { 1.f, 0.f };
 	_indices[(*iCount)++] = *vCount;
+	_vertices[(*vCount)++] = position;
+
+	// Point 3
+	*p[axis2] *= -1;
+	_uvs[*vCount] = { 1.f, 1.f };
+	_indices[(*iCount)++] = *vCount;
+	_indices[(*iCount)++] = *vCount;
+	_vertices[(*vCount)++] = position;
+
+	// Point 4
+	*p[axis1] *= -1;
+	_uvs[*vCount] = { 0.f, 1.f };
+	_indices[(*iCount)++] = *vCount;
+	_indices[(*iCount)++] = *vCount - 3;
+	_vertices[(*vCount)++] = position;
 }
