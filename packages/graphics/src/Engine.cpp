@@ -6,7 +6,6 @@
 #include <graphics/windows/WindowManager.h>
 #include <graphics/shaders/ShaderManager.h>
 #include <graphics/textures/TextureManager.h>
-#include <graphics/buffers/BufferManager.h>
 #include <common/exceptions/IllegalStateException.h>
 
 std::mutex Engine::_MUTEX;
@@ -57,9 +56,6 @@ void Engine::start(bool headlessMode)
     // Initialize textures
     TextureManager::setup();
 
-    // Initialize buffers
-    BufferManager::setup();
-
     _INITIALIZED = true;
 }
 
@@ -73,7 +69,6 @@ void Engine::stop()
     }
 
     // Clear managers
-    BufferManager::clear();
     TextureManager::clear();
     ShaderManager::clear();
     WindowManager::clear();
@@ -102,7 +97,7 @@ void Engine::startFrame()
 
     // Clear
     Color clearColor = window->_clearColor;
-    glClearColor(clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha);
+    glClearColor(clearColor.red(), clearColor.green(), clearColor.blue(), clearColor.alpha());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

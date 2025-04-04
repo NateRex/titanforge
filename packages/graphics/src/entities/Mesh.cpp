@@ -1,11 +1,12 @@
 #include <graphics/entities/Mesh.h>
 
-Mesh::Mesh(GeometryPtr geometry) : _geometry(geometry)
+Mesh::Mesh(GeometryPtr geometry, MaterialPtr material)
+	: Entity(EntityType::BUFFERED), _geometry(geometry), _material(material)
 {
 
 }
 
-MeshPtr Mesh::create(GeometryPtr geometry)
+MeshPtr Mesh::create(GeometryPtr geometry, MaterialPtr material)
 {
-	return std::shared_ptr<Mesh>(new Mesh(geometry));
+	return std::shared_ptr<Mesh>(new Mesh(geometry, material));
 }

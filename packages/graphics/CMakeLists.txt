@@ -8,12 +8,13 @@ find_package(Stb REQUIRED)
 # Library files
 add_library(Graphics
     src/buffers/Buffer.cpp
-    src/buffers/BufferManager.cpp
     src/entities/Entity.cpp
     src/entities/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/materials/Material.cpp
+    src/materials/MeshMaterial.cpp
     src/shaders/Shader.cpp
     src/shaders/ShaderManager.cpp
     src/textures/ImageLoader.cpp

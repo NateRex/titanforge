@@ -3,67 +3,16 @@
 #include <graphics/windows/Window.h>
 #include <graphics/windows/InputController.h>
 #include <graphics/buffers/Buffer.h>
-#include <graphics/buffers/BufferManager.h>
 #include <graphics/textures/Texture.h>
 #include <graphics/textures/TextureManager.h>
 #include <graphics/shaders/Shader.h>
 #include <graphics/shaders/ShaderManager.h>
+#include <graphics/geometry/BoxGeometry.h>
 #include <graphics/entities/Mesh.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <math/Vector3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
-
-/**
- * @return An example polyface
- */
-Mesh examplePolyface()
-{
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
-
-    return Mesh(vertices, 180, { false, true });
-}
 
 /**
  * @return Model matrix
@@ -99,17 +48,19 @@ int main() {
     Window* window = WindowManager::getCurrent();
     window->setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 
-    // Textures
-    Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
+    // Geometry
+    GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
 
-    // Buffers
-    Buffer* buffer = BufferManager::startBuffer("geometry")
-        .add(examplePolyface())
-        .finish();
+    // Material
+    Texture* texture = TextureManager::create("box", "assets/container.jpg");
+    MaterialPtr material = MeshMaterial::Builder()
+        .setTexture(texture)
+        .build();
+    
 
     // Shaders
     Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("tex", 0, boxTexture);
+    shader->setUniform("tex", 0, texture);
     shader->setUniform("model", getModelMatrix());
     shader->setUniform("view", getViewMatrix());
     shader->setUniform("proj", getProjectionMatrix());
@@ -120,7 +71,7 @@ int main() {
         Engine::startFrame();
 
         shader->setUniform("model", getModelMatrix());
-        shader->draw(buffer);
+        shader->draw(geometry->getBuffer());
 
         Engine::finishFrame();
     }

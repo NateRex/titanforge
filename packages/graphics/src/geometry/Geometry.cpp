@@ -167,10 +167,10 @@ void Geometry::createBuffer()
 		if (attribs.colors)
 		{
 			Color c = _colors[i];
-			vData[idx++] = c.red;
-			vData[idx++] = c.green;
-			vData[idx++] = c.blue;
-			vData[idx++] = c.alpha;
+			vData[idx++] = c.red();
+			vData[idx++] = c.green();
+			vData[idx++] = c.blue();
+			vData[idx++] = c.alpha();
 		}
 
 		if (attribs.uvs)
@@ -182,5 +182,7 @@ void Geometry::createBuffer()
 	}
 
 	delete _buffer;
-	_buffer = new Buffer();
+	_buffer = new Buffer(attribs, vData, vSize, _indices, _numIndices);
+
+	delete[] vData;
 }

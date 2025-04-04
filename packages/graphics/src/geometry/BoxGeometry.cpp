@@ -20,7 +20,8 @@ BoxGeometry::BoxGeometry(float length, float height, float depth)
 	_indices = new unsigned int[36];
 	_numIndices = 36;
 
-	unsigned int vIdx, iIdx = 0;
+	unsigned int vIdx = 0;
+	unsigned int iIdx = 0;
 	createFace(&vIdx, &iIdx, 2, -hz, 0, hx, 1, -hy);		// back
 	createFace(&vIdx, &iIdx, 0, -hx, 2, -hz, 1, -hy);		// left
 	createFace(&vIdx, &iIdx, 2, hz, 0, -hx, 1, -hy);		// front
@@ -45,20 +46,20 @@ void BoxGeometry::createFace(unsigned int* vCount, unsigned int* iCount, int fix
 	*p[axis1] = start1;
 	*p[axis2] = start2;
 	_uvs[*vCount] = { 0.f, 0.f };
-	_vertices[*vCount++] = position;
+	_vertices[(*vCount)++] = position;
 	*p[axis1] *= -1;
 	_uvs[*vCount] = { 1.f, 0.f };
-	_vertices[*vCount++] = position;
+	_vertices[(*vCount)++] = position;
 	*p[axis2] *= -1;
 	_uvs[*vCount] = { 1.f, 1.f };
-	_vertices[*vCount++] = position;
+	_vertices[(*vCount)++] = position;
 	*p[axis1] *= -1;
 	_uvs[*vCount] = { 0.f, 1.f };
-	_vertices[*vCount++] = position;
+	_vertices[(*vCount)++] = position;
 
 	// Indices
-	_indices[*iCount++] = *vCount - 3;
-	_indices[*iCount++] = *vCount - 2;
-	_indices[*iCount++] = *vCount - 1;
-	_indices[*iCount++] = *vCount;
+	_indices[(*iCount)++] = *vCount - 3;
+	_indices[(*iCount)++] = *vCount - 2;
+	_indices[(*iCount)++] = *vCount - 1;
+	_indices[(*iCount)++] = *vCount;
 }
