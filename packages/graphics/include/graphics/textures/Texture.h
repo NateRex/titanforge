@@ -23,18 +23,24 @@ public:
 	 */
 	const std::string imagePath;
 
+	/**
+	 * @return The GLFW id of this texture
+	 */
+	unsigned int id() const;
+
 private:
 
 	/**
 	 * GLFW id of this texture
 	 */
-	unsigned int _id;
+	unsigned int _id = 0;
 
 	/**
 	 * Constructor
 	 * @param name A unique name that can be used to refer to this texture in the future
 	 * @param imagePath Relative path to the image file that will be used to generate the texture.
 	 * This path is relative to the directory containing the currently running executable.
+	 * 
 	 */
 	Texture(const std::string& name, const std::string& imagePath);
 

@@ -13,7 +13,7 @@ BasicMaterialPtr BasicMaterial::Builder::build() const
 }
 
 BasicMaterial::BasicMaterial(const Color& color, const Texture* texture, bool useVertexColors)
-	: Material(color, texture), useVertexColors(useVertexColors)
+	: Material(MaterialType::BASIC, color, texture), useVertexColors(useVertexColors)
 {
 
 }

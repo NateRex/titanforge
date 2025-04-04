@@ -1,62 +1,46 @@
 #pragma once
-#include <iosfwd>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 #include <unordered_map>
-#include <mutex>
 
-class Shader;
+enum class MaterialType;
 
 /**
- * The shader manager is responsible for tracking all shaders that have been registered for use
+ * The shader manager is a singleton, responsible for tracking all shaders that have been registered for use
  * @author Nathaniel Rex
  */
 class ShaderManager
 {
 public:
 
-	friend class Engine;
+	/**
+	 * Singleton instance
+	 */
+	const static ShaderManager INSTANCE;
 
 	/**
-	 * Links and registers a new shader program for use in this manager
-	 * @param name Unique name for the shader
-	 * @param vertexShader Vertex shader source code
-	 * @param fragmentShader Fragment shader source code
-	 * @return The new shader program
-	 * @throws IllegalArgumentException if a shader with that name already exists
-	 * @throws InstantiationException on failure to compile or link the shader
+	 * Destructor
 	 */
-	static Shader* create(const std::string& name, const char* vertexShader, const char* fragmentShader);
+	~ShaderManager();
 
 	/**
-	 * Fetches a shader program by name
-	 * @param name The name of the shader previously created via this manager
-	 * @return The shader
-	 * @throws IllegalArgumentException if a program with that name could not be found
+	 * Fetches a shader program for use against a given material type
+	 * @param matType Material type
+	 * @return The shader program capable of handling that material
+	 * @throws NullPointerException If a shader for that material type could not be found
 	 */
-	static Shader* get(const std::string& name);
-
-	/**
-	 * Destroys a shader program held by this manager, releasing all of its resources
-	 * @param name The name of the shader program
-	 * @throws IllegalArgumentException if a program with that name could not be found
-	 */
-	static void destroy(const std::string& name);
+	ShaderPtr getShader(MaterialType matType);
 
 private:
-	
-	/**
-	 * Mutex lock for manipulating static data
-	 */
-	static std::mutex _MUTEX;
 
 	/**
-	 * Map containing all shaders that have been created
+	 * Mapping from material types to shaders
 	 */
-	static std::unordered_map<std::string, Shader> _SHADERS;
+	std::unordered_map<MaterialType, ShaderPtr> _shaders;
 
 	/**
 	 * Constructor
 	 */
-	ShaderManager() = delete;
+	ShaderManager();
 
 	/**
 	 * Constructor
@@ -71,13 +55,8 @@ private:
 	ShaderManager(ShaderManager&& mgr) = delete;
 
 	/**
-	 * Initializes this shader manager by compiling and linking all default shader programs,
-	 * and sets the starting shader program for use by the GPU
+	 * Assignment operator
+	 * @param mgr Shader manager to assign from
 	 */
-	static void setup();
-
-	/**
-	 * Clears and deletes all shaders held by this manager
-	 */
-	static void clear();
+	ShaderManager& operator=(const ShaderManager& mgr) = delete;
 };

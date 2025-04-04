@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * Enumerated type describing types of entities
+ * Enumeration describing types of entities
  * @author Nathaniel Rex
  */
 enum class EntityType

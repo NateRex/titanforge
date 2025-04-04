@@ -1,83 +1,77 @@
 #pragma once
-#include <string>
+#include <graphics/materials/pointers/MaterialPtr.h>
 
-class Buffer;
-class Texture;
 class Matrix4;
 
 /**
- * A shader program, managed by the shader manager
+ * Parent class to all shared programs, managed by the shader manager
  * @author Nathaniel Rex
  */
 class Shader {
 public:
 
-    friend class ShaderManager;
-
     /**
-     * Unique name of this shader program
+     * Destructor
      */
-    const std::string name;
+    ~Shader();
 
     /**
-     * Draws a buffer using this shader program
-     * @param buffer The buffer to draw
+     * Updates uniforms for this shader using the given model matrix. This method assumes that this shader
+     * is currently in-use.
+     * @param matrix Matrix representing the transformation from local to world space
      */
-    void draw(const Buffer* buffer) const;
+    void setModelMatrix(const Matrix4& matrix);
 
     /**
-     * Sets a uniform texture.
-     * @param name Uniform variable name
-     * @param textureUnit Texture unit. Must be a value between 0 and 15.
-     * @param texture Texture
+     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
+     * is currently in-use.
+     * @param matrix Matrix representing the transformation from world to view space
      */
-    void setUniform(const char* name, unsigned int textureUnit, const Texture* texture) const;
+    void setViewMatrix(const Matrix4& matrix);
 
     /**
-     * Sets uniform 4x4 matrix.
-     * @param name Uniform variable name
-     * @param matrix Matrix value
+     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
+     * shader is currently in-use.
+     * @param matrix Matrix representing the transformation from view to clipping space
      */
-    void setUniform(const char* name, const Matrix4& matrix) const;
-
-private:
+    void setProjectionMatrix(const Matrix4& matrix);
 
     /**
-	 * GLFW id. Will be zero until this program has been linked.
-	 */
-	unsigned int _id;
-
-    /**
-     * Constructor
-     * @param name The unique name of this shader
+     * Updates uniforms for this shader using the given material. This method assumes that this shader is
+     * currently in-use.
+     * @param material Material
      */
-    Shader(const std::string& name);
-
-    /**
-     * Compiles shader code for use in linking.
-     * @param type The shader type
-     * @param source Shader source code
-     * @return The ID of the compiled shader. Must be destroyed via glDeleteShader when no longer needed.
-     */
-    unsigned int compileSource(int type, const char* source);
-
-    /**
-     * Links this shader program for use by OpenGL, using the given source code.
-     * @param vertexShader Vertex shader source code
-     * @param fragmentShader Fragment shader source code
-     * @throws InstantiationException On failure to compile or link the shader
-     */
-    void link(const char* vertexShader, const char* fragmentShader);
+    virtual void setMaterial(const MaterialPtr material) = 0;
 
     /**
      * Activates this shader as the current shader program used for rendering
      */
     void use() const;
 
+protected:
+
     /**
-     * Destroys this shader program and releases all of its resources.
+	 * GLFW id
+	 */
+	unsigned int _id = 0;
+
+    /**
+     * Constructor
+     * @param prgmName Program name. Used in error messages on failure to compile or link.
+     * @param vertexShader Vertex shader source code
+     * @param fragmentShader Fragment shader source code
+     * @throws InstantiationException On failure to compile or link the shader
      */
-    void destroy();
+    Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader);
+
+    /**
+     * Compiles shader code for use in linking.
+     * @param prgmName Program name. Used in error messages on failure to compile.
+     * @param type The shader type
+     * @param source Shader source code
+     * @return The ID of the compiled shader. Must be destroyed via glDeleteShader when no longer needed.
+     */
+    unsigned int compileSource(const char* prgmName, int type, const char* source);
 
     /**
      * Helper method that obtains the location of a uniform variable in this shader program (assuming it's bound),

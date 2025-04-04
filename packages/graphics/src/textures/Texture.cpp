@@ -11,6 +11,11 @@ Texture::Texture(const std::string& name, const std::string& imagePath)
 	
 }
 
+unsigned int Texture::id() const
+{
+	return _id;
+}
+
 void Texture::create(bool flip)
 {
 	// Resolve image path

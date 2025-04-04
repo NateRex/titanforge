@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/materials/MaterialType.h>
 #include <graphics/Color.h>
 
 class Texture;
@@ -25,10 +26,11 @@ protected:
 
 	/**
 	 * Constructor
+	 * @param type Material type.
 	 * @param color Color
 	 * @param texture Texture. Can be null.
 	 */
-	Material(const Color& color, const Texture* texture);
+	Material(MaterialType type, const Color& color, const Texture* texture);
 
 	/**
 	 * Builder used to construct a Material instance
