@@ -99,3 +99,35 @@ void assertLessThanOrEqual(float value, float upperBound,
  */
 void assertInRange(float value, float lowerBound, float upperBound, bool inclusive = true,
 		const char* errMsg = "Value was not in expected range");
+
+/**
+ * Asserts that a map contains a key
+ * @param map The map to evaluate
+ * @param key The key to search for
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if key is not present within the map
+ */
+template <typename MapType, typename KeyType>
+void assertKeyInMap(const MapType& map, const KeyType& key, const char* errMsg = "Key was not found in map")
+{
+	if (map.find(key) == map.end())
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
+
+/**
+ * Asserts that a map does not contain a key
+ * @param map The map to evaluate
+ * @param key The key to search for
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if key is present within the map
+ */
+template <typename MapType, typename KeyType>
+void assertKeyNotInMap(const MapType& map, const KeyType& key, const char* errMsg = "Key already exists in map")
+{
+	if (map.find(key) != map.end())
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
