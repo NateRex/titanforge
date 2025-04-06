@@ -1,26 +1,37 @@
 #pragma once
-#include <memory>
-#include <string>
-#include <graphics/core/Color.h>
+#include <graphics/core/windows/pointers/WindowPtr.h>
 
 struct GLFWwindow;
 class InputController;
 
 /**
- * Representation of a window target for rendering
+ * A window target for rendering
  * @author Nathaniel Rex
  */
 class Window
 {
 public:
 
-    friend class WindowManager;
-    friend class Engine;
+    /**
+     * Destructor
+     */
+    ~Window();
 
     /**
-     * The unique name of this window
+     * Sets the global flag that determines whether or not windows should be initialized in "headless mode",
+     * which prevents the engine from trying to actually display them on screen. This is primarily useful in
+     * test environments.
+     * @param headlessMode True if windows should be initialized in "headless mode". False otherwise.
      */
-    const std::string name;
+    static void setHeadlessMode(bool headlessMode);
+
+    /**
+     * Constructs a new window
+     * @param title Window title
+     * @param width Starting width (in pixels).
+     * @param height Starting height (in pixels).
+     */
+    static WindowPtr create(const char* title, unsigned int width, unsigned int height);
 
     /**
      * @return The input controller
@@ -33,47 +44,41 @@ public:
      */
     bool isOpen() const;
 
-    /**
-     * Sets the background (clear) color
-     * @param color Color
-     */
-    void setBackgroundColor(const Color color);
-
 private:
 
     /**
-     * A pointer to the GLFW window object. Will be null until this window is constructed explicitly via
-     * create()
+     * Boolean flag that, when true, indicates that GLFW has been initialized 
+     */
+    static bool GLFW_INIT;
+
+    /**
+     * Boolean flag that, when true, indicates that GLFW should be initialized in "headless mode",
+     * which prevents the display of windows. This is primarily useful in test environments.
+     */
+    static bool HEADLESS;
+
+    /**
+     * A pointer to the GLFW window object
      */
     GLFWwindow* _glfwWindow;
 
     /**
      * Input controller
      */
-    std::shared_ptr<InputController> _inputController;
-
-    /**
-     * Background (clear) color. Defaults to black.
-     */
-    Color _clearColor;
+    InputController* _inputController;
 
     /**
      * Constructor.
-     * @param name Unique name to associate with this window
+     * @param title Window title
+     * @param width Starting width (in pixels).
+     * @param height Starting height (in pixels).
      */
-    Window(const std::string& name);
+    Window(const char* title, unsigned int width, unsigned int height);
 
     /**
-     * Creates the OpenGL resources for this window
-     * @param width Starting width of the window (in pixels).
-     * @param height Starting height of the window (in pixels).
+     * Initializes GLFW. This should only be done once, on creation of the first window.
      */
-    void create(unsigned int width, unsigned int height);
-
-    /**
-     * Destroys this window, freeing its resources
-     */
-    void destroy();
+    static void initGLFW();
 
     /**
      * Callback method that is triggered whenever a window is resized
