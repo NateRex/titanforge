@@ -12,6 +12,8 @@ class Window
 {
 public:
 
+    friend class Renderer;
+
     /**
      * Destructor
      */
@@ -47,7 +49,7 @@ public:
 private:
 
     /**
-     * Boolean flag that, when true, indicates that GLFW has been initialized 
+     * Boolean flag that, when true, indicates that GLFW has been initialized
      */
     static bool GLFW_INIT;
 
