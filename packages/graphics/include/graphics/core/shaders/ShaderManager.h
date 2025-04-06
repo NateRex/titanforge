@@ -13,14 +13,14 @@ class ShaderManager
 public:
 
 	/**
-	 * Singleton instance
-	 */
-	const static ShaderManager INSTANCE;
-
-	/**
 	 * Destructor
 	 */
 	~ShaderManager();
+
+	/**
+	 * @return The global ShaderManager instance
+	 */
+	static ShaderManager& getInstance();
 
 	/**
 	 * Fetches a shader program for use against a given material type

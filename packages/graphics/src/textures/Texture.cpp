@@ -1,25 +1,14 @@
 #include <graphics/textures/Texture.h>
-#include <graphics/core/ImageLoader.h>
+#include <graphics/textures/ImageLoader.h>
 #include <common/exceptions/InstantiationException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
 #include <sstream>
 
-Texture::Texture(const std::string& name, const std::string& imagePath)
-	: _id(0), name(name), imagePath(imagePath)
-{
-	
-}
-
-unsigned int Texture::id() const
-{
-	return _id;
-}
-
-void Texture::create(bool flip)
+Texture::Texture(const std::string& path, bool flip)
 {
 	// Resolve image path
-	std::string fullPath = resolvePath(imagePath);
+	std::string fullPath = resolvePath(path);
 
 	// Load image
 	int width, height, channels;
@@ -28,7 +17,7 @@ void Texture::create(bool flip)
 	if (!data)
 	{
 		std::ostringstream oss;
-		oss << "Failed to load texture image: " << imagePath;
+		oss << "Failed to load texture image: " << path;
 		throw InstantiationException(oss.str());
 	}
 
@@ -43,7 +32,7 @@ void Texture::create(bool flip)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Load image data
-	unsigned int glRgb = checkSuffix(imagePath, ".png") ? GL_RGBA : GL_RGB;
+	unsigned int glRgb = checkSuffix(path, ".png") ? GL_RGBA : GL_RGB;
 	glTexImage2D(GL_TEXTURE_2D, 0, glRgb, width, height, 0, glRgb, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -51,7 +40,7 @@ void Texture::create(bool flip)
 	stbi_image_free(data);
 }
 
-void Texture::destroy()
+Texture::~Texture()
 {
 	GLint boundId;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundId);
@@ -63,4 +52,14 @@ void Texture::destroy()
 
 	glDeleteTextures(1, &_id);
 	_id = 0;
+}
+
+TexturePtr Texture::create(const std::string& path, bool flip)
+{
+	return std::shared_ptr<Texture>(new Texture(path, flip));
+}
+
+unsigned int Texture::id() const
+{
+	return _id;
 }

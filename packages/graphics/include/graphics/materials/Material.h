@@ -1,8 +1,7 @@
 #pragma once
 #include <graphics/materials/MaterialType.h>
+#include <graphics/textures/pointers/TexturePtr.h>
 #include <graphics/Color.h>
-
-class Texture;
 
 /**
  * Base class for all materials that define the appearance of objects in a scene.
@@ -20,7 +19,7 @@ public:
 	/**
 	 * Texture. Can be null.
 	 */
-	const Texture* texture;
+	const TexturePtr texture;
 
 protected:
 
@@ -30,7 +29,7 @@ protected:
 	 * @param color Color
 	 * @param texture Texture. Can be null.
 	 */
-	Material(MaterialType type, const Color& color, const Texture* texture);
+	Material(MaterialType type, const Color& color, const TexturePtr texture);
 
 	/**
 	 * Builder used to construct a Material instance
@@ -56,7 +55,7 @@ protected:
 		 * @param texture Texture value
 		 * @return This vuilder
 		 */
-		SubBuilder& setTexture(Texture* texture)
+		SubBuilder& setTexture(TexturePtr texture)
 		{
 			_texture = texture;
 			return static_cast<SubBuilder&>(*this);
@@ -72,6 +71,6 @@ protected:
 		/**
 		 * Texture
 		 */
-		Texture* _texture = nullptr;
+		TexturePtr _texture = nullptr;
 	};
 };

@@ -23,7 +23,7 @@ add_library(Graphics
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/textures/Texture.cpp
-    src/textures/TextureManager.cpp
+    src/textures/TextureLoader.cpp
     src/Color.cpp
     src/Engine.cpp
 )

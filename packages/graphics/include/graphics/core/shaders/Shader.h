@@ -53,7 +53,7 @@ protected:
     /**
 	 * GLFW id
 	 */
-	unsigned int _id = 0;
+	unsigned int _id;
 
     /**
      * Constructor

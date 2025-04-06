@@ -11,10 +11,6 @@ class Buffer
 {
 public:
 
-	friend class Shader;
-	friend class BufferBuilder;
-	friend class BufferManager;
-
 	/**
 	 * Constructor
 	 * @param attributes Vertex attributes
