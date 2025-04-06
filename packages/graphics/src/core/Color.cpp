@@ -1,4 +1,4 @@
-#include <graphics/Color.h>
+#include <graphics/core/Color.h>
 #include <common/Assertions.h>
 
 const Color Color::TRANSPARENT(0.f, 0.f, 0.f, 0.f);

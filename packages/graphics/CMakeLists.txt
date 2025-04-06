@@ -14,7 +14,8 @@ add_library(Graphics
     src/core/windows/Window.cpp
     src/core/windows/WindowManager.cpp
     src/core/Buffer.cpp
-    src/core/ImageLoader.cpp
+    src/core/Color.cpp
+    src/core/Renderer.cpp
     src/entities/Entity.cpp
     src/entities/Mesh.cpp
     src/geometry/BoxGeometry.cpp
@@ -22,9 +23,9 @@ add_library(Graphics
     src/geometry/GeometryAttributes.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
+    src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureLoader.cpp
-    src/Color.cpp
     src/Engine.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)

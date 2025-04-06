@@ -1,6 +1,6 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
-#include <graphics/Color.h>
+#include <graphics/core/Color.h>
 #include <graphics/core/Buffer.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>

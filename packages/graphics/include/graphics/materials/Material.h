@@ -1,7 +1,7 @@
 #pragma once
 #include <graphics/materials/MaterialType.h>
 #include <graphics/textures/pointers/TexturePtr.h>
-#include <graphics/Color.h>
+#include <graphics/core/Color.h>
 
 /**
  * Base class for all materials that define the appearance of objects in a scene.

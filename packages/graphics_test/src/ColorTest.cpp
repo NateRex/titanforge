@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/Color.h>
+#include <graphics/core/Color.h>
 #include <common/Utils.h>
 
 /**
