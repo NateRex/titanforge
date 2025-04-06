@@ -4,12 +4,12 @@
 #include <graphics/core/windows/InputController.h>
 #include <graphics/core/Buffer.h>
 #include <graphics/textures/Texture.h>
-#include <graphics/textures/TextureManager.h>
+#include <graphics/textures/TextureLoader.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/entities/Mesh.h>
-#include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/BasicMaterial.h>
 #include <math/Vector3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
@@ -52,25 +52,24 @@ int main() {
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
 
     // Material
-    Texture* texture = TextureManager::create("box", "assets/container.jpg");
-    MaterialPtr material = MeshMaterial::Builder()
+    TexturePtr texture = TextureLoader::getInstance().load("assets/container.jpg");
+    MaterialPtr material = BasicMaterial::Builder()
         .setTexture(texture)
         .build();
-    
 
     // Shaders
-    Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("tex", 0, texture);
-    shader->setUniform("model", getModelMatrix());
-    shader->setUniform("view", getViewMatrix());
-    shader->setUniform("proj", getProjectionMatrix());
+    ShaderPtr shader = ShaderManager::getInstance().getShader(MaterialType::BASIC);
+    shader->setMaterial(material);
+    shader->setModelMatrix(getModelMatrix());
+    shader->setViewMatrix(getViewMatrix());
+    shader->setProjectionMatrix(getProjectionMatrix());
 
     // Render loop
     while (window->isOpen())
     {
         Engine::startFrame();
 
-        shader->setUniform("model", getModelMatrix());
+        shader->setModelMatrix(getModelMatrix());
         shader->draw(geometry->getBuffer());
 
         Engine::finishFrame();
