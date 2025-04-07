@@ -10,8 +10,8 @@
 #include <math/Matrix4.h>		// TODO: Delete this include when view and proj matrices are coming from camera
 #include <common/Utils.h>		// TODO: Delete this include when view and proj matrices are coming from camera
 #include <common/Assertions.h>
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
 {

@@ -1,5 +1,4 @@
 #include <common/Assertions.h>
-#include <common/exceptions/IllegalArgumentException.h>
 
 void assertTrue(bool value, const char* errMsg)
 {

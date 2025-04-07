@@ -1,5 +1,6 @@
 #pragma once
 #include <common/exceptions/NullPointerException.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <functional>
 
 /**

@@ -26,6 +26,11 @@ public:
 	 */
 	const TexturePtr texture;
 
+	/**
+	 * Destructor
+	 */
+	virtual ~Material() = default;
+
 protected:
 
 	/**

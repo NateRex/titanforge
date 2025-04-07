@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/textures/pointers/TexturePtr.h>
-#include <iosfwd>
+#include <string>
 #include <unordered_map>
 
 /**
