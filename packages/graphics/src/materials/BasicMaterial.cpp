@@ -1,19 +1,13 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/textures/Texture.h>
 
-BasicMaterial::Builder& BasicMaterial::Builder::useVertexColors(bool shouldUseVertexColors)
+BasicMaterialPtr BasicMaterial::create()
 {
-	_useVertexColors = shouldUseVertexColors;
-	return *this;
+	return std::shared_ptr<BasicMaterial>(new BasicMaterial());
 }
 
-BasicMaterialPtr BasicMaterial::Builder::build() const
-{
-	return std::shared_ptr<BasicMaterial>(new BasicMaterial(_color, _texture, _useVertexColors));
-}
-
-BasicMaterial::BasicMaterial(const Color& color, const TexturePtr texture, bool useVertexColors)
-	: Material(MaterialType::BASIC, color, texture), useVertexColors(useVertexColors)
+BasicMaterial::BasicMaterial()
+	: Material(MaterialType::BASIC)
 {
 
 }

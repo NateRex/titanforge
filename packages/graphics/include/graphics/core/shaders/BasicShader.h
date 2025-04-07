@@ -14,9 +14,11 @@ constexpr const char* BASIC_VERTEX = R"(
 		layout (location = 2) in vec2 vert_TexCoord;
 
 		// Uniforms
-		uniform mat4 model;
-		uniform mat4 view;
-		uniform mat4 proj;
+		uniform vec4 uColor;
+		uniform int uUseVertexColors;
+		uniform mat4 uModel;
+		uniform mat4 uView;
+		uniform mat4 uProj;
 
 		// Outputs
 		out vec4 frag_Color;
@@ -24,8 +26,8 @@ constexpr const char* BASIC_VERTEX = R"(
 
 		void main()
 		{
-			gl_Position = proj * view * model * vec4(vert_Pos, 1.0f);
-			frag_Color = vert_Color;
+			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
+			frag_Color = uUseVertexColors == 1 ? vert_Color : uColor;
 			frag_TexCoord = vert_TexCoord;
 		}
 )";
@@ -41,14 +43,20 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		in vec2 frag_TexCoord;
 
 		// Uniforms
-		uniform sampler2D tex;
+		uniform int uHasTexture;
+		uniform sampler2D uTexture;
 
 		// Outputs
 		out vec4 FragColor;
 
 		void main()
 		{
-			FragColor = texture(tex, frag_TexCoord);
+			vec4 color = frag_Color;
+			if (uHasTexture == 1) {
+				color = texture(uTexture, frag_TexCoord);
+			}
+
+			FragColor = color;
 		} 
 )";
 

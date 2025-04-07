@@ -21,6 +21,7 @@ Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
 	setWindow(window);
+	applyGlobalDrawSettings();
 }
 
 Renderer::~Renderer()

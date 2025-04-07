@@ -23,16 +23,17 @@ void BasicShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Color
-	glUniform4f(getUniformLocation("color"), mat->color.red(), mat->color.green(), mat->color.blue(), mat->color.alpha());
+	glUniform4f(getUniformLocation("uColor"), mat->color.red(), mat->color.green(), mat->color.blue(), mat->color.alpha());
 
 	// Texture
 	if (mat->texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mat->texture->id());
-		glUniform1i(getUniformLocation("tex"), GL_TEXTURE0);
+		glUniform1i(getUniformLocation("uTexture"), GL_TEXTURE0);
+		glUniform1i(getUniformLocation("uHasTexture"), 1);
 	}
 
 	// Vertex color usage
-	glUniform1i(getUniformLocation("useVertexColors"), mat->useVertexColors ? 1 : 0);
+	glUniform1i(getUniformLocation("uUseVertexColors"), mat->useVertexColors ? 1 : 0);
 }

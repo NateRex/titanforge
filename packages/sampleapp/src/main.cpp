@@ -18,20 +18,14 @@
  */
 int main() {
     Renderer renderer;
+    renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 
-    // Geometry
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
+    MaterialPtr material = BasicMaterial::create();
+    material->texture = TextureLoader::getInstance().load("assets/container.jpg");
 
-    // Material
-    TexturePtr texture = TextureLoader::getInstance().load("assets/container.jpg");
-    MaterialPtr material = BasicMaterial::Builder()
-        .setTexture(texture)
-        .build();
-
-    // Entity
     MeshPtr mesh = Mesh::create(geometry, material);
 
-    // Render loop
     while (renderer.getWindow()->isOpen())
     {
         renderer.render(mesh);

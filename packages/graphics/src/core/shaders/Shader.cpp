@@ -109,18 +109,18 @@ int Shader::getUniformLocation(const char* variableName) const
 
 void Shader::setModelMatrix(const Matrix4& matrix)
 {
-	int loc = getUniformLocation("model");
+	int loc = getUniformLocation("uModel");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
 void Shader::setViewMatrix(const Matrix4& matrix)
 {
-	int loc = getUniformLocation("view");
+	int loc = getUniformLocation("uView");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
 void Shader::setProjectionMatrix(const Matrix4& matrix)
 {
-	int loc = getUniformLocation("proj");
+	int loc = getUniformLocation("uProj");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
