@@ -4,14 +4,8 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/entities/Mesh.h>
 #include <graphics/core/windows/Window.h>
-
-/**
- * @return Model matrix
- */
-//Matrix4 getModelMatrix()
-//{
-//    return Matrix4::fromRotation(Vector3(0.5f, 1.0f, 0.f), Engine::getTime() * deg2Rad(50.f));
-//}
+#include <common/Utils.h>
+#include <cmath>
 
 /**
  * Main entrypoint for the application
@@ -28,6 +22,9 @@ int main() {
 
     while (renderer.getWindow()->isOpen())
     {
+        Matrix3 rotation = Matrix3::fromRotation(Vector3(0.5f, 1.0f, 0.f), renderer.getTime() * deg2Rad(50.f));
+        mesh->setRotation(rotation);
+
         renderer.render(mesh);
     }
 }
