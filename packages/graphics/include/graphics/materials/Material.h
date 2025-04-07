@@ -19,12 +19,12 @@ public:
 	/**
 	 * Color. Defaults to solid white.
 	 */
-	Color color;
+	Color color = Color::WHITE;
 
 	/**
 	 * Texture. Can be null.
 	 */
-	TexturePtr texture;
+	TexturePtr texture = nullptr;
 
 	/**
 	 * Destructor

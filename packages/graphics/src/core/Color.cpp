@@ -45,3 +45,8 @@ float Color::alpha() const
 {
 	return _alpha;
 }
+
+Color Color::withAlpha(float alpha) const
+{
+	return Color(_red, _green, _blue, alpha);
+}

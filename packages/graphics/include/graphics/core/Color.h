@@ -48,6 +48,13 @@ public:
 	 */
 	float alpha() const;
 
+	/**
+	 * Creates a new color that is similar to this one, but with the given alpha channel value
+	 * @param alpha Alpha channel value (a value between 0 and 1)
+	 * @return The new color
+	 */
+	Color withAlpha(float alpha) const;
+
 private:
 
 	/**
