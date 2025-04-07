@@ -13,6 +13,16 @@ class Mesh : public Entity
 public:
 
 	/**
+	 * Geometry. The points of this geometry are assumed to form a series of triangles.
+	 */
+	GeometryPtr geometry;
+
+	/**
+	 * Material
+	 */
+	MaterialPtr material;
+
+	/**
 	 * Constructs a new mesh instance
 	 * @param geometry Geometry whose points are expected to form a series of triangles
 	 * @param material Material
@@ -20,16 +30,6 @@ public:
 	static MeshPtr create(GeometryPtr geometry, MaterialPtr material);
 
 private:
-
-	/**
-	 * Geometry. The points of this geometry are assumed to form a series of triangles.
-	 */
-	GeometryPtr _geometry;
-
-	/**
-	 * Material
-	 */
-	MaterialPtr _material;
 
 	/**
 	 * Constructor

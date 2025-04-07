@@ -12,6 +12,11 @@ class Buffer
 public:
 
 	/**
+	 * The number of indices held inside this buffer
+	 */
+	const unsigned int size;
+
+	/**
 	 * Constructor
 	 * @param attributes Vertex attributes
 	 * @param vertexData Array of vertex data for this buffer
@@ -26,6 +31,11 @@ public:
 	 * Destructor
 	 */
 	~Buffer();
+
+	/**
+	 * Binds this buffer for drawing
+	 */
+	void bind() const;
 
 private:
 
@@ -43,9 +53,4 @@ private:
 	 * ID of the GLFW vertex array object (VAO) used to bind and unbind this buffer for rendering.
 	 */
 	unsigned int _vaoId = 0;
-
-	/**
-	 * The number of indices held inside this buffer
-	 */
-	unsigned int _size = 0;
 };

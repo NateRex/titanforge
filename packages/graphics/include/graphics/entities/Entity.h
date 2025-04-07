@@ -3,6 +3,8 @@
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
 
+class Matrix4;
+
 /**
  * Base class for all entities that can be added to the scene. Contains a set of properties and methods for manipulating
  * the object in 3D space. An entity can have one or more children, whose position, rotation, and scaling will be relative
@@ -11,8 +13,9 @@
  */
 class Entity
 {
-
 public:
+
+	friend class Renderer;
 
 	/**
 	 * Position
@@ -71,6 +74,11 @@ public:
 	 * @param z Scaling in the z direction
 	 */
 	void addScaling(float x, float y, float z);
+
+	/**
+	 * @return A matrix representing the transformation of this entity from local to world space
+	 */
+	Matrix4 getMatrix() const;
 
 protected:
 

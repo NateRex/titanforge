@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/core/windows/pointers/WindowPtr.h>
+#include <mutex>
 
 struct GLFWwindow;
 class InputController;
@@ -49,15 +50,21 @@ public:
 private:
 
     /**
-     * Boolean flag that, when true, indicates that GLFW has been initialized
-     */
-    static bool GLFW_INIT;
-
-    /**
      * Boolean flag that, when true, indicates that GLFW should be initialized in "headless mode",
      * which prevents the display of windows. This is primarily useful in test environments.
      */
-    static bool HEADLESS;
+    static bool _HEADLESS;
+
+    /**
+     * The number of windows currently in existence. This counter is used to determine when we need
+     * to init and deinit GLFW.
+     */
+    static int _WINDOW_COUNT;
+
+    /**
+     * Mutex for modifying the global window count
+     */
+    static std::mutex _MUTEX;
 
     /**
      * A pointer to the GLFW window object
@@ -78,9 +85,27 @@ private:
     Window(const char* title, unsigned int width, unsigned int height);
 
     /**
-     * Initializes GLFW. This should only be done once, on creation of the first window.
+     * Increments the global window count. If this is the first window being created, this will result
+     * in the initialization of GLFW.
      */
-    static void initGLFW();
+    static void incrementWindowCount();
+
+    /**
+     * Decrements the global window count. If this is the last window to be destroyed, this will result
+     * in the termination of GLFW.
+     */
+    static void decrementWindowCount();
+
+    /**
+     * Initializes GLFW. This should only be done on creation of the first window.
+     * @return True if initialization was successful. Returns false otherwise.
+     */
+    static bool initGLFW();
+
+    /**
+     * Terminates GLFW. This should only be done once the last window has been destroyed.
+     */
+    static void terminateGLFW();
 
     /**
      * Callback method that is triggered whenever a window is resized

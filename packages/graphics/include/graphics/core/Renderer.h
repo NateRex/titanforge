@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/core/windows/pointers/WindowPtr.h>
-#include <graphics/entities/pointers/EntityPtr.h>
+#include <graphics/entities/pointers/MeshPtr.h>
 #include <graphics/core/Color.h>
 
 /**
@@ -29,6 +29,11 @@ public:
 	~Renderer();
 
 	/**
+	 * @return The total amount of time (in decimal seconds) that this renderer has been active for
+	 */
+	double getTime() const;
+
+	/**
 	 * @return The current window context that is the target of draw commands
 	 */
 	WindowPtr getWindow() const;
@@ -55,7 +60,7 @@ public:
 	 * TODO (Nate) - Update this method to only accept a scene, once that class has been created
 	 * @param entity The entity to render
 	 */
-	void render(const EntityPtr entity) const;
+	void render(const MeshPtr entity) const;
 
 private:
 
@@ -68,13 +73,6 @@ private:
 	 * The current background (clear) color
 	 */
 	Color _backgroundColor;
-
-	/**
-	 * Loads GLAD function pointers for the given window context. This should be done any time the current
-	 * window context changes.
-	 * @param window Window context
-	 */
-	static void initGLAD(const WindowPtr window);
 
 	/**
 	 * Applies global OpenGL settings that should apply to all entities

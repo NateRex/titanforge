@@ -12,7 +12,6 @@ add_library(Graphics
     src/core/shaders/ShaderManager.cpp
     src/core/windows/InputController.cpp
     src/core/windows/Window.cpp
-    src/core/windows/WindowManager.cpp
     src/core/Buffer.cpp
     src/core/Color.cpp
     src/core/Renderer.cpp
@@ -26,7 +25,6 @@ add_library(Graphics
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureLoader.cpp
-    src/Engine.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 

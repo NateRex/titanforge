@@ -5,11 +5,14 @@
 #include <common/exceptions/InstantiationException.h>
 #include <sstream>
 
-bool Window::GLFW_INIT = false;
-bool Window::HEADLESS = false;
+bool Window::_HEADLESS = false;
+int Window::_WINDOW_COUNT = 0;
+std::mutex Window::_MUTEX;
 
 Window::Window(const char* title, unsigned int width, unsigned int height)
 {
+    incrementWindowCount();
+
     // Create window
     _glfwWindow = glfwCreateWindow(width, height, title, NULL, NULL);
     if (!_glfwWindow)
@@ -38,20 +41,17 @@ Window::~Window()
 
     delete _inputController;
     _inputController = nullptr;
+
+    decrementWindowCount();
 }
 
 void Window::setHeadlessMode(bool headlessMode)
 {
-    HEADLESS = headlessMode;
+    _HEADLESS = headlessMode;
 }
 
 WindowPtr Window::create(const char* title, unsigned int width, unsigned int height)
 {
-    if (!GLFW_INIT)
-    {
-        initGLFW();
-    }
-
     return std::shared_ptr<Window>(new Window(title, width, height));
 }
 
@@ -65,9 +65,36 @@ bool Window::isOpen() const
     return !glfwWindowShouldClose(_glfwWindow);
 }
 
-void Window::initGLFW()
+void Window::incrementWindowCount()
 {
-    glfwInit();
+    std::lock_guard<std::mutex> lock(_MUTEX);
+    if (_WINDOW_COUNT == 0)
+    {
+        if (!initGLFW())
+        {
+            throw InstantiationException("Failed to initialize GLFW");
+        }
+    }
+
+    _WINDOW_COUNT++;
+}
+
+void Window::decrementWindowCount()
+{
+    std::lock_guard<std::mutex> lock(_MUTEX);
+    if (--_WINDOW_COUNT == 0)
+    {
+        terminateGLFW();
+    }
+}
+
+bool Window::initGLFW()
+{
+    if (!glfwInit())
+    {
+        return false;
+    }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -78,12 +105,17 @@ void Window::initGLFW()
     #endif
 
     // Possibly run in headless mode (for test environments)
-    if (HEADLESS)
+    if (_HEADLESS)
     {
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
     }
 
-    GLFW_INIT = true;
+    return true;
+}
+
+void Window::terminateGLFW()
+{
+    glfwTerminate();
 }
 
 void Window::onResize(GLFWwindow* window, int width, int height)

@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 
 Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numVerts,
-	const unsigned int* indices, unsigned int numIndices)
+	const unsigned int* indices, unsigned int numIndices): size(numIndices)
 {
 	// Create buffers
 	glGenVertexArrays(1, &_vaoId);
@@ -42,8 +42,6 @@ Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsi
 		glEnableVertexAttribArray(2);
 		offset += 2;
 	}
-
-	_size = numIndices;
 }
 
 Buffer::~Buffer()
@@ -65,4 +63,9 @@ Buffer::~Buffer()
 	_vaoId = 0;
 	_vboId = 0;
 	_eboId = 0;
+}
+
+void Buffer::bind() const
+{
+	glBindVertexArray(_vaoId);
 }

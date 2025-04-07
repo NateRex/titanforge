@@ -12,6 +12,11 @@ class Material
 public:
 
 	/**
+	 * Material type
+	 */
+	const MaterialType type;
+
+	/**
 	 * Color. Defaults to a transparent.
 	 */
 	const Color color;

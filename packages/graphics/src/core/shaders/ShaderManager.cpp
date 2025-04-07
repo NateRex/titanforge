@@ -17,8 +17,8 @@ ShaderManager::~ShaderManager()
 
 ShaderManager& ShaderManager::getInstance()
 {
-	static ShaderManager instance;		// created only once, and will exist until program exit
-	return instance;
+	static ShaderManager _INSTANCE;		// created only once, and will exist until program exit
+	return _INSTANCE;
 }
 
 ShaderPtr ShaderManager::getShader(MaterialType matType)

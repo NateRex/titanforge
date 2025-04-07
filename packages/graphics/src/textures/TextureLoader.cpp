@@ -13,8 +13,8 @@ TextureLoader::~TextureLoader()
 
 TextureLoader& TextureLoader::getInstance()
 {
-	static TextureLoader instance;		// created only once, and will exist until program exit
-	return instance;
+	static TextureLoader _INSTANCE;		// created only once, and will exist until program exit
+	return _INSTANCE;
 }
 
 TexturePtr TextureLoader::load(const std::string& path, bool flip)

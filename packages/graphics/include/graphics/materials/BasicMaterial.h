@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/materials/Material.h>
+#include <graphics/materials/pointers/MaterialPtr.h>
 #include <graphics/materials/pointers/BasicMaterialPtr.h>
 
 /**
@@ -24,7 +25,7 @@ private:
 	 * @param useVertexColors Flag that, when true, forces the use of colors specified on geometry vertices
 	 * (when available)
 	 */
-	BasicMaterial(const Color& color, const Texture* texture, bool useVertexColors);
+	BasicMaterial(const Color& color, const TexturePtr texture, bool useVertexColors);
 
 public:
 

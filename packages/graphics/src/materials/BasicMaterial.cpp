@@ -12,7 +12,7 @@ BasicMaterialPtr BasicMaterial::Builder::build() const
 	return std::shared_ptr<BasicMaterial>(new BasicMaterial(_color, _texture, _useVertexColors));
 }
 
-BasicMaterial::BasicMaterial(const Color& color, const Texture* texture, bool useVertexColors)
+BasicMaterial::BasicMaterial(const Color& color, const TexturePtr texture, bool useVertexColors)
 	: Material(MaterialType::BASIC, color, texture), useVertexColors(useVertexColors)
 {
 
