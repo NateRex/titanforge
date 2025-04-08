@@ -11,25 +11,9 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 # Executable files
 add_executable(GraphicsTest
-    src/buffers/BufferManagerTest.cpp
-    src/buffers/BufferTest.cpp
-    src/entities/EntityTest.cpp
-    src/entities/MeshTest.cpp
-    src/geometry/BoxGeometryTest.cpp
-    src/geometry/GeometryAttributesTest.cpp
-    src/geometry/GeometryTest.cpp
-    src/shaders/ShaderManagerTest.cpp
-    src/shaders/ShaderTest.cpp
-    src/testutils/GlobalTestFixture.cpp
-    src/testutils/ShaderTestFixture.cpp
-    src/textures/ImageLoaderTest.cpp
-    src/textures/TextureManagerTest.cpp
-    src/textures/TextureTest.cpp
-    src/windows/InputControllerTest.cpp
-    src/windows/WindowManagerTest.cpp
-    src/windows/WindowTest.cpp
-    src/ColorTest.cpp
-    src/EngineTest.cpp
+    src/core/shaders/BasicShaderTest.cpp
+    src/core/shaders/ShaderManagerTest.cpp
+    src/GlobalTestFixture.cpp
     src/main.cpp
 )
 

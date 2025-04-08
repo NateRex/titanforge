@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/entities/pointers/EntityPtr.h>
 #include <graphics/entities/pointers/MeshPtr.h>
 #include <graphics/entities/Entity.h>
 #include <graphics/geometry/pointers/GeometryPtr.h>

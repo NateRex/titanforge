@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/geometry/pointers/GeometryPtr.h>
 #include <graphics/geometry/pointers/BoxGeometryPtr.h>
 #include <graphics/geometry/Geometry.h>
 
