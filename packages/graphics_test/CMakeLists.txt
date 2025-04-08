@@ -15,6 +15,7 @@ add_executable(GraphicsTest
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/InputControllerTest.cpp
     src/core/windows/WindowTest.cpp
+    src/core/BufferTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )

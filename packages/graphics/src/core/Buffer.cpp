@@ -2,7 +2,7 @@
 #include <graphics/geometry/GeometryAttributes.h>
 #include <glad/glad.h>
 
-Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numVerts,
+Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,
 	const unsigned int* indices, unsigned int numIndices): size(numIndices)
 {
 	// Create buffers
@@ -13,7 +13,7 @@ Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsi
 
 	// Load vertex data
 	glBindBuffer(GL_ARRAY_BUFFER, _vboId);
-	glBufferData(GL_ARRAY_BUFFER, numVerts * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numValues * sizeof(float), vertices, GL_STATIC_DRAW);
 
 	// Load index data
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
