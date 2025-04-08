@@ -13,6 +13,8 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/core/shaders/BasicShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
+    src/core/windows/InputControllerTest.cpp
+    src/core/windows/WindowTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )
