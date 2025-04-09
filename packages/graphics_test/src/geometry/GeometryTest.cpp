@@ -1,18 +1,26 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
+#include <graphics/core/Buffer.h>
 
 /**
- * Tests the basic constructors, accessors, and mutators of the class
+ * Tests that a geometry is initially empty on construction
  */
-BOOST_AUTO_TEST_CASE(Geometry_basics)
+BOOST_AUTO_TEST_CASE(Geometry_construction)
 {
 	GeometryPtr geom = Geometry::create();
 	BOOST_TEST(geom->size() == 0);
 	BOOST_TEST(!geom->getAttributes().colors);
 	BOOST_TEST(!geom->getAttributes().uvs);
+}
 
-	// vertices
+/**
+ * Tests the ability to set the vertices and indices of a geometry
+ */
+BOOST_AUTO_TEST_CASE(Geometry_verticesAndIndices)
+{
+	GeometryPtr geom = Geometry::create();
+
 	float vertices[] = {
 		0.f, 0.f, 0.f,
 		1.f, 2.f, 0.f,
@@ -21,12 +29,18 @@ BOOST_AUTO_TEST_CASE(Geometry_basics)
 	geom->setVertices(vertices, 3);
 	BOOST_TEST(geom->size() == 3);
 
-	// indices
 	unsigned int indices[] = { 0, 1, 2, 0 };
 	geom->setIndices(indices, 4);
 	BOOST_TEST(geom->size() == 4);
+}
 
-	// colors
+/**
+ * Tests the ability to add and remove colors from a geometry
+ */
+BOOST_AUTO_TEST_CASE(Geometry_colors)
+{
+	GeometryPtr geom = Geometry::create();
+
 	float colors[] = {
 		1.f, 0.f, 0.f, 1.f,
 		0.f, 1.f, 0.f, 1.f,
@@ -35,13 +49,40 @@ BOOST_AUTO_TEST_CASE(Geometry_basics)
 	};
 	geom->setColors(colors, 4);
 	BOOST_TEST(geom->getAttributes().colors);
+
 	geom->removeColors();
 	BOOST_TEST(!geom->getAttributes().colors);
+}
 
-	// texture coords
+/**
+ * Tests the ability to add and remove texture coordinates from a geometry
+ */
+BOOST_AUTO_TEST_CASE(Geometry_uvs)
+{
+	GeometryPtr geom = Geometry::create();
+
 	float uvs[] = { 0.f, 0.f, 0.5f, 0.5f, 1.f, 0.f };
 	geom->setTextureCoords(uvs, 3);
 	BOOST_TEST(geom->getAttributes().uvs);
+
 	geom->removeTextureCoords();
-	BOOST_TEST(!geom.);
+	BOOST_TEST(!geom->getAttributes().uvs);
+}
+
+/**
+ * Tests the ability to construct a GL buffer containing the data for a geometry
+ */
+BOOST_AUTO_TEST_CASE(Geometry_buffer)
+{
+	GeometryPtr geometry = Geometry::create();
+	float vertices[] = {
+		0.f, 0.f, 0.f,
+		1.f, 2.f, 0.f,
+		2.f, 0.f, 0.f
+	};
+	geometry->setVertices(vertices, 3);
+
+	Buffer* buffer = geometry->getBuffer();
+	BOOST_TEST(buffer != nullptr);
+	BOOST_TEST(buffer->size == geometry->size());
 }

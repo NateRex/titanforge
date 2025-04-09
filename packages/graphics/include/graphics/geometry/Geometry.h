@@ -41,7 +41,7 @@ public:
 	void setIndices(const unsigned int* indices, unsigned int numIndices);
 
 	/**
-	 * @return The total number of indexed vertices in this geometry
+	 * @return The total number of indices in this geometry
 	 */
 	unsigned int size() const;
 

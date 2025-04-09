@@ -20,6 +20,9 @@ add_executable(GraphicsTest
     src/core/RendererTest.cpp
     src/entities/EntityTest.cpp
     src/entities/MeshTest.cpp
+    src/geometry/BoxGeometryTest.cpp
+    src/geometry/GeometryAttributesTest.cpp
+    src/geometry/GeometryTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )

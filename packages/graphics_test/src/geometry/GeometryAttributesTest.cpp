@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/GeometryAttributes.h>
-#include <common/Utils.h>
+#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic constructors and accessors
