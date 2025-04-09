@@ -18,6 +18,8 @@ add_executable(GraphicsTest
     src/core/BufferTest.cpp
     src/core/ColorTest.cpp
     src/core/RendererTest.cpp
+    src/entities/EntityTest.cpp
+    src/entities/MeshTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )
