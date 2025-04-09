@@ -12,6 +12,12 @@ ShaderManager::ShaderManager()
 ShaderManager::~ShaderManager()
 {
 	glUseProgram(0);
+
+	for (auto& pair : _shaders)
+	{
+		pair.second.reset();
+	}
+
 	_shaders.clear();
 }
 

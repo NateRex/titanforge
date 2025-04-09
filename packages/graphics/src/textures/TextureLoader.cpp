@@ -8,6 +8,11 @@ TextureLoader::TextureLoader()
 
 TextureLoader::~TextureLoader()
 {
+	for (auto& pair : _textures)
+	{
+		pair.second.reset();
+	}
+
 	_textures.clear();
 }
 
