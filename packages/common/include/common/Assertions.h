@@ -1,5 +1,6 @@
 #pragma once
 #include <common/exceptions/NullPointerException.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <functional>
 
 /**
@@ -20,6 +21,22 @@ void assertNotNull(const T* obj, const char* errMsg, const std::function<void()>
 		throw NullPointerException(errMsg);
 	}
 }
+
+/**
+ * Asserts that the given value is true
+ * @param value Value to test
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if value is not true
+ */
+void assertTrue(bool value, const char* errMsg = "Value was not true");
+
+/**
+ * Asserts that the given value is false
+ * @param value Value to test
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if value is not false
+ */
+void assertFalse(bool value, const char* errMsg = "Value was not false");
 
 /**
  * Asserts that a value is equal to an expected value
@@ -83,3 +100,35 @@ void assertLessThanOrEqual(float value, float upperBound,
  */
 void assertInRange(float value, float lowerBound, float upperBound, bool inclusive = true,
 		const char* errMsg = "Value was not in expected range");
+
+/**
+ * Asserts that a map contains a key
+ * @param map The map to evaluate
+ * @param key The key to search for
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if key is not present within the map
+ */
+template <typename MapType, typename KeyType>
+void assertKeyInMap(const MapType& map, const KeyType& key, const char* errMsg = "Key was not found in map")
+{
+	if (map.find(key) == map.end())
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}
+
+/**
+ * Asserts that a map does not contain a key
+ * @param map The map to evaluate
+ * @param key The key to search for
+ * @param errMsg (Optional) Custom error message
+ * @throws IllegalArgumentException if key is present within the map
+ */
+template <typename MapType, typename KeyType>
+void assertKeyNotInMap(const MapType& map, const KeyType& key, const char* errMsg = "Key already exists in map")
+{
+	if (map.find(key) != map.end())
+	{
+		throw IllegalArgumentException(errMsg);
+	}
+}

@@ -3,6 +3,7 @@
 #include <math/Matrix3.h>
 #include <math/Vector3.h>
 #include <common/Constants.h>
+#include <common/PrintHelpers.h>
 #include <common/Utils.h>
 
 /**

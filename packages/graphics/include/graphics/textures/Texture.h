@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/textures/pointers/TexturePtr.h>
 #include <string>
 
 /**
@@ -9,19 +10,26 @@ class Texture
 {
 public:
 
-	friend class Shader;
-	friend class TextureManager;
-
 	/**
-	 * Unique name of this texture
+	 * Destructor
 	 */
-	const std::string name;
+	~Texture();
 
 	/**
-	 * Relative path to the image file that will be used to generate the texture.
+	 * Constructs a new texture instance. In order to ensure textures are cached for future use, it is typically
+	 * encouraged that callers use the TextureLoader for creating textures, rather than creating them directly.
+	 * @param path Relative path to the image file that will be used to generate the texture.
 	 * This path is relative to the directory containing the currently running executable.
+	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped when loading.
+	 * Defaults to false
+	 * @return The new texture
 	 */
-	const std::string imagePath;
+	static TexturePtr create(const std::string& path, bool flip = false);
+
+	/**
+	 * @return The GLFW id of this texture
+	 */
+	unsigned int id() const;
 
 private:
 
@@ -32,20 +40,9 @@ private:
 
 	/**
 	 * Constructor
-	 * @param name A unique name that can be used to refer to this texture in the future
-	 * @param imagePath Relative path to the image file that will be used to generate the texture.
+	 * @param path Relative path to the image file that will be used to generate the texture.
 	 * This path is relative to the directory containing the currently running executable.
+	 * @param flip Boolean flag that, when true, will cause the imagery to be flipped when loading
 	 */
-	Texture(const std::string& name, const std::string& imagePath);
-
-	/**
-	 * Creates the OpenGL resources for this texture
-	 * @param flip Boolean flag that, when true, will cause the imagery to be flipped
-	 */
-	void create(bool flip);
-
-	/**
-	 * Destroys this texture, freeing its resources
-	 */
-	void destroy();
+	Texture(const std::string& path, bool flip);
 };

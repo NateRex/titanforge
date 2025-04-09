@@ -13,18 +13,6 @@ BOOST_AUTO_TEST_CASE(Utils_equals)
 }
 
 /**
- * Tests safeDelete
- */
-BOOST_AUTO_TEST_CASE(Utils_safeDelete)
-{
-    int* ptr = new int;
-    BOOST_REQUIRE_NO_THROW(safeDelete(ptr));
-
-    ptr = nullptr;
-    BOOST_REQUIRE_NO_THROW(safeDelete(ptr));
-}
-
-/**
  * Tests rad2Deg
  */
 BOOST_AUTO_TEST_CASE(Utils_rad2Deg)

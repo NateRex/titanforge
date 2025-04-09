@@ -1,129 +1,31 @@
-#include <graphics/Engine.h>
-#include <graphics/windows/WindowManager.h>
-#include <graphics/windows/Window.h>
-#include <graphics/windows/InputController.h>
-#include <graphics/buffers/Buffer.h>
-#include <graphics/buffers/BufferManager.h>
-#include <graphics/textures/Texture.h>
-#include <graphics/textures/TextureManager.h>
-#include <graphics/shaders/Shader.h>
-#include <graphics/shaders/ShaderManager.h>
-#include <graphics/objects/Mesh.h>
-#include <math/Vector3.h>
-#include <math/Matrix4.h>
+#include <graphics/core/Renderer.h>
+#include <graphics/geometry/BoxGeometry.h>
+#include <graphics/textures/TextureLoader.h>
+#include <graphics/materials/BasicMaterial.h>
+#include <graphics/entities/Mesh.h>
+#include <graphics/core/windows/Window.h>
 #include <common/Utils.h>
-
-/**
- * @return An example polyface
- */
-Mesh examplePolyface()
-{
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
-
-    return Mesh(vertices, 180, { false, true });
-}
-
-/**
- * @return Model matrix
- */
-Matrix4 getModelMatrix()
-{
-    return Matrix4::fromRotation(Vector3(0.5f, 1.0f, 0.f), Engine::getTime() * deg2Rad(50.f));
-}
-
-/**
- * @return View matrix
- */
-Matrix4 getViewMatrix()
-{
-    return Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f));
-}
-
-/**
- * @return Projection matrix
- */
-Matrix4 getProjectionMatrix()
-{
-    return Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f);
-}
+#include <cmath>
 
 /**
  * Main entrypoint for the application
  */
 int main() {
-    Engine::start();
+    Renderer renderer;
+    renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 
-    // Configure window
-    Window* window = WindowManager::getCurrent();
-    window->setBackgroundColor(Color::fromFloats(0.2f, 0.3f, 0.3f, 1.0f));
+    GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
+    
+    MaterialPtr material = BasicMaterial::create();
+    material->texture = TextureLoader::load("assets/container.jpg");
 
-    // Textures
-    Texture* boxTexture = TextureManager::create("box", "assets/container.jpg");
+    MeshPtr mesh = Mesh::create(geometry, material);
 
-    // Buffers
-    Buffer* buffer = BufferManager::startBuffer("geometry")
-        .add(examplePolyface())
-        .finish();
-
-    // Shaders
-    Shader* shader = ShaderManager::get("tf_basic");
-    shader->setUniform("tex", 0, boxTexture);
-    shader->setUniform("model", getModelMatrix());
-    shader->setUniform("view", getViewMatrix());
-    shader->setUniform("proj", getProjectionMatrix());
-
-    // Render loop
-    while (window->isOpen())
+    while (renderer.getWindow()->isOpen())
     {
-        Engine::startFrame();
+        Matrix3 rotation = Matrix3::fromRotation(Vector3(0.5f, 1.0f, 0.f), renderer.getTime() * deg2Rad(50.f));
+        mesh->setRotation(rotation);
 
-        shader->setUniform("model", getModelMatrix());
-        shader->draw(buffer);
-
-        Engine::finishFrame();
+        renderer.render(mesh);
     }
-
-    Engine::stop();
 }

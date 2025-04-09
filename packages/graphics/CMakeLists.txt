@@ -7,19 +7,24 @@ find_package(Stb REQUIRED)
 
 # Library files
 add_library(Graphics
-    src/buffers/Buffer.cpp
-    src/buffers/BufferManager.cpp
-    src/objects/Mesh.cpp
-    src/shaders/Shader.cpp
-    src/shaders/ShaderManager.cpp
+    src/core/shaders/BasicShader.cpp
+    src/core/shaders/Shader.cpp
+    src/core/shaders/ShaderManager.cpp
+    src/core/windows/InputController.cpp
+    src/core/windows/Window.cpp
+    src/core/Buffer.cpp
+    src/core/Color.cpp
+    src/core/Renderer.cpp
+    src/entities/Entity.cpp
+    src/entities/Mesh.cpp
+    src/geometry/BoxGeometry.cpp
+    src/geometry/Geometry.cpp
+    src/geometry/GeometryAttributes.cpp
+    src/materials/BasicMaterial.cpp
+    src/materials/Material.cpp
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
-    src/textures/TextureManager.cpp
-    src/windows/InputController.cpp
-    src/windows/Window.cpp
-    src/windows/WindowManager.cpp
-    src/Color.cpp
-    src/Engine.cpp
+    src/textures/TextureLoader.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 
