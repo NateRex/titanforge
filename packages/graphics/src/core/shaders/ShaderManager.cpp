@@ -4,6 +4,8 @@
 #include <common/Assertions.h>
 #include <glad/glad.h>
 
+std::unique_ptr<ShaderManager> ShaderManager::_INSTANCE = nullptr;
+
 ShaderManager::ShaderManager()
 {
 	_shaders.emplace(MaterialType::BASIC, BasicShader::create());
@@ -12,25 +14,31 @@ ShaderManager::ShaderManager()
 ShaderManager::~ShaderManager()
 {
 	glUseProgram(0);
-
-	for (auto& pair : _shaders)
-	{
-		pair.second.reset();
-	}
-
 	_shaders.clear();
 }
 
-ShaderManager& ShaderManager::getInstance()
+ShaderManager* ShaderManager::getInstance()
 {
-	static ShaderManager _INSTANCE;		// created only once, and will exist until program exit
-	return _INSTANCE;
+	if (!_INSTANCE)
+	{
+		_INSTANCE = std::unique_ptr<ShaderManager>(new ShaderManager());
+	}
+
+	return _INSTANCE.get();
 }
 
 ShaderPtr ShaderManager::getShader(MaterialType matType)
 {
-	ShaderManager& mgr = getInstance();
+	ShaderManager* mgr = getInstance();
 
-	assertKeyInMap(mgr._shaders, matType, "Could not find shader for material");
-	return mgr._shaders[matType];
+	assertKeyInMap(mgr->_shaders, matType, "Could not find shader for material");
+	return mgr->_shaders[matType];
+}
+
+void ShaderManager::reset()
+{
+	if (_INSTANCE)
+	{
+		_INSTANCE.reset();
+	}
 }

@@ -25,7 +25,17 @@ public:
 	 */
 	static TexturePtr load(const std::string& path, bool flip = false);
 
+	/**
+	 * Resets the global texture loader instance to its initial state, prior to graphics initialization
+	 */
+	static void reset();
+
 private:
+
+	/**
+	 * Global texture loader instance
+	 */
+	static std::unique_ptr<TextureLoader> _INSTANCE;
 
 	/**
 	 * Mapping from image filepaths to textures that have been created
@@ -58,5 +68,5 @@ private:
 	/**
 	 * @return The global texture loader instance
 	 */
-	static TextureLoader& getInstance();
+	static TextureLoader* getInstance();
 };

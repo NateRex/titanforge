@@ -25,7 +25,17 @@ public:
 	 */
 	static ShaderPtr getShader(MaterialType matType);
 
+	/**
+	 * Resets the global shader manager instance to its initial state, prior to graphics initialization
+	 */
+	static void reset();
+
 private:
+
+	/**
+	 * Global shader manager instance
+	 */
+	static std::unique_ptr<ShaderManager> _INSTANCE;
 
 	/**
 	 * Mapping from material types to shaders
@@ -58,5 +68,5 @@ private:
 	/**
 	 * @return The global ShaderManager instance
 	 */
-	static ShaderManager& getInstance();
+	static ShaderManager* getInstance();
 };
