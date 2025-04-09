@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <functional>
 #include <vector>
 
@@ -54,6 +54,13 @@ public:
 	void addListener(int key, std::function<void()> callback);
 
 	/**
+	 * Removes all callback functions tied to the given key
+	 * @param key The key of interest. For a mapping of key name to integer values, see
+	 * https://www.glfw.org/docs/3.3/group__keys.html
+	 */
+	void removeListeners(int key);
+
+	/**
 	 * Processes all current inputs and invokes callback functions for any keys pressed
 	 */
 	void processInput();
@@ -69,13 +76,13 @@ private:
 	 * Overrides for key states. Values in this map will be used over actual system state when
 	 * present.
 	 */
-	std::map<int, bool> _stateOverrides;
+	std::unordered_map<int, bool> _stateOverrides;
 
 	/**
 	 * A mapping from key values to callback functions that should be triggered when those
 	 * keys are pressed
 	 */
-	std::map<int, std::vector<std::function<void()>>> _listeners;
+	std::unordered_map<int, std::vector<std::function<void()>>> _listeners;
 
 	/**
 	 * Constructor

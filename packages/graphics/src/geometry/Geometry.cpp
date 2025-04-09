@@ -16,11 +16,11 @@ Geometry::Geometry()
 
 Geometry::~Geometry()
 {
+	delete _buffer;
 	delete[] _vertices;
 	delete[] _indices;
 	delete[] _colors;
 	delete[] _uvs;
-	delete _buffer;
 
 	_vertices = nullptr;
 	_indices = nullptr;

@@ -1,5 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/Color.h>
+#include <common/PrintHelpers.h>
 
 /**
  * Tests default construction of a color
@@ -47,4 +48,16 @@ BOOST_AUTO_TEST_CASE(Color_withAlpha)
 	BOOST_TEST(color.green() == 0.f);
 	BOOST_TEST(color.blue() == 0.f);
 	BOOST_TEST(color.alpha() == 0.5f);
+}
+
+/**
+ * Tests the ability to compare colors for equality
+ */
+BOOST_AUTO_TEST_CASE(Color_equalsChecks)
+{
+	BOOST_TEST(Color::WHITE == Color::WHITE);
+	BOOST_TEST(Color(0.f, 1.f, 1.f, 1.f) != Color::WHITE);
+	BOOST_TEST(Color(1.f, 0.f, 1.f, 1.f) != Color::WHITE);
+	BOOST_TEST(Color(1.f, 1.f, 0.f, 1.f) != Color::WHITE);
+	BOOST_TEST(Color(1.f, 1.f, 1.f, 0.f) != Color::WHITE);
 }

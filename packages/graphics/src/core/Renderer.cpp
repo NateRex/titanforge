@@ -12,6 +12,7 @@
 #include <common/Assertions.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <sstream>
 
 Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
 {
@@ -41,6 +42,11 @@ WindowPtr Renderer::getWindow() const
 
 void Renderer::setWindow(WindowPtr window)
 {
+	if (_window == window)
+	{
+		return;
+	}
+
 	_window = window;
 
 	// Set window as the current context
@@ -50,6 +56,16 @@ void Renderer::setWindow(WindowPtr window)
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 	{
 		throw std::runtime_error("Failed to initialize GLAD for window");
+	}
+
+	GLint value;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
+
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR) {
+		std::ostringstream oss;
+		oss << "Error occurred updating renderer window: " << err;
+		throw std::runtime_error(oss.str());
 	}
 
 	// Set the viewport dimensions

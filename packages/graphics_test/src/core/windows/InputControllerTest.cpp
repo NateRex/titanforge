@@ -1,5 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics_test/GlobalTestFixture.h>
+#include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/windows/InputController.h>
 #include <GLFW/glfw3.h>
@@ -9,8 +10,7 @@
  */
 BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
 {
-    Renderer* renderer = GlobalTestFixture::RENDERER;
-    WindowPtr window = renderer->getWindow();
+    WindowPtr window = GlobalTestFixture::RENDERER->getWindow();
     InputController* controller = window->getInputController();
 
     BOOST_TEST(!controller->isKeyPressed(GLFW_KEY_0));
@@ -26,12 +26,11 @@ BOOST_AUTO_TEST_CASE(InputController_isKeyPressed)
 }
 
 /**
- * Tests the ability to construct an input controller and listen for user inputs
+ * Tests the ability to add and remove listeners for specific keys
  */
 BOOST_AUTO_TEST_CASE(InputController_listeners)
 {
-    Renderer* renderer = GlobalTestFixture::RENDERER;
-    WindowPtr window = renderer->getWindow();
+    WindowPtr window = GlobalTestFixture::RENDERER->getWindow();
     InputController* controller = window->getInputController();
 
     // Add listener
@@ -46,6 +45,13 @@ BOOST_AUTO_TEST_CASE(InputController_listeners)
 
     // Key is pressed
     controller->setOverride(GLFW_KEY_A, GLFW_PRESS);
+    controller->processInput();
+    BOOST_TEST(value == 1);
+
+    // Remove listener
+    controller->removeListeners(GLFW_KEY_A);
+
+    // Key is pressed, but listener no longer exists
     controller->processInput();
     BOOST_TEST(value == 1);
 }

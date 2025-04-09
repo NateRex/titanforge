@@ -38,6 +38,14 @@ void InputController::addListener(int key, std::function<void()> callback)
 	_listeners[key].push_back(callback);
 }
 
+void InputController::removeListeners(int key)
+{
+	if (_listeners.find(key) != _listeners.end())
+	{
+		_listeners[key].clear();
+	}
+}
+
 void InputController::processInput()
 {
 	for (const auto& [key, listeners] : _listeners)

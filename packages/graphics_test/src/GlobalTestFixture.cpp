@@ -1,4 +1,5 @@
 #include <graphics_test/GlobalTestFixture.h>
+#include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
 
 Renderer* GlobalTestFixture::RENDERER = nullptr;

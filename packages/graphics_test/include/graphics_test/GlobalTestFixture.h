@@ -1,5 +1,7 @@
 #pragma once
-#include <graphics/core/Renderer.h>
+#include <mutex>
+
+class Renderer;
 
 /**
  * Test fixture that instantiates a new static renderer instance for use across tests.

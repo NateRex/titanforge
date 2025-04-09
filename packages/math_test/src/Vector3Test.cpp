@@ -2,6 +2,7 @@
 #include <math/Vector3.h>
 #include <math/Vector2.h>
 #include <common/Utils.h>
+#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic constructors and accessors of the class

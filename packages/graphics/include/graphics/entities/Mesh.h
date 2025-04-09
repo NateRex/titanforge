@@ -24,6 +24,11 @@ public:
 	MaterialPtr material;
 
 	/**
+	 * Destructor
+	 */
+	~Mesh();
+
+	/**
 	 * Constructs a new mesh instance
 	 * @param geometry Geometry whose points are expected to form a series of triangles
 	 * @param material Material

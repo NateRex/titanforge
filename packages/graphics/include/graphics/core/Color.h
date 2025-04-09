@@ -55,6 +55,20 @@ public:
 	 */
 	Color withAlpha(float alpha) const;
 
+	/**
+	 * Determines if this color is equal to another color
+	 * @param other Color to compare to
+	 * @return True if the two colors are equal. Returns false otherwise.
+	 */
+	bool operator==(const Color& other) const;
+
+	/**
+	 * Determines if this color is not equal to another color
+	 * @param other Color to compare to
+	 * @return True if the two colors are not equal. Returns false otherwise.
+	 */
+	bool operator!=(const Color& other) const;
+
 private:
 
 	/**
@@ -76,7 +90,6 @@ private:
 	 * Alpha channel value (a value between 0 and 1)
 	 */
 	float _alpha;
-
 
 public:
 

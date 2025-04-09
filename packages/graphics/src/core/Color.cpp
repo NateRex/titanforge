@@ -50,3 +50,16 @@ Color Color::withAlpha(float alpha) const
 {
 	return Color(_red, _green, _blue, alpha);
 }
+
+bool Color::operator==(const Color& other) const
+{
+	return _red == other._red
+		&& _green == other._green
+		&& _blue == other._blue
+		&& _alpha == other._alpha;
+}
+
+bool Color::operator!=(const Color& other) const
+{
+	return !(*this == other);
+}

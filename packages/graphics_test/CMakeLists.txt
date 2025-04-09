@@ -17,6 +17,7 @@ add_executable(GraphicsTest
     src/core/windows/WindowTest.cpp
     src/core/BufferTest.cpp
     src/core/ColorTest.cpp
+    src/core/RendererTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )
