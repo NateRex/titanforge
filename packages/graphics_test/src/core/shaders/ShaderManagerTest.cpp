@@ -7,6 +7,5 @@
  */
 BOOST_AUTO_TEST_CASE(ShaderManager_getShader)
 {
-	ShaderManager& mgr = ShaderManager::getInstance();
-	BOOST_TEST(mgr.getShader(MaterialType::BASIC) != nullptr);
+	BOOST_TEST(ShaderManager::getShader(MaterialType::BASIC) != nullptr);
 }

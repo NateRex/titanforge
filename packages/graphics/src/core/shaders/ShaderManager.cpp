@@ -23,6 +23,8 @@ ShaderManager& ShaderManager::getInstance()
 
 ShaderPtr ShaderManager::getShader(MaterialType matType)
 {
-	assertKeyInMap(_shaders, matType, "Could not find shader for material");
-	return _shaders[matType];
+	ShaderManager& mgr = getInstance();
+
+	assertKeyInMap(mgr._shaders, matType, "Could not find shader for material");
+	return mgr._shaders[matType];
 }

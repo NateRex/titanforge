@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(Material_properties)
 	material->color = Color::RED;
 	BOOST_TEST(material->color == Color::RED);
 
-	TexturePtr texture = TextureLoader::getInstance().load("assets/container.jpg");
+	TexturePtr texture = TextureLoader::load("assets/container.jpg");
 	material->texture = texture;
 	BOOST_TEST(material->texture == texture);
 }

@@ -17,7 +17,7 @@ int main() {
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
     
     MaterialPtr material = BasicMaterial::create();
-    material->texture = TextureLoader::getInstance().load("assets/container.jpg");
+    material->texture = TextureLoader::load("assets/container.jpg");
 
     MeshPtr mesh = Mesh::create(geometry, material);
 

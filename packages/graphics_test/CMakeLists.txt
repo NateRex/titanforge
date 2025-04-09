@@ -25,6 +25,9 @@ add_executable(GraphicsTest
     src/geometry/GeometryTest.cpp
     src/materials/BasicMaterialTest.cpp
     src/materials/MaterialTest.cpp
+    src/textures/ImageLoaderTest.cpp
+    src/textures/TextureLoaderTest.cpp
+    src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )

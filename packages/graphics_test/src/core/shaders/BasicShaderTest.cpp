@@ -12,7 +12,7 @@
  */
 BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 {
-	ShaderPtr shader = ShaderManager::getInstance().getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 
 	Matrix4 m;
 	BOOST_REQUIRE_NO_THROW(shader->setModelMatrix(m));
@@ -25,14 +25,14 @@ BOOST_AUTO_TEST_CASE(BasicShader_matrices)
  */
 BOOST_AUTO_TEST_CASE(BasicShader_material)
 {
-	ShaderPtr shader = ShaderManager::getInstance().getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 
 	// Without texture
 	MaterialPtr material = BasicMaterial::create();
 	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material));
 
 	// With texture
-	material->texture = TextureLoader::getInstance().load("assets/container.jpg");
+	material->texture = TextureLoader::load("assets/container.jpg");
 	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material));
 }
 
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_wrongMaterial)
 		TestMaterial() : Material(MaterialType::BASIC) {}
 	};
 
-	ShaderPtr shader = ShaderManager::getInstance().getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 	MaterialPtr material = std::shared_ptr<TestMaterial>(new TestMaterial());
 	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
 }

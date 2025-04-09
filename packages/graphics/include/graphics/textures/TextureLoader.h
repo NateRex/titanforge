@@ -17,18 +17,13 @@ public:
 	~TextureLoader();
 
 	/**
-	 * @return The global texture loader instance
-	 */
-	static TextureLoader& getInstance();
-
-	/**
 	 * Loads a texture from an image located at the given file path, creating it if it does not yet exist
 	 * @param path Relative path to the image file that will be used to generate the texture. This path is relative
 	 * to the directory containing the currently running executable.
 	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped. Defaults to false.
 	 * @return The texture
 	 */
-	TexturePtr load(const std::string& path, bool flip = false);
+	static TexturePtr load(const std::string& path, bool flip = false);
 
 private:
 
@@ -59,4 +54,9 @@ private:
 	 * @param loader Texture loader to assign from
 	 */
 	TextureLoader& operator=(const TextureLoader& loader) = delete;
+
+	/**
+	 * @return The global texture loader instance
+	 */
+	static TextureLoader& getInstance();
 };

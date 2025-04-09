@@ -19,13 +19,15 @@ TextureLoader& TextureLoader::getInstance()
 
 TexturePtr TextureLoader::load(const std::string& path, bool flip)
 {
-	auto existing = _textures.find(path);
-	if (existing != _textures.end())
+	TextureLoader& loader = getInstance();
+
+	auto existing = loader._textures.find(path);
+	if (existing != loader._textures.end())
 	{
 		return existing->second;
 	}
 
 	TexturePtr texture = Texture::create(path, flip);
-	_textures[path] = texture;
+	loader._textures[path] = texture;
 	return texture;
 }

@@ -96,7 +96,7 @@ void Renderer::render(const MeshPtr entity) const
 
 	// Load shader data
 	MaterialPtr material = entity->material;
-	ShaderPtr shader = ShaderManager::getInstance().getShader(material->type);
+	ShaderPtr shader = ShaderManager::getShader(material->type);
 	shader->use();
 	shader->setModelMatrix(entity->getMatrix());
 	shader->setViewMatrix(Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f)));							// TODO: Get this data from camera
