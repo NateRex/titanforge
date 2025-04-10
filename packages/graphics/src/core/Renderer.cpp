@@ -6,6 +6,7 @@
 #include <graphics/core/Buffer.h>
 #include <graphics/entities/Mesh.h>
 #include <graphics/materials/Material.h>
+#include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <math/Matrix4.h>		// TODO: Delete this include when view and proj matrices are coming from camera
 #include <common/Utils.h>		// TODO: Delete this include when view and proj matrices are coming from camera
@@ -27,7 +28,9 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 
 Renderer::~Renderer()
 {
-	_window = nullptr;
+	// Release global resources
+	ShaderManager::reset();
+	TextureLoader::reset();
 }
 
 double Renderer::getTime() const
