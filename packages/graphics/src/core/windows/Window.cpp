@@ -2,8 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/windows/InputController.h>
-#include <graphics/core/shaders/ShaderManager.h>
-#include <graphics/textures/TextureLoader.h>
 #include <common/exceptions/InstantiationException.h>
 #include <sstream>
 
@@ -117,10 +115,6 @@ bool Window::initGLFW()
 
 void Window::terminateGLFW()
 {
-    // Reset globals back to their original state
-    ShaderManager::reset();
-    TextureLoader::reset();
-
     glfwTerminate();
 }
 

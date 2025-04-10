@@ -2,6 +2,7 @@
 #include <graphics/core/windows/pointers/WindowPtr.h>
 #include <graphics/entities/pointers/MeshPtr.h>
 #include <graphics/core/Color.h>
+#include <mutex>
 
 /**
  * The renderer is responsible for managing the current render context target and drawing the scene
@@ -65,6 +66,17 @@ public:
 private:
 
 	/**
+	 * The number of renderers currently in existence. This counter is used to determine when we need
+	 * to release global resources, such as shaders or textures
+	 */
+	static int _RENDERER_COUNT;
+
+	/**
+	 * Mutex for modifying the global renderer count
+	 */
+	static std::mutex _MUTEX;
+
+	/**
 	 * The current window context
 	 */
 	WindowPtr _window;
@@ -73,6 +85,17 @@ private:
 	 * The current background (clear) color
 	 */
 	Color _backgroundColor;
+
+	/**
+	 * Increments the global renderer count
+	 */
+	static void incrementRendererCount();
+
+	/**
+	 * Decrements the global renderer count. If this is the last renderer to be destroyed, this will result
+	 * in the release of global resources, such as textures and shaders.
+	 */
+	static void decrementRendererCount();
 
 	/**
 	 * Applies global OpenGL settings that should apply to all entities

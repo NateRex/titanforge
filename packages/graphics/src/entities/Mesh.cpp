@@ -6,12 +6,6 @@ Mesh::Mesh(GeometryPtr geometry, MaterialPtr material)
 
 }
 
-Mesh::~Mesh()
-{
-	geometry = nullptr;
-	material = nullptr;
-}
-
 MeshPtr Mesh::create(GeometryPtr geometry, MaterialPtr material)
 {
 	return std::shared_ptr<Mesh>(new Mesh(geometry, material));
