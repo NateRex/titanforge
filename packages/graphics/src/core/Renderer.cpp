@@ -15,6 +15,9 @@
 #include <GLFW/glfw3.h>
 #include <sstream>
 
+int Renderer::_RENDERER_COUNT = 0;
+std::mutex Renderer::_MUTEX;
+
 Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
 {
 
@@ -22,15 +25,14 @@ Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
 
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
+	incrementRendererCount();
 	setWindow(window);
 	applyGlobalDrawSettings();
 }
 
 Renderer::~Renderer()
 {
-	// Release global resources
-	ShaderManager::reset();
-	TextureLoader::reset();
+	decrementRendererCount();
 }
 
 double Renderer::getTime() const
@@ -114,6 +116,22 @@ void Renderer::render(const MeshPtr entity) const
 	// Display scene
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
+}
+
+void Renderer::incrementRendererCount()
+{
+	std::lock_guard<std::mutex> lock(_MUTEX);
+	_RENDERER_COUNT++;
+}
+
+void Renderer::decrementRendererCount()
+{
+	std::lock_guard<std::mutex> lock(_MUTEX);
+	if (--_RENDERER_COUNT == 0)
+	{
+		TextureLoader::reset();
+		ShaderManager::reset();
+	}
 }
 
 void Renderer::applyGlobalDrawSettings()
