@@ -94,3 +94,23 @@ BOOST_AUTO_TEST_CASE(Entity_getTransform)
 	Matrix4 transform = e.getMatrix();
 	BOOST_TEST(transform.equalTo(expected));
 }
+
+/**
+ * Tests the ability to add and remove children from an entity
+ */
+BOOST_AUTO_TEST_CASE(Entity_children)
+{
+	EntityPtr child = std::make_shared<TestEntity>();
+	BOOST_TEST(child->getParent() == nullptr);
+
+	TestEntity parent1;
+	parent1.add(child);
+	BOOST_TEST(child->getParent() == &parent1);
+	BOOST_TEST(parent1.getNumberOfChildren() == 1);
+
+	TestEntity parent2;
+	parent2.add(child);
+	BOOST_TEST(child->getParent() == &parent2);
+	BOOST_TEST(parent1.getNumberOfChildren() == 0);
+	BOOST_TEST(parent2.getNumberOfChildren() == 1);
+}

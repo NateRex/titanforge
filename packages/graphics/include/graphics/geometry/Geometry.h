@@ -23,6 +23,7 @@ public:
 
 	/**
 	 * Constructs a new geometry instance
+	 * @return The new geometry instance
 	 */
 	static GeometryPtr create();
 

@@ -19,6 +19,7 @@ public:
 
 	/**
 	 * Creates a new BasicMaterial instance
+	 * @return The new BasicMaterial instance
 	 */
 	static BasicMaterialPtr create();
 

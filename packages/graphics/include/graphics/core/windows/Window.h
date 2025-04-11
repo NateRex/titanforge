@@ -33,6 +33,7 @@ public:
      * @param title Window title
      * @param width Starting width (in pixels).
      * @param height Starting height (in pixels).
+     * @return The new window instance
      */
     static WindowPtr create(const char* title, unsigned int width, unsigned int height);
 

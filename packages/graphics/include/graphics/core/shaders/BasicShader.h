@@ -71,6 +71,7 @@ public:
 
 	/**
 	 * Constructs a new BasicShader instance. This should typically only be done once, by the shader manager.
+	 * @return The new BasicShader instance
 	 */
 	static BasicShaderPtr create();
 

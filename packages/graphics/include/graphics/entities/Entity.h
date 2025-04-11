@@ -1,7 +1,9 @@
 #pragma once
 #include <graphics/entities/EntityType.h>
+#include <graphics/entities/pointers/EntityPtr.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
+#include <vector>
 
 class Matrix4;
 
@@ -16,6 +18,11 @@ class Entity
 public:
 
 	friend class Renderer;
+
+	/**
+	 * Entity type
+	 */
+	const EntityType type;
 
 	/**
 	 * Position
@@ -80,12 +87,39 @@ public:
 	 */
 	Matrix4 getMatrix() const;
 
+	/**
+	 * @return The parent of this entity. Can be null.
+	 */
+	Entity* getParent() const;
+
+	/**
+	 * @return The number of children this entity has
+	 */
+	unsigned int getNumberOfChildren() const;
+
+	/**
+	 * Adds a child to this entity.
+	 * @param child The child entity
+	 */
+	void add(EntityPtr entity);
+	
+	/**
+	 * Removes a child from this entity.
+	 * @param child The child entity
+	 */
+	void remove(EntityPtr entity);
+
 protected:
 
 	/**
-	 * Entity type
+	 * Parent entity. Is null by default.
 	 */
-	const EntityType _type;
+	Entity* _parent = nullptr;
+
+	/**
+	 * Child entities. Can be empty.
+	 */
+	std::vector<EntityPtr> _children;
 
 	/**
 	 * Constructor

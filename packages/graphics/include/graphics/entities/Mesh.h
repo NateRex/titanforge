@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/entities/pointers/EntityPtr.h>
 #include <graphics/entities/pointers/MeshPtr.h>
 #include <graphics/entities/Entity.h>
 #include <graphics/geometry/pointers/GeometryPtr.h>
@@ -27,6 +26,7 @@ public:
 	 * Constructs a new mesh instance
 	 * @param geometry Geometry whose points are expected to form a series of triangles
 	 * @param material Material
+	 * @return The new mesh instance
 	 */
 	static MeshPtr create(GeometryPtr geometry, MaterialPtr material);
 
