@@ -16,6 +16,7 @@ add_library(Graphics
     src/core/Color.cpp
     src/core/Renderer.cpp
     src/entities/Entity.cpp
+    src/entities/EntityGroup.cpp
     src/entities/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp

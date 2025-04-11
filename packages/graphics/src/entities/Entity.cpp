@@ -2,7 +2,7 @@
 #include <math/Matrix4.h>
 #include <algorithm>
 
-Entity::Entity(EntityType type): _type(type), scale(1.f, 1.f, 1.f)
+Entity::Entity(EntityType type): type(type), scale(1.f, 1.f, 1.f)
 {
 
 }
@@ -56,6 +56,11 @@ Matrix4 Entity::getMatrix() const
 Entity* Entity::getParent() const
 {
 	return _parent;
+}
+
+unsigned int Entity::getNumberOfChildren() const
+{
+	return _children.size();
 }
 
 void Entity::add(EntityPtr child)

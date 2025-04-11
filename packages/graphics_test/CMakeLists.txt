@@ -18,6 +18,7 @@ add_executable(GraphicsTest
     src/core/BufferTest.cpp
     src/core/ColorTest.cpp
     src/core/RendererTest.cpp
+    src/entities/EntityGroupTest.cpp
     src/entities/EntityTest.cpp
     src/entities/MeshTest.cpp
     src/geometry/BoxGeometryTest.cpp

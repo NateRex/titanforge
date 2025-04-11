@@ -20,6 +20,11 @@ public:
 	friend class Renderer;
 
 	/**
+	 * Entity type
+	 */
+	const EntityType type;
+
+	/**
 	 * Position
 	 */
 	Vector3 position;
@@ -88,6 +93,11 @@ public:
 	Entity* getParent() const;
 
 	/**
+	 * @return The number of children this entity has
+	 */
+	unsigned int getNumberOfChildren() const;
+
+	/**
 	 * Adds a child to this entity.
 	 * @param child The child entity
 	 */
@@ -100,11 +110,6 @@ public:
 	void remove(EntityPtr entity);
 
 protected:
-
-	/**
-	 * Entity type
-	 */
-	const EntityType _type;
 
 	/**
 	 * Parent entity. Is null by default.
