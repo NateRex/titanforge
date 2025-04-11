@@ -1,5 +1,6 @@
 #include <graphics/entities/Entity.h>
 #include <math/Matrix4.h>
+#include <algorithm>
 
 Entity::Entity(EntityType type): _type(type), scale(1.f, 1.f, 1.f)
 {
@@ -50,4 +51,30 @@ Matrix4 Entity::getMatrix() const
 	m.multiply(Matrix4::fromRotation(rotation), &m);
 	m.multiply(Matrix4::fromScaling(scale.x, scale.y, scale.z), &m);
 	return m;
+}
+
+Entity* Entity::getParent() const
+{
+	return _parent;
+}
+
+void Entity::add(EntityPtr child)
+{
+	if (child->_parent != nullptr)
+	{
+		child->_parent->remove(child);
+	}
+
+	_children.push_back(child);
+	child->_parent = this;
+}
+
+void Entity::remove(EntityPtr child)
+{
+	_children.erase(std::remove(_children.begin(), _children.end(), child), _children.end());
+
+	if (child->_parent == this)
+	{
+		child->_parent = nullptr;
+	}
 }

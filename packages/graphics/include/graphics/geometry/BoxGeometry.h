@@ -17,6 +17,7 @@ public:
 	 * @param length Length of the box along the x axis
 	 * @param height Height of the box along the y axis
 	 * @param depth Depth of the box along the z axis
+	 * @return The new box geometry instance
 	 */
 	static BoxGeometryPtr create(float length, float height, float depth);
 
