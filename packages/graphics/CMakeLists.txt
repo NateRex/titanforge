@@ -23,6 +23,7 @@ add_library(Graphics
     src/geometry/GeometryAttributes.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
+    src/scene/Scene.cpp
     src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
     src/textures/TextureLoader.cpp

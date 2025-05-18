@@ -15,7 +15,7 @@ public:
 	 */
 	static EntityGroupPtr create();
 
-private:
+protected:
 
 	/**
 	 * Constructor
