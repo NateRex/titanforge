@@ -67,7 +67,8 @@ void Renderer::setWindow(WindowPtr window)
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
 
 	GLenum err = glGetError();
-	if (err != GL_NO_ERROR) {
+	if (err != GL_NO_ERROR)
+	{
 		std::ostringstream oss;
 		oss << "Error occurred updating renderer window: " << err;
 		throw std::runtime_error(oss.str());
@@ -103,7 +104,7 @@ void Renderer::render(const MeshPtr entity) const
 	MaterialPtr material = entity->material;
 	ShaderPtr shader = ShaderManager::getShader(material->type);
 	shader->use();
-	shader->setModelMatrix(entity->getMatrix());
+	shader->setModelMatrix(entity->getWorldMatrix());
 	shader->setViewMatrix(Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f)));							// TODO: Get this data from camera
 	shader->setProjectionMatrix(Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f));	// TODO: Get this data from camera
 	shader->setMaterial(material);

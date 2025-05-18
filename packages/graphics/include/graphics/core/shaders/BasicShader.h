@@ -53,7 +53,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		void main()
 		{
 			vec4 color = frag_Color;
-			if (uHasTexture == 1) {
+			if (uHasTexture == 1)
+			{
 				color *= texture(uTexture, frag_TexCoord);
 			}
 

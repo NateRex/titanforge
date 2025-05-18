@@ -10,7 +10,8 @@
 /**
  * Main entrypoint for the application
  */
-int main() {
+int main()
+{
     Renderer renderer;
     renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 

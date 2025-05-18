@@ -15,7 +15,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TestEntity(): Entity(EntityType::GROUP) { }
+	TestEntity(): Entity(EntityType::GROUP) {}
 };
 
 /**
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 /**
  * Tests the ability to obtain the transformation matrix for an entity
  */
-BOOST_AUTO_TEST_CASE(Entity_getTransform)
+BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
 {
 	TestEntity e;
 
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(Entity_getTransform)
 	e.setScaling(4.f, 5.f, 6.f);
 
 	Matrix4 expected = translation.multiply(rotation).multiply(scale);
-	Matrix4 transform = e.getMatrix();
+	Matrix4 transform = e.getWorldMatrix();
 	BOOST_TEST(transform.equalTo(expected));
 }
 

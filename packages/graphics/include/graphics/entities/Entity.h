@@ -85,7 +85,7 @@ public:
 	/**
 	 * @return A matrix representing the transformation of this entity from local to world space
 	 */
-	Matrix4 getMatrix() const;
+	Matrix4 getWorldMatrix() const;
 
 	/**
 	 * @return The parent of this entity. Can be null.
@@ -126,4 +126,12 @@ protected:
 	 * @param type Entity type
 	 */
 	Entity(EntityType type);
+
+private:
+
+	/**
+	 * @return The matrix representing the transformation of this entity from local space to the reference
+	 * frame of its parent
+	 */
+	Matrix4 getLocalToParentMatrix() const;
 };

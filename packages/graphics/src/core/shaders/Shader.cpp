@@ -32,7 +32,8 @@ Shader::Shader(const char* prgmName, const char* vertexShader, const char* fragm
 	int success;
 	char infoLog[512];
 	glGetProgramiv(_id, GL_LINK_STATUS, &success);
-	if (!success) {
+	if (!success)
+	{
 		glGetProgramInfoLog(_id, 512, NULL, infoLog);
 		glDeleteProgram(_id);
 

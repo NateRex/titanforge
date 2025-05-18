@@ -45,7 +45,7 @@ void Entity::addScaling(float x, float y, float z)
 	scale.z += z;
 }
 
-Matrix4 Entity::getMatrix() const
+Matrix4 Entity::getWorldMatrix() const
 {
 	Matrix4 m = Matrix4::fromTranslation(position);
 	m.multiply(Matrix4::fromRotation(rotation), &m);
@@ -82,4 +82,9 @@ void Entity::remove(EntityPtr child)
 	{
 		child->_parent = nullptr;
 	}
+}
+
+Matrix4 Entity::getLocalToParentMatrix() const
+{
+
 }
