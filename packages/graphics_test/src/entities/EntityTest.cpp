@@ -74,13 +74,12 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 }
 
 /**
- * Tests the ability to obtain the transformation matrix for an entity
+ * Tests the ability to obtain the transformation matrix for an entity that contains no parent
  */
-BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
+BOOST_AUTO_TEST_CASE(Entity_worldMatrixNoParent)
 {
 	TestEntity e;
 
-	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	e.setPosition(1.f, 2.f, 3.f);
 
 	Matrix3 rot3x3 = Matrix3::fromXRotation(deg2Rad(45.f));
@@ -90,9 +89,45 @@ BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
 	Matrix4 scale = Matrix4::fromScaling(4.f, 5.f, 6.f);
 	e.setScaling(4.f, 5.f, 6.f);
 
+	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	Matrix4 expected = translation.multiply(rotation).multiply(scale);
 	Matrix4 transform = e.getWorldMatrix();
 	BOOST_TEST(transform.equalTo(expected));
+}
+
+/**
+ * Tests the ability to obtain the transformation matrix for an entity that is part of an
+ * entity chain
+ */
+BOOST_AUTO_TEST_CASE(Entity_worldMatrixWithParents)
+{
+	EntityPtr charlie = std::make_shared<TestEntity>();
+	charlie->setPosition(1.f, 2.f, 3.f);
+	
+	EntityPtr bravo = std::make_shared<TestEntity>();
+	bravo->add(charlie);
+	bravo->setPosition(1.f, 2.f, 3.f);
+
+	EntityPtr alpha = std::make_shared<TestEntity>();
+	alpha->add(bravo);
+	alpha->setPosition(1.f, 2.f, 3.f);
+
+	Vector3 origin;
+
+	// Alpha is topmost parent. Translation should be unaffected by any other entity.
+	Matrix4 m = alpha->getWorldMatrix();
+	Vector3 p = m.transformPosition(origin);
+	BOOST_TEST(p.equalTo(Vector3(1.f, 2.f, 3.f)));
+
+	// Bravo is child to alpha. Translation should be applied a total of 2 times.
+	m = bravo->getWorldMatrix();
+	p = m.transformPosition(origin);
+	BOOST_TEST(p.equalTo(Vector3(2.f, 4.f, 6.f)));
+
+	// Charlie is child to alpha. Translation should be applied a total of 3 times.
+	m = charlie->getWorldMatrix();
+	p = m.transformPosition(origin);
+	BOOST_TEST(p.equalTo(Vector3(3.f, 6.f, 9.f)));
 }
 
 /**
