@@ -1,7 +1,7 @@
 #include <graphics/entities/Mesh.h>
 
 Mesh::Mesh(GeometryPtr geometry, MaterialPtr material)
-	: Entity(EntityType::BUFFERED), geometry(geometry), material(material)
+	: Entity(EntityType::MESH), geometry(geometry), material(material)
 {
 
 }
