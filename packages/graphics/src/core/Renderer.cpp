@@ -114,6 +114,7 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 	{
 		case EntityType::GROUP:
 		{
+			// Recursively handle each child
 			for (const EntityPtr child : entity->_children)
 			{
 				Matrix4 childMatrix = local2World.multiply(child->getMatrix());
@@ -123,11 +124,8 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 		}
 		case EntityType::MESH:
 		{
-			MeshPtr mesh = std::dynamic_pointer_cast<Mesh>(entity);
-			if (!mesh)
-			{
-				throw IllegalArgumentException("Could not cast entity with type MESH");
-			}
+			// Render mesh
+			MeshPtr mesh = cast<Mesh>(entity);
 			renderMesh(mesh, local2World);
 			break;
 		}
