@@ -15,7 +15,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TestEntity(): Entity(EntityType::GROUP) { }
+	TestEntity(): Entity(EntityType::GROUP) {}
 };
 
 /**
@@ -76,11 +76,10 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 /**
  * Tests the ability to obtain the transformation matrix for an entity
  */
-BOOST_AUTO_TEST_CASE(Entity_getTransform)
+BOOST_AUTO_TEST_CASE(Entity_getMatrix)
 {
 	TestEntity e;
 
-	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	e.setPosition(1.f, 2.f, 3.f);
 
 	Matrix3 rot3x3 = Matrix3::fromXRotation(deg2Rad(45.f));
@@ -90,6 +89,7 @@ BOOST_AUTO_TEST_CASE(Entity_getTransform)
 	Matrix4 scale = Matrix4::fromScaling(4.f, 5.f, 6.f);
 	e.setScaling(4.f, 5.f, 6.f);
 
+	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	Matrix4 expected = translation.multiply(rotation).multiply(scale);
 	Matrix4 transform = e.getMatrix();
 	BOOST_TEST(transform.equalTo(expected));

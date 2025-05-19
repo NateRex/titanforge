@@ -29,6 +29,7 @@ struct has_ostream_operator<
  */
 template <typename T>
 std::enable_if_t<!has_ostream_operator<T>::value, std::ostream&>
-operator<<(std::ostream& os, const T& obj) {
+operator<<(std::ostream& os, const T& obj)
+{
     return os << "[object]";
 }

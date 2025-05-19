@@ -35,7 +35,8 @@ std::string resolvePath(const std::string& relPath)
 
 #elif defined(__linux__)
     ssize_t count = readlink("/proc/self/exe", path, 259);
-    if (count == -1) {
+    if (count == -1)
+    {
         throw IllegalStateException("Failed to get executable path");
     }
 
@@ -44,7 +45,8 @@ std::string resolvePath(const std::string& relPath)
 
 #elif defined(__APPLE__)
     uint32_t size = sizeof(path);
-    if (_NSGetExecutablePath(path, &size) != 0) {
+    if (_NSGetExecutablePath(path, &size) != 0)
+    {
         throw IllegalStateException("Failed to get executable path");
     }
 
@@ -56,7 +58,8 @@ std::string resolvePath(const std::string& relPath)
 
 bool checkSuffix(const std::string& str, const std::string& suffix)
 {
-    if (str.length() < suffix.length()) {
+    if (str.length() < suffix.length())
+    {
         return false;
     }
 

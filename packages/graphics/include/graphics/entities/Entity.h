@@ -40,6 +40,11 @@ public:
 	Vector3 scale;
 
 	/**
+	 * Destructor
+	 */
+	virtual ~Entity() = default;
+
+	/**
 	 * Sets the position of this entity relative to its parent.
 	 * @param x X coordinate
 	 * @param y Y coordinate
@@ -83,7 +88,8 @@ public:
 	void addScaling(float x, float y, float z);
 
 	/**
-	 * @return A matrix representing the transformation of this entity from local to world space
+	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
+	 * it's direct parent
 	 */
 	Matrix4 getMatrix() const;
 

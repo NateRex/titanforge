@@ -181,7 +181,8 @@ bool Matrix4::inverse(Matrix4* result)
 
 	float det = _m[0] * t00 + _m[1] * t01 + _m[2] * t02 + _m[3] * t03;
 
-	if (equals(det, 0, 1.0e-11)) {
+	if (equals(det, 0, 1.0e-11))
+	{
 		return false;
 	}
 

@@ -51,7 +51,8 @@ bool checkSuffix(const std::string& str, const std::string& suffix);
 template <typename T>
 T& getOrDefault(T* ptr, T def)
 {
-    if (ptr != nullptr) {
+    if (ptr != nullptr)
+    {
         return *ptr;
     }
     return ptr != nullptr ? *ptr : def;

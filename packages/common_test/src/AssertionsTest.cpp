@@ -10,7 +10,8 @@
 BOOST_AUTO_TEST_CASE(Assertions_notNull)
 {
 	int value = 1;
-	std::function<void()> increment = [&value]() {
+	std::function<void()> increment = [&value]()
+	{
 		value++;
 	};
 

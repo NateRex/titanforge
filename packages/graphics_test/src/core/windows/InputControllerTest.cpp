@@ -35,9 +35,10 @@ BOOST_AUTO_TEST_CASE(InputController_listeners)
 
     // Add listener
     int value = 0;
-    controller->addListener(GLFW_KEY_A, [&value]() {
+    controller->addListener(GLFW_KEY_A, [&value]()
+    {
         value++;
-        });
+    });
 
     // Key is not pressed
     controller->processInput();
