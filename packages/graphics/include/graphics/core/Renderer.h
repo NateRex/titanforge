@@ -1,8 +1,11 @@
 #pragma once
 #include <graphics/core/windows/pointers/WindowPtr.h>
-#include <graphics/entities/pointers/MeshPtr.h>
+#include <graphics/scene/pointers/ScenePtr.h>
+#include <graphics/entities/Mesh.h>
 #include <graphics/core/Color.h>
 #include <mutex>
+
+class Matrix4;
 
 /**
  * The renderer is responsible for managing the current render context target and drawing the scene
@@ -57,11 +60,10 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders the given entity
-	 * TODO (Nate) - Update this method to only accept a scene, once that class has been created
-	 * @param entity The entity to render
+	 * Renders the given scene
+	 * @param scene The scene
 	 */
-	void render(const MeshPtr entity) const;
+	void render(const ScenePtr scene) const;
 
 private:
 
@@ -101,4 +103,20 @@ private:
 	 * Applies global OpenGL settings that should apply to all entities
 	 */
 	static void applyGlobalDrawSettings();
+
+	/**
+	 * Recursively renders an entity belonging to the scene, along with all of its children
+	 * @param entity Entity to render
+	 * @param local2World Matrix representing the transformation from local to world space for the entity. This
+	 * should be the combined transformations of all parents to the entity.
+	 */
+	void renderEntity(const EntityPtr entity, const Matrix4& local2World) const;
+
+	/**
+	 * Renders a mesh belonging to the scene
+	 * @param mesh Mesh to render
+	 * @param local2World Matrix representing the transformation from local to world space for the mesh. This
+	 * should be the combined transformations of all parents to the entity.
+	 */
+	void renderMesh(const MeshPtr mesh, const Matrix4& local2World) const;
 };

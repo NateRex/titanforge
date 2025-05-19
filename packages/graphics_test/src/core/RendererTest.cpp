@@ -2,6 +2,7 @@
 #include <graphics_test/GlobalTestFixture.h>
 #include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
+#include <graphics/scene/Scene.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/entities/Mesh.h>
@@ -48,12 +49,16 @@ BOOST_AUTO_TEST_CASE(Renderer_setWindow)
  */
 BOOST_AUTO_TEST_CASE(Renderer_render)
 {
-	// Create simple box mesh
+	// Create scene
+	ScenePtr scene = Scene::create();
+
+	// Create simple box mesh and add it to the scene
 	GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
 	MaterialPtr material = BasicMaterial::create();
 	MeshPtr mesh = Mesh::create(geometry, material);
+	scene->add(mesh);
 
 	// Render
 	Renderer* renderer = GlobalTestFixture::RENDERER;
-	BOOST_REQUIRE_NO_THROW((renderer->render(mesh)));
+	BOOST_REQUIRE_NO_THROW((renderer->render(scene)));
 }

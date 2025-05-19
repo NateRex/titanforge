@@ -4,7 +4,7 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/Buffer.h>
-#include <graphics/entities/Mesh.h>
+#include <graphics/scene/Scene.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -90,7 +90,7 @@ void Renderer::setBackgroundColor(const Color& color)
 	_backgroundColor = color;
 }
 
-void Renderer::render(const MeshPtr entity) const
+void Renderer::render(const ScenePtr scene) const
 {
 	// Process input
 	InputController* inputController = _window->getInputController();
@@ -100,23 +100,59 @@ void Renderer::render(const MeshPtr entity) const
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Recursively parse and draw entities
+	renderEntity(scene, scene->getMatrix());
+
+	// Display scene
+	glfwSwapBuffers(_window->_glfwWindow);
+	glfwPollEvents();
+}
+
+void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) const
+{
+	switch (entity->type)
+	{
+		case EntityType::GROUP:
+		{
+			for (const EntityPtr child : entity->_children)
+			{
+				Matrix4 childMatrix = local2World.multiply(child->getMatrix());
+				renderEntity(child, childMatrix);
+			}
+			break;
+		}
+		case EntityType::BUFFERED:
+		{
+			MeshPtr mesh = std::dynamic_pointer_cast<Mesh>(entity);
+			if (!mesh)
+			{
+				throw IllegalArgumentException("Expected entity with type BUFFERED to be a mesh, but it was not");
+			}
+			renderMesh(mesh, local2World);
+			break;
+		}
+		default:
+		{
+			// Do nothing
+		}
+	}
+}
+
+void Renderer::renderMesh(const MeshPtr mesh, const Matrix4& local2World) const
+{
 	// Load shader data
-	MaterialPtr material = entity->material;
+	MaterialPtr material = mesh->material;
 	ShaderPtr shader = ShaderManager::getShader(material->type);
 	shader->use();
-	shader->setModelMatrix(entity->getWorldMatrix());
+	shader->setModelMatrix(local2World);
 	shader->setViewMatrix(Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f)));							// TODO: Get this data from camera
 	shader->setProjectionMatrix(Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f));	// TODO: Get this data from camera
 	shader->setMaterial(material);
 
 	// Draw buffer
-	Buffer* buffer = entity->geometry->getBuffer();
+	Buffer* buffer = mesh->geometry->getBuffer();
 	buffer->bind();
 	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
-
-	// Display scene
-	glfwSwapBuffers(_window->_glfwWindow);
-	glfwPollEvents();
 }
 
 void Renderer::incrementRendererCount()

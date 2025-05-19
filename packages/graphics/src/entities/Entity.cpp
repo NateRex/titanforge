@@ -45,29 +45,12 @@ void Entity::addScaling(float x, float y, float z)
 	scale.z += z;
 }
 
-Matrix4 Entity::getWorldMatrix() const
+Matrix4 Entity::getMatrix() const
 {
-	std::vector<const Entity*> parentList;
-
-	// Traverse up parent chain
-	const Entity* current = this;
-	while (current != nullptr)
-	{
-		parentList.push_back(current);
-		current = current->getParent();
-	}
-
-	// Reverse order
-	std::reverse(parentList.begin(), parentList.end());
-
-	// Apply matrices
-	Matrix4 result;
-	for (const Entity* e : parentList)
-	{
-		result.multiply(e->getLocalToParentMatrix(), &result);
-	}
-
-	return result;
+	Matrix4 m = Matrix4::fromTranslation(position);
+	m.multiply(Matrix4::fromRotation(rotation), &m);
+	m.multiply(Matrix4::fromScaling(scale.x, scale.y, scale.z), &m);
+	return m;
 }
 
 Entity* Entity::getParent() const
@@ -99,12 +82,4 @@ void Entity::remove(EntityPtr child)
 	{
 		child->_parent = nullptr;
 	}
-}
-
-Matrix4 Entity::getLocalToParentMatrix() const
-{
-	Matrix4 m = Matrix4::fromTranslation(position);
-	m.multiply(Matrix4::fromRotation(rotation), &m);
-	m.multiply(Matrix4::fromScaling(scale.x, scale.y, scale.z), &m);
-	return m;
 }
