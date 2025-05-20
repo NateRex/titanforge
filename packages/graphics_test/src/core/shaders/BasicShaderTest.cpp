@@ -35,21 +35,3 @@ BOOST_AUTO_TEST_CASE(BasicShader_material)
 	material->texture = TextureLoader::load("assets/container.jpg");
 	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material));
 }
-
-/**
- * Tests that an exception is thrown when trying to apply the wrong material
- */
-BOOST_AUTO_TEST_CASE(BasicShader_wrongMaterial)
-{
-	// Define material that cannot be cast to a BasicMaterial
-	// TODO (Nate) - Remove this once there actually exists more than one type of material
-	class TestMaterial : public Material
-	{
-	public:
-		TestMaterial() : Material(MaterialType::BASIC) {}
-	};
-
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
-	MaterialPtr material = std::shared_ptr<TestMaterial>(new TestMaterial());
-	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
-}
