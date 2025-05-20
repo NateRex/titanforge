@@ -114,6 +114,7 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 	{
 		case EntityType::GROUP:
 		{
+			// Recursively handle each child
 			for (const EntityPtr child : entity->_children)
 			{
 				Matrix4 childMatrix = local2World.multiply(child->getMatrix());
@@ -121,13 +122,10 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 			}
 			break;
 		}
-		case EntityType::BUFFERED:
+		case EntityType::MESH:
 		{
-			MeshPtr mesh = std::dynamic_pointer_cast<Mesh>(entity);
-			if (!mesh)
-			{
-				throw IllegalArgumentException("Expected entity with type BUFFERED to be a mesh, but it was not");
-			}
+			// Handle mesh
+			MeshPtr mesh = cast<Mesh>(entity);
 			renderMesh(mesh, local2World);
 			break;
 		}

@@ -19,7 +19,7 @@ enum class EntityType
 	CAMERA,
 
 	/**
-	 * An entity containing buffered data to be processed by the GPU
+	 * A mesh entity containing triangulated buffered data to be processed by the GPU
 	 */
-	BUFFERED
+	MESH
 };

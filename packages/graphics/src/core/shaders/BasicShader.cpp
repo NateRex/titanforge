@@ -2,6 +2,7 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <common/Utils.h>
 #include <glad/glad.h>
 
 BasicShader::BasicShader() : Shader("BasicShader", BASIC_VERTEX, BASIC_FRAGMENT)
@@ -16,11 +17,7 @@ BasicShaderPtr BasicShader::create()
 
 void BasicShader::setMaterial(const MaterialPtr material)
 {
-	BasicMaterialPtr mat = std::dynamic_pointer_cast<BasicMaterial>(material);
-	if (!mat)
-	{
-		throw IllegalArgumentException("BasicShader may only accept BasicMaterials");
-	}
+	BasicMaterialPtr mat = cast<BasicMaterial>(material);
 
 	// Color
 	glUniform4f(getUniformLocation("uColor"), mat->color.red(), mat->color.green(), mat->color.blue(), mat->color.alpha());
