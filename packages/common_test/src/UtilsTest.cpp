@@ -77,10 +77,10 @@ BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
 BOOST_AUTO_TEST_CASE(Utils_cast)
 {
     // Runtime error can be casted to parent exception class
-    std::shared_ptr<std::exception> ptr1 = std::make_shared<std::runtime_error>("Runtime error");
+    std::shared_ptr<std::exception> ptr1 = std::make_shared<std::runtime_error>("");
     BOOST_REQUIRE_NO_THROW(cast<std::runtime_error>(ptr1));
 
-    // Exception cannot be downcasted to runtime error
-    std::shared_ptr<std::exception> ptr2 = std::make_shared<std::exception>("Exception error");
-    BOOST_REQUIRE_THROW(cast<std::runtime_error>(ptr2), IllegalStateException);
+    // bad_alloc and allocator have no polymorphic relationship
+    std::shared_ptr<std::bad_alloc> ptr2 = std::make_shared<std::bad_alloc>();
+    BOOST_REQUIRE_THROW(cast<std::allocator<char>>(ptr2), IllegalStateException);
 }
