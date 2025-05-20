@@ -74,7 +74,7 @@ std::shared_ptr<S> cast(const std::shared_ptr<T>& ptr)
     std::shared_ptr<S> casted = std::dynamic_pointer_cast<S>(ptr);
     if (!casted)
     {
-        throw IllegalStateException("Failed to cast object");
+        throw IllegalStateException("Failed to cast object to child subtype");
     }
 
     return casted;
