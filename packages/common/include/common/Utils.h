@@ -65,6 +65,8 @@ T& getOrDefault(T* ptr, T def)
  * @param <S> The type to cast to
  * @param <T> The current object type
  * @param ptr The pointer to cast
+ * @return The casted pointer
+ * @throws IllegalStateException If the cast fails
  */
 template <class S, class T>
 std::shared_ptr<S> cast(const std::shared_ptr<T>& ptr)

@@ -70,3 +70,17 @@ BOOST_AUTO_TEST_CASE(Utils_getOrDefault)
     ptr = &two;
     BOOST_TEST((getOrDefault(ptr, one) == two));
 }
+
+/**
+ * Tests casting of pointers
+ */
+BOOST_AUTO_TEST_CASE(Utils_cast)
+{
+    // Runtime error can be casted to parent exception class
+    std::shared_ptr<std::exception> ptr1 = std::make_shared<std::runtime_error>("Runtime error");
+    BOOST_REQUIRE_NO_THROW(cast<std::runtime_error>(ptr1));
+
+    // Exception cannot be downcasted to runtime error
+    std::shared_ptr<std::exception> ptr2 = std::make_shared<std::exception>("Exception error");
+    BOOST_REQUIRE_THROW(cast<std::runtime_error>(ptr2), IllegalStateException);
+}

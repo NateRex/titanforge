@@ -124,7 +124,7 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 		}
 		case EntityType::MESH:
 		{
-			// Render mesh
+			// Handle mesh
 			MeshPtr mesh = cast<Mesh>(entity);
 			renderMesh(mesh, local2World);
 			break;
