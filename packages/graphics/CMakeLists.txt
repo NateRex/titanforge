@@ -7,6 +7,7 @@ find_package(Stb REQUIRED)
 
 # Library files
 add_library(Graphics
+    src/cameras/Camera.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp

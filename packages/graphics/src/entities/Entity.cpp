@@ -2,54 +2,69 @@
 #include <math/Matrix4.h>
 #include <algorithm>
 
-Entity::Entity(EntityType type): type(type), scale(1.f, 1.f, 1.f)
+Entity::Entity(EntityType type): type(type), _scale(1.f, 1.f, 1.f)
 {
 
+}
+
+Vector3 Entity::getPosition() const
+{
+	return _position;
 }
 
 void Entity::setPosition(float x, float y, float z)
 {
-	position.x = x;
-	position.y = y;
-	position.z = z;
+	_position.x = x;
+	_position.y = y;
+	_position.z = z;
 }
 
 void Entity::addPosition(float x, float y, float z)
 {
-	position.x += x;
-	position.y += y;
-	position.z += z;
+	_position.x += x;
+	_position.y += y;
+	_position.z += z;
+}
+
+Matrix3 Entity::getRotation() const
+{
+	return _rotation;
 }
 
 void Entity::setRotation(const Matrix3& rot)
 {
-	rotation = rot;
+	_rotation = rot;
 }
 
 void Entity::addRotation(const Matrix3& rot)
 {
-	rotation.multiply(rot, &rotation);
+	_rotation.multiply(rot, &_rotation);
+}
+
+Vector3 Entity::getScaling() const
+{
+	return _scale;
 }
 
 void Entity::setScaling(float x, float y, float z)
 {
-	scale.x = x;
-	scale.y = y;
-	scale.z = z;
+	_scale.x = x;
+	_scale.y = y;
+	_scale.z = z;
 }
 
 void Entity::addScaling(float x, float y, float z)
 {
-	scale.x += x;
-	scale.y += y;
-	scale.z += z;
+	_scale.x += x;
+	_scale.y += y;
+	_scale.z += z;
 }
 
 Matrix4 Entity::getMatrix() const
 {
-	Matrix4 m = Matrix4::fromTranslation(position);
-	m.multiply(Matrix4::fromRotation(rotation), &m);
-	m.multiply(Matrix4::fromScaling(scale.x, scale.y, scale.z), &m);
+	Matrix4 m = Matrix4::fromTranslation(_position);
+	m.multiply(Matrix4::fromRotation(_rotation), &m);
+	m.multiply(Matrix4::fromScaling(_scale.x, _scale.y, _scale.z), &m);
 	return m;
 }
 

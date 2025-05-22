@@ -25,24 +25,14 @@ public:
 	const EntityType type;
 
 	/**
-	 * Position
-	 */
-	Vector3 position;
-
-	/**
-	 * Rotation
-	 */
-	Matrix3 rotation;
-
-	/**
-	 * Scaling
-	 */
-	Vector3 scale;
-
-	/**
 	 * Destructor
 	 */
 	virtual ~Entity() = default;
+
+	/**
+	 * @return The position of this entity relative to its parent.
+	 */
+	Vector3 getPosition() const;
 
 	/**
 	 * Sets the position of this entity relative to its parent.
@@ -61,6 +51,11 @@ public:
 	void addPosition(float x, float y, float z);
 
 	/**
+	 * @return The 3x3 matrix representing the rotation of this entity relative to its parent
+	 */
+	Matrix3 getRotation() const;
+
+	/**
 	 * Sets the rotation of this entity relative to its parent, using a rotation matrix.
 	 * @param rot Rotation matrix
 	 */
@@ -70,6 +65,11 @@ public:
 	 * Applies additional rotation to this entity relative to its parent, using a rotation matrix.
 	 */
 	void addRotation(const Matrix3& rot);
+
+	/**
+	 * @return The scaling of this entity relative to its parent across the x, y, and z axes
+	 */
+	Vector3 getScaling() const;
 
 	/**
 	 * Sets the scaling of this entity relative to its parent.
@@ -116,6 +116,21 @@ public:
 	void remove(EntityPtr entity);
 
 protected:
+
+	/**
+	 * Position
+	 */
+	Vector3 _position;
+
+	/**
+	 * Rotation
+	 */
+	Matrix3 _rotation;
+
+	/**
+	 * Scaling
+	 */
+	Vector3 _scale;
 
 	/**
 	 * Parent entity. Is null by default.
