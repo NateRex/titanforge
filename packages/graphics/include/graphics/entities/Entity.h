@@ -55,6 +55,21 @@ public:
 	Matrix3 getRotation() const;
 
 	/**
+	 * Sets the rotation of this entity relative to its parent, using values for a rotation matrix specified
+	 * in row-major order.
+	 * @param m00 Row 0, column 0 rotation matrix value
+	 * @param m01 Row 0, column 1 rotation matrix value
+	 * @param m02 Row 0, column 2 rotation matrix value
+	 * @param m10 Row 1, column 0 rotation matrix value
+	 * @param m11 Row 1, column 1 rotation matrix value
+	 * @param m12 Row 1, column 2 rotation matrix value
+	 * @param m20 Row 2, column 0 rotation matrix value
+	 * @param m21 Row 2, column 1 rotation matrix value
+	 * @param m22 Row 2, column 2 rotation matrix value
+	 */
+	void setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
+
+	/**
 	 * Sets the rotation of this entity relative to its parent, using a rotation matrix.
 	 * @param rot Rotation matrix
 	 */
@@ -90,7 +105,7 @@ public:
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
 	 * it's direct parent
 	 */
-	Matrix4 getMatrix();
+	virtual Matrix4 getMatrix();
 
 	/**
 	 * @return The parent of this entity. Can be null.

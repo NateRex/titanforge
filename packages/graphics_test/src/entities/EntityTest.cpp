@@ -44,6 +44,21 @@ BOOST_AUTO_TEST_CASE(Entity_positionFromFloats)
 }
 
 /**
+ * Tests setting rotation using raw matrix values
+ */
+BOOST_AUTO_TEST_CASE(Entity_rotationFromValues)
+{
+	TestEntity e;
+	e.setRotation(0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f);
+
+	Matrix3 rotation = e.getRotation();
+	for (int i = 0; i < 9; i++)
+	{
+		BOOST_TEST(rotation[i] == i);
+	}
+}
+
+/**
  * Tests setting and adding rotation using a matrix
  */
 BOOST_AUTO_TEST_CASE(Entity_rotationFromMatrix)

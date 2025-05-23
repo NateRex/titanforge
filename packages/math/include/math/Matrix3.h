@@ -104,6 +104,20 @@ public:
 	const float* getValues() const;
 
 	/**
+	 * Sets the values of this matrix, specified in row-major order
+	 * @param m00 Row 0, column 0 value
+	 * @param m01 Row 0, column 1 value
+	 * @param m02 Row 0, column 2 value
+	 * @param m10 Row 1, column 0 value
+	 * @param m11 Row 1, column 1 value
+	 * @param m12 Row 1, column 2 value
+	 * @param m20 Row 2, column 0 value
+	 * @param m21 Row 2, column 1 value
+	 * @param m22 Row 2, column 2 value
+	 */
+	void setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
+
+	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
 	 */
 	bool isIdentity() const;
@@ -193,20 +207,6 @@ private:
 	 * null or a valid matrix.
 	 */
 	Matrix3* _inverse = nullptr;
-
-	/**
-	 * Sets the values of this matrix, specified in row-major order
-	 * @param m00 Row 0, column 0 value
-	 * @param m01 Row 0, column 1 value
-	 * @param m02 Row 0, column 2 value
-	 * @param m10 Row 1, column 0 value
-	 * @param m11 Row 1, column 1 value
-	 * @param m12 Row 1, column 2 value
-	 * @param m20 Row 2, column 0 value
-	 * @param m21 Row 2, column 1 value
-	 * @param m22 Row 2, column 2 value
-	 */
-	void setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 	/**
 	 * Set the values of this matrix from another matrix

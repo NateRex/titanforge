@@ -112,6 +112,15 @@ const float* Matrix3::getValues() const
 	return _m;
 }
 
+void Matrix3::setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+{
+	clearInverse();
+
+	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;
+	_m[3] = m10;	_m[4] = m11;	_m[5] = m12;
+	_m[6] = m20;	_m[7] = m21;	_m[8] = m22;
+}
+
 bool Matrix3::isIdentity() const
 {
 	return equalTo(Matrix3::IDENTITY);
@@ -252,15 +261,6 @@ bool Matrix3::operator==(const Matrix3& other) const
 bool Matrix3::operator!=(const Matrix3& other) const
 {
 	return !equalTo(other);
-}
-
-void Matrix3::setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
-{
-	clearInverse();
-
-	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;
-	_m[3] = m10;	_m[4] = m11;	_m[5] = m12;
-	_m[6] = m20;	_m[7] = m21;	_m[8] = m22;
 }
 
 void Matrix3::setValues(const Matrix3& other)
