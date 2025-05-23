@@ -17,6 +17,8 @@ void Entity::setPosition(float x, float y, float z)
 	_position.x = x;
 	_position.y = y;
 	_position.z = z;
+
+	_transformNeedsUpdate = true;
 }
 
 void Entity::addPosition(float x, float y, float z)
@@ -24,6 +26,8 @@ void Entity::addPosition(float x, float y, float z)
 	_position.x += x;
 	_position.y += y;
 	_position.z += z;
+
+	_transformNeedsUpdate = true;
 }
 
 Matrix3 Entity::getRotation() const
@@ -34,11 +38,15 @@ Matrix3 Entity::getRotation() const
 void Entity::setRotation(const Matrix3& rot)
 {
 	_rotation = rot;
+
+	_transformNeedsUpdate = true;
 }
 
 void Entity::addRotation(const Matrix3& rot)
 {
 	_rotation.multiply(rot, &_rotation);
+
+	_transformNeedsUpdate = true;
 }
 
 Vector3 Entity::getScaling() const
@@ -51,6 +59,8 @@ void Entity::setScaling(float x, float y, float z)
 	_scale.x = x;
 	_scale.y = y;
 	_scale.z = z;
+
+	_transformNeedsUpdate = true;
 }
 
 void Entity::addScaling(float x, float y, float z)
@@ -58,14 +68,28 @@ void Entity::addScaling(float x, float y, float z)
 	_scale.x += x;
 	_scale.y += y;
 	_scale.z += z;
+
+	_transformNeedsUpdate = true;
 }
 
-Matrix4 Entity::getMatrix() const
+Matrix4 Entity::getMatrix()
 {
-	Matrix4 m = Matrix4::fromTranslation(_position);
-	m.multiply(Matrix4::fromRotation(_rotation), &m);
-	m.multiply(Matrix4::fromScaling(_scale.x, _scale.y, _scale.z), &m);
-	return m;
+	updateTransform();
+	return _transform;
+}
+
+void Entity::updateTransform()
+{
+	if (!_transformNeedsUpdate)
+	{
+		return;
+	}
+
+	Matrix4::fromTranslation(_position, &_transform);
+	_transform.multiply(Matrix4::fromRotation(_rotation), &_transform);
+	_transform.multiply(Matrix4::fromScaling(_scale.x, _scale.y, _scale.z), &_transform);
+
+	_transformNeedsUpdate = false;
 }
 
 Entity* Entity::getParent() const

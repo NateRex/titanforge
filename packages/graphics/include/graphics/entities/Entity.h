@@ -3,9 +3,8 @@
 #include <graphics/entities/pointers/EntityPtr.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
+#include <math/Matrix4.h>
 #include <vector>
-
-class Matrix4;
 
 /**
  * Base class for all entities that can be added to the scene. Contains a set of properties and methods for manipulating
@@ -91,7 +90,7 @@ public:
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
 	 * it's direct parent
 	 */
-	Matrix4 getMatrix() const;
+	Matrix4 getMatrix();
 
 	/**
 	 * @return The parent of this entity. Can be null.
@@ -133,6 +132,18 @@ protected:
 	Vector3 _scale;
 
 	/**
+	 * Cached matrix representing the transformation of this entity from local to parent space. This matrix is lazily updated
+	 * when requested.
+	 */
+	Matrix4 _transform;
+
+	/**
+	 * Boolean flag that, when true, indicates that one or more values representing the transformation of this entity have changed,
+	 * and thus the transformation matrix needs to be re-computed.
+	 */
+	bool _transformNeedsUpdate = true;
+
+	/**
 	 * Parent entity. Is null by default.
 	 */
 	Entity* _parent = nullptr;
@@ -147,4 +158,9 @@ protected:
 	 * @param type Entity type
 	 */
 	Entity(EntityType type);
+
+	/**
+	 * Checks whether or not the cached transformation matrix for this entity is out-of-date, and if so, updates it
+	 */
+	void updateTransform();
 };
