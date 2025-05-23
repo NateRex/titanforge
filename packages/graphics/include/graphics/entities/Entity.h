@@ -76,7 +76,7 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	void setScaling(float x, float y, float z);
+	virtual void setScaling(float x, float y, float z);
 
 	/**
 	 * Applies additional scaling to this entity relative to its parent.
@@ -84,7 +84,7 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	void addScaling(float x, float y, float z);
+	virtual void addScaling(float x, float y, float z);
 
 	/**
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of

@@ -16,6 +16,7 @@ add_executable(CommonTest
     src/exceptions/InstantiationExceptionTest.cpp
     src/exceptions/NullPointerExceptionTest.cpp
     src/exceptions/OutOfBoundsExceptionTest.cpp
+    src/exceptions/UnsupportedOperationExceptionTest.cpp
     src/AssertionsTest.cpp
     src/main.cpp
     src/UtilsTest.cpp)

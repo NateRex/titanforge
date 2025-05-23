@@ -10,6 +10,18 @@ class Camera : public Entity
 public:
 
 	/**
+	 * @override
+	 * @throws UnsupportedOperationException When called, as scaling of cameras is not supported.
+	 */
+	void setScaling(float x, float y, float z) override;
+
+	/**
+	 * @override
+	 * @throws UnsupportedOperationException When called, as scaling of cameras is not supported.
+	 */
+	void addScaling(float x, float y, float z) override;
+
+	/**
 	 * @return A matrix capable of transforming objects from world space to view space relative to this camera
 	 */
 	virtual Matrix4 getViewMatrix() const = 0;
@@ -35,6 +47,12 @@ public:
 	void lookAt(const Vector3& position, const Vector3& target, const Vector3& up);
 
 private:
+
+	/**
+	 * Matrix representing the transformation from world to view space, relative to this camera. This is the inverse
+	 * of the camera's local-to-world transformation matrix.
+	 */
+	Matrix4 _viewMatrix;
 
 	/**
 	 * Constructor
