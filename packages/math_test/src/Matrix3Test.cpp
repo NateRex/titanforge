@@ -4,6 +4,7 @@
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
 #include <common/Constants.h>
+#include <common/exceptions/IllegalArgumentException.h>
 
 /**
  * Tests the basic constructors and accessors of the class
@@ -74,6 +75,34 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromMajorAxisRotations)
 	Matrix3::fromZRotation(deg2Rad(90), &rot);
 	rot.multiply(Vector3(0.f, 1.f, 0.f), &v);
 	BOOST_TEST(v.equalTo(Vector3(-1.f, 0.f, 0.f), 1.0e-6));
+}
+
+/**
+ * Tests the ability to fetch rows and columns from a matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix3_rowsAndColumns)
+{
+	Matrix3 m(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
+	
+	Vector3 r;
+	BOOST_TEST(m.getRow(0, &r) == Vector3(1.f, 2.f, 3.f));
+	BOOST_TEST(m.getRow(1, &r) == Vector3(4.f, 5.f, 6.f));
+	BOOST_TEST(m.getRow(2, &r) == Vector3(7.f, 8.f, 9.f));
+	BOOST_TEST(m.getColumn(0, &r) == Vector3(1.f, 4.f, 7.f));
+	BOOST_TEST(m.getColumn(1, &r) == Vector3(2.f, 5.f, 8.f));
+	BOOST_TEST(m.getColumn(2, &r) == Vector3(3.f, 6.f, 9.f));
+}
+
+/**
+ * Tests that an exception is thrown when trying to fetch a row or column using an invalid index
+ */
+BOOST_AUTO_TEST_CASE(Matrix3_badRowAndColumnIndices)
+{
+	Matrix3 m(1, 2, 3, 4, 5, 6, 7, 8, 9);
+	BOOST_REQUIRE_THROW(m.getRow(-1), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(m.getRow(3), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(m.getColumn(-1), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(m.getColumn(3), IllegalArgumentException);
 }
 
 /**

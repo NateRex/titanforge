@@ -1,6 +1,7 @@
 #include <math/Matrix3.h>
 #include <math/Vector3.h>
 #include <common/Utils.h>
+#include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <math.h>
 #include <string>
@@ -110,6 +111,31 @@ Matrix3 Matrix3::fromZRotation(float radians, Matrix3* result)
 const float* Matrix3::getValues() const
 {
 	return _m;
+}
+
+Vector3 Matrix3::getRow(unsigned int idx, Vector3* result) const
+{
+	assertInRange(idx, 0, 2, true, "Row index must be between 0 and 2");
+
+	Vector3& r = getOrDefault(result, Vector3());
+	unsigned int mIdx = idx * 3;
+	r.x = _m[mIdx];
+	r.y = _m[mIdx + 1];
+	r.z = _m[mIdx + 2];
+
+	return r;
+}
+
+Vector3 Matrix3::getColumn(unsigned int idx, Vector3* result) const
+{
+	assertInRange(idx, 0, 2, true, "Column index must be between 0 and 2");
+
+	Vector3& r = getOrDefault(result, Vector3());
+	r.x = _m[idx];
+	r.y = _m[3 + idx];
+	r.z = _m[6 + idx];
+
+	return r;
 }
 
 void Matrix3::setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)

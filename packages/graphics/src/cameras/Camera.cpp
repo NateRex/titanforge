@@ -16,6 +16,11 @@ void Camera::addScaling(float x, float y, float z)
 	throw UnsupportedOperationException("Scaling not supported for cameras");
 }
 
+void Camera::lookAt(const Vector3& target)
+{
+	Vector3 up = _rotation.get
+}
+
 void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)
 {
 	Vector3 vDirection = position.minus(target).normalize();

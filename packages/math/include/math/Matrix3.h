@@ -104,6 +104,22 @@ public:
 	const float* getValues() const;
 
 	/**
+	 * Fetch a row from this matrix
+	 * @param idx Row index. Must be a value between 0 and 2.
+	 * @param result (Optional) Vector in which to store the results
+	 * @return A vector containing the values of the requested row
+	 */
+	Vector3 getRow(unsigned int idx, Vector3* result = nullptr) const;
+
+	/**
+	 * Fetch a column from this matrix
+	 * @param idx Column index. Must be a value between 0 and 2.
+	 * @param result (Optional) Vector in which to store the results
+	 * @return A vector containing the values of the requested column
+	 */
+	Vector3 getColumn(unsigned int idx, Vector3* result = nullptr) const;
+
+	/**
 	 * Sets the values of this matrix, specified in row-major order
 	 * @param m00 Row 0, column 0 value
 	 * @param m01 Row 0, column 1 value
