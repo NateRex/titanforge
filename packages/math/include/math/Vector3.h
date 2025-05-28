@@ -11,6 +11,11 @@ class Vector3
 public:
 	
     /**
+     * The zero vector
+     */
+    static const Vector3 ZERO;
+
+    /**
      * Unit vector in the x direction
      */
     static const Vector3 XHAT;

@@ -5,11 +5,11 @@
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/Buffer.h>
 #include <graphics/scene/Scene.h>
+#include <graphics/cameras/Camera.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
-#include <math/Matrix4.h>		// TODO: Delete this include when view and proj matrices are coming from camera
-#include <common/Utils.h>		// TODO: Delete this include when view and proj matrices are coming from camera
+#include <common/Utils.h>
 #include <common/Assertions.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -90,7 +90,7 @@ void Renderer::setBackgroundColor(const Color& color)
 	_backgroundColor = color;
 }
 
-void Renderer::render(const ScenePtr scene) const
+void Renderer::render(const ScenePtr scene, const CameraPtr camera) const
 {
 	// Process input
 	InputController* inputController = _window->getInputController();
@@ -101,14 +101,14 @@ void Renderer::render(const ScenePtr scene) const
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Recursively parse and draw entities
-	renderEntity(scene, scene->getMatrix());
+	renderEntity(camera, scene, scene->getMatrix());
 
 	// Display scene
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
 }
 
-void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) const
+void Renderer::renderEntity(const CameraPtr camera, const EntityPtr entity, const Matrix4& local2World) const
 {
 	switch (entity->type)
 	{
@@ -118,7 +118,7 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 			for (const EntityPtr child : entity->_children)
 			{
 				Matrix4 childMatrix = local2World.multiply(child->getMatrix());
-				renderEntity(child, childMatrix);
+				renderEntity(camera, child, childMatrix);
 			}
 			break;
 		}
@@ -126,7 +126,7 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 		{
 			// Handle mesh
 			MeshPtr mesh = cast<Mesh>(entity);
-			renderMesh(mesh, local2World);
+			renderMesh(camera, mesh, local2World);
 			break;
 		}
 		default:
@@ -136,15 +136,15 @@ void Renderer::renderEntity(const EntityPtr entity, const Matrix4& local2World) 
 	}
 }
 
-void Renderer::renderMesh(const MeshPtr mesh, const Matrix4& local2World) const
+void Renderer::renderMesh(const CameraPtr camera, const MeshPtr mesh, const Matrix4& local2World) const
 {
 	// Load shader data
 	MaterialPtr material = mesh->material;
 	ShaderPtr shader = ShaderManager::getShader(material->type);
 	shader->use();
 	shader->setModelMatrix(local2World);
-	shader->setViewMatrix(Matrix4::fromTranslation(Vector3(0.f, 0.f, -3.f)));							// TODO: Get this data from camera
-	shader->setProjectionMatrix(Matrix4::fromPerspective(deg2Rad(45.f), 800.f / 600.f, 0.1f, 100.f));	// TODO: Get this data from camera
+	shader->setViewMatrix(camera->getViewMatrix());
+	shader->setProjectionMatrix(camera->getProjectionMatrix());
 	shader->setMaterial(material);
 
 	// Draw buffer

@@ -3,6 +3,7 @@
 #include <common/Utils.h>
 #include <math.h>
 
+const Vector3 Vector3::ZERO(0.f, 0.f, 0.f);
 const Vector3 Vector3::XHAT(1.f, 0.f, 0.f);
 const Vector3 Vector3::YHAT(0.f, 1.f, 0.f);
 const Vector3 Vector3::ZHAT(0.f, 0.f, 1.f);

@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/core/windows/pointers/WindowPtr.h>
 #include <graphics/scene/pointers/ScenePtr.h>
+#include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/entities/Mesh.h>
 #include <graphics/core/Color.h>
 #include <mutex>
@@ -60,10 +61,11 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders the given scene
-	 * @param scene The scene
+	 * Renders a scene
+	 * @param scene Scene
+	 * @param camera Camera
 	 */
-	void render(const ScenePtr scene) const;
+	void render(const ScenePtr scene, const CameraPtr camera) const;
 
 private:
 
@@ -106,17 +108,19 @@ private:
 
 	/**
 	 * Recursively renders an entity belonging to the scene, along with all of its children
+	 * @param camera Camera
 	 * @param entity Entity to render
 	 * @param local2World Matrix representing the transformation from local to world space for the entity. This
 	 * should be the combined transformations of all parents to the entity.
 	 */
-	void renderEntity(const EntityPtr entity, const Matrix4& local2World) const;
+	void renderEntity(const CameraPtr camera, const EntityPtr entity, const Matrix4& local2World) const;
 
 	/**
 	 * Renders a mesh belonging to the scene
+	 * @param camera Camera
 	 * @param mesh Mesh to render
 	 * @param local2World Matrix representing the transformation from local to world space for the mesh. This
 	 * should be the combined transformations of all parents to the entity.
 	 */
-	void renderMesh(const MeshPtr mesh, const Matrix4& local2World) const;
+	void renderMesh(const CameraPtr camera, const MeshPtr mesh, const Matrix4& local2World) const;
 };

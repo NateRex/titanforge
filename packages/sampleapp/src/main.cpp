@@ -1,5 +1,6 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/scene/Scene.h>
+#include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/materials/BasicMaterial.h>
@@ -55,6 +56,10 @@ int main()
     Renderer renderer;
     renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
 
+    // Create camera
+    CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
+    camera->setPosition(0.f, 0.f, 3.f);
+
     // Create scene
     ScenePtr scene = Scene::create();
     std::vector<MeshPtr> meshes = createBoxes(scene);
@@ -62,14 +67,24 @@ int main()
     // Render the scene until the window is closed, rotating the meshes on each animation frame.
     while (renderer.getWindow()->isOpen())
     {
+        double t = renderer.getTime();
+
+        // Rotate each mesh
         int idx = 0;
         for (MeshPtr mesh : meshes)
         {
-            Matrix3 rotation = Matrix3::fromRotation(Vector3(1.f, 0.3f, 0.5f), renderer.getTime() * deg2Rad(20.f * idx));
+            Matrix3 rotation = Matrix3::fromRotation(Vector3(1.f, 0.3f, 0.5f), t * deg2Rad(20.f * idx));
             mesh->setRotation(rotation);
             idx++;
         }
 
-        renderer.render(scene);
+        // Transform camera
+        const float radius = 10.0f;
+        float camX = sin(t) * radius;
+        float camZ = cos(t) * radius;
+        camera->lookAt(Vector3(camX, 0.f, camZ), Vector3::ZERO, Vector3::YHAT);
+
+        // Render scene
+        renderer.render(scene, camera);
     }
 }
