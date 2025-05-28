@@ -24,13 +24,13 @@ public:
 	/**
 	 * @return A matrix capable of transforming objects from world space to view space relative to this camera
 	 */
-	virtual Matrix4 getViewMatrix() const = 0;
+	Matrix4 getViewMatrix();
 
 	/**
 	 * @return A matrix capable of transforming objects from view space to projection (clip) space relative to this
 	 * camera
 	 */
-	virtual Matrix4 getProjectionMatrix() const = 0;
+	virtual Matrix4 getProjectionMatrix() = 0;
 
 	/**
 	 * Rotates this camera in-place to look at a given target

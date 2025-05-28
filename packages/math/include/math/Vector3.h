@@ -10,6 +10,21 @@ class Vector3
 {
 public:
 	
+    /**
+     * Unit vector in the x direction
+     */
+    static const Vector3 XHAT;
+
+    /**
+     * Unit vector in the y direction
+     */
+    static const Vector3 YHAT;
+
+    /**
+     * Unit vector in the z direction
+     */
+    static const Vector3 ZHAT;
+
 	/**
 	 * X coordinate
 	 */
