@@ -3,6 +3,7 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
+#include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/entities/Mesh.h>
@@ -52,6 +53,9 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 	// Create scene
 	ScenePtr scene = Scene::create();
 
+	// Create camera
+	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+
 	// Create simple box mesh and add it to the scene
 	GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
 	MaterialPtr material = BasicMaterial::create();
@@ -60,5 +64,5 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 
 	// Render
 	Renderer* renderer = GlobalTestFixture::RENDERER;
-	BOOST_REQUIRE_NO_THROW((renderer->render(scene)));
+	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
 }

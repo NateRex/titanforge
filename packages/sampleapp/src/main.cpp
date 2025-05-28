@@ -69,15 +69,6 @@ int main()
     {
         double t = renderer.getTime();
 
-        // Rotate each mesh
-        int idx = 0;
-        for (MeshPtr mesh : meshes)
-        {
-            Matrix3 rotation = Matrix3::fromRotation(Vector3(1.f, 0.3f, 0.5f), t * deg2Rad(20.f * idx));
-            mesh->setRotation(rotation);
-            idx++;
-        }
-
         // Transform camera
         const float radius = 10.0f;
         float camX = sin(t) * radius;

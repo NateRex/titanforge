@@ -11,6 +11,8 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 
 # Executable files
 add_executable(GraphicsTest
+    src/cameras/CameraTest.cpp
+    src/cameras/PerspectiveCameraTest.cpp
     src/core/shaders/BasicShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/InputControllerTest.cpp

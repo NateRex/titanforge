@@ -23,15 +23,15 @@ void Camera::lookAt(const Vector3& target)
 
 void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)
 {
-	Vector3 vDirection = position.minus(target).normalize();
-	Vector3 vUp = up.normalize();
-	Vector3 vRight = up.cross(vDirection).normalize();
+	Vector3 cDir = position.minus(target).normalize();
+	Vector3 cRight = up.cross(cDir).normalize();
+	Vector3 cUp = cDir.cross(cRight).normalize();
 
 	// set local-to-world rotation
 	setRotation(
-		vRight.x, vUp.x, vDirection.x,
-		vRight.y, vUp.y, vDirection.y,
-		vRight.z, vUp.z, vDirection.z
+		cRight.x,	cRight.y,	cRight.z,
+		cUp.x,		cUp.y,		cUp.z,
+		cDir.x,		cDir.y,		cDir.z
 	);
 
 	// local-to-world translation
@@ -50,12 +50,11 @@ Matrix4 Camera::getViewMatrix()
 
 	// Since cameras contain affine transformations (rotation and translation only), we
 	// can optimize how we compute the inverse.
-	Matrix3 invRot = _rotation.transpose();
 	Vector3 invTrans = _rotation.multiply(_position.scale(-1));
 	_viewMatrix.setValues(
-		invRot[0], invRot[1], invRot[2], invTrans.x,
-		invRot[3], invRot[4], invRot[5], invTrans.y,
-		invRot[6], invRot[7], invRot[8], invTrans.z,
+		_rotation[0], _rotation[1], _rotation[2], invTrans.x,
+		_rotation[3], _rotation[4], _rotation[5], invTrans.y,
+		_rotation[6], _rotation[7], _rotation[8], invTrans.z,
 		0.f, 0.f, 0.f, 1.f
 	);
 
