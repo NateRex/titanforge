@@ -27,7 +27,8 @@ BOOST_AUTO_TEST_CASE(Camera_scalingNotSupported)
 }
 
 /**
- * Tests that the view matrix is correctly computed as a result of manually setting the camera position and rotation
+ * Tests that the view matrix is correctly computed as a result of manually setting the camera position and rotation.
+ * Expected values were precomputed by hand.
  */
 BOOST_AUTO_TEST_CASE(Camera_manual)
 {

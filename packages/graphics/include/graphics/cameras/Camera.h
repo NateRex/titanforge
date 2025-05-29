@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/entities/Entity.h>
 
 /**
