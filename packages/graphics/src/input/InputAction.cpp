@@ -9,3 +9,8 @@ bool InputAction::operator==(const InputAction& other) const
 {
 	return name == other.name && type == other.type;
 }
+
+bool InputAction::operator!=(const InputAction& other) const
+{
+	return !(*this == other);
+}

@@ -36,4 +36,11 @@ public:
 	 * @return True if the two input actions are equal. Returns false otherwise.
 	 */
 	bool operator==(const InputAction& other) const;
+
+	/**
+	 * Compares this input action to another, testing for inequality.
+	 * @param other Input action to compare against
+	 * @return True if the two input actions are not equal. Returns false otherwise.
+	 */
+	bool operator!=(const InputAction& other) const;
 };
