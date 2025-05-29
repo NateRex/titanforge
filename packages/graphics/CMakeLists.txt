@@ -23,6 +23,7 @@ add_library(Graphics
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/input/InputAction.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp

@@ -71,8 +71,8 @@ int main()
 
         // Transform camera
         const float radius = 10.0f;
-        float camX = sin(t) * radius;
-        float camZ = cos(t) * radius;
+        float camX = sin(t * 0.5f) * radius;
+        float camZ = cos(t * 0.5f) * radius;
         camera->lookAt(Vector3(camX, 0.f, camZ), Vector3::ZERO, Vector3::YHAT);
 
         // Render scene
