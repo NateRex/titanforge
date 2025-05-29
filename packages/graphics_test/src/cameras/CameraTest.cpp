@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/cameras/Camera.h>
 #include <common/exceptions/UnsupportedOperationException.h>
+#include <common/Utils.h>
 #include <common/PrintHelpers.h>
 
 /**
@@ -23,6 +24,27 @@ BOOST_AUTO_TEST_CASE(Camera_scalingNotSupported)
 	TestCamera camera;
 	BOOST_REQUIRE_THROW(camera.setScaling(1.f, 2.f, 3.f), UnsupportedOperationException);
 	BOOST_REQUIRE_THROW(camera.addScaling(1.f, 2.f, 3.f), UnsupportedOperationException);
+}
+
+/**
+ * Tests that the view matrix is correctly computed as a result of manually setting the camera position and rotation
+ */
+BOOST_AUTO_TEST_CASE(Camera_manual)
+{
+	TestCamera camera;
+	BOOST_TEST(camera.getViewMatrix() == Matrix4::IDENTITY);
+
+	Matrix4 exp;
+
+	// Change rotation
+	camera.setRotation(Matrix3::fromRotation(Vector3::YHAT, deg2Rad(135.f)));
+	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.f, 1.f, 0.f, 0.f, -0.7071f, 0.f, -0.7071f, 0.f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
+
+	// Change position
+	camera.setPosition(1.f, 1.f, 1.f);
+	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.f, 1.f, 0.f, -1.f, -0.7071f, 0.f, -0.7071f, 1.4142f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
 }
 
 /**
