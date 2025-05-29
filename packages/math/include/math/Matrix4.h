@@ -148,6 +148,28 @@ public:
 	const float* getValues() const;
 
 	/**
+	 * Sets the values of this matrix, specified in row-major order
+	 * @param m00 Row 0, column 0 value
+	 * @param m01 Row 0, column 1 value
+	 * @param m02 Row 0, column 2 value
+	 * @param m03 Row 0, column 3 value
+	 * @param m10 Row 1, column 0 value
+	 * @param m11 Row 1, column 1 value
+	 * @param m12 Row 1, column 2 value
+	 * @param m13 Row 1, column 3 value
+	 * @param m20 Row 2, column 0 value
+	 * @param m21 Row 2, column 1 value
+	 * @param m22 Row 2, column 2 value
+	 * @param m23 Row 2, column 3 value
+	 * @param m30 Row 3, column 0 value
+	 * @param m31 Row 3, column 1 value
+	 * @param m32 Row 3, column 2 value
+	 * @param m33 Row 3, column 3 value
+	 */
+	void setValues(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33);
+
+	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
 	 */
 	bool isIdentity() const;
@@ -247,28 +269,6 @@ private:
 	 * null or a valid matrix.
 	 */
 	Matrix4* _inverse = nullptr;
-
-	/**
-	 * Sets the values of this matrix, specified in row-major order
-	 * @param m00 Row 0, column 0 value
-	 * @param m01 Row 0, column 1 value
-	 * @param m02 Row 0, column 2 value
-	 * @param m03 Row 0, column 3 value
-	 * @param m10 Row 1, column 0 value
-	 * @param m11 Row 1, column 1 value
-	 * @param m12 Row 1, column 2 value
-	 * @param m13 Row 1, column 3 value
-	 * @param m20 Row 2, column 0 value
-	 * @param m21 Row 2, column 1 value
-	 * @param m22 Row 2, column 2 value
-	 * @param m23 Row 2, column 3 value
-	 * @param m30 Row 3, column 0 value
-	 * @param m31 Row 3, column 1 value
-	 * @param m32 Row 3, column 2 value
-	 * @param m33 Row 3, column 3 value
-	 */
-	void setValues(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
-		float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33);
 
 	/**
 	 * Set the values of this matrix from another matrix

@@ -129,6 +129,17 @@ const float* Matrix4::getValues() const
 	return _m;
 }
 
+void Matrix4::setValues(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
+	float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
+{
+	clearInverse();
+
+	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;	_m[3] = m03;
+	_m[4] = m10;	_m[5] = m11;	_m[6] = m12;	_m[7] = m13;
+	_m[8] = m20;	_m[9] = m21;	_m[10] = m22;	_m[11] = m23;
+	_m[12] = m30;	_m[13] = m31;	_m[14] = m32;	_m[15] = m33;
+}
+
 bool Matrix4::isIdentity() const
 {
 	return equalTo(Matrix4::IDENTITY);
@@ -311,17 +322,6 @@ bool Matrix4::operator==(const Matrix4& other) const
 bool Matrix4::operator!=(const Matrix4& other) const
 {
 	return !equalTo(other);
-}
-
-void Matrix4::setValues(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13,
-	float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
-{
-	clearInverse();
-
-	_m[0] = m00;	_m[1] = m01;	_m[2] = m02;	_m[3] = m03;
-	_m[4] = m10;	_m[5] = m11;	_m[6] = m12;	_m[7] = m13;
-	_m[8] = m20;	_m[9] = m21;	_m[10] = m22;	_m[11] = m23;
-	_m[12] = m30;	_m[13] = m31;	_m[14] = m32;	_m[15] = m33;
 }
 
 void Matrix4::setValues(const Matrix4& other)

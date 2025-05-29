@@ -104,6 +104,36 @@ public:
 	const float* getValues() const;
 
 	/**
+	 * Fetch a row from this matrix
+	 * @param idx Row index. Must be a value between 0 and 2.
+	 * @param result (Optional) Vector in which to store the results
+	 * @return A vector containing the values of the requested row
+	 */
+	Vector3 getRow(unsigned int idx, Vector3* result = nullptr) const;
+
+	/**
+	 * Fetch a column from this matrix
+	 * @param idx Column index. Must be a value between 0 and 2.
+	 * @param result (Optional) Vector in which to store the results
+	 * @return A vector containing the values of the requested column
+	 */
+	Vector3 getColumn(unsigned int idx, Vector3* result = nullptr) const;
+
+	/**
+	 * Sets the values of this matrix, specified in row-major order
+	 * @param m00 Row 0, column 0 value
+	 * @param m01 Row 0, column 1 value
+	 * @param m02 Row 0, column 2 value
+	 * @param m10 Row 1, column 0 value
+	 * @param m11 Row 1, column 1 value
+	 * @param m12 Row 1, column 2 value
+	 * @param m20 Row 2, column 0 value
+	 * @param m21 Row 2, column 1 value
+	 * @param m22 Row 2, column 2 value
+	 */
+	void setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
+
+	/**
 	 * @return True if this matrix is the identity matrix. Returns false otherwise.
 	 */
 	bool isIdentity() const;
@@ -193,20 +223,6 @@ private:
 	 * null or a valid matrix.
 	 */
 	Matrix3* _inverse = nullptr;
-
-	/**
-	 * Sets the values of this matrix, specified in row-major order
-	 * @param m00 Row 0, column 0 value
-	 * @param m01 Row 0, column 1 value
-	 * @param m02 Row 0, column 2 value
-	 * @param m10 Row 1, column 0 value
-	 * @param m11 Row 1, column 1 value
-	 * @param m12 Row 1, column 2 value
-	 * @param m20 Row 2, column 0 value
-	 * @param m21 Row 2, column 1 value
-	 * @param m22 Row 2, column 2 value
-	 */
-	void setValues(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 	/**
 	 * Set the values of this matrix from another matrix

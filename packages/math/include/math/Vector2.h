@@ -11,6 +11,11 @@ class Vector2
 public:
 
     /**
+     * Zero vector
+     */
+    static const Vector2 ZERO;
+
+    /**
      * X coordinate
      */
     float x;

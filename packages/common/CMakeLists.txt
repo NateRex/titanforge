@@ -7,6 +7,7 @@ add_library(Common
     src/exceptions/InstantiationException.cpp
     src/exceptions/NullPointerException.cpp
     src/exceptions/OutOfBoundsException.cpp
+    src/exceptions/UnsupportedOperationException.cpp
     src/Assertions.cpp
     src/Utils.cpp)
 add_library(Common::Common ALIAS Common)

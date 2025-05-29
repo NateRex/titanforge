@@ -3,6 +3,8 @@
 #include <common/Utils.h>
 #include <math.h>
 
+const Vector2 Vector2::ZERO;
+
 Vector2::Vector2(): x(0.0), y(0.0)
 {
 
