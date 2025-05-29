@@ -16,22 +16,17 @@ void Camera::addScaling(float x, float y, float z)
 	throw UnsupportedOperationException("Scaling not supported for cameras");
 }
 
-void Camera::lookAt(const Vector3& target)
-{
-	lookAt(_position, target, Vector3::YHAT);
-}
-
 void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)
 {
-	Vector3 cDir = position.minus(target).normalize();
-	Vector3 cRight = up.cross(cDir).normalize();
-	Vector3 cUp = cDir.cross(cRight).normalize();
+	Vector3 f = target.minus(position).normalize();
+	Vector3 r = f.cross(up).normalize();
+	Vector3 u = r.cross(f).normalize();
 
 	// set local-to-world rotation
 	setRotation(
-		cRight.x,	cRight.y,	cRight.z,
-		cUp.x,		cUp.y,		cUp.z,
-		cDir.x,		cDir.y,		cDir.z
+		r.x,	r.y,	r.z,
+		u.x,	u.y,	u.z,
+		-f.x,	-f.y,	-f.z
 	);
 
 	// local-to-world translation
@@ -50,11 +45,11 @@ Matrix4 Camera::getViewMatrix()
 
 	// Since cameras contain affine transformations (rotation and translation only), we
 	// can optimize how we compute the inverse.
-	Vector3 invTrans = _rotation.multiply(_position.scale(-1));
+	Vector3 invTrans = _rotation.multiply(_position);
 	_viewMatrix.setValues(
-		_rotation[0], _rotation[1], _rotation[2], invTrans.x,
-		_rotation[3], _rotation[4], _rotation[5], invTrans.y,
-		_rotation[6], _rotation[7], _rotation[8], invTrans.z,
+		_rotation[0], _rotation[1], _rotation[2], -invTrans.x,
+		_rotation[3], _rotation[4], _rotation[5], -invTrans.y,
+		_rotation[6], _rotation[7], _rotation[8], -invTrans.z,
 		0.f, 0.f, 0.f, 1.f
 	);
 

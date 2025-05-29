@@ -33,12 +33,6 @@ public:
 	virtual Matrix4 getProjectionMatrix() const = 0;
 
 	/**
-	 * Rotates this camera in-place to look at a given target
-	 * @param target Target world position
-	 */
-	void lookAt(const Vector3& target);
-
-	/**
 	 * Rotates and moves the camera to look at a given target
 	 * @param position New camera world position
 	 * @param target Target world position

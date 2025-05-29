@@ -21,14 +21,29 @@ public:
     static const Vector3 XHAT;
 
     /**
+     * Unit vector in the negative x direction
+     */
+    static const Vector3 MINUS_XHAT;
+
+    /**
      * Unit vector in the y direction
      */
     static const Vector3 YHAT;
 
     /**
+     * Unit vector in the negative y direction
+     */
+    static const Vector3 MINUS_YHAT;
+
+    /**
      * Unit vector in the z direction
      */
     static const Vector3 ZHAT;
+
+    /**
+     * Unit vector in the negative z direction
+     */
+    static const Vector3 MINUS_ZHAT;
 
 	/**
 	 * X coordinate
