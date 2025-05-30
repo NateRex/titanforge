@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <graphics/core/input/InputEventType.h>
+#include <graphics/core/input/TriggerType.h>
 
 /**
  * This class is used to define an abstract input action (e.g., "Jump" or "MoveForward") that
@@ -21,14 +21,14 @@ public:
 	/**
 	 * The type of input event that triggers this action
 	 */
-	const InputEventType type;
+	const TriggerType type;
 
 	/**
 	 * Constructor
 	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
 	 * @param type The type of input event that triggers this action
 	 */
-	InputAction(const std::string& name, const InputEventType type);
+	InputAction(const std::string& name, const TriggerType type);
 
 	/**
 	 * Compares this input action to another, testing for equality.

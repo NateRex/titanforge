@@ -6,7 +6,7 @@
  * released, or held down.
  * @author Nathaniel Rex
  */
-enum class InputEventType
+enum class TriggerType
 {
 	/**
 	 * Input is pressed (e.g., a key or mouse down event)
@@ -25,8 +25,8 @@ enum class InputEventType
 };
 
 /**
- * Maps a GLFW action type to a TitanForge input event type
+ * Maps a GLFW action type to an input trigger type
  * @param glfwAction Integer value representing a GLFW action type
- * @return The corresponding input event type
+ * @return The corresponding input trigger type
  */
-InputEventType mapGLFWActionType(int glfwAction);
+TriggerType mapGLFWActionType(int glfwAction);

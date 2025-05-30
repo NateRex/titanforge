@@ -92,10 +92,6 @@ void Renderer::setBackgroundColor(const Color& color)
 
 void Renderer::render(const ScenePtr scene, const CameraPtr camera) const
 {
-	// Process input
-	InputController* inputController = _window->getInputController();
-	inputController->processInput();
-
 	// Clear
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

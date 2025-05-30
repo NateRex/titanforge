@@ -1,13 +1,14 @@
 #pragma once
 #include <unordered_map>
-#include <functional>
-#include <vector>
 
 struct GLFWwindow;
 
 /**
- * An input controller is created upon creation of a window, and handles all user mouse and keyboard
- * events while that window is active.
+ * This class provides a flexible input system that allows mapping raw key inputs
+ * to named actions (e.g., "Jump", "Shoot"), which are then bound to command objects
+ * (e.g., entity methods or behaviors). It is intended to decouple input handling from gameplay
+ * logic using the Command Pattern.
+ * 
  * @author Nathaniel Rex
  */
 class InputController
@@ -21,49 +22,6 @@ public:
 	 */
 	~InputController();
 
-	/**
-	 * Overrides the state of a key to a constant value. This value will be used over actual
-	 * system state when evaluating key presses.
-	 * @param key The key of interest. For a mapping of key name to integer values, see
-	 * https://www.glfw.org/docs/3.3/group__keys.html
-	 * @param state GLFW key state (either GLFW_PRESS or GLFW_RELEASE).
-	 */
-	void setOverride(int key, int state);
-
-	/**
-	 * Removes an override previously set via setOverride()
-	 * @param key The key of interest. For a mapping of key name to integer values, see
-	 * https://www.glfw.org/docs/3.3/group__keys.html
-	 */
-	void removeOverride(int key);
-
-	/**
-	 * Determines if the given key is currently pressed
-	 * @param key The key of interest. For a mapping of key name to integer values, see
-	 * https://www.glfw.org/docs/3.3/group__keys.html
-	 * @return True if that key is currently pressed. Returns false otherwise.
-	 */
-	bool isKeyPressed(int key);
-
-	/**
-	 * Registers a new callback function that will be invoked for a given key
-	 * @param key The key of interest. For a mapping of key name to integer values, see
-	 * https://www.glfw.org/docs/3.3/group__keys.html
-	 * @param callback Callback function to be invoked when the key is pressed
-	 */
-	void addListener(int key, std::function<void()> callback);
-
-	/**
-	 * Removes all callback functions tied to the given key
-	 * @param key The key of interest. For a mapping of key name to integer values, see
-	 * https://www.glfw.org/docs/3.3/group__keys.html
-	 */
-	void removeListeners(int key);
-
-	/**
-	 * Processes all current inputs and invokes callback functions for any keys pressed
-	 */
-	void processInput();
 
 private:
 
@@ -73,16 +31,8 @@ private:
 	GLFWwindow* _glfwWindow;
 
 	/**
-	 * Overrides for key states. Values in this map will be used over actual system state when
-	 * present.
+	 * A mapping from GLFW key values to 
 	 */
-	std::unordered_map<int, bool> _stateOverrides;
-
-	/**
-	 * A mapping from key values to callback functions that should be triggered when those
-	 * keys are pressed
-	 */
-	std::unordered_map<int, std::vector<std::function<void()>>> _listeners;
 
 	/**
 	 * Constructor

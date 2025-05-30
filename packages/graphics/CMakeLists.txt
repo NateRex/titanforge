@@ -12,7 +12,7 @@ add_library(Graphics
     src/core/input/InputAction.cpp
     src/core/input/InputCode.cpp
     src/core/input/InputController.cpp
-    src/core/input/InputEventType.cpp
+    src/core/input/TriggerType.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
