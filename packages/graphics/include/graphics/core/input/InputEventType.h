@@ -23,3 +23,10 @@ enum class InputEventType
 	 */
 	HELD
 };
+
+/**
+ * Maps a GLFW action type to a TitanForge input event type
+ * @param glfwAction Integer value representing a GLFW action type
+ * @return The corresponding input event type
+ */
+InputEventType mapGLFWActionType(int glfwAction);

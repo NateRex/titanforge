@@ -11,6 +11,7 @@ add_library(Graphics
     src/cameras/PerspectiveCamera.cpp
     src/core/input/InputAction.cpp
     src/core/input/InputController.cpp
+    src/core/input/InputEventType.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
