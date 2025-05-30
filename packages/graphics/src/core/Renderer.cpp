@@ -1,6 +1,6 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
-#include <graphics/core/windows/InputController.h>
+#include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/Buffer.h>

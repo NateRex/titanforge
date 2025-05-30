@@ -13,9 +13,10 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/cameras/CameraTest.cpp
     src/cameras/PerspectiveCameraTest.cpp
+    src/core/input/InputActionTest.cpp
+    src/core/input/InputControllerTest.cpp
     src/core/shaders/BasicShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
-    src/core/windows/InputControllerTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/BufferTest.cpp
     src/core/ColorTest.cpp
@@ -26,7 +27,6 @@ add_executable(GraphicsTest
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp
-    src/input/InputActionTest.cpp
     src/materials/BasicMaterialTest.cpp
     src/materials/MaterialTest.cpp
     src/scene/SceneTest.cpp

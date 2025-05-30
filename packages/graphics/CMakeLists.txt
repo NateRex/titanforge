@@ -9,10 +9,11 @@ find_package(Stb REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/input/InputAction.cpp
+    src/core/input/InputController.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
-    src/core/windows/InputController.cpp
     src/core/windows/Window.cpp
     src/core/Buffer.cpp
     src/core/Color.cpp
@@ -23,7 +24,6 @@ add_library(Graphics
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
-    src/input/InputAction.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp

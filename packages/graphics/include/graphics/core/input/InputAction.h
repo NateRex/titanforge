@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <graphics/input/InputEventType.h>
+#include <graphics/core/input/InputEventType.h>
 
 /**
  * This class is used to define an abstract input action (e.g., "Jump" or "MoveForward") that

@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/input/InputAction.h>
+#include <graphics/core/input/InputAction.h>
 #include <common/PrintHelpers.h>
 
 /**

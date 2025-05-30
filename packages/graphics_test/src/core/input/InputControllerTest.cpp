@@ -2,7 +2,7 @@
 #include <graphics_test/GlobalTestFixture.h>
 #include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
-#include <graphics/core/windows/InputController.h>
+#include <graphics/core/input/InputController.h>
 #include <GLFW/glfw3.h>
 
 /**
