@@ -13,6 +13,7 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputKey.cpp
     src/core/input/InputTrigger.cpp
+    src/core/input/InputValue.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
