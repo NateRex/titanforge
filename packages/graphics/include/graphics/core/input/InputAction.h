@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
-#include <graphics/core/input/InputTrigger.h>
+#include <graphics/core/input/InputValueType.h>
 
 /**
- * This class is used to define an abstract input action (e.g., "Jump" or "MoveForward") that
- * can be triggered by specific input events such as key presses, releases, or holds.
+ * This class defines an input action and the type of value it expects (boolean, 1D, 2D, or 3D).
+ * Input actions are referenced by mappings in an InputMappingContext and are bound to behavior
+ * in an InputComponent.
  * @author Nathaniel Rex
  */
 class InputAction
@@ -17,16 +18,16 @@ public:
 	const std::string name;
 
 	/**
-	 * The type of input event that triggers this action
+	 * The type of value that this action expects
 	 */
-	const InputTrigger type;
+	const InputValueType valueType;
 
 	/**
 	 * Constructor
 	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
-	 * @param type The type of input event that triggers this action
+	 * @param valueType The type of value that this action expects
 	 */
-	InputAction(const std::string& name, const InputTrigger type);
+	InputAction(const std::string& name, const InputValueType valueType);
 
 	/**
 	 * Compares this input action to another, testing for equality.

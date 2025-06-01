@@ -7,9 +7,9 @@
  */
 BOOST_AUTO_TEST_CASE(InputAction_basics)
 {
-	InputAction action("Jump", TriggerType::PRESSED);
+	InputAction action("Jump", InputValueType::SCALAR);
 	BOOST_TEST(action.name == "Jump");
-	BOOST_TEST(action.type == TriggerType::PRESSED);
+	BOOST_TEST(action.valueType == InputValueType::SCALAR);
 }
 
 /**
@@ -17,8 +17,8 @@ BOOST_AUTO_TEST_CASE(InputAction_basics)
  */
 BOOST_AUTO_TEST_CASE(InputAction_equals)
 {
-	InputAction action("Jump", TriggerType::PRESSED);
+	InputAction action("Jump", InputValueType::VECTOR_2D);
 	BOOST_TEST(action == action);
-	BOOST_TEST(action != InputAction("Run", TriggerType::PRESSED));
-	BOOST_TEST(action != InputAction("Jump", TriggerType::HELD));
+	BOOST_TEST(action != InputAction("Run", InputValueType::VECTOR_2D));
+	BOOST_TEST(action != InputAction("Jump", InputValueType::VECTOR_3D));
 }
