@@ -7,9 +7,9 @@
  */
 BOOST_AUTO_TEST_CASE(InputAction_basics)
 {
-	InputAction action("Jump", InputValueType::SCALAR);
-	BOOST_TEST(action.name == "Jump");
-	BOOST_TEST(action.valueType == InputValueType::SCALAR);
+	InputActionPtr action = InputAction::create("Jump", InputValueType::SCALAR);
+	BOOST_TEST(action->name == "Jump");
+	BOOST_TEST(action->valueType == InputValueType::SCALAR);
 }
 
 /**
@@ -17,8 +17,8 @@ BOOST_AUTO_TEST_CASE(InputAction_basics)
  */
 BOOST_AUTO_TEST_CASE(InputAction_equals)
 {
-	InputAction action("Jump", InputValueType::VECTOR_2D);
-	BOOST_TEST(action == action);
-	BOOST_TEST(action != InputAction("Run", InputValueType::VECTOR_2D));
-	BOOST_TEST(action != InputAction("Jump", InputValueType::VECTOR_3D));
+	InputActionPtr action = InputAction::create("Jump", InputValueType::VECTOR_2D);
+	BOOST_TEST(*action == *action);
+	BOOST_TEST(*action != *InputAction::create("Run", InputValueType::VECTOR_2D));
+	BOOST_TEST(*action != *InputAction::create("Jump", InputValueType::VECTOR_3D));
 }

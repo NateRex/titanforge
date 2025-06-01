@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/core/input/pointers/InputValuePtr.h>
 #include <graphics/core/input/InputValueType.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
@@ -18,28 +19,32 @@ public:
 	const InputValueType type;
 
 	/**
-	 * Constructs an input action value containing boolean input
+	 * Creates a new input action value containing boolean data
 	 * @param value Input value
+	 * @return The resulting input action value
 	 */
-	InputValue(bool value);
+	static InputValuePtr create(bool value);
 
 	/**
-	 * Constructs an input action value containing scalar input
+	 * Creates a new input action value containing scalar data
 	 * @param value Input value
+	 * @return The resulting input action value
 	 */
-	InputValue(float scalar);
+	static InputValuePtr create(float value);
 
 	/**
-	 * Constructs an input action value containing 2D vector data
+	 * Creates a new input action value containing 2D vector data
 	 * @param value Input value
+	 * @return The resulting input action value
 	 */
-	InputValue(const Vector2& value);
+	static InputValuePtr create(const Vector2& value);
 
 	/**
-	 * Constructs an input action value containing 3D vector data
+	 * Creates a new input action value containing 3D vector data
 	 * @param value Input value
+	 * @return The resulting input action value
 	 */
-	InputValue(const Vector3& value);
+	static InputValuePtr create(const Vector3& value);
 
 	/**
 	 * @return The boolean value stored by this object
@@ -72,4 +77,28 @@ private:
 		Vector2 _vector2Value;
 		Vector3 _vector3Value;
 	};
+
+	/**
+	 * Constructs an input action value containing boolean data
+	 * @param value Input value
+	 */
+	InputValue(bool value);
+
+	/**
+	 * Constructs an input action value containing scalar data
+	 * @param value Input value
+	 */
+	InputValue(float scalar);
+
+	/**
+	 * Constructs an input action value containing 2D vector data
+	 * @param value Input value
+	 */
+	InputValue(const Vector2& value);
+
+	/**
+	 * Constructs an input action value containing 3D vector data
+	 * @param value Input value
+	 */
+	InputValue(const Vector3& value);
 };

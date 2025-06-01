@@ -20,6 +20,26 @@ InputValue::InputValue(const Vector3& value) : type(InputValueType::VECTOR_3D), 
 
 }
 
+InputValuePtr InputValue::create(bool value)
+{
+	return std::shared_ptr<InputValue>(new InputValue(value));
+}
+
+InputValuePtr InputValue::create(float value)
+{
+	return std::shared_ptr<InputValue>(new InputValue(value));
+}
+
+InputValuePtr InputValue::create(const Vector2& value)
+{
+	return std::shared_ptr<InputValue>(new InputValue(value));
+}
+
+InputValuePtr InputValue::create(const Vector3& value)
+{
+	return std::shared_ptr<InputValue>(new InputValue(value));
+}
+
 bool InputValue::getBoolean() const
 {
 	return _boolValue;

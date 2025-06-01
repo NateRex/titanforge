@@ -7,9 +7,9 @@
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_boolean)
 {
-	InputValue iv(true);
-	BOOST_TEST(iv.type == InputValueType::BOOLEAN);
-	BOOST_TEST(iv.getBoolean());
+	InputValuePtr iv = InputValue::create(true);
+	BOOST_TEST(iv->type == InputValueType::BOOLEAN);
+	BOOST_TEST(iv->getBoolean());
 }
 
 /**
@@ -17,9 +17,9 @@ BOOST_AUTO_TEST_CASE(InputValueTest_boolean)
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_scalar)
 {
-	InputValue iv(1.2f);
-	BOOST_TEST(iv.type == InputValueType::SCALAR);
-	BOOST_TEST(iv.getScalar() == 1.2f);
+	InputValuePtr iv = InputValue::create(1.2f);
+	BOOST_TEST(iv->type == InputValueType::SCALAR);
+	BOOST_TEST(iv->getScalar() == 1.2f);
 }
 
 /**
@@ -28,9 +28,9 @@ BOOST_AUTO_TEST_CASE(InputValueTest_scalar)
 BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 {
 	Vector2 vector(1.f, 2.f);
-	InputValue iv(vector);
-	BOOST_TEST(iv.type == InputValueType::VECTOR_2D);
-	BOOST_TEST(iv.get2D() == vector);
+	InputValuePtr iv = InputValue::create(vector);
+	BOOST_TEST(iv->type == InputValueType::VECTOR_2D);
+	BOOST_TEST(iv->get2D() == vector);
 }
 
 /**
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 BOOST_AUTO_TEST_CASE(InputValueTest_vector3D)
 {
 	Vector3 vector(1.f, 2.f, 3.f);
-	InputValue iv(vector);
-	BOOST_TEST(iv.type == InputValueType::VECTOR_3D);
-	BOOST_TEST(iv.get3D() == vector);
+	InputValuePtr iv = InputValue::create(vector);
+	BOOST_TEST(iv->type == InputValueType::VECTOR_3D);
+	BOOST_TEST(iv->get3D() == vector);
 }
