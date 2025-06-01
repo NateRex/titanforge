@@ -6,7 +6,7 @@
  * released, or held down.
  * @author Nathaniel Rex
  */
-enum class TriggerType
+enum class InputTrigger
 {
 	/**
 	 * Input is pressed (e.g., a key or mouse down event)
@@ -29,4 +29,4 @@ enum class TriggerType
  * @param glfwAction Integer value representing a GLFW action type
  * @return The corresponding input trigger type
  */
-TriggerType mapGLFWActionType(int glfwAction);
+InputTrigger mapGLFWActionType(int glfwAction);

@@ -7,7 +7,7 @@
  * coupling user code to a specific library.
  * @author Nathaniel Rex
  */
-enum class InputCode
+enum class InputKey
 {
 	// Keyboard
 
@@ -135,9 +135,9 @@ enum class InputCode
 };
 
 /**
- * Maps a TitanForge input code to its corresponding GLFW definition
- * @param code Input code to map
- * @return The GLFW definition corresponding to that input code
- * @throws IllegalArgumentException on failure to map the given code to a valid GLFW value
+ * Maps a TitanForge input key to its corresponding GLFW definition
+ * @param key Input key to map
+ * @return The GLFW definition corresponding to that input key
+ * @throws IllegalArgumentException on failure to map the given key to a valid GLFW value
  */
-int mapInputCode(const InputCode& code);
+int mapInputKey(const InputKey& key);
