@@ -33,11 +33,6 @@ public:
 	 */
 	const InputValuePtr value;
 
-	/**
-	 * Destructor
-	 */
-	~InputActionMapping();
-
 private:
 
 	/**
