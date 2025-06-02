@@ -44,8 +44,8 @@ BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 
 	// Copy constructor
 	InputValue iv2(iv);
-	BOOST_TEST(iv2.getType() == InputValueType::SCALAR);
-	BOOST_TEST(iv2.getScalar() == 1.2f);
+	BOOST_TEST(iv2.getType() == InputValueType::VECTOR_2D);
+	BOOST_TEST(iv2.get2D() == vector);
 }
 
 /**
@@ -60,6 +60,6 @@ BOOST_AUTO_TEST_CASE(InputValueTest_vector3D)
 
 	// Copy constructor
 	InputValue iv2(iv);
-	BOOST_TEST(iv2.getType() == InputValueType::SCALAR);
-	BOOST_TEST(iv2.getScalar() == 1.2f);
+	BOOST_TEST(iv2.getType() == InputValueType::VECTOR_3D);
+	BOOST_TEST(iv2.get3D() == vector);
 }
