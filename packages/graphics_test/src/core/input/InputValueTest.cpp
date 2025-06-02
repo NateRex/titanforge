@@ -7,9 +7,14 @@
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_boolean)
 {
-	InputValuePtr iv = InputValue::create(true);
-	BOOST_TEST(iv->type == InputValueType::BOOLEAN);
-	BOOST_TEST(iv->getBoolean());
+	InputValue iv(true);
+	BOOST_TEST(iv.getType() == InputValueType::BOOLEAN);
+	BOOST_TEST(iv.getBoolean());
+
+	// Copy constructor
+	InputValue iv2(iv);
+	BOOST_TEST(iv2.getType() == InputValueType::BOOLEAN);
+	BOOST_TEST(iv2.getBoolean());
 }
 
 /**
@@ -17,9 +22,14 @@ BOOST_AUTO_TEST_CASE(InputValueTest_boolean)
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_scalar)
 {
-	InputValuePtr iv = InputValue::create(1.2f);
-	BOOST_TEST(iv->type == InputValueType::SCALAR);
-	BOOST_TEST(iv->getScalar() == 1.2f);
+	InputValue iv(1.2f);
+	BOOST_TEST(iv.getType() == InputValueType::SCALAR);
+	BOOST_TEST(iv.getScalar() == 1.2f);
+
+	// Copy constructor
+	InputValue iv2(iv);
+	BOOST_TEST(iv2.getType() == InputValueType::SCALAR);
+	BOOST_TEST(iv2.getScalar() == 1.2f);
 }
 
 /**
@@ -28,9 +38,14 @@ BOOST_AUTO_TEST_CASE(InputValueTest_scalar)
 BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 {
 	Vector2 vector(1.f, 2.f);
-	InputValuePtr iv = InputValue::create(vector);
-	BOOST_TEST(iv->type == InputValueType::VECTOR_2D);
-	BOOST_TEST(iv->get2D() == vector);
+	InputValue iv(vector);
+	BOOST_TEST(iv.getType() == InputValueType::VECTOR_2D);
+	BOOST_TEST(iv.get2D() == vector);
+
+	// Copy constructor
+	InputValue iv2(iv);
+	BOOST_TEST(iv2.getType() == InputValueType::SCALAR);
+	BOOST_TEST(iv2.getScalar() == 1.2f);
 }
 
 /**
@@ -39,7 +54,12 @@ BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 BOOST_AUTO_TEST_CASE(InputValueTest_vector3D)
 {
 	Vector3 vector(1.f, 2.f, 3.f);
-	InputValuePtr iv = InputValue::create(vector);
-	BOOST_TEST(iv->type == InputValueType::VECTOR_3D);
-	BOOST_TEST(iv->get3D() == vector);
+	InputValue iv(vector);
+	BOOST_TEST(iv.getType() == InputValueType::VECTOR_3D);
+	BOOST_TEST(iv.get3D() == vector);
+
+	// Copy constructor
+	InputValue iv2(iv);
+	BOOST_TEST(iv2.getType() == InputValueType::SCALAR);
+	BOOST_TEST(iv2.getScalar() == 1.2f);
 }

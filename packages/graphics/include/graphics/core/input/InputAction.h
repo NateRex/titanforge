@@ -13,21 +13,21 @@ class InputAction
 public:
 
 	/**
-	 * The name of the action (e.g, "Jump" or "MoveForward")
-	 */
-	const std::string name;
-
-	/**
-	 * The type of value that this action expects
-	 */
-	const InputValueType valueType;
-
-	/**
 	 * Constructor
 	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
-	 * @param valueType The type of value that this action expects
+	 * @param valueType The type of value that this action generates
 	 */
 	InputAction(const std::string& name, const InputValueType valueType);
+
+	/**
+	 * @return The name of the action (e.g, "Jump" or "MoveForward")
+	 */
+	std::string getName() const { return _name; }
+
+	/**
+	 * @return The type of value that this action generates
+	 */
+	InputValueType getValueType() const { return _valueType; }
 
 	/**
 	 * Compares this input action to another, testing for equality.
@@ -42,6 +42,18 @@ public:
 	 * @return True if the two input actions are not equal. Returns false otherwise.
 	 */
 	bool operator!=(const InputAction& other) const;
+
+private:
+
+	/**
+	 * The name of the action (e.g, "Jump" or "MoveForward")
+	 */
+	std::string _name;
+
+	/**
+	 * The type of value that this action generates
+	 */
+	InputValueType _valueType;
 };
 
 namespace std {
@@ -58,8 +70,8 @@ namespace std {
 		 * @return Hash result
 		 */
 		std::size_t operator()(const InputAction& action) const noexcept {
-			std::size_t h1 = std::hash<std::string>{}(action.name);
-			std::size_t h2 = std::hash<int>{}(static_cast<int>(action.valueType));
+			std::size_t h1 = std::hash<std::string>{}(action.getName());
+			std::size_t h2 = std::hash<int>{}(static_cast<int>(action.getValueType()));
 			return h1 ^ (h2 << 1);
 		}
 	};

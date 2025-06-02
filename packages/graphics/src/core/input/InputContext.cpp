@@ -15,7 +15,7 @@ void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& ac
 {
 	int glfwKey = mapInputKey(key);
 	std::pair<int, InputTrigger> mapKey = std::make_pair(glfwKey, trigger);
-	_mappings[mapKey].emplace_back(glfwKey, trigger, action, value);
+	_mappings[mapKey].push_back({ glfwKey, trigger, action, value });
 }
 
 size_t InputContext::size() const

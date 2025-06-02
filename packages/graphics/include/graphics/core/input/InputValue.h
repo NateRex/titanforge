@@ -13,11 +13,6 @@ class InputValue
 public:
 
 	/**
-	 * The type of input data held by this object.
-	 */
-	const InputValueType type;
-
-	/**
 	 * Constructs an input action value containing boolean data
 	 * @param value Input value
 	 */
@@ -42,26 +37,42 @@ public:
 	InputValue(const Vector3& value);
 
 	/**
+	 * Constructs an input action value from an existing value
+	 * @param other Input action value to copy from
+	 */
+	InputValue(const InputValue& other);
+
+	/**
+	 * @return The type of data held by this object
+	 */
+	InputValueType getType() const { return _type; }
+
+	/**
 	 * @return The boolean value stored by this object
 	 */
-	bool getBoolean() const;
+	bool getBoolean() const { return _boolValue; }
 
 	/**
 	 * @return The scalar value stored by this object
 	 */
-	float getScalar() const;
+	float getScalar() const { return _scalarValue; }
 
 	/**
 	 * @return The 2D vector value stored by this object
 	 */
-	Vector2 get2D() const;
+	Vector2 get2D() const { return _vector2Value; }
 
 	/**
 	 * @return The 3D vector value stored by this object
 	 */
-	Vector3 get3D() const;
+	Vector3 get3D() const { return _vector3Value; }
 
 private:
+
+	/**
+	 * The type of data held by this object.
+	 */
+	InputValueType _type;
 
 	/**
 	 * The data stored by this object

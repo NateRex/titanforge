@@ -10,7 +10,6 @@ add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
     src/core/input/InputAction.cpp
-    src/core/input/InputActionMapping.cpp
     src/core/input/InputContext.cpp
     src/core/input/InputController.cpp
     src/core/input/InputKey.cpp

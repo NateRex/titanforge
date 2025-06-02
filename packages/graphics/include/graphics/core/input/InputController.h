@@ -1,11 +1,11 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
+#include <graphics/core/input/InputAction.h>
 #include <vector>
 #include <unordered_map>
 #include <functional>
 
 struct GLFWwindow;
-class InputAction;
 class InputValue;
 
 using ActionCallback = std::function<void(const InputValue&)> ;

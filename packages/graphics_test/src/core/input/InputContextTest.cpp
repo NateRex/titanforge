@@ -9,9 +9,9 @@
  */
 BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 {
-	InputActionPtr action1 = InputAction::create("Action1", InputValueType::BOOLEAN);
-	InputActionPtr action2 = InputAction::create("Action2", InputValueType::VECTOR_2D);
-	InputValuePtr value = InputValue::create(true);
+	InputAction action1("Action1", InputValueType::BOOLEAN);
+	InputAction action2("Action2", InputValueType::VECTOR_2D);
+	InputValue value(true);
 
 	InputContextPtr context = InputContext::create();
 	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action1, value);
