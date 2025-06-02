@@ -1,15 +1,14 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
-#include <graphics/core/input/pointers/InputActionPtr.h>
+#include <graphics/core/input/InputAction.h>
 #include <vector>
 #include <unordered_map>
 #include <functional>
 
 struct GLFWwindow;
-class InputAction;
 class InputValue;
 
-using ActionCallback = std::function<void(const InputValue&) >> ;
+using ActionCallback = std::function<void(const InputValue&)> ;
 
 /**
  * Central dispatcher for input events based on active contexts and action bindings. This class receives GLFW key
@@ -17,7 +16,7 @@ using ActionCallback = std::function<void(const InputValue&) >> ;
  * the matching input action.
  * @author Nathaniel Rex
  */
-class InputComponent
+class InputController
 {
 public:
 	
@@ -29,10 +28,10 @@ public:
 	 * @param action Action
 	 * @param callback Callback function
 	 */
-	void bindAction(const InputActionPtr action, const ActionCallback& callback);
+	void bindAction(const InputAction& action, const ActionCallback& callback);
 
 	/**
-	 * Adds a new active input context to this component. In doing so, any action mappings contained within the
+	 * Adds a new active input context to this controller. In doing so, any action mappings contained within the
 	 * context will be enabled.
 	 */
 	void addContext(const InputContextPtr context);
@@ -68,5 +67,5 @@ private:
 	 * Constructor
 	 * @param glfwWindow A pointer to the GLFW window object for which we want to monitor input
 	 */
-	InputComponent(GLFWwindow* glfwWindow);
+	InputController(GLFWwindow* glfwWindow);
 };

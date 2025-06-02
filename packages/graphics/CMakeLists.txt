@@ -11,8 +11,8 @@ add_library(Graphics
     src/cameras/PerspectiveCamera.cpp
     src/core/input/InputAction.cpp
     src/core/input/InputActionMapping.cpp
-    src/core/input/InputComponent.cpp
     src/core/input/InputContext.cpp
+    src/core/input/InputController.cpp
     src/core/input/InputKey.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
