@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/core/input/pointers/InputValuePtr.h>
 #include <graphics/core/input/InputValueType.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
@@ -19,32 +18,28 @@ public:
 	const InputValueType type;
 
 	/**
-	 * Creates a new input action value containing boolean data
+	 * Constructs an input action value containing boolean data
 	 * @param value Input value
-	 * @return The resulting input action value
 	 */
-	static InputValuePtr create(bool value);
+	InputValue(bool value);
 
 	/**
-	 * Creates a new input action value containing scalar data
+	 * Constructs an input action value containing scalar data
 	 * @param value Input value
-	 * @return The resulting input action value
 	 */
-	static InputValuePtr create(float value);
+	InputValue(float scalar);
 
 	/**
-	 * Creates a new input action value containing 2D vector data
+	 * Constructs an input action value containing 2D vector data
 	 * @param value Input value
-	 * @return The resulting input action value
 	 */
-	static InputValuePtr create(const Vector2& value);
+	InputValue(const Vector2& value);
 
 	/**
-	 * Creates a new input action value containing 3D vector data
+	 * Constructs an input action value containing 3D vector data
 	 * @param value Input value
-	 * @return The resulting input action value
 	 */
-	static InputValuePtr create(const Vector3& value);
+	InputValue(const Vector3& value);
 
 	/**
 	 * @return The boolean value stored by this object
@@ -77,28 +72,4 @@ private:
 		Vector2 _vector2Value;
 		Vector3 _vector3Value;
 	};
-
-	/**
-	 * Constructs an input action value containing boolean data
-	 * @param value Input value
-	 */
-	InputValue(bool value);
-
-	/**
-	 * Constructs an input action value containing scalar data
-	 * @param value Input value
-	 */
-	InputValue(float scalar);
-
-	/**
-	 * Constructs an input action value containing 2D vector data
-	 * @param value Input value
-	 */
-	InputValue(const Vector2& value);
-
-	/**
-	 * Constructs an input action value containing 3D vector data
-	 * @param value Input value
-	 */
-	InputValue(const Vector3& value);
 };

@@ -11,7 +11,7 @@ InputContextPtr InputContext::create()
 	return std::shared_ptr<InputContext>(new InputContext());
 }
 
-void InputContext::add(InputKey key, InputTrigger trigger, const InputActionPtr action, const InputValuePtr value)
+void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value)
 {
 	int glfwKey = mapInputKey(key);
 	std::pair<int, InputTrigger> mapKey = std::make_pair(glfwKey, trigger);

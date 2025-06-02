@@ -1,13 +1,13 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
-#include <graphics/core/input/pointers/InputActionPtr.h>
-#include <graphics/core/input/pointers/InputValuePtr.h>
 #include <graphics/core/input/InputKey.h>
 #include <graphics/core/input/InputTrigger.h>
 #include <unordered_map>
 #include <vector>
 #include <utility>
 
+class InputAction;
+class InputValue;
 class InputActionMapping;
 
 /**
@@ -33,12 +33,12 @@ public:
 	 * @param action Action
 	 * @param value Value to generate for the action
 	 */
-	void add(InputKey key, InputTrigger trigger, const InputActionPtr action, const InputValuePtr value);
+	void add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value);
 
 	/**
 	 * @return The number of action mappings held by this context
 	 */
-	size_t size() const;
+	std::size_t size() const;
 
 	/**
 	 * Identifies the action mappings associated with the given input key and trigger pair

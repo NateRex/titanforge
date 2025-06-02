@@ -5,11 +5,6 @@ InputAction::InputAction(const std::string& name, const InputValueType valueType
 
 }
 
-InputActionPtr InputAction::create(const std::string& name, const InputValueType valueType)
-{
-	return std::shared_ptr<InputAction>(new InputAction(name, valueType));
-}
-
 bool InputAction::operator==(const InputAction& other) const
 {
 	return name == other.name && valueType == other.valueType;

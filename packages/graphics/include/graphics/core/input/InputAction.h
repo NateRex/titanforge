@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/core/input/pointers/InputActionPtr.h>
 #include <graphics/core/input/InputValueType.h>
 #include <string>
 
@@ -24,12 +23,11 @@ public:
 	const InputValueType valueType;
 
 	/**
-	 * Creates a new input action
+	 * Constructor
 	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
 	 * @param valueType The type of value that this action expects
-	 * @return The resulting input action
 	 */
-	static InputActionPtr create(const std::string& name, const InputValueType valueType);
+	InputAction(const std::string& name, const InputValueType valueType);
 
 	/**
 	 * Compares this input action to another, testing for equality.
@@ -44,15 +42,6 @@ public:
 	 * @return True if the two input actions are not equal. Returns false otherwise.
 	 */
 	bool operator!=(const InputAction& other) const;
-
-private:
-
-	/**
-	 * Constructor
-	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
-	 * @param valueType The type of value that this action expects
-	 */
-	InputAction(const std::string& name, const InputValueType valueType);
 };
 
 namespace std {
