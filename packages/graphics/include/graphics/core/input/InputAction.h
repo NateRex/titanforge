@@ -54,3 +54,24 @@ private:
 	 */
 	InputAction(const std::string& name, const InputValueType valueType);
 };
+
+namespace std {
+
+	/**
+	 * Hashing struct for InputAction
+	 */
+	template <>
+	struct hash<InputAction> {
+
+		/**
+		 * Hashing function for InputAction
+		 * @param action Action
+		 * @return Hash result
+		 */
+		std::size_t operator()(const InputAction& action) const noexcept {
+			std::size_t h1 = std::hash<std::string>{}(action.name);
+			std::size_t h2 = std::hash<int>{}(static_cast<int>(action.valueType));
+			return h1 ^ (h2 << 1);
+		}
+	};
+}
