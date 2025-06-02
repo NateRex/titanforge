@@ -11,30 +11,6 @@ class InputActionMapping
 {
 public:
 
-	friend class InputContext;
-
-	/**
-	 * GLFW key code
-	 */
-	const int key;
-
-	/**
-	 * Trigger event
-	 */
-	const InputTrigger trigger;
-
-	/**
-	 * Action
-	 */
-	const InputActionPtr action;
-
-	/**
-	 * Value
-	 */
-	const InputValuePtr value;
-
-private:
-
 	/**
 	 * Constructor
 	 * @param key GLFW key code
@@ -43,4 +19,46 @@ private:
 	 * @param value Value that should be passed to the executable bound to the action, when triggered
 	 */
 	InputActionMapping(int key, InputTrigger trigger, const InputActionPtr action, const InputValuePtr value);
+
+	/**
+	 * @return The GLFW key code
+	 */
+	int getGLFWKey() { return key; }
+
+	/**
+	 * @return The trigger event
+	 */
+	InputTrigger getTrigger() { return trigger; }
+
+	/**
+	 * @return The action
+	 */
+	InputActionPtr getAction() { return action; }
+
+	/**
+	 * @return The value
+	 */
+	InputValuePtr getValue() { return value; }
+
+private:
+
+	/**
+	 * GLFW key code
+	 */
+	int key;
+
+	/**
+	 * Trigger event
+	 */
+	InputTrigger trigger;
+
+	/**
+	 * Action
+	 */
+	InputActionPtr action;
+
+	/**
+	 * Value
+	 */
+	InputValuePtr value;
 };

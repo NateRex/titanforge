@@ -14,6 +14,7 @@ add_executable(GraphicsTest
     src/cameras/CameraTest.cpp
     src/cameras/PerspectiveCameraTest.cpp
     src/core/input/InputActionTest.cpp
+    src/core/input/InputContextTest.cpp
     src/core/input/InputKeyTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
