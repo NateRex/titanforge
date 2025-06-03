@@ -54,19 +54,17 @@ private:
 	 * The type of value that this action generates
 	 */
 	InputValueType _valueType;
-};
 
-namespace std {
+public:
 
 	/**
-	 * Hashing struct for InputAction
+	 * Hash structure for InputAction
 	 */
-	template <>
-	struct hash<InputAction> {
-
+	struct Hash
+	{
 		/**
-		 * Hashing function for InputAction
-		 * @param action Action
+		 * Hash function
+		 * @param action InputAction
 		 * @return Hash result
 		 */
 		std::size_t operator()(const InputAction& action) const noexcept {
@@ -75,4 +73,4 @@ namespace std {
 			return h1 ^ (h2 << 1);
 		}
 	};
-}
+};

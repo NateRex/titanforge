@@ -23,28 +23,37 @@ public:
 	friend class Window;
 
 	/**
-	 * Binds an action to a function that will be called whenever the action is triggered via one of the active
-	 * input contexts
-	 * @param action Action
-	 * @param callback Callback function
-	 */
-	void bindAction(const InputAction& action, const ActionCallback& callback);
-
-	/**
 	 * Adds a new active input context to this controller. In doing so, any action mappings contained within the
 	 * context will be enabled.
 	 */
 	void addContext(const InputContextPtr context);
 
 	/**
-	 * Clear all action bindings. In doing so, there will no longer be any callback functions associated with actions.
+	 * Binds an action to a function that will be called whenever the action is triggered via one of the active
+	 * input contexts
+	 * @param action Action
+	 * @param callback Callback function
 	 */
-	void clearActionBindings();
+	void bind(const InputAction& action, const ActionCallback& callback);
 
 	/**
 	 * Clear all input contexts. In doing so, there will no longer be any action mappings enabled.
 	 */
 	void clearContexts();
+
+	/**
+	 * Clear all action bindings. In doing so, there will no longer be any callback functions associated with actions.
+	 */
+	void clearBindings();
+
+	/**
+	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the active input contexts,
+	 * and executing callbacks bound to those actions.
+	 * @param glfwKey GLFW key code
+	 * @param glfwAction GLFW trigger type
+	 * @param mods GLFW modifier bits
+	 */
+	void processKeyEvent(int glfwKey, int glfwAction, int mods) const;
 
 private:
 
@@ -61,7 +70,7 @@ private:
 	/**
 	 * Mapping from input actions to callback values
 	 */
-	std::unordered_map<InputAction, ActionCallback> _bindings;
+	std::unordered_map<InputAction, ActionCallback, InputAction::Hash> _bindings;
 
 	/**
 	 * Constructor

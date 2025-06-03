@@ -1,7 +1,7 @@
 #include <graphics/core/input/InputTrigger.h>
 #include <GLFW/glfw3.h>
 
-InputTrigger mapGLFWActionType(int glfwAction)
+InputTrigger mapGLFWAction(int glfwAction)
 {
 	switch (glfwAction)
 	{

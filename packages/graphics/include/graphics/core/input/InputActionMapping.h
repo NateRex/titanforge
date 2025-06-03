@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/core/input/InputTrigger.h>
 #include <graphics/core/input/InputAction.h>
 #include <graphics/core/input/InputValue.h>
 
@@ -9,11 +8,10 @@
  */
 struct InputActionMapping
 {
-
 	/**
-	 * GLFW key code
+	 * Input key
 	 */
-	int key;
+	InputKey key;
 
 	/**
 	 * Trigger event

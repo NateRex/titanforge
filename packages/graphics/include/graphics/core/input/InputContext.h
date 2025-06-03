@@ -58,16 +58,16 @@ private:
 
 		/**
 		 * Computes the hash of a (key, trigger) pair
-		 * @param p Pair containing the GLFW key, followed by the trigger type
+		 * @param p Pair containing the input key, followed by the trigger type
 		 * @return The resulting hash
 		 */
-		std::size_t operator()(const std::pair<int, InputTrigger>& p) const;
+		std::size_t operator()(const std::pair<InputKey, InputTrigger>& p) const;
 	};
 
 	/**
 	 * Mapping from (key, trigger) pairs to a list of action mappings
 	 */
-	std::unordered_map<std::pair<int, InputTrigger>, std::vector<InputActionMapping>, PairHash> _mappings;
+	std::unordered_map<std::pair<InputKey, InputTrigger>, std::vector<InputActionMapping>, PairHash> _mappings;
 
 	/**
 	 * Constructor

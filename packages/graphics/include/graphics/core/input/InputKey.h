@@ -135,9 +135,9 @@ enum class InputKey
 };
 
 /**
- * Maps a TitanForge input key to its corresponding GLFW definition
- * @param key Input key to map
- * @return The GLFW definition corresponding to that input key
+ * Maps a GLFW input code to an input key enumerated value
+ * @param glfwKey GLFW key to map
+ * @return The corresponding input key
  * @throws IllegalArgumentException on failure to map the given key to a valid GLFW value
  */
-int mapInputKey(const InputKey& key);
+InputKey mapGLFWKey(int glfwKey);
