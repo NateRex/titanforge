@@ -9,6 +9,15 @@
 InputController::InputController(GLFWwindow* glfwWindow) : _glfwWindow(glfwWindow)
 {
 	assertNotNull(_glfwWindow, "Input controller requires valid GLFW window");
+
+	glfwSetWindowUserPointer(glfwWindow, this);
+	glfwSetKeyCallback(glfwWindow, InputController::processKeyEvent);
+}
+
+InputController::~InputController()
+{
+	glfwSetKeyCallback(_glfwWindow, nullptr);
+	glfwSetWindowUserPointer(_glfwWindow, nullptr);
 }
 
 void InputController::bind(const InputAction& action, const ActionCallback& callback)
@@ -60,4 +69,16 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 			}
 		}
 	}
+}
+
+void InputController::processKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	// Grab input controller pointer
+	InputController* controller = static_cast<InputController*>(glfwGetWindowUserPointer(window));
+	if (!controller)
+	{
+		return;
+	}
+
+	controller->processKeyEvent(key, action, mods);
 }

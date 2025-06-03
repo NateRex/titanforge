@@ -23,6 +23,11 @@ public:
 	friend class Window;
 
 	/**
+	 * Destructor
+	 */
+	~InputController();
+
+	/**
 	 * Adds a new active input context to this controller. In doing so, any action mappings contained within the
 	 * context will be enabled.
 	 */
@@ -77,4 +82,15 @@ private:
 	 * @param glfwWindow A pointer to the GLFW window object for which we want to monitor input
 	 */
 	InputController(GLFWwindow* glfwWindow);
+
+	/**
+	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the input controller
+	 * associated with the window.
+	 * @param glfwWindow GLFW window pointer
+	 * @param glfwKey GLFW key code
+	 * @param scancode The platform-specific scan code of the key.
+	 * @param The GLFW action type (GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT)
+	 * @param mods Bit field describing which modifier keys were held.
+	 */
+	static void processKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 };
