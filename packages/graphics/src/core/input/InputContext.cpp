@@ -1,5 +1,6 @@
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/InputActionMapping.h>
+#include <common/Assertions.h>
 
 InputContext::InputContext()
 {
@@ -13,6 +14,8 @@ InputContextPtr InputContext::create()
 
 void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value)
 {
+	assertTrue(action.getValueType() == value.getType(), "Value did not match expected action type");
+
 	std::pair<InputKey, InputTrigger> mapKey = std::make_pair(key, trigger);
 	_mappings[mapKey].push_back({ key, trigger, action, value });
 }

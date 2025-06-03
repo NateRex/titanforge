@@ -1,13 +1,13 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
+#include <graphics/core/input/InputAction.h>
+#include <graphics/core/input/InputValue.h>
 #include <graphics/core/input/InputKey.h>
 #include <graphics/core/input/InputTrigger.h>
 #include <unordered_map>
 #include <vector>
 #include <utility>
 
-class InputAction;
-class InputValue;
 class InputActionMapping;
 
 /**
@@ -32,6 +32,7 @@ public:
 	 * @param trigger Trigger event
 	 * @param action Action
 	 * @param value Value to generate for the action
+	 * @throws IllegalArgumentException If the value type does not match the expected value type on the given action
 	 */
 	void add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value);
 

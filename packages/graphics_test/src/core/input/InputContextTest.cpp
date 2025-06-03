@@ -10,7 +10,7 @@
 BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 {
 	InputAction action1("Action1", InputValueType::BOOLEAN);
-	InputAction action2("Action2", InputValueType::VECTOR_2D);
+	InputAction action2("Action2", InputValueType::BOOLEAN);
 	InputValue value(true);
 
 	InputContextPtr context = InputContext::create();
