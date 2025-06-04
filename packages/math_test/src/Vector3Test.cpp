@@ -129,9 +129,9 @@ BOOST_AUTO_TEST_CASE(Vector3_crossProduct)
 }
 
 /**
- * Tests the operator for scaling a vector
+ * Tests uniform scaling of a vector
  */
-BOOST_AUTO_TEST_CASE(Vector3_scaling)
+BOOST_AUTO_TEST_CASE(Vector3_uniformScaling)
 {
     Vector3 v1(-3, 8, 1);
     Vector3 v2 = v1.scale(-2);
@@ -141,6 +141,22 @@ BOOST_AUTO_TEST_CASE(Vector3_scaling)
 
     Vector3 result;
     v1.scale(-2, &result);
+    BOOST_TEST(result == v2);
+}
+
+/**
+ * Tests non-uniform scaling of a vector
+ */
+BOOST_AUTO_TEST_CASE(Vector3_nonUniformScaling)
+{
+    Vector3 v1(1, 2, 3);
+    Vector3 v2 = v1.scale(-2, 3, -4);
+    BOOST_TEST(equals(v2.x, -2, 1.0e-12));
+    BOOST_TEST(equals(v2.y, 6, 1.0e-12));
+    BOOST_TEST(equals(v2.z, -12, 1.0e-12));
+
+    Vector3 result;
+    v1.scale(-2, 3, -4, &result);
     BOOST_TEST(result == v2);
 }
 

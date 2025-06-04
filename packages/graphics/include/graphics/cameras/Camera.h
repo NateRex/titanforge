@@ -23,6 +23,27 @@ public:
 	void addScaling(float x, float y, float z) override;
 
 	/**
+	 * Computes the unit vector representing the "up" direction of the camera, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The up vector
+	 */
+	Vector3 getUpVector(Vector3* result = nullptr) const;
+
+	/**
+	 * Computes the unit vector representing the "forward" direction of the camera, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The forward vector
+	 */
+	Vector3 getForwardVector(Vector3* result = nullptr) const;
+
+	/**
+	 * Computes the unit vector representing the "right" direction of the camera, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The right vector
+	 */
+	Vector3 getRightVector(Vector3* result = nullptr) const;
+
+	/**
 	 * @return A matrix capable of transforming objects from world space to view space relative to this camera
 	 */
 	Matrix4 getViewMatrix();

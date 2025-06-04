@@ -91,12 +91,21 @@ public:
     Vector2 normalize(Vector2* result = nullptr) const;
 
     /**
-     * Scales this vector by the given value, returning the result as a new vector
+     * Uniformly scales this vector by the given value, returning the result as a new vector
      * @param value The value to scale by
      * @param result (Optional) Pointer to a vector in which to store the results
      * @return The resulting vector
      */
     Vector2 scale(float value, Vector2* result = nullptr) const;
+
+    /**
+     * Performs a non-uniform scaling of this vector using the given values, returning the result as a new vector
+     * @param xScalar Scaling in the x direction
+     * @param yScalar Scaling in the y direction
+     * @param result (Optional) Pointer to a vector in which to store the results
+     * @return The resulting vector
+     */
+    Vector2 scale(float xScalar, float yScalar, Vector2* result = nullptr) const;
 
     /**
      * Subtracts another vector from this vector.

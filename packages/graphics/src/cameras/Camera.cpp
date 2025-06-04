@@ -1,5 +1,6 @@
 #include <graphics/cameras/Camera.h>
 #include <common/exceptions/UnsupportedOperationException.h>
+#include <common/Utils.h>
 
 Camera::Camera(): Entity(EntityType::CAMERA)
 {
@@ -14,6 +15,27 @@ void Camera::setScaling(float x, float y, float z)
 void Camera::addScaling(float x, float y, float z)
 {
 	throw UnsupportedOperationException("Scaling not supported for cameras");
+}
+
+Vector3 Camera::getRightVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(0, &r);
+	return r.normalize(&r);
+}
+
+Vector3 Camera::getUpVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(1, &r);
+	return r.normalize(&r);
+}
+
+Vector3 Camera::getForwardVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(2, &r);
+	return r.normalize(&r);
 }
 
 void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)

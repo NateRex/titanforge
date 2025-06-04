@@ -67,7 +67,7 @@ int main()
     // Render the scene until the window is closed, rotating the meshes on each animation frame.
     while (renderer.getWindow()->isOpen())
     {
-        double t = renderer.getTime();
+        float t = renderer.getTime();
 
         // Transform camera
         const float radius = 10.0f;

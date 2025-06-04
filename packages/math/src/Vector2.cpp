@@ -79,6 +79,15 @@ Vector2 Vector2::scale(float value, Vector2* result) const
     return r;
 }
 
+Vector2 Vector2::scale(float xScalar, float yScalar, Vector2* result) const
+{
+    Vector2& r = getOrDefault(result, Vector2());
+
+    r.x = x * xScalar;
+    r.y = y * yScalar;
+    return r;
+}
+
 Vector2 Vector2::minus(const Vector2& other, Vector2* result) const
 {
     Vector2& r = getOrDefault(result, Vector2());

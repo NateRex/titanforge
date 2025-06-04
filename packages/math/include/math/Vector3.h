@@ -128,12 +128,22 @@ public:
     Vector3 normalize(Vector3* result = nullptr) const;
 
     /**
-     * Scales this vector by the given value, returning the result as a new vector
+     * Uniformly scales this vector by the given value, returning the result as a new vector
      * @param value The value to scale by
      * @param result (Optional) Pointer to a vector in which to store the results
      * @return The resulting vector
      */
     Vector3 scale(float value, Vector3* result = nullptr) const;
+
+    /**
+     * Performs a non-uniform scaling of this vector using the given values, returning the result as a new vector
+     * @param xScalar Scaling in the x direction
+     * @param yScalar Scaling in the y direction
+     * @param zScalar Scaling in the z direction
+     * @param result (Optional) Pointer to a vector in which to store the results
+     * @return The resulting vector
+     */
+    Vector3 scale(float xScalar, float yScalar, float zScalar, Vector3* result = nullptr) const;
 
     /**
      * Subtracts another vector from this vector.
