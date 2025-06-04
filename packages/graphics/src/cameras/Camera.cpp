@@ -48,7 +48,7 @@ void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector
 	setRotation(
 		r.x,	r.y,	r.z,
 		u.x,	u.y,	u.z,
-		-f.x,	-f.y,	-f.z
+		f.x,	f.y,	f.z
 	);
 
 	// local-to-world translation
