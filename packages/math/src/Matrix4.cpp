@@ -112,14 +112,14 @@ Matrix4 Matrix4::fromOrthographic(float width, float height, float near, float f
 
 Matrix4 Matrix4::fromPerspective(float fov, float aspect, float near, float far, Matrix4* result)
 {
-	float tanHalfFov = tan(fov / 2.0f);
+	float f = 1.0f / tan(fov / 2.0f);
 
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(
-		1.0f / (aspect * tanHalfFov), 0.f, 0.f, 0.f,
-		0.f, 1.0f / tanHalfFov, 0.f, 0.f,
-		0.f, 0.f, -(far + near) / (far - near), -2.f * far * near / (far - near),
-		0.f, 0.f, -1.0f, 0.f);
+		f / aspect, 0.f, 0.f, 0.f,
+		0.f, f, 0.f, 0.f,
+		0.f, 0.f, (far + near) / (near - far), 2.f * far * near / (near - far),
+		0.f, 0.f, -1.f, 0.f);
 
 	return r;
 }

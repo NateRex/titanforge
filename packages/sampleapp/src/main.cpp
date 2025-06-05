@@ -62,7 +62,12 @@ int main()
 
     // Create scene
     ScenePtr scene = Scene::create();
-    std::vector<MeshPtr> meshes = createBoxes(scene);
+    // std::vector<MeshPtr> meshes = createBoxes(scene);
+    GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
+    MaterialPtr material = BasicMaterial::create();
+    material->texture = TextureLoader::load("assets/awesomeface.png");
+    MeshPtr mesh = Mesh::create(geometry, material);
+    mesh->setPosition(0.f, 0.f, 5.f);
 
     // Render the scene until the window is closed, rotating the meshes on each animation frame.
     while (renderer.getWindow()->isOpen())
@@ -70,10 +75,10 @@ int main()
         float t = renderer.getTime();
 
         // Transform camera
-        const float radius = 10.0f;
+        /*const float radius = 10.0f;
         float camX = sin(t * 0.5f) * radius;
         float camZ = cos(t * 0.5f) * radius;
-        camera->lookAt(Vector3(camX, 0.f, camZ), Vector3::ZERO, Vector3::YHAT);
+        camera->lookAt(Vector3(camX, 0.f, camZ), Vector3::ZERO, Vector3::YHAT);*/
 
         // Render scene
         renderer.render(scene, camera);
