@@ -6,8 +6,13 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/entities/Mesh.h>
 #include <graphics/core/windows/Window.h>
+#include <graphics/core/input/InputController.h>
+#include <graphics/core/input/InputContext.h>
 #include <common/Utils.h>
 #include <cmath>
+
+
+#include <iostream>
 
 /**
  * Creates several boxes and adds them to the given scene
@@ -48,22 +53,54 @@ std::vector<MeshPtr> createBoxes(ScenePtr scene)
 }
 
 /**
+ * Creates a camera capable of being controlled via the 'a', 's', 'd', and 'f' keys
+ * @param window The window context
+ * @return The camera that was created
+ */
+CameraPtr createCamera(WindowPtr window)
+{
+    CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
+
+    InputAction moveCamera("MoveCamera", InputValueType::VECTOR_2D);
+
+    // Create key bindings
+    InputContextPtr context = InputContext::create();
+    context->add(InputKey::KEY_A, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(-1.f, 0.f)));
+    context->add(InputKey::KEY_D, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(1.f, 0.f)));
+    context->add(InputKey::KEY_S, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(0.f, -1.f)));
+    context->add(InputKey::KEY_W, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(0.f, 1.f)));
+    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputValue(Vector2(-1.f, 0.f)));
+    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera, InputValue(Vector2(1.f, 0.f)));
+    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, -1.f)));
+    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, 1.f)));
+
+    // Create callbacks
+    InputController* inputController = window->getInputController();
+    inputController->addContext(context);
+    inputController->bind(moveCamera, [camera](InputValue value)
+    {
+        Vector2 v = value.get2D();
+        const float cameraSpeed = 0.2f;
+        camera->addPosition(cameraSpeed * v.x, 0.f, - cameraSpeed * v.y);
+    });
+
+    return camera;
+}
+
+/**
  * Main entrypoint for the application
  */
 int main()
 {
-    // Create renderer
     Renderer renderer;
     renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.4f, 1.0f));
 
-    // Create camera
-    CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
+    CameraPtr camera = createCamera(renderer.getWindow());
+    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
-    // Create scene
     ScenePtr scene = Scene::create();
     std::vector<MeshPtr> meshes = createBoxes(scene);
 
-    // Render the scene until the window is closed, rotating the meshes on each animation frame.
     while (renderer.getWindow()->isOpen())
     {
         float t = renderer.getTime();
@@ -74,12 +111,6 @@ int main()
             MeshPtr mesh = meshes[i];
             mesh->addRotation(Matrix3::fromRotation(Vector3(0.5f, 1.0f, 0.0f), i * 0.001));
         }
-
-        // Transform camera
-        const float radius = 10.0f;
-        float camX = sin(t * 0.5f) * radius;
-        float camZ = cos(t * 0.5f) * radius;
-        camera->lookAt(Vector3(camX, 0.f, camZ), Vector3::ZERO, Vector3::YHAT);
 
         // Render scene
         renderer.render(scene, camera);
