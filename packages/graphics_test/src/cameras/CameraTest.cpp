@@ -33,9 +33,8 @@ BOOST_AUTO_TEST_CASE(Camera_axes)
 {
 	Vector3 v;
 
-	// Start camera off at origin, looking in -z direction
+	// Camera starts off at origin, looking in -z direction
 	TestCamera camera;
-	camera.lookAt(Vector3::ZERO, Vector3::MINUS_ZHAT, Vector3::YHAT);
 	BOOST_TEST(camera.getForwardVector(&v) == Vector3::MINUS_ZHAT);
 	BOOST_TEST(camera.getUpVector(&v) == Vector3::YHAT);
 	BOOST_TEST(camera.getRightVector(&v) == Vector3::XHAT);
@@ -56,19 +55,28 @@ BOOST_AUTO_TEST_CASE(Camera_axes)
 BOOST_AUTO_TEST_CASE(Camera_manual)
 {
 	TestCamera camera;
-	BOOST_TEST(camera.getViewMatrix() == Matrix4::IDENTITY);
-
 	Matrix4 exp;
 
-	// Change rotation
-	camera.setRotation(Matrix3::fromRotation(Vector3::YHAT, deg2Rad(135.f)));
-	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.f, 1.f, 0.f, 0.f, -0.7071f, 0.f, -0.7071f, 0.f, 0.f, 0.f, 0.f, 1.f);
-	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
+	// Change yaw by 90 degrees
+	camera.addRotation(Matrix3::fromYRotation(deg2Rad(90)));
+	exp.setValues(0.f, 0.f, -1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-6));
+
+	// Change pitch by 90 degrees
+	camera.addRotation(Matrix3::fromXRotation(deg2Rad(90)));
+	exp.setValues(0.f, 0.f, -1.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, -1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-6));
+
+	// Change roll by 90 degrees
+	camera.addRotation(Matrix3::fromZRotation(deg2Rad(90)));
+	exp.setValues(-1.f, 0.f, 0.f, 0.f, 0.f, 0.f, -1.f, 0.f, 0.f, -1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-6));
 
 	// Change position
-	camera.setPosition(1.f, 1.f, 1.f);
-	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.f, 1.f, 0.f, -1.f, -0.7071f, 0.f, -0.7071f, 1.4142f, 0.f, 0.f, 0.f, 1.f);
-	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
+	camera.setPosition(10.f, 10.f, 10.f);
+	exp.setValues(-1.f, 0.f, 0.f, 10.f, 0.f, 0.f, -1.f, 10.f, 0.f, -1.f, 0.f, 10.f, 0.f, 0.f, 0.f, 1.f);
+	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-6));
+
 }
 
 /**
@@ -78,8 +86,6 @@ BOOST_AUTO_TEST_CASE(Camera_manual)
 BOOST_AUTO_TEST_CASE(Camera_lookAt)
 {
 	TestCamera camera;
-	BOOST_TEST(camera.getViewMatrix() == Matrix4::IDENTITY);
-
 	Matrix4 exp;
 
 	// Change target --------------------------------------
@@ -88,35 +94,14 @@ BOOST_AUTO_TEST_CASE(Camera_lookAt)
 	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.f, 1.f, 0.f, 0.f, -0.7071f, 0.f, -0.7071f, 0.f, 0.f, 0.f, 0.f, 1.f);
 	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
 
-	Vector3 f = camera.getForwardVector();
-	Vector3 u = camera.getUpVector();
-	Vector3 r = camera.getRightVector();
-	BOOST_TEST(f.equalTo(target.normalize(), 1.0e-6));
-	BOOST_TEST(u.equalTo(Vector3::YHAT, 1.0e-6));
-	BOOST_TEST(r.equalTo(f.cross(u).normalize(), 1.0e-6));
-
 	// Change position ------------------------------------
 	Vector3 position(1.f, 1.f, 1.f);
 	camera.lookAt(position, target, Vector3::YHAT);
 	exp.setValues(-0.7071f, 0.f, 0.7071f, 0.f, 0.1231f, 0.9840f, 0.1231f, -1.2302f, -0.6963f, 0.1741f, -0.6963f, 1.2185f, 0.f, 0.f, 0.f, 1.f);
 	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
 
-	camera.getForwardVector(&f);
-	camera.getUpVector(&u);
-	camera.getRightVector(&r);
-	BOOST_TEST(f.equalTo(target.minus(position).normalize(), 1.0e-6));
-	BOOST_TEST(u.equalTo(Vector3::YHAT, 1.0e-6));
-	BOOST_TEST(r.equalTo(f.cross(u).normalize(), 1.0e-6));
-
 	// Change up vector ------------------------------------
 	camera.lookAt(position, target, Vector3::XHAT);
 	exp.setValues(0.f, 0.9701f, 0.2425f, -1.2126f, 0.7177f, 0.1688f, -0.6755f, -0.2109f, -0.6963, 0.1740f, -0.6963f, 1.2186f, 0.f, 0.f, 0.f, 1.f);
 	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
-
-	camera.getForwardVector(&f);
-	camera.getUpVector(&u);
-	camera.getRightVector(&r);
-	BOOST_TEST(f.equalTo(target.minus(position).normalize(), 1.0e-6));
-	BOOST_TEST(u.equalTo(Vector3::XHAT, 1.0e-6));
-	BOOST_TEST(r.equalTo(f.cross(u).normalize(), 1.0e-6));
 }

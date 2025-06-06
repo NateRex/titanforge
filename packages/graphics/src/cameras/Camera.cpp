@@ -4,7 +4,8 @@
 
 Camera::Camera(): Entity(EntityType::CAMERA)
 {
-
+	// Camera starts at origin looking in -z direction
+	lookAt(Vector3::ZERO, Vector3::MINUS_ZHAT, Vector3::YHAT);
 }
 
 void Camera::setScaling(float x, float y, float z)
@@ -65,13 +66,12 @@ Matrix4 Camera::getViewMatrix()
 	// Update local-to-world transform first
 	updateTransform();
 
-	// Since cameras contain affine transformations (rotation and translation only), we
-	// can optimize how we compute the inverse.
-	Vector3 invTrans = _rotation.multiply(_position);
+	// Invert to form view matrix
+	Vector3 vT = _rotation.multiply(_position);
 	_viewMatrix.setValues(
-		_rotation[0], _rotation[1], _rotation[2], -invTrans.x,
-		_rotation[3], _rotation[4], _rotation[5], -invTrans.y,
-		_rotation[6], _rotation[7], _rotation[8], -invTrans.z,
+		_rotation[0], _rotation[1], _rotation[2], -vT.x,
+		_rotation[3], _rotation[4], _rotation[5], -vT.y,
+		-_rotation[6], -_rotation[7], -_rotation[8], vT.z,
 		0.f, 0.f, 0.f, 1.f
 	);
 
