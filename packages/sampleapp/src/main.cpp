@@ -54,7 +54,7 @@ int main()
 {
     // Create renderer
     Renderer renderer;
-    renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.3f, 1.0f));
+    renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.4f, 1.0f));
 
     // Create camera
     CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
@@ -67,6 +67,13 @@ int main()
     while (renderer.getWindow()->isOpen())
     {
         float t = renderer.getTime();
+
+        // Rotate meshes
+        for (int i = 0; i < meshes.size(); i++)
+        {
+            MeshPtr mesh = meshes[i];
+            mesh->addRotation(Matrix3::fromRotation(Vector3(0.5f, 1.0f, 0.0f), i * 0.001));
+        }
 
         // Transform camera
         const float radius = 10.0f;
