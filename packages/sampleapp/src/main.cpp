@@ -53,7 +53,7 @@ std::vector<MeshPtr> createBoxes(ScenePtr scene)
 }
 
 /**
- * Creates a camera capable of being controlled via the 'a', 's', 'd', and 'f' keys
+ * Creates a camera capable of being controlled via the 'a', 'w', 's', and 'd' keys
  * @param window The window context
  * @return The camera that was created
  */
