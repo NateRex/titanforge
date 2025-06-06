@@ -51,7 +51,8 @@ void Entity::setRotation(const Matrix3& rot)
 
 void Entity::addRotation(const Matrix3& rot)
 {
-	_rotation.multiply(rot, &_rotation);
+	// Pre-multiply to apply rotation in local space
+	rot.multiply(_rotation, &_rotation);
 
 	_transformNeedsUpdate = true;
 }

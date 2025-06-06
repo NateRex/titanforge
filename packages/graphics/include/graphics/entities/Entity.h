@@ -76,7 +76,7 @@ public:
 	void setRotation(const Matrix3& rot);
 
 	/**
-	 * Applies additional rotation to this entity relative to its parent, using a rotation matrix.
+	 * Applies additional rotation to this entity along its local coordinate axes
 	 */
 	void addRotation(const Matrix3& rot);
 

@@ -9,10 +9,15 @@ find_package(Stb REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/input/InputAction.cpp
+    src/core/input/InputContext.cpp
+    src/core/input/InputController.cpp
+    src/core/input/InputKey.cpp
+    src/core/input/InputTrigger.cpp
+    src/core/input/InputValue.cpp
     src/core/shaders/BasicShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
-    src/core/windows/InputController.cpp
     src/core/windows/Window.cpp
     src/core/Buffer.cpp
     src/core/Color.cpp

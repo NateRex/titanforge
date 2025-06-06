@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/core/windows/Window.h>
-#include <graphics/core/windows/InputController.h>
+#include <graphics/core/input/InputController.h>
 #include <common/exceptions/InstantiationException.h>
 #include <sstream>
 
