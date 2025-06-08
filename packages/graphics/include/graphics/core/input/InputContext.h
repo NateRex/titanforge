@@ -42,12 +42,18 @@ public:
 	std::size_t size() const;
 
 	/**
-	 * Identifies the action mappings associated with the given input key and trigger pair
+	 * Returns action mappings stored within this context
+	 * @param results Vector in which to store the results
+	 */
+	void getMappings(std::vector<InputActionMapping>& results) const;
+
+	/**
+	 * Identifies the action mappings associated with a single input key and trigger pair
 	 * @param key Input key
 	 * @param trigger Trigger event
 	 * @param results Vector in which to store the results
 	 */
-	void get(InputKey key, InputTrigger trigger, std::vector<InputActionMapping>& results) const;
+	void getMappings(InputKey key, InputTrigger trigger, std::vector<InputActionMapping>& results) const;
 
 private:
 

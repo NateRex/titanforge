@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 	
 	// Bind action
 	int value = 0;
-	controller->bind(action, [&value](const InputValue& v) {
+	controller->bind(action, [&value](const InputValue& v, float deltaTime) {
 		value++;
 	});
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(InputController_addAndRemoveContexts)
 
 	// Bind action
 	int value = 0;
-	controller->bind(action, [&value](const InputValue& v) {
+	controller->bind(action, [&value](const InputValue& v, float deltaTime) {
 		value++;
 	});
 

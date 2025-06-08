@@ -8,8 +8,8 @@
  */
 BOOST_AUTO_TEST_CASE(InputTrigger_mapping)
 {
-	BOOST_TEST(mapGLFWAction(GLFW_PRESS) == InputTrigger::PRESSED);
-	BOOST_TEST(mapGLFWAction(GLFW_RELEASE) == InputTrigger::RELEASED);
-	BOOST_TEST(mapGLFWAction(GLFW_REPEAT) == InputTrigger::HELD);
-	BOOST_TEST(mapGLFWAction(-1) == InputTrigger::PRESSED);		// default case
+	BOOST_TEST(glfwToInputTrigger(GLFW_PRESS) == InputTrigger::PRESSED);
+	BOOST_TEST(glfwToInputTrigger(GLFW_RELEASE) == InputTrigger::RELEASED);
+	BOOST_TEST(glfwToInputTrigger(GLFW_REPEAT) == InputTrigger::HELD);
+	BOOST_TEST(glfwToInputTrigger(-1) == InputTrigger::RELEASED);		// default case
 }

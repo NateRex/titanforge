@@ -135,9 +135,17 @@ enum class InputKey
 };
 
 /**
- * Maps a GLFW input code to an input key enumerated value
+ * Maps a GLFW input code to an InputKey value
  * @param glfwKey GLFW key to map
  * @return The corresponding input key
- * @throws IllegalArgumentException on failure to map the given key to a valid GLFW value
+ * @throws IllegalArgumentException on failure to map the given code to a valid InputKey
  */
-InputKey mapGLFWKey(int glfwKey);
+InputKey glfwToInputKey(int glfwKey);
+
+/**
+ * Maps an InputKey value to a GLFW input code
+ * @param key Input key to map
+ * @return The corresponding GLFW input code
+ * @throws IllegalArgumentException on failure to map the given key to a valid GLFW code
+ */
+int inputKeyToGLFW(InputKey key);

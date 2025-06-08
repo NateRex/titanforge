@@ -36,7 +36,7 @@ public:
 	/**
 	 * @return The total amount of time (in decimal seconds) that this renderer has been active for
 	 */
-	double getTime() const;
+	float getTime() const;
 
 	/**
 	 * @return The current window context that is the target of draw commands
@@ -65,7 +65,7 @@ public:
 	 * @param scene Scene
 	 * @param camera Camera
 	 */
-	void render(const ScenePtr scene, const CameraPtr camera) const;
+	void render(const ScenePtr scene, const CameraPtr camera);
 
 private:
 
@@ -89,6 +89,11 @@ private:
 	 * The current background (clear) color
 	 */
 	Color _backgroundColor;
+
+	/**
+	 * Time (in decimal seconds) at which the last frame was rendered (relative to the start of rendering)
+	 */
+	float _timeOfLastFrame = 0.f;
 
 	/**
 	 * Increments the global renderer count

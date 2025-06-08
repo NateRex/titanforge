@@ -19,21 +19,24 @@ BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 	context->add(InputKey::KEY_A, InputTrigger::PRESSED, action1, value);
 	context->add(InputKey::KEY_SPACE, InputTrigger::RELEASED, action1, value);
 
+	std::vector<InputActionMapping> allMappings;
+	context->getMappings(allMappings);
 	BOOST_TEST(context->size() == 4);
+	BOOST_TEST(allMappings.size() == 4);
 	
-	std::vector<InputActionMapping> out;
-	context->get(InputKey::KEY_SPACE, InputTrigger::PRESSED, out);
-	BOOST_TEST(out.size() == 2);
+	std::vector<InputActionMapping> mappingsForPair;
+	context->getMappings(InputKey::KEY_SPACE, InputTrigger::PRESSED, mappingsForPair);
+	BOOST_TEST(mappingsForPair.size() == 2);
 
-	out.clear();
-	context->get(InputKey::KEY_A, InputTrigger::PRESSED, out);
-	BOOST_TEST(out.size() == 1);
+	mappingsForPair.clear();
+	context->getMappings(InputKey::KEY_A, InputTrigger::PRESSED, mappingsForPair);
+	BOOST_TEST(mappingsForPair.size() == 1);
 
-	out.clear();
-	context->get(InputKey::KEY_SPACE, InputTrigger::RELEASED, out);
-	BOOST_TEST(out.size() == 1);
+	mappingsForPair.clear();
+	context->getMappings(InputKey::KEY_SPACE, InputTrigger::RELEASED, mappingsForPair);
+	BOOST_TEST(mappingsForPair.size() == 1);
 
-	out.clear();
-	context->get(InputKey::KEY_LEFT_SHIFT, InputTrigger::PRESSED, out);
-	BOOST_TEST(out.size() == 0);
+	mappingsForPair.clear();
+	context->getMappings(InputKey::KEY_LEFT_SHIFT, InputTrigger::PRESSED, mappingsForPair);
+	BOOST_TEST(mappingsForPair.size() == 0);
 }

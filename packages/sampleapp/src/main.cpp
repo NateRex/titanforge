@@ -11,9 +11,6 @@
 #include <common/Utils.h>
 #include <cmath>
 
-
-#include <iostream>
-
 /**
  * Creates several boxes and adds them to the given scene
  * @return A vector containing pointers to the meshes that were created
@@ -61,26 +58,24 @@ CameraPtr createCamera(WindowPtr window)
 {
     CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
+    InputAction jump("Jump", InputValueType::BOOLEAN);
     InputAction moveCamera("MoveCamera", InputValueType::VECTOR_2D);
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
-    context->add(InputKey::KEY_A, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(-1.f, 0.f)));
-    context->add(InputKey::KEY_D, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(1.f, 0.f)));
-    context->add(InputKey::KEY_S, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(0.f, -1.f)));
-    context->add(InputKey::KEY_W, InputTrigger::PRESSED, moveCamera, InputValue(Vector2(0.f, 1.f)));
     context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputValue(Vector2(-1.f, 0.f)));
     context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera, InputValue(Vector2(1.f, 0.f)));
     context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, -1.f)));
     context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, 1.f)));
 
-    // Create callbacks
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
-    inputController->bind(moveCamera, [camera](InputValue value)
+
+    // Bind move action
+    inputController->bind(moveCamera, [camera](InputValue value, float deltaTime)
     {
         Vector2 v = value.get2D();
-        const float cameraSpeed = 0.2f;
+        float cameraSpeed = 2.5f * deltaTime;
         camera->addPosition(cameraSpeed * v.x, 0.f, - cameraSpeed * v.y);
     });
 

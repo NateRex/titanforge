@@ -29,7 +29,14 @@ size_t InputContext::size() const
 	return total;
 }
 
-void InputContext::get(InputKey key, InputTrigger trigger, std::vector<InputActionMapping>& results) const
+void InputContext::getMappings(std::vector<InputActionMapping>& results) const
+{
+	for (const auto& [key, val] : _mappings) {
+		results.insert(results.end(), val.begin(), val.end());
+	}
+}
+
+void InputContext::getMappings(InputKey key, InputTrigger trigger, std::vector<InputActionMapping>& results) const
 {
 	auto it = _mappings.find(std::make_pair(key, trigger));
 	if (it != _mappings.end()) {

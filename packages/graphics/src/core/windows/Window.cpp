@@ -36,11 +36,11 @@ Window::~Window()
         glfwMakeContextCurrent(nullptr);
     }
 
-    glfwDestroyWindow(_glfwWindow);
-    _glfwWindow = nullptr;
-
     delete _inputController;
     _inputController = nullptr;
+
+    glfwDestroyWindow(_glfwWindow);
+    _glfwWindow = nullptr;
 
     decrementWindowCount();
 }

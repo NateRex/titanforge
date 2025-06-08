@@ -29,4 +29,4 @@ enum class InputTrigger
  * @param glfwAction Integer value representing a GLFW action type
  * @return The corresponding input trigger type
  */
-InputTrigger mapGLFWAction(int glfwAction);
+InputTrigger glfwToInputTrigger(int glfwAction);
