@@ -53,12 +53,20 @@ public:
 
 	/**
 	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the active input contexts,
-	 * and executing callbacks bound to those actions.
+	 * and executing callbacks bound to those actions. This event-driven method of resolving inputs is specific to actions bound
+	 * to PRESSED or RELEASED triggers.
 	 * @param glfwKey GLFW key code
 	 * @param glfwAction GLFW trigger type
 	 * @param mods GLFW modifier bits
 	 */
 	void processKeyEvent(int glfwKey, int glfwAction, int mods) const;
+
+	/**
+	 * Polls for held keys and dispatches callbacks for actions bound to the HELD trigger. This method is called once
+	 * per frame (e.g, inside the game loop) by the renderer.
+	 * @param deltaTime Time since the last frame renderered (in decimal seconds)
+	 */
+	void poll(float deltaTime) const;
 
 private:
 
@@ -85,7 +93,8 @@ private:
 
 	/**
 	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the input controller
-	 * associated with the window.
+	 * associated with the window. This event-driven method of resolving inputs is used for actions bound to PRESSED
+	 * or RELEASED triggers.
 	 * @param glfwWindow GLFW window pointer
 	 * @param glfwKey GLFW key code
 	 * @param scancode The platform-specific scan code of the key.

@@ -96,6 +96,9 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera) const
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Poll for input updates
+	_window->getInputController()->poll(0.f);
+
 	// Recursively parse and draw entities
 	renderEntity(camera, scene, scene->getMatrix());
 
