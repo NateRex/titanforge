@@ -84,17 +84,17 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 			auto binding = _bindings.find(mapping.action);
 			if (binding != _bindings.end() && binding->second)
 			{
-				binding->second(mapping.value);
+				binding->second(mapping.value, _deltaTime);
 			}
 		}
 	}
 }
 
-void InputController::poll(float deltaTime) const
+void InputController::poll(float deltaTime)
 {
-	// Store key states so that we don't have to poll more than once per key
-	std::unordered_map<InputKey, InputTrigger> key2State;
+	_deltaTime = deltaTime;
 
+	std::unordered_map<InputKey, InputTrigger> key2State;
 	std::vector<InputActionMapping> mappings;
 
 	// Iterate over contexts
@@ -134,7 +134,7 @@ void InputController::poll(float deltaTime) const
 			// Trigger callback
 			if (keyState == InputTrigger::PRESSED)
 			{
-				binding->second(mapping.value);
+				binding->second(mapping.value, deltaTime);
 			}
 		}
 	}

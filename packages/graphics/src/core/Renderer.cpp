@@ -35,7 +35,7 @@ Renderer::~Renderer()
 	decrementRendererCount();
 }
 
-double Renderer::getTime() const
+float Renderer::getTime() const
 {
 	return glfwGetTime();
 }
@@ -90,14 +90,17 @@ void Renderer::setBackgroundColor(const Color& color)
 	_backgroundColor = color;
 }
 
-void Renderer::render(const ScenePtr scene, const CameraPtr camera) const
+void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 {
 	// Clear
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Poll for input updates
-	_window->getInputController()->poll(0.f);
+	float time = getTime();
+	float deltaTime = time - _timeOfLastFrame;
+	_timeOfLastFrame = time;
+	_window->getInputController()->poll(deltaTime);
 
 	// Recursively parse and draw entities
 	renderEntity(camera, scene, scene->getMatrix());

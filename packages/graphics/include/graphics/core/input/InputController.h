@@ -8,7 +8,7 @@
 struct GLFWwindow;
 class InputValue;
 
-using ActionCallback = std::function<void(const InputValue&)> ;
+using ActionCallback = std::function<void(const InputValue&, float deltaTime)> ;
 
 /**
  * Central dispatcher for input events based on active contexts and action bindings. This class receives GLFW key
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the active input contexts,
 	 * and executing callbacks bound to those actions. This event-driven method of resolving inputs is specific to actions bound
-	 * to PRESSED or RELEASED triggers.
+	 * to PRESSED or RELEASED triggers. This method is called automatically in response to key presses and releases.
 	 * @param glfwKey GLFW key code
 	 * @param glfwAction GLFW trigger type
 	 * @param mods GLFW modifier bits
@@ -66,7 +66,7 @@ public:
 	 * per frame (e.g, inside the game loop) by the renderer.
 	 * @param deltaTime Time since the last frame renderered (in decimal seconds)
 	 */
-	void poll(float deltaTime) const;
+	void poll(float deltaTime);
 
 private:
 
@@ -84,6 +84,13 @@ private:
 	 * Mapping from input actions to callback values
 	 */
 	std::unordered_map<InputAction, ActionCallback, InputAction::Hash> _bindings;
+
+	/**
+	 * The time (in decimal seconds) since the last frame. This value is set once per frame by the main application loop
+	 * and is available during input processing, including event-driven callbacks such as key presses. It enables time-dependent
+	 * behavior (e.g., movement speed) within input callbacks.
+	 */
+	float _deltaTime = 0.f;
 
 	/**
 	 * Constructor

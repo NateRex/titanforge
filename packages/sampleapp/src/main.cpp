@@ -72,10 +72,10 @@ CameraPtr createCamera(WindowPtr window)
     inputController->addContext(context);
 
     // Bind move action
-    inputController->bind(moveCamera, [camera](InputValue value)
+    inputController->bind(moveCamera, [camera](InputValue value, float deltaTime)
     {
         Vector2 v = value.get2D();
-        const float cameraSpeed = 0.2f;
+        float cameraSpeed = 2.5f * deltaTime;
         camera->addPosition(cameraSpeed * v.x, 0.f, - cameraSpeed * v.y);
     });
 
