@@ -76,7 +76,12 @@ CameraPtr createCamera(WindowPtr window)
     {
         Vector2 v = value.get2D();
         float cameraSpeed = 2.5f * deltaTime;
-        camera->addPosition(cameraSpeed * v.x, 0.f, - cameraSpeed * v.y);
+        
+        Vector3 sideToSideMovement = camera->getRightVector().scale(cameraSpeed * v.x);
+        camera->addPosition(sideToSideMovement);
+
+        Vector3 forwardMovement = camera->getForwardVector().scale(cameraSpeed * v.y);
+        camera->addPosition(forwardMovement);
     });
 
     return camera;

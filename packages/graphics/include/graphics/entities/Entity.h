@@ -42,12 +42,24 @@ public:
 	void setPosition(float x, float y, float z);
 
 	/**
+	 * Sets the position of this entity relative to its parent.
+	 * @param v Position vector, relative to the origin of this entity's parent
+	 */
+	void setPosition(const Vector3& v);
+
+	/**
 	 * Applies additional translation of this entity relative to its parent
 	 * @param x X coordinate
 	 * @param y Y coordinate
 	 * @param z Z coordinate
 	 */
 	void addPosition(float x, float y, float z);
+
+	/**
+	 * Applies additional translation of this entity relative to its parent
+	 * @param v Vector to apply
+	 */
+	void addPosition(const Vector3& v);
 
 	/**
 	 * @return The 3x3 matrix representing the rotation of this entity relative to its parent
