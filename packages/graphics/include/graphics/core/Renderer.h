@@ -107,9 +107,10 @@ private:
 	static void decrementRendererCount();
 
 	/**
-	 * Applies global OpenGL settings that should apply to all entities
+	 * Applies fixed global OpenGL settings that should be set for the entire system. This method only needs to
+	 * be called once, on construction of the first renderer instance.
 	 */
-	static void applyGlobalDrawSettings();
+	static void applyGlobalSettings();
 
 	/**
 	 * Recursively renders an entity belonging to the scene, along with all of its children
