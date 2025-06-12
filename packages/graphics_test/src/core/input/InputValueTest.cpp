@@ -37,15 +37,16 @@ BOOST_AUTO_TEST_CASE(InputValueTest_scalar)
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
 {
-	Vector2 vector(1.f, 2.f);
-	InputValue iv(vector);
+	InputValue iv(1.f, 2.f);
+
+	Vector2 expected(1.f, 2.f);
 	BOOST_TEST(iv.getType() == InputValueType::VECTOR_2D);
-	BOOST_TEST(iv.get2D() == vector);
+	BOOST_TEST(iv.get2D() == expected);
 
 	// Copy constructor
 	InputValue iv2(iv);
 	BOOST_TEST(iv2.getType() == InputValueType::VECTOR_2D);
-	BOOST_TEST(iv2.get2D() == vector);
+	BOOST_TEST(iv2.get2D() == expected);
 }
 
 /**
@@ -53,13 +54,14 @@ BOOST_AUTO_TEST_CASE(InputValueTest_vector2D)
  */
 BOOST_AUTO_TEST_CASE(InputValueTest_vector3D)
 {
-	Vector3 vector(1.f, 2.f, 3.f);
-	InputValue iv(vector);
+	InputValue iv(1.f, 2.f, 3.f);
+
+	Vector3 expected(1.f, 2.f, 3.f);
 	BOOST_TEST(iv.getType() == InputValueType::VECTOR_3D);
-	BOOST_TEST(iv.get3D() == vector);
+	BOOST_TEST(iv.get3D() == expected);
 
 	// Copy constructor
 	InputValue iv2(iv);
 	BOOST_TEST(iv2.getType() == InputValueType::VECTOR_3D);
-	BOOST_TEST(iv2.get3D() == vector);
+	BOOST_TEST(iv2.get3D() == expected);
 }

@@ -24,14 +24,19 @@ InputValue NegateModifier::apply(const InputValue& value) const
 		case InputValueType::VECTOR_2D:
 		{
 			Vector2 v = value.get2D();
-			v.scale(_negateX ? -1.f : 1.f, _negateY ? -1.f : 1.f, &v);
-			return InputValue(v);
+			return InputValue(
+				_negateX ? -v.x : v.x,
+				_negateY ? -v.y : v.y
+			);
 		}
 		case InputValueType::VECTOR_3D:
 		{
 			Vector3 v = value.get3D();
-			v.scale(_negateX ? -1.f : 1.f, _negateY ? -1.f : 1.f, _negateZ ? -1.f : 1.f, &v);
-			return InputValue(v);
+			return InputValue(
+				_negateX ? -v.x : v.x,
+				_negateY ? -v.y : v.y,
+				_negateZ ? -v.z : v.z
+			);
 		}
 		default:
 			return value;

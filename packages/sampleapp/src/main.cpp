@@ -63,10 +63,10 @@ CameraPtr createCamera(WindowPtr window)
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
-    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputValue(Vector2(-1.f, 0.f)));
-    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera, InputValue(Vector2(1.f, 0.f)));
-    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, -1.f)));
-    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputValue(Vector2(0.f, 1.f)));
+    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputValue(-1.f, 0.f));
+    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera, InputValue(1.f, 0.f));
+    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputValue(0.f, -1.f));
+    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputValue(0.f, 1.f));
 
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
