@@ -2,17 +2,14 @@
 #include <graphics/core/input/modifiers/InputModifier.h>
 
 /**
- * Enumerated type defining a reordering of component axes, used in conjunction with a swizzle input modifier.
+ * Enumerated type used to map axis components to array index values
  * @author Nathaniel Rex
  */
-enum class AxisOrder
+enum class AxisComponent
 {
-	XYZ,
-	XZY,
-	YXZ,
-	YZX,
-	ZXY,
-	ZYX
+	X = 0,
+	Y = 1,
+	Z = 2
 };
 
 /**
@@ -33,13 +30,19 @@ public:
 private:
 
 	/**
+	 * The axis component that x should be assigned to. In cases where an input value
+	 */
+
+	/**
 	 * Swizzle order, representing the reordering of axis values
 	 */
-	AxisOrder _order;
+	AxisComponent _order[3];
 
 	/**
 	 * Constructor
-	 * @param order Swizzle order, representing the reordering of axis values.
+	 * @param order Swizzle order, representing the reordering of axis values. Only the components that
+	 * exist in the input value (based on its type) are used. Invalid accesses (e.g. requesting Z on a
+	 * 2D input) are skipped.
 	 */
-	SwizzleModifier(AxisOrder order);
+	SwizzleModifier(const AxisComponent (&order)[3]);
 };

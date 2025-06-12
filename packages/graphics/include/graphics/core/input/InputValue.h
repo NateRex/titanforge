@@ -26,15 +26,18 @@ public:
 
 	/**
 	 * Constructs an input action value containing 2D vector data
-	 * @param value Input value
+	 * @param x The x component value
+	 * @param y The y component value
 	 */
-	InputValue(const Vector2& value);
+	InputValue(float x, float y);
 
 	/**
 	 * Constructs an input action value containing 3D vector data
-	 * @param value Input value
+	 * @param x The x component value
+	 * @param y The y component value
+	 * @param z The z component value
 	 */
-	InputValue(const Vector3& value);
+	InputValue(float x, float y, float z);
 
 	/**
 	 * Constructs an input action value from an existing value
@@ -50,22 +53,22 @@ public:
 	/**
 	 * @return The boolean value stored by this object
 	 */
-	bool getBoolean() const { return _boolValue; }
+	bool getBoolean() const { return _data.b; }
 
 	/**
 	 * @return The scalar value stored by this object
 	 */
-	float getScalar() const { return _scalarValue; }
+	float getScalar() const { return _data.s; }
 
 	/**
 	 * @return The 2D vector value stored by this object
 	 */
-	Vector2 get2D() const { return _vector2Value; }
+	Vector2 get2D() const { return Vector2(_data.v2[0], _data.v2[1]); }
 
 	/**
 	 * @return The 3D vector value stored by this object
 	 */
-	Vector3 get3D() const { return _vector3Value; }
+	Vector3 get3D() const { return Vector3(_data.v3[0], _data.v3[1], _data.v3[2]); }
 
 private:
 
@@ -78,9 +81,9 @@ private:
 	 * The data stored by this object
 	 */
 	union {
-		bool _boolValue;
-		float _scalarValue;
-		Vector2 _vector2Value;
-		Vector3 _vector3Value;
-	};
+		bool b;
+		float s;
+		float v2[2];
+		float v3[3];
+	} _data;
 };

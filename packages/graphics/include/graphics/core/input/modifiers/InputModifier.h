@@ -19,7 +19,6 @@ public:
 	/**
 	 * Applies this modifier to a given input value
 	 * @param value The value to transform
-	 * @return The transformed result
 	 */
 	virtual InputValue apply(const InputValue& value) const = 0;
 };
