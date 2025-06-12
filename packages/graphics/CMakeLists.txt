@@ -9,6 +9,9 @@ find_package(Stb REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/input/modifiers/InputModifiers.cpp
+    src/core/input/modifiers/NegateModifier.cpp
+    src/core/input/modifiers/SwizzleModifier.cpp
     src/core/input/InputAction.cpp
     src/core/input/InputContext.cpp
     src/core/input/InputController.cpp
