@@ -30,6 +30,21 @@ public:
 	/**
 	 * Registers a new action mapping to this context
 	 * @param key Input key that triggers the action
+	 * @param action Action
+	 */
+	void add(InputKey key, const InputAction& action);
+
+	/**
+	 * Registers a new action mapping to this context
+	 * @param key Input key that triggers the action
+	 * @param action Action
+	 * @param modifiers Value modifiers
+	 */
+	void add(InputKey key, const InputAction& action, const InputModifiers& modifiers);
+
+	/**
+	 * Registers a new action mapping to this context
+	 * @param key Input key that triggers the action
 	 * @param trigger Trigger event
 	 * @param action Action
 	 */
