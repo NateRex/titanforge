@@ -19,7 +19,7 @@ InputValue InputModifiers::apply(const InputValue& value) const
 
 	for (const InputModifier* mod : _modifiers)
 	{
-		result = mod->apply(value);
+		result = mod->apply(result);
 	}
 
 	return result;
