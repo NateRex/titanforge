@@ -27,7 +27,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
 	incrementRendererCount();
 	setWindow(window);
-	applyGlobalDrawSettings();
+	applyGlobalSettings();
 }
 
 Renderer::~Renderer()
@@ -78,6 +78,9 @@ void Renderer::setWindow(WindowPtr window)
 	int width, height;
 	glfwGetWindowSize(window->_glfwWindow, &width, &height);
 	glViewport(0, 0, width, height);
+
+	// Hide and capture the cursor inside the window
+	glfwSetInputMode(_window->_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 Color Renderer::getBackgroundColor() const
@@ -171,7 +174,7 @@ void Renderer::decrementRendererCount()
 	}
 }
 
-void Renderer::applyGlobalDrawSettings()
+void Renderer::applyGlobalSettings()
 {
 	// Enable alpha channel for transparency
 	glEnable(GL_BLEND);

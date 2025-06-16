@@ -13,6 +13,9 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/cameras/CameraTest.cpp
     src/cameras/PerspectiveCameraTest.cpp
+    src/core/input/modifiers/InputModifiersTest.cpp
+    src/core/input/modifiers/NegateModifierTest.cpp
+    src/core/input/modifiers/SwizzleModifierTest.cpp
     src/core/input/InputActionTest.cpp
     src/core/input/InputContextTest.cpp
     src/core/input/InputControllerTest.cpp

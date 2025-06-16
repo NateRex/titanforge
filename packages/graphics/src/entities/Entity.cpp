@@ -21,11 +21,29 @@ void Entity::setPosition(float x, float y, float z)
 	_transformNeedsUpdate = true;
 }
 
+void Entity::setPosition(const Vector3& v)
+{
+	_position.x = v.x;
+	_position.y = v.y;
+	_position.z = v.z;
+
+	_transformNeedsUpdate = true;
+}
+
 void Entity::addPosition(float x, float y, float z)
 {
 	_position.x += x;
 	_position.y += y;
 	_position.z += z;
+
+	_transformNeedsUpdate = true;
+}
+
+void Entity::addPosition(const Vector3& v)
+{
+	_position.x += v.x;
+	_position.y += v.y;
+	_position.z += v.z;
 
 	_transformNeedsUpdate = true;
 }
