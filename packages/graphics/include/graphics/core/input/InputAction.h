@@ -15,7 +15,7 @@ public:
 	/**
 	 * Constructor
 	 * @param name The name of the action (e.g, "Jump" or "MoveForward")
-	 * @param valueType The type of value that this action generates
+	 * @param valueType The type of value that this action expects
 	 */
 	InputAction(const std::string& name, const InputValueType valueType);
 

@@ -11,13 +11,12 @@ BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 {
 	InputAction action1("Action1", InputValueType::BOOLEAN);
 	InputAction action2("Action2", InputValueType::BOOLEAN);
-	InputValue value(true);
 
 	InputContextPtr context = InputContext::create();
-	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action1, value);
-	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action2, value);
-	context->add(InputKey::KEY_A, InputTrigger::PRESSED, action1, value);
-	context->add(InputKey::KEY_SPACE, InputTrigger::RELEASED, action1, value);
+	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action1);
+	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action2);
+	context->add(InputKey::KEY_A, InputTrigger::PRESSED, action1, InputModifiers().negate());
+	context->add(InputKey::KEY_SPACE, InputTrigger::RELEASED, action1);
 
 	std::vector<InputActionMapping> allMappings;
 	context->getMappings(allMappings);
@@ -31,6 +30,7 @@ BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 	mappingsForPair.clear();
 	context->getMappings(InputKey::KEY_A, InputTrigger::PRESSED, mappingsForPair);
 	BOOST_TEST(mappingsForPair.size() == 1);
+	BOOST_TEST(mappingsForPair[0].modifiers.size() == 1);
 
 	mappingsForPair.clear();
 	context->getMappings(InputKey::KEY_SPACE, InputTrigger::RELEASED, mappingsForPair);

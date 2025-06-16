@@ -1,9 +1,9 @@
 #pragma once
 #include <graphics/core/input/InputAction.h>
-#include <graphics/core/input/InputValue.h>
+#include <graphics/core/input/modifiers/InputModifiers.h>
 
 /**
- * Maps a key and trigger event to an input action and value, with optional trigger conditions and value modifiers.
+ * Internal structure that maps a key and trigger event to an input action, with optional value modifiers.
  * @author Nathaniel Rex
  */
 struct InputActionMapping
@@ -24,7 +24,7 @@ struct InputActionMapping
 	InputAction action;
 
 	/**
-	 * Value
+	 * Modifiers
 	 */
-	InputValue value;
+	InputModifiers modifiers;
 };

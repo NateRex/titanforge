@@ -14,11 +14,13 @@ BOOST_AUTO_TEST_CASE(InputModifiers_modifierOrder)
 	// Negate x before swizzling. Results in negated x value in the y component position.
 	InputModifiers mod1;
 	mod1.negateX().swizzle(Axis::Y, Axis::X, Axis::Z);
+	BOOST_TEST(mod1.size() == 2);
 	BOOST_TEST(mod1.apply(input).get3D() == Vector3(2.f, -1.f, 3.f));
 
 	// Negate x after swizzling. Results in negated y value in the x component position.
 	InputModifiers mod2;
 	mod2.swizzle(Axis::Y, Axis::X, Axis::Z).negateX();
+	BOOST_TEST(mod2.size() == 2);
 	BOOST_TEST(mod2.apply(input).get3D() == Vector3(-2.f, 1.f, 3.f));
 }
 

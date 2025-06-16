@@ -2,6 +2,7 @@
 #include <graphics/core/input/modifiers/InputModifier.h>
 #include <math/Axis.h>
 #include <vector>
+#include <memory>
 
  /**
   * A chain of modifiers that transform an input value before it is passed to an action callback. This allows for features
@@ -13,14 +14,14 @@ class InputModifiers : public InputModifier
 public:
 
 	/**
-	 * Destructor
-	 */
-	~InputModifiers();
-
-	/**
 	 * @override
 	 */
 	InputValue apply(const InputValue& value) const override;
+
+	/**
+	 * @return The number of modifications that this input modifier chain will perform on inputs
+	 */
+	std::size_t size() const;
 
 	/**
 	 * Negates input.
@@ -62,5 +63,5 @@ private:
 	/**
 	 * The ordererd list of modifiers
 	 */
-	std::vector<InputModifier*> _modifiers;
+	std::vector<std::shared_ptr<InputModifier>> _modifiers;
 };
