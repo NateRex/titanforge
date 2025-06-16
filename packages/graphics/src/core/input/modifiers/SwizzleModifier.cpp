@@ -1,12 +1,12 @@
 #include <graphics/core/input/modifiers/SwizzleModifier.h>
+#include <math/Axis.h>
 #include <graphics/core/input/InputValue.h>
 
-SwizzleModifier::SwizzleModifier(const AxisComponent (&order)[3])
+SwizzleModifier::SwizzleModifier(Axis first, Axis second, Axis third)
 {
-	for (int i = 0; i < 3; i++)
-	{
-		_order[i] = order[i];
-	}
+	_order[0] = first;
+	_order[1] = second;
+	_order[2] = third;
 }
 
 InputValue SwizzleModifier::apply(const InputValue& value) const
@@ -16,20 +16,20 @@ InputValue SwizzleModifier::apply(const InputValue& value) const
 		case InputValueType::BOOLEAN:
 		{
 			bool b = value.getBoolean();
-			return InputValue(_order[0] == AxisComponent::X ? b : false);
+			return InputValue(_order[0] == Axis::X ? b : false);
 		}
 		case InputValueType::SCALAR:
 		{
 			float s = value.getScalar();
-			return InputValue(_order[0] == AxisComponent::X ? s : false);
+			return InputValue(_order[0] == Axis::X ? s : false);
 		}
 		case InputValueType::VECTOR_2D:
 		{
 			Vector2 v = value.get2D();
 			float vArray[2]{ v.x, v.y };
 			return InputValue(
-				_order[0] != AxisComponent::Z ? vArray[static_cast<int>(_order[0])] : 0.f,
-				_order[1] != AxisComponent::Z ? vArray[static_cast<int>(_order[1])] : 0.f
+				_order[0] != Axis::Z ? vArray[static_cast<int>(_order[0])] : 0.f,
+				_order[1] != Axis::Z ? vArray[static_cast<int>(_order[1])] : 0.f
 			);
 		}
 		case InputValueType::VECTOR_3D:
@@ -42,5 +42,7 @@ InputValue SwizzleModifier::apply(const InputValue& value) const
 				vArray[static_cast<int>(_order[2])]
 			);
 		}
+		default:
+			return value;
 	}
 }

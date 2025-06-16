@@ -10,6 +10,16 @@ class NegateModifier : public InputModifier
 public:
 
 	/**
+	 * Constructor
+	 * @param x True if the x component should be negated. In cases where only a boolean or scalar is
+	 * present, this flag dictates whether or not negation will occur.
+	 * @param y True if the y component should be negated. Has no effect on one dimensional values.
+	 * @param z True if the z component should be negated. Has no effect on one-dimensional or
+	 * two-dimensional values.
+	 */
+	NegateModifier(bool x, bool y, bool z);
+
+	/**
 	 * @override
 	 */
 	InputValue apply(const InputValue& value) const override;
@@ -32,14 +42,4 @@ private:
 	 * two-dimensional values.
 	 */
 	bool _negateZ;
-
-	/**
-	 * Constructor
-	 * @param negateX True if the x component should be negated. In cases where only a boolean or scalar is
-	 * present, this flag dictates whether or not negation will occur.
-	 * @param negateY True if the y component should be negated. Has no effect on one dimensional values.
-	 * @param negateZ True if the z component should be negated. Has no effect on one-dimensional or
-	 * two-dimensional values.
-	 */
-	NegateModifier(bool negateX, bool negateY, bool negateZ);
 };
