@@ -8,7 +8,8 @@
 #include <vector>
 #include <utility>
 
-class InputActionMapping;
+struct InputActionMapping;
+class InputModifiers;
 
 /**
  * Groups a set of action mappings into a named context (e.g. Gameplay, Menu). An InputContext allows modular
@@ -27,14 +28,21 @@ public:
 	static InputContextPtr create();
 
 	/**
-	 * Registers a new action mapping inside this context
+	 * Registers a new action mapping to this context
 	 * @param key Input key that triggers the action
 	 * @param trigger Trigger event
 	 * @param action Action
-	 * @param value Value to generate for the action
-	 * @throws IllegalArgumentException If the value type does not match the expected value type on the given action
 	 */
-	void add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value);
+	void add(InputKey key, InputTrigger trigger, const InputAction& action);
+
+	/**
+	 * Registers a new action mapping to this context
+	 * @param key Input key that triggers the action
+	 * @param trigger Trigger event
+	 * @param action Action
+	 * @param modifiers Value modifiers
+	 */
+	void add(InputKey key, InputTrigger trigger, const InputAction& action, const InputModifiers& modifiers);
 
 	/**
 	 * @return The number of action mappings held by this context
@@ -42,7 +50,7 @@ public:
 	std::size_t size() const;
 
 	/**
-	 * Returns action mappings stored within this context
+	 * Returns all action mappings stored within this context
 	 * @param results Vector in which to store the results
 	 */
 	void getMappings(std::vector<InputActionMapping>& results) const;

@@ -79,12 +79,13 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 		// Iterate over actions mapped to (key, trigger) pair
 		for (const auto& mapping : contextMappings)
 		{
+			const InputAction& action = mapping.action;
 
 			// Apply callback if action is bound
-			auto binding = _bindings.find(mapping.action);
+			auto binding = _bindings.find(action);
 			if (binding != _bindings.end() && binding->second)
 			{
-				binding->second(mapping.value, _deltaTime);
+				binding->second(createValue(mapping, 1.f, 0.f, 0.f), _deltaTime);
 			}
 		}
 	}
@@ -134,8 +135,14 @@ void InputController::poll(float deltaTime)
 			// Trigger callback
 			if (keyState == InputTrigger::PRESSED)
 			{
-				binding->second(mapping.value, deltaTime);
+				binding->second(createValue(mapping, 1.f, 0.f, 0.f), deltaTime);
 			}
 		}
 	}
+}
+
+InputValue InputController::createValue(const InputActionMapping& mapping, float x, float y, float z)
+{
+	InputValue value(mapping.action.getValueType(), x, y, z);
+	return mapping.modifiers.apply(value);
 }

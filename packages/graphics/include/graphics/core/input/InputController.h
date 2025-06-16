@@ -6,6 +6,7 @@
 #include <functional>
 
 struct GLFWwindow;
+struct InputActionMapping;
 class InputValue;
 
 using ActionCallback = std::function<void(const InputValue&, float deltaTime)> ;
@@ -109,4 +110,14 @@ private:
 	 * @param mods Bit field describing which modifier keys were held.
 	 */
 	static void processKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	/**
+	 * Creates an input value object for a given input action mapping
+	 * @param mapping Input action mapping
+	 * @param x X component value
+	 * @param y Y component value
+	 * @param z Z component value
+	 * @return The input value result
+	 */
+	static InputValue createValue(const InputActionMapping& mapping, float x, float y, float z);
 };

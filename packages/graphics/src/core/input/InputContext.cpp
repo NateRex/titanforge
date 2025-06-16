@@ -12,12 +12,15 @@ InputContextPtr InputContext::create()
 	return std::shared_ptr<InputContext>(new InputContext());
 }
 
-void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action, const InputValue& value)
+void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action)
 {
-	assertTrue(action.getValueType() == value.getType(), "Value did not match expected action type");
+	add(key, trigger, action, InputModifiers());
+}
 
+void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action, const InputModifiers& modifiers)
+{
 	std::pair<InputKey, InputTrigger> mapKey = std::make_pair(key, trigger);
-	_mappings[mapKey].push_back({ key, trigger, action, value });
+	_mappings[mapKey].push_back({ key, trigger, action, modifiers });
 }
 
 size_t InputContext::size() const

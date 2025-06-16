@@ -40,7 +40,16 @@ public:
 	InputValue(float x, float y, float z);
 
 	/**
-	 * Constructs an input action value from an existing value
+	 * Constructor
+	 * @param type Value type
+	 * @param x X component value.
+	 * @param y Y component value. Will be ignored if the type is one-dimensional.
+	 * @param z Z component value. Will be ignored if the type is one-dimensional or two-dimensional.
+	 */
+	InputValue(InputValueType type, float x, float y, float z);
+
+	/**
+	 * Constructor.
 	 * @param other Input action value to copy from
 	 */
 	InputValue(const InputValue& other);
