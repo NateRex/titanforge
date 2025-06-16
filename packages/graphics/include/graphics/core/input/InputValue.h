@@ -53,22 +53,22 @@ public:
 	/**
 	 * @return The boolean value stored by this object
 	 */
-	bool getBoolean() const { return _data.b; }
+	bool getBoolean() const;
 
 	/**
 	 * @return The scalar value stored by this object
 	 */
-	float getScalar() const { return _data.s; }
+	float getScalar() const;
 
 	/**
 	 * @return The 2D vector value stored by this object
 	 */
-	Vector2 get2D() const { return Vector2(_data.v2[0], _data.v2[1]); }
+	Vector2 get2D() const;
 
 	/**
 	 * @return The 3D vector value stored by this object
 	 */
-	Vector3 get3D() const { return Vector3(_data.v3[0], _data.v3[1], _data.v3[2]); }
+	Vector3 get3D() const;
 
 private:
 
