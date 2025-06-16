@@ -8,6 +8,7 @@
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
+#include <graphics/core/input/modifiers/InputModifiers.h>
 #include <common/Utils.h>
 #include <cmath>
 
@@ -63,10 +64,10 @@ CameraPtr createCamera(WindowPtr window)
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
-    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputValue(-1.f, 0.f));
-    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera, InputValue(1.f, 0.f));
-    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputValue(0.f, -1.f));
-    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputValue(0.f, 1.f));
+    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera);
+    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputModifiers().negateX());
+    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
 
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
