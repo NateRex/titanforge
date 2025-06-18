@@ -62,6 +62,20 @@ Vector3 Vector3::cross(const Vector3& other, Vector3* result) const
 	return r;
 }
 
+float Vector3::angleBetween(const Vector3& other) const
+{
+    float dotProduct = dot(other);
+    float magA = getMagnitude();
+    float magB = other.getMagnitude();
+
+    float cosTheta = dotProduct / (magA * magB);
+
+    // Clamp to avoid NaNs due to floating point errors
+    cosTheta = clamp(cosTheta, -1.0f, 1.0f);
+
+    return acos(cosTheta);
+}
+
 Vector3 Vector3::normalize(Vector3* result) const
 {
     float mag = getMagnitude();

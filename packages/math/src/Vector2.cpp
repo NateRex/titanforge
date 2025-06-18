@@ -50,6 +50,20 @@ float Vector2::cross(const Vector2& other) const
     return x * other.y - y * other.x;
 }
 
+float Vector2::angleBetween(const Vector2& other) const
+{
+    float dotProduct = dot(other);
+    float magA = getMagnitude();
+    float magB = other.getMagnitude();
+
+    float cosTheta = dotProduct / (magA * magB);
+
+    // Clamp to avoid NaNs due to floating point errors
+    cosTheta = clamp(cosTheta, -1.0f, 1.0f);
+
+    return acos(cosTheta);
+}
+
 Vector2 Vector2::normalize(Vector2* result) const
 {
     float mag = getMagnitude();

@@ -2,10 +2,20 @@
 #include <common/exceptions/UnsupportedOperationException.h>
 #include <common/Utils.h>
 
-Camera::Camera(): Entity(EntityType::CAMERA)
+Camera::Camera(): Entity(EntityType::CAMERA), _minPitch(-89.f), _maxPitch(89.f)
 {
 	// Camera starts at origin looking in -z direction
 	lookAt(Vector3::ZERO, Vector3::MINUS_ZHAT, Vector3::YHAT);
+}
+
+Camera::~Camera()
+{
+	if (_pitch != nullptr)
+	{
+		delete _pitch;
+	}
+
+	_pitch = nullptr;
 }
 
 void Camera::setScaling(float x, float y, float z)
@@ -37,6 +47,39 @@ Vector3 Camera::getForwardVector(Vector3* result) const
 	Vector3& r = getOrDefault(result, Vector3());
 	_rotation.getRow(2, &r);
 	return r.normalize(&r);
+}
+
+void Camera::setMinPitch(float min)
+{
+	_minPitch = min;
+}
+
+void Camera::setMaxPitch(float max)
+{
+	_maxPitch = max;
+}
+
+void Camera::addYaw(float degrees)
+{
+	addRotation(Matrix3::fromYRotation(deg2Rad(degrees)));
+}
+
+void Camera::addPitch(float degrees)
+{
+	// Compute pitch from starting orientation if this is the first time we are calling this method
+	if (_pitch == nullptr)
+	{
+		Vector3 forward = getForwardVector();
+		float pitch = rad2Deg(asinf(forward.y));
+		_pitch = new float(pitch);
+	}
+
+	// Clamp pitch to min and max values
+	float clamped = clamp(*_pitch + degrees, _minPitch, _maxPitch);
+	float delta = clamped - *_pitch;
+
+	addRotation(Matrix3::fromXRotation(deg2Rad(delta)));
+	*_pitch = clamped;
 }
 
 void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)

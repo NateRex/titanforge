@@ -121,6 +121,13 @@ public:
     Vector3 cross(const Vector3& other, Vector3* result = nullptr) const;
 
     /**
+     * Computes the unsigned angle between this vector and another vector
+     * @param other The other vector
+     * @return The unsigned angle between the two vectors (in radians)
+     */
+    float angleBetween(const Vector3& other) const;
+
+    /**
      * Normalizes this vector to have a magnitude of 1. If this vector is the zero vector, this method has no effect.
      * @param result (Optional) Pointer to a vector in which to store the results
      * @return The normalized vector

@@ -49,6 +49,66 @@ BOOST_AUTO_TEST_CASE(Camera_axes)
 }
 
 /**
+ * Tests the ability to change the yaw angle of the camera
+ */
+BOOST_AUTO_TEST_CASE(Camera_addYaw)
+{
+	TestCamera camera;
+	Vector3 startingForward = camera.getForwardVector();
+
+	camera.addYaw(30.f);
+	Vector3 forward = camera.getForwardVector();
+	float angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 30.f, 1.0e-5));
+
+	camera.addYaw(-75.f);
+	forward = camera.getForwardVector();
+	angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 45.f, 1.0e-5));
+}
+
+/**
+ * Tests the ability to change the pitch angle of the camera
+ */
+BOOST_AUTO_TEST_CASE(Camera_addPitch)
+{
+	TestCamera camera;
+	Vector3 startingForward = camera.getForwardVector();
+
+	camera.addPitch(30.f);
+	Vector3 forward = camera.getForwardVector();
+	float angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 30.f, 1.0e-5));
+
+	camera.addPitch(-75.f);
+	forward = camera.getForwardVector();
+	angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 45.f, 1.0e-5));
+}
+
+/**
+ * Tests that pitch respects lower and upper bounds when set via addPitch()
+ */
+BOOST_AUTO_TEST_CASE(Camera_pitchBounds)
+{
+	TestCamera camera;
+	Vector3 startingForward = camera.getForwardVector();
+
+	camera.setMinPitch(-30.f);
+	camera.setMaxPitch(30.f);
+
+	camera.addPitch(31.f);
+	Vector3 forward = camera.getForwardVector();
+	float angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 30.f, 1.0e-12));
+
+	camera.addPitch(-70.f);
+	forward = camera.getForwardVector();
+	angleBetween = rad2Deg(forward.angleBetween(startingForward));
+	BOOST_TEST(equals(angleBetween, 30.f, 1.0e-12));
+}
+
+/**
  * Tests that the view matrix is correctly computed as a result of manually setting the camera position and rotation.
  * Expected values were precomputed by hand.
  */
