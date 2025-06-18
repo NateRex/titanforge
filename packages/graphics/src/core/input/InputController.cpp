@@ -160,7 +160,7 @@ void InputController::processMouseMovement(double xPos, double yPos)
 	std::vector<InputActionMapping> contextMappings;
 
 	float xOffset = xPos - _mouseX;
-	float yOffset = _mouseY - yPos;
+	float yOffset = yPos - _mouseY;
 	_mouseX = xPos;
 	_mouseY = yPos;
 
@@ -186,7 +186,7 @@ void InputController::processMouseMovement(double xPos, double yPos)
 			auto binding = _bindings.find(action);
 			if (binding != _bindings.end() && binding->second)
 			{
-				binding->second(createValue(mapping, xOffset * 0.1, yOffset * 0.1, 0.f), _deltaTime);
+				binding->second(createValue(mapping, -xOffset * 0.1, yOffset * 0.1, 0.f), _deltaTime);
 			}
 		}
 	}

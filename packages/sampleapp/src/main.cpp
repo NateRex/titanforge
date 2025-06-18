@@ -59,21 +59,22 @@ CameraPtr createCamera(WindowPtr window)
 {
     CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
-    InputAction jump("Jump", InputValueType::BOOLEAN);
-    InputAction moveCamera("MoveCamera", InputValueType::VECTOR_2D);
+    InputAction move("Move", InputValueType::VECTOR_2D);
+    InputAction look("Look", InputValueType::VECTOR_2D);
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
-    context->add(InputKey::KEY_D, InputTrigger::HELD, moveCamera);
-    context->add(InputKey::KEY_A, InputTrigger::HELD, moveCamera, InputModifiers().negateX());
-    context->add(InputKey::KEY_W, InputTrigger::HELD, moveCamera, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
-    context->add(InputKey::KEY_S, InputTrigger::HELD, moveCamera, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(InputKey::KEY_D, InputTrigger::HELD, move);
+    context->add(InputKey::KEY_A, InputTrigger::HELD, move, InputModifiers().negateX());
+    context->add(InputKey::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(InputKey::KEY_S, InputTrigger::HELD, move, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(InputKey::MOUSE_MOVE, look, InputModifiers().negateY());
 
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
 
     // Bind move action
-    inputController->bind(moveCamera, [camera](InputValue value, float deltaTime)
+    inputController->bind(move, [camera](InputValue value, float deltaTime)
     {
         Vector2 v = value.get2D();
         float cameraSpeed = 2.5f * deltaTime;
@@ -83,6 +84,14 @@ CameraPtr createCamera(WindowPtr window)
 
         Vector3 forwardMovement = camera->getForwardVector().scale(cameraSpeed * v.y);
         camera->addPosition(forwardMovement);
+    });
+
+    // Bind look action
+    inputController->bind(look, [camera](InputValue value, float deltaTime)
+    {
+        Vector2 v = value.get2D();
+        camera->addYaw(v.x);
+        camera->addPitch(v.y);
     });
 
     return camera;
