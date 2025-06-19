@@ -1,4 +1,5 @@
 #include <graphics/core/input/InputContext.h>
+#include <graphics/core/input/InputContextMappings.h>
 #include <common/Assertions.h>
 
 InputContext::InputContext()
@@ -57,6 +58,21 @@ void InputContext::getDigitalMappings(DigitalInput key, InputTrigger trigger, st
 {
 	auto it = _digitalMappings.find(std::make_pair(key, trigger));
 	if (it != _digitalMappings.end()) {
+		results.insert(results.end(), it->second.begin(), it->second.end());
+	}
+}
+
+void InputContext::getAxisMappings(std::vector<AxisMapping>& results) const
+{
+	for (const auto& [key, val] : _axisMappings) {
+		results.insert(results.end(), val.begin(), val.end());
+	}
+}
+
+void InputContext::getAxisMappings(AxisInput input, std::vector<AxisMapping>& results) const
+{
+	auto it = _axisMappings.find(input);
+	if (it != _axisMappings.end()) {
 		results.insert(results.end(), it->second.begin(), it->second.end());
 	}
 }

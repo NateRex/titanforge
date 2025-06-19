@@ -133,17 +133,17 @@ enum class DigitalInput
 };
 
 /**
- * Maps a GLFW input code to an InputKey value
+ * Maps a GLFW input code to a digital input value
  * @param glfwKey GLFW key to map
  * @return The corresponding input key
- * @throws IllegalArgumentException on failure to map the given code to a valid InputKey
+ * @throws IllegalArgumentException on failure to map the given code to a valid digital input
  */
-InputKey glfwToInputKey(int glfwKey);
+DigitalInput glfwToInputKey(int glfwKey);
 
 /**
- * Maps an InputKey value to a GLFW input code
+ * Maps a digital input value to a GLFW input code
  * @param key Input key to map
  * @return The corresponding GLFW input code
  * @throws IllegalArgumentException on failure to map the given key to a valid GLFW code
  */
-int inputKeyToGLFW(InputKey key);
+int inputKeyToGLFW(DigitalInput key);

@@ -1,62 +1,16 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
 #include <graphics/core/input/DigitalInput.h>
-#include <graphics/core/input/InputTrigger.h>
 #include <graphics/core/input/AxisInput.h>
-#include <graphics/core/input/InputAction.h>
-#include <graphics/core/input/modifiers/InputModifiers.h>
+#include <graphics/core/input/InputTrigger.h>
 #include <unordered_map>
 #include <vector>
 #include <utility>
 
-/**
- * Internal structure that maps a digital key and trigger event to an action, with optional value modifiers.
- * @author Nathaniel Rex
- */
-struct DigitalMapping
-{
-	/**
-	 * Input key
-	 */
-	DigitalInput key;
-
-	/**
-	 * Trigger event
-	 */
-	InputTrigger trigger;
-
-	/**
-	 * Action
-	 */
-	InputAction action;
-
-	/**
-	 * Modifiers
-	 */
-	InputModifiers modifiers;
-};
-
-/**
- * Internal structure that maps an axis input to an action, with optional value modifiers.
- * @author Nathaniel Rex
- */
-struct AxisMapping
-{
-	/**
-	 * Input
-	 */
-	AxisInput key;
-
-	/**
-	 * Action
-	 */
-	InputAction action;
-
-	/**
-	 * Modifiers
-	 */
-	InputModifiers modifiers;
-};
+struct DigitalMapping;
+struct AxisMapping;
+class InputAction;
+class InputModifiers;
 
 /**
  * Hashing function used for storing (key, trigger) pairs representing digital input
@@ -152,7 +106,7 @@ public:
 	 * @param input Input type
 	 * @param results Vector in which to store the results
 	 */
-	void getAxisMappings(std::vector<AxisMapping>& results) const;
+	void getAxisMappings(AxisInput input, std::vector<AxisMapping>& results) const;
 
 private:
 

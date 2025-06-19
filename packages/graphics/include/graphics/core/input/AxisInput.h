@@ -8,8 +8,6 @@
  */
 enum class AxisInput
 {
-	MOUSE_SCROLL_2D,
-	MOUSE_SCROLL_X,
-	MOUSE_SCROLL_Y,
+	MOUSE_SCROLL,
 	MOUSE_MOVE
-}
+};

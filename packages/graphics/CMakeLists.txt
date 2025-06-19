@@ -12,10 +12,10 @@ add_library(Graphics
     src/core/input/modifiers/InputModifiers.cpp
     src/core/input/modifiers/NegateModifier.cpp
     src/core/input/modifiers/SwizzleModifier.cpp
+    src/core/input/DigitalInput.cpp
     src/core/input/InputAction.cpp
     src/core/input/InputContext.cpp
     src/core/input/InputController.cpp
-    src/core/input/InputKey.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
     src/core/shaders/BasicShader.cpp
