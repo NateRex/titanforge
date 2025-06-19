@@ -1,4 +1,6 @@
 #include <graphics/core/input/InputValue.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/Assertions.h>
 #include <cstring>
 

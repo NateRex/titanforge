@@ -9,6 +9,8 @@
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/modifiers/InputModifiers.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/Utils.h>
 #include <cmath>
 
@@ -64,11 +66,11 @@ CameraPtr createCamera(WindowPtr window)
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
-    context->add(InputKey::KEY_D, InputTrigger::HELD, move);
-    context->add(InputKey::KEY_A, InputTrigger::HELD, move, InputModifiers().negateX());
-    context->add(InputKey::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
-    context->add(InputKey::KEY_S, InputTrigger::HELD, move, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
-    context->add(InputKey::MOUSE_MOVE, look, InputModifiers().negateY());
+    context->add(DigitalInput::KEY_D, InputTrigger::HELD, move);
+    context->add(DigitalInput::KEY_A, InputTrigger::HELD, move, InputModifiers().negateX());
+    context->add(DigitalInput::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(DigitalInput::KEY_S, InputTrigger::HELD, move, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
 
     InputController* inputController = window->getInputController();
     inputController->addContext(context);

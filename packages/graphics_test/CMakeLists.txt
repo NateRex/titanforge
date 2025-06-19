@@ -16,10 +16,10 @@ add_executable(GraphicsTest
     src/core/input/modifiers/InputModifiersTest.cpp
     src/core/input/modifiers/NegateModifierTest.cpp
     src/core/input/modifiers/SwizzleModifierTest.cpp
+    src/core/input/DigitalInputTest.cpp
     src/core/input/InputActionTest.cpp
     src/core/input/InputContextTest.cpp
     src/core/input/InputControllerTest.cpp
-    src/core/input/InputKeyTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
     src/core/shaders/BasicShaderTest.cpp

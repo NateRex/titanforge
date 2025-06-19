@@ -1,6 +1,8 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/input/modifiers/NegateModifier.h>
 #include <graphics/core/input/InputValue.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/PrintHelpers.h>
 
 /**

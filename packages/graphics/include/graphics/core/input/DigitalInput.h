@@ -1,15 +1,14 @@
 #pragma once
 
 /**
- * Enumerated type defining a platform-independent set of inputs.
- * It is used throughout the engine to handle input in an abstract way,
- * allowing for backend-specific mapping (e.g., GLFW, SDL, etc.) without
- * coupling user code to a specific library.
+ * Enumerated type defining a platform-independent set of digital inputs (e.g. - key presses).
+ * It is used throughout the engine to handle input in an abstract way, allowing for
+ * backend-specific mapping (e.g., GLFW, SDL, etc.) without coupling user code to a specific
+ * library.
  * @author Nathaniel Rex
  */
-enum class InputKey
+enum class DigitalInput
 {
-	// Keyboard
 	KEY_SPACE,
 	KEY_APOSTROPHE,
 	KEY_COMMA,
@@ -130,24 +129,21 @@ enum class InputKey
 	KEY_RIGHT_ALT,
 	KEY_RIGHT_SUPER,
 	KEY_MENU,
-	KEY_LAST,
-
-	// Mouse
-	MOUSE_MOVE
+	KEY_LAST
 };
 
 /**
- * Maps a GLFW input code to an InputKey value
+ * Maps a GLFW input code to a digital input value
  * @param glfwKey GLFW key to map
  * @return The corresponding input key
- * @throws IllegalArgumentException on failure to map the given code to a valid InputKey
+ * @throws IllegalArgumentException on failure to map the given code to a valid digital input
  */
-InputKey glfwToInputKey(int glfwKey);
+DigitalInput glfwToInputKey(int glfwKey);
 
 /**
- * Maps an InputKey value to a GLFW input code
+ * Maps a digital input value to a GLFW input code
  * @param key Input key to map
  * @return The corresponding GLFW input code
  * @throws IllegalArgumentException on failure to map the given key to a valid GLFW code
  */
-int inputKeyToGLFW(InputKey key);
+int inputKeyToGLFW(DigitalInput key);

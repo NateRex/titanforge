@@ -1,13 +1,14 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
 #include <graphics/core/input/InputAction.h>
+#include <graphics/core/input/InputValue.h>
 #include <vector>
 #include <unordered_map>
 #include <functional>
 
 struct GLFWwindow;
-struct InputActionMapping;
-class InputValue;
+struct DigitalMapping;
+struct AxisMapping;
 
 using ActionCallback = std::function<void(const InputValue&, float deltaTime)> ;
 
@@ -149,12 +150,19 @@ private:
 	static void processMouseMovement(GLFWwindow* window, double xPos, double yPos);
 
 	/**
-	 * Creates an input value object for a given input action mapping
-	 * @param mapping Input action mapping
-	 * @param x X component value
-	 * @param y Y component value
-	 * @param z Z component value
+	 * Creates an input value object for a given digital input action mapping
+	 * @param mapping Input action mapping for a digital (key, trigger) pair (e.g., a key press)
 	 * @return The input value result
 	 */
-	static InputValue createValue(const InputActionMapping& mapping, float x, float y, float z);
+	static InputValue createValue(const DigitalMapping& mapping);
+
+	/**
+	 * Creates an input value object for a given axis action mapping
+	 * @param mapping Action mapping for an axis input (e.g., mouse move or mouse scroll)
+	 * @param x X coordinate value
+	 * @param y Y coordinate value
+	 * @param z Z coordinate value
+	 * @return The input value result
+	 */
+	static InputValue createValue(const AxisMapping& mapping, float x, float y, float z);
 };

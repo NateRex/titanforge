@@ -1,5 +1,7 @@
 #include <graphics/core/input/modifiers/NegateModifier.h>
 #include <graphics/core/input/InputValue.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 
 NegateModifier::NegateModifier(bool x, bool y, bool z)
 	: _negateX(x), _negateY(y), _negateZ(z)

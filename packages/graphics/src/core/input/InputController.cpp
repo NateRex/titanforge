@@ -1,7 +1,7 @@
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
-#include <graphics/core/input/InputActionMapping.h>
-#include <graphics/core/input/InputTrigger.h>
+#include <graphics/core/input/InputContextMappings.h>
+#include <math/Vector3.h>
 #include <common/Assertions.h>
 #include <unordered_set>
 #include <GLFW/glfw3.h>
@@ -61,7 +61,7 @@ void InputController::processKeyEvent(GLFWwindow* window, int key, int scancode,
 
 void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) const
 {
-	InputKey key = glfwToInputKey(glfwKey);
+	DigitalInput key = glfwToInputKey(glfwKey);
 	InputTrigger trigger = glfwToInputTrigger(glfwAction);
 
 	if (trigger == InputTrigger::HELD)
@@ -70,13 +70,13 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 		return;
 	}
 
-	std::vector<InputActionMapping> contextMappings;
+	std::vector<DigitalMapping> contextMappings;
 
 	// Iterate over contexts
 	for (const auto& context : _contexts)
 	{
 		contextMappings.clear();
-		context->getMappings(key, trigger, contextMappings);
+		context->getDigitalMappings(key, trigger, contextMappings);
 
 		// Iterate over actions mapped to (key, trigger) pair
 		for (const auto& mapping : contextMappings)
@@ -87,7 +87,7 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 			auto binding = _bindings.find(action);
 			if (binding != _bindings.end() && binding->second)
 			{
-				binding->second(createValue(mapping, 1.f, 0.f, 0.f), _deltaTime);
+				binding->second(createValue(mapping), _deltaTime);
 			}
 		}
 	}
@@ -97,14 +97,14 @@ void InputController::poll(float deltaTime)
 {
 	_deltaTime = deltaTime;
 
-	std::unordered_map<InputKey, InputTrigger> key2State;
-	std::vector<InputActionMapping> mappings;
+	std::unordered_map<DigitalInput, InputTrigger> key2State;
+	std::vector<DigitalMapping> mappings;
 
 	// Iterate over contexts
 	for (const auto& context : _contexts)
 	{
 		mappings.clear();
-		context->getMappings(mappings);
+		context->getDigitalMappings(mappings);
 
 		// Iterate over bindings
 		for (const auto& mapping : mappings)
@@ -137,7 +137,7 @@ void InputController::poll(float deltaTime)
 			// Trigger callback
 			if (keyState == InputTrigger::PRESSED)
 			{
-				binding->second(createValue(mapping, 1.f, 0.f, 0.f), deltaTime);
+				binding->second(createValue(mapping), deltaTime);
 			}
 		}
 	}
@@ -157,7 +157,7 @@ void InputController::processMouseMovement(GLFWwindow* window, double xPos, doub
 
 void InputController::processMouseMovement(double xPos, double yPos)
 {
-	std::vector<InputActionMapping> contextMappings;
+	std::vector<AxisMapping> contextMappings;
 
 	float xOffset = xPos - _mouseX;
 	float yOffset = yPos - _mouseY;
@@ -175,7 +175,7 @@ void InputController::processMouseMovement(double xPos, double yPos)
 	for (const auto& context : _contexts)
 	{
 		contextMappings.clear();
-		context->getMappings(InputKey::MOUSE_MOVE, InputTrigger::MOVE, contextMappings);
+		context->getAxisMappings(AxisInput::MOUSE_MOVE, contextMappings);
 
 		// Iterate over actions mapped to mouse movement
 		for (const auto& mapping : contextMappings)
@@ -192,8 +192,24 @@ void InputController::processMouseMovement(double xPos, double yPos)
 	}
 }
 
-InputValue InputController::createValue(const InputActionMapping& mapping, float x, float y, float z)
+InputValue InputController::createValue(const DigitalMapping& mapping)
 {
-	InputValue value(mapping.action.getValueType(), x, y, z);
-	return mapping.modifiers.apply(value);
+	// Start w/ 3D type so that all 3 component values are preserved when applying modifiers
+	InputValue value(InputValueType::VECTOR_3D, 1.f, 0.f, 0.f);
+	value = mapping.modifiers.apply(value);
+	Vector3 vec = value.get3D();
+
+	// Repack values into input with correct type
+	return InputValue(mapping.action.getValueType(), vec.x, vec.y, vec.z);
+}
+
+InputValue InputController::createValue(const AxisMapping& mapping, float x, float y, float z)
+{
+	// Start w/ 3D type so taht all 3 component values are preserved when applying modifiers
+	InputValue value(InputValueType::VECTOR_3D, x, y, z);
+	value = mapping.modifiers.apply(value);
+	Vector3 vec = value.get3D();
+
+	// Repack values into input with correct type
+	return InputValue(mapping.action.getValueType(), vec.x, vec.y, vec.z);
 }
