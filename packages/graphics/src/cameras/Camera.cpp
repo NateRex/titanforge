@@ -70,7 +70,7 @@ void Camera::addPitch(float degrees)
 	if (_pitch == nullptr)
 	{
 		Vector3 forward = getForwardVector();
-		float pitch = rad2Deg(asinf(forward.y));
+		float pitch = rad2Deg(asin(forward.y));
 		_pitch = new float(pitch);
 	}
 

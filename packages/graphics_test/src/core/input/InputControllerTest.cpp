@@ -10,7 +10,7 @@
  * Tests that actions can be bound and unbound to callback functions via an input controller, which are triggered via
  * key binding events. When actions are unbound, the callback function can no longer be triggered.
  */
-BOOST_AUTO_TEST_CASE(InputController_keyBindings)
+BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 {
 	// Record starting mouse position
 	InputController* controller = GlobalTestFixture::RENDERER->getWindow()->getInputController();
