@@ -1,6 +1,7 @@
 #include <graphics/cameras/Camera.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 #include <common/Utils.h>
+#include <math.h>
 
 Camera::Camera(): Entity(EntityType::CAMERA), _minPitch(-89.f), _maxPitch(89.f)
 {
