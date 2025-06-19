@@ -1,15 +1,14 @@
 #pragma once
 
 /**
- * Enumerated type defining a platform-independent set of inputs.
- * It is used throughout the engine to handle input in an abstract way,
- * allowing for backend-specific mapping (e.g., GLFW, SDL, etc.) without
- * coupling user code to a specific library.
+ * Enumerated type defining a platform-independent set of digital inputs (e.g. - key presses).
+ * It is used throughout the engine to handle input in an abstract way, allowing for
+ * backend-specific mapping (e.g., GLFW, SDL, etc.) without coupling user code to a specific
+ * library.
  * @author Nathaniel Rex
  */
-enum class InputKey
+enum class DigitalInput
 {
-	// Keyboard
 	KEY_SPACE,
 	KEY_APOSTROPHE,
 	KEY_COMMA,
@@ -130,10 +129,7 @@ enum class InputKey
 	KEY_RIGHT_ALT,
 	KEY_RIGHT_SUPER,
 	KEY_MENU,
-	KEY_LAST,
-
-	// Mouse
-	MOUSE_MOVE
+	KEY_LAST
 };
 
 /**
