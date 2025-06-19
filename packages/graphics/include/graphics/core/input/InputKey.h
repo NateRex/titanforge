@@ -10,7 +10,6 @@
 enum class InputKey
 {
 	// Keyboard
-
 	KEY_SPACE,
 	KEY_APOSTROPHE,
 	KEY_COMMA,
@@ -131,7 +130,10 @@ enum class InputKey
 	KEY_RIGHT_ALT,
 	KEY_RIGHT_SUPER,
 	KEY_MENU,
-	KEY_LAST
+	KEY_LAST,
+
+	// Mouse
+	MOUSE_MOVE
 };
 
 /**

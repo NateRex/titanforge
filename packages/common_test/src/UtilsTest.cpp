@@ -35,6 +35,16 @@ BOOST_AUTO_TEST_CASE(Utils_deg2Rad)
 }
 
 /**
+ * Tests clamp
+ */
+BOOST_AUTO_TEST_CASE(Utils_clamp)
+{
+    BOOST_TEST(clamp(-1.f, 0.f, 2.f) == 0.f);
+    BOOST_TEST(clamp(3.f, 0.f, 2.f) == 2.f);
+    BOOST_TEST(clamp(1.f, 0.f, 2.f) == 1.f);
+}
+
+/**
  * Tests resolvePath
  */
 BOOST_AUTO_TEST_CASE(Utils_resolvePath)

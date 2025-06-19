@@ -13,11 +13,13 @@ InputController::InputController(GLFWwindow* glfwWindow) : _glfwWindow(glfwWindo
 
 	glfwSetWindowUserPointer(glfwWindow, this);
 	glfwSetKeyCallback(glfwWindow, InputController::processKeyEvent);
+	glfwSetCursorPosCallback(glfwWindow, InputController::processMouseMovement);
 }
 
 InputController::~InputController()
 {
 	glfwSetKeyCallback(_glfwWindow, nullptr);
+	glfwSetCursorPosCallback(_glfwWindow, nullptr);
 	glfwSetWindowUserPointer(_glfwWindow, nullptr);
 }
 
@@ -136,6 +138,55 @@ void InputController::poll(float deltaTime)
 			if (keyState == InputTrigger::PRESSED)
 			{
 				binding->second(createValue(mapping, 1.f, 0.f, 0.f), deltaTime);
+			}
+		}
+	}
+}
+
+void InputController::processMouseMovement(GLFWwindow* window, double xPos, double yPos)
+{
+	// Grab input controller pointer
+	InputController* controller = static_cast<InputController*>(glfwGetWindowUserPointer(window));
+	if (!controller)
+	{
+		return;
+	}
+
+	controller->processMouseMovement(xPos, yPos);
+}
+
+void InputController::processMouseMovement(double xPos, double yPos)
+{
+	std::vector<InputActionMapping> contextMappings;
+
+	float xOffset = xPos - _mouseX;
+	float yOffset = yPos - _mouseY;
+	_mouseX = xPos;
+	_mouseY = yPos;
+
+	// If we haven't yet gotten a starting mouse position, record it and skip over callbacks on this frame
+	if (!_didComputeMousePosition)
+	{
+		_didComputeMousePosition = true;
+		return;
+	}
+
+	// Iterate over contexts
+	for (const auto& context : _contexts)
+	{
+		contextMappings.clear();
+		context->getMappings(InputKey::MOUSE_MOVE, InputTrigger::MOVE, contextMappings);
+
+		// Iterate over actions mapped to mouse movement
+		for (const auto& mapping : contextMappings)
+		{
+			const InputAction& action = mapping.action;
+
+			// Apply callback if action is bound
+			auto binding = _bindings.find(action);
+			if (binding != _bindings.end() && binding->second)
+			{
+				binding->second(createValue(mapping, -xOffset * 0.1, yOffset * 0.1, 0.f), _deltaTime);
 			}
 		}
 	}

@@ -25,6 +25,14 @@ float deg2Rad(float deg)
     return deg * PI / 180.;
 }
 
+float clamp(float value, float min, float max)
+{
+    float result = value;
+    result = (result < min) ? min : result;
+    result = (result > max) ? max : result;
+    return result;
+}
+
 std::string resolvePath(const std::string& relPath)
 {
     char path[260];

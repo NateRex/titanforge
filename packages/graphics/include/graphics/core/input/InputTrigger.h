@@ -9,19 +9,24 @@
 enum class InputTrigger
 {
 	/**
-	 * Input is pressed (e.g., a key or mouse down event)
+	 * Key is pressed (e.g., a key or mouse down event)
 	 */
 	PRESSED,
 
 	/**
-	 * Input is released (e.g., a key or mouse up event)
+	 * Key is released (e.g., a key or mouse up event)
 	 */
 	RELEASED,
 
 	/**
-	 * Input is continuously held down
+	 * Key is continuously held down
 	 */
-	HELD
+	HELD,
+
+	/**
+	 * Movement of device (e.g., mouse move)
+	 */
+	MOVE
 };
 
 /**

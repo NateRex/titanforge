@@ -113,6 +113,30 @@ BOOST_AUTO_TEST_CASE(Vector2_crossProduct)
 }
 
 /**
+ * Tests the ability to obtain the angle between two vectors
+ */
+BOOST_AUTO_TEST_CASE(Vector2_angleBetween)
+{
+    Vector2 v1(1, 0);
+
+    Vector2 v2(0, 1);
+    float angle = v1.angleBetween(v2);
+    BOOST_TEST(equals(angle, deg2Rad(90.f), 1.0e-12));
+
+    v2 = Vector2(-1, 0);
+    angle = v1.angleBetween(v2);
+    BOOST_TEST(equals(angle, deg2Rad(180.f), 1.0e-12));
+
+    v2 = Vector2(1, 1);
+    angle = v1.angleBetween(v2);
+    BOOST_TEST(equals(angle, deg2Rad(45.f), 1.0e-12));
+
+    v2 = Vector2(1, -1);
+    angle = v1.angleBetween(v2);
+    BOOST_TEST(equals(angle, deg2Rad(45.f), 1.0e-12));
+}
+
+/**
  * Tests uniform scaling of a vector
  */
 BOOST_AUTO_TEST_CASE(Vector2_uniformScaling)

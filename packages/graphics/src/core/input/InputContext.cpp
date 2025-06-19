@@ -12,6 +12,16 @@ InputContextPtr InputContext::create()
 	return std::shared_ptr<InputContext>(new InputContext());
 }
 
+void InputContext::add(InputKey key, const InputAction& action)
+{
+	add(key, InputTrigger::PRESSED, action, InputModifiers());
+}
+
+void InputContext::add(InputKey key, const InputAction& action, const InputModifiers& modifiers)
+{
+	add(key, InputTrigger::PRESSED, action, modifiers);
+}
+
 void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action)
 {
 	add(key, trigger, action, InputModifiers());
@@ -19,8 +29,11 @@ void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& ac
 
 void InputContext::add(InputKey key, InputTrigger trigger, const InputAction& action, const InputModifiers& modifiers)
 {
-	std::pair<InputKey, InputTrigger> mapKey = std::make_pair(key, trigger);
-	_mappings[mapKey].push_back({ key, trigger, action, modifiers });
+	// Default to MOVE trigger if input represents movement of device
+	InputTrigger actualTrigger = key == InputKey::MOUSE_MOVE ? InputTrigger::MOVE : trigger;
+
+	std::pair<InputKey, InputTrigger> mapKey = std::make_pair(key, actualTrigger);
+	_mappings[mapKey].push_back({ key, actualTrigger, action, modifiers });
 }
 
 size_t InputContext::size() const

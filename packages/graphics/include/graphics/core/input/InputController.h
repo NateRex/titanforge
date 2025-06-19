@@ -53,7 +53,7 @@ public:
 	void clearBindings();
 
 	/**
-	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the active input contexts,
+	 * Processes a key event by evaluating what (if any) actions are mapped to that key via the active input contexts,
 	 * and executing callbacks bound to those actions. This event-driven method of resolving inputs is specific to actions bound
 	 * to PRESSED or RELEASED triggers. This method is called automatically in response to key presses and releases.
 	 * @param glfwKey GLFW key code
@@ -61,6 +61,15 @@ public:
 	 * @param mods GLFW modifier bits
 	 */
 	void processKeyEvent(int glfwKey, int glfwAction, int mods) const;
+
+	/**
+	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the input
+	 * controller associated with the window. This event-driven method of resolving mouse movement inputs is used for
+	 * all triggers.
+	 * @param xPos X position of the mouse (in window coordinates)
+	 * @param yPos Y position of the mouse (in window coordinates)
+	 */
+	void processMouseMovement(double xPos, double yPos);
 
 	/**
 	 * Polls for held keys and dispatches callbacks for actions bound to the HELD trigger. This method is called once
@@ -94,13 +103,31 @@ private:
 	float _deltaTime = 0.f;
 
 	/**
+	 * The x position of the cursor in the previous frame (in pixels). This value is set once per frame, and is used to determine
+	 * the offset of mouse movement.
+	 */
+	float _mouseX = 0.f;
+
+	/**
+	 * The y position of the cursor in the previous frame (in pixels). This value is set once per frame, and is used to determine
+	 * the offset of mouse movement.
+	 */
+	float _mouseY = 0.f;
+
+	/**
+	 * Boolean flag that, when true, implies that this controller has computed a starting mouse position, and thus mouse movement events
+	 * are active.
+	 */
+	bool _didComputeMousePosition = false;
+
+	/**
 	 * Constructor
 	 * @param glfwWindow A pointer to the GLFW window object for which we want to monitor input
 	 */
 	InputController(GLFWwindow* glfwWindow);
 
 	/**
-	 * Processes the given key event by evaluating what (if any) actions are mapped to that key via the input controller
+	 * Processes a key events by evaluating what (if any) actions are mapped to that key via the input controller
 	 * associated with the window. This event-driven method of resolving inputs is used for actions bound to PRESSED
 	 * or RELEASED triggers.
 	 * @param glfwWindow GLFW window pointer
@@ -110,6 +137,16 @@ private:
 	 * @param mods Bit field describing which modifier keys were held.
 	 */
 	static void processKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	/**
+	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the input
+	 * controller associated with the window. This event-driven method of resolving mouse movement inputs is used for
+	 * all triggers.
+	 * @param glfwWindow GLFW window pointer
+	 * @param xPos X position of the mouse (in window coordinates)
+	 * @param yPos Y position of the mouse (in window coordinates)
+	 */
+	static void processMouseMovement(GLFWwindow* window, double xPos, double yPos);
 
 	/**
 	 * Creates an input value object for a given input action mapping

@@ -12,9 +12,10 @@ BOOST_AUTO_TEST_CASE(InputContext_addAndFetch)
 	InputAction action1("Action1", InputValueType::BOOLEAN);
 	InputAction action2("Action2", InputValueType::BOOLEAN);
 
+	// Exercise the different add() methods
 	InputContextPtr context = InputContext::create();
-	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action1);
-	context->add(InputKey::KEY_SPACE, InputTrigger::PRESSED, action2);
+	context->add(InputKey::KEY_SPACE, action1);
+	context->add(InputKey::KEY_SPACE, action2, InputModifiers());
 	context->add(InputKey::KEY_A, InputTrigger::PRESSED, action1, InputModifiers().negate());
 	context->add(InputKey::KEY_SPACE, InputTrigger::RELEASED, action1);
 

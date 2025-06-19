@@ -7,20 +7,23 @@
 #include <GLFW/glfw3.h>
 
 /**
- * Tests that action can be bound and unbound to callback functions via an input controller. When actions
- * are unbound, the callback function can no longer be triggered.
+ * Tests that actions can be bound and unbound to callback functions via an input controller, which are triggered via
+ * key binding events. When actions are unbound, the callback function can no longer be triggered.
  */
 BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 {
-	InputAction action("Action", InputValueType::BOOLEAN);
+	// Record starting mouse position
+	InputController* controller = GlobalTestFixture::RENDERER->getWindow()->getInputController();
+	controller->processMouseMovement(0.f, 0.f);
 
 	// Create context with two mappings for the action
 	InputContextPtr context = InputContext::create();
+	InputAction action("Action", InputValueType::BOOLEAN);
 	context->add(InputKey::KEY_0, InputTrigger::PRESSED, action);
 	context->add(InputKey::KEY_1, InputTrigger::PRESSED, action);
+	context->add(InputKey::MOUSE_MOVE, action);
 
 	// Add context to controller
-	InputController* controller = GlobalTestFixture::RENDERER->getWindow()->getInputController();
 	controller->addContext(context);
 	
 	// Bind action
@@ -29,17 +32,19 @@ BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 		value++;
 	});
 
-	// Trigger twice via two separate keys. Value is now 2.
+	// Trigger twice via two separate keys and movement of the mouse. Value is now 3.
 	controller->processKeyEvent(GLFW_KEY_0, GLFW_PRESS, 0);
 	controller->processKeyEvent(GLFW_KEY_1, GLFW_PRESS, 0);
-	BOOST_TEST(value == 2);
+	controller->processMouseMovement(1.f, 1.f);
+	BOOST_TEST(value == 3);
 
 	// Remove binding
 	controller->clearBindings();
 
-	// Can no longer trigger. Value is still 2.
+	// Can no longer trigger. Value is still 3.
 	controller->processKeyEvent(GLFW_KEY_0, GLFW_PRESS, 0);
-	BOOST_TEST(value == 2);
+	controller->processMouseMovement(2.f, 2.f);
+	BOOST_TEST(value == 3);
 
 	// Cleanup
 	controller->clearContexts();

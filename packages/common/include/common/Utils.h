@@ -27,6 +27,15 @@ float rad2Deg(float rad);
 float deg2Rad(float deg);
 
 /**
+ * Clamps a value to the given range
+ * @param value Value to clamp
+ * @param min Lower bound (inclusive)
+ * @param max Upper bound (inclusive)
+ * @return The clamped value, guaranteed to be within the given range
+ */
+float clamp(float value, float min, float max);
+
+/**
  * Resolves a relative path to the directory containing this executable
  * @param relPath The relative path
  * @return The absolute path to the same file or directory
