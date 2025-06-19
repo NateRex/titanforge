@@ -1,7 +1,8 @@
 #pragma once
 #include <graphics/core/input/InputValueType.h>
-#include <math/Vector2.h>
-#include <math/Vector3.h>
+
+class Vector2;
+class Vector3;
 
 /**
  * This class encapsulates the input data (bool, float, Vector2D, or Vector3D) for an input action.

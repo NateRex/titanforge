@@ -1,7 +1,7 @@
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/InputContextMappings.h>
-#include <graphics/core/input/InputValue.h>
+#include <math/Vector3.h>
 #include <common/Assertions.h>
 #include <unordered_set>
 #include <GLFW/glfw3.h>
@@ -206,7 +206,7 @@ InputValue InputController::createValue(const DigitalMapping& mapping)
 InputValue InputController::createValue(const AxisMapping& mapping, float x, float y, float z)
 {
 	// Start w/ 3D type so taht all 3 component values are preserved when applying modifiers
-	InputValue value(InputValueType::VECTOR_3D, 1.f, 0.f, 0.f);
+	InputValue value(InputValueType::VECTOR_3D, x, y, z);
 	value = mapping.modifiers.apply(value);
 	Vector3 vec = value.get3D();
 

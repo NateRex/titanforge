@@ -2,6 +2,8 @@
 #include <graphics/core/input/modifiers/SwizzleModifier.h>
 #include <graphics/core/input/InputValue.h>
 #include <math/Axis.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <common/PrintHelpers.h>
 
 /**

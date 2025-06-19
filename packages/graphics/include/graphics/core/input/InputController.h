@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/core/input/pointers/InputContextPtr.h>
 #include <graphics/core/input/InputAction.h>
+#include <graphics/core/input/InputValue.h>
 #include <vector>
 #include <unordered_map>
 #include <functional>
@@ -8,7 +9,6 @@
 struct GLFWwindow;
 struct DigitalMapping;
 struct AxisMapping;
-class InputValue;
 
 using ActionCallback = std::function<void(const InputValue&, float deltaTime)> ;
 

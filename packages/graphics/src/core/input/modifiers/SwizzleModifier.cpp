@@ -1,5 +1,7 @@
 #include <graphics/core/input/modifiers/SwizzleModifier.h>
 #include <math/Axis.h>
+#include <math/Vector2.h>
+#include <math/Vector3.h>
 #include <graphics/core/input/InputValue.h>
 
 SwizzleModifier::SwizzleModifier(Axis first, Axis second, Axis third)

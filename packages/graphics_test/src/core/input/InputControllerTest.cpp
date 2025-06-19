@@ -16,12 +16,12 @@ BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 	InputController* controller = GlobalTestFixture::RENDERER->getWindow()->getInputController();
 	controller->processMouseMovement(0.f, 0.f);
 
-	// Create context with two mappings for the action
+	// Create context
 	InputContextPtr context = InputContext::create();
 	InputAction action("Action", InputValueType::BOOLEAN);
-	context->add(InputKey::KEY_0, InputTrigger::PRESSED, action);
-	context->add(InputKey::KEY_1, InputTrigger::PRESSED, action);
-	context->add(InputKey::MOUSE_MOVE, action);
+	context->add(DigitalInput::KEY_0, InputTrigger::PRESSED, action);
+	context->add(DigitalInput::KEY_1, InputTrigger::PRESSED, action);
+	context->add(AxisInput::MOUSE_MOVE, action);
 
 	// Add context to controller
 	controller->addContext(context);
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(InputController_addAndRemoveContexts)
 	// Create context with mapping for one action
 	InputAction action("Action", InputValueType::BOOLEAN);
 	InputContextPtr context = InputContext::create();
-	context->add(InputKey::KEY_0, InputTrigger::PRESSED, action);
+	context->add(DigitalInput::KEY_0, InputTrigger::PRESSED, action);
 
 	// Add context to controller
 	InputController* controller = GlobalTestFixture::RENDERER->getWindow()->getInputController();
