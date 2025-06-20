@@ -14,12 +14,14 @@ InputController::InputController(GLFWwindow* glfwWindow) : _glfwWindow(glfwWindo
 	glfwSetWindowUserPointer(glfwWindow, this);
 	glfwSetKeyCallback(glfwWindow, InputController::processKeyEvent);
 	glfwSetCursorPosCallback(glfwWindow, InputController::processMouseMovement);
+	glfwSetScrollCallback(glfwWindow, InputController::processMouseScroll);
 }
 
 InputController::~InputController()
 {
 	glfwSetKeyCallback(_glfwWindow, nullptr);
 	glfwSetCursorPosCallback(_glfwWindow, nullptr);
+	glfwSetScrollCallback(_glfwWindow, nullptr);
 	glfwSetWindowUserPointer(_glfwWindow, nullptr);
 }
 
@@ -93,7 +95,7 @@ void InputController::processKeyEvent(int glfwKey, int glfwAction, int mods) con
 	}
 }
 
-void InputController::poll(float deltaTime)
+void InputController::pollForKeyHolds(float deltaTime)
 {
 	_deltaTime = deltaTime;
 
@@ -187,6 +189,43 @@ void InputController::processMouseMovement(double xPos, double yPos)
 			if (binding != _bindings.end() && binding->second)
 			{
 				binding->second(createValue(mapping, -xOffset * 0.1, yOffset * 0.1, 0.f), _deltaTime);
+			}
+		}
+	}
+}
+
+void InputController::processMouseScroll(GLFWwindow* window, double xOffset, double yOffset)
+{
+	// Grab input controller pointer
+	InputController* controller = static_cast<InputController*>(glfwGetWindowUserPointer(window));
+	if (!controller)
+	{
+		return;
+	}
+
+	controller->processMouseScroll(xOffset, yOffset);
+}
+
+void InputController::processMouseScroll(double xOffset, double yOffset)
+{
+	std::vector<AxisMapping> contextMappings;
+
+	// Iterate over contexts
+	for (const auto& context : _contexts)
+	{
+		contextMappings.clear();
+		context->getAxisMappings(AxisInput::MOUSE_SCROLL, contextMappings);
+
+		// Iterate over actions mapped to mouse scrolling
+		for (const auto& mapping : contextMappings)
+		{
+			const InputAction& action = mapping.action;
+
+			// Apply callback if action is bound
+			auto binding = _bindings.find(action);
+			if (binding != _bindings.end() && binding->second)
+			{
+				binding->second(createValue(mapping, xOffset, yOffset, 0.f), _deltaTime);
 			}
 		}
 	}

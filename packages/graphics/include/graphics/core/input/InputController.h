@@ -64,20 +64,28 @@ public:
 	void processKeyEvent(int glfwKey, int glfwAction, int mods) const;
 
 	/**
-	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the input
-	 * controller associated with the window. This event-driven method of resolving mouse movement inputs is used for
-	 * all triggers.
+	 * Polls for held keys and dispatches callbacks for actions bound to the HELD trigger. This method is called once
+	 * per frame (e.g, inside the game loop) by the renderer.
+	 * @param deltaTime Time since the last frame renderered (in decimal seconds)
+	 */
+	void pollForKeyHolds(float deltaTime);
+
+	/**
+	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the active input
+	 * contexts, and executing callbacks bound to those actions.
 	 * @param xPos X position of the mouse (in window coordinates)
 	 * @param yPos Y position of the mouse (in window coordinates)
 	 */
 	void processMouseMovement(double xPos, double yPos);
 
 	/**
-	 * Polls for held keys and dispatches callbacks for actions bound to the HELD trigger. This method is called once
-	 * per frame (e.g, inside the game loop) by the renderer.
-	 * @param deltaTime Time since the last frame renderered (in decimal seconds)
+	 * Processes mouse scroll events by evaluating what (if any) actions are mapped to mouse movement via the active input
+	 * contexts, and executing callbacks bound to those actions.
+	 * @param glfwWindow GLFW window pointer
+	 * @param xOffset Scroll delta in the horizontal direction
+	 * @param yOffset Scroll delta in the vertical direction
 	 */
-	void poll(float deltaTime);
+	void processMouseScroll(double xOffset, double yOffset);
 
 private:
 
@@ -141,13 +149,21 @@ private:
 
 	/**
 	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the input
-	 * controller associated with the window. This event-driven method of resolving mouse movement inputs is used for
-	 * all triggers.
+	 * controller associated with the window.
 	 * @param glfwWindow GLFW window pointer
 	 * @param xPos X position of the mouse (in window coordinates)
 	 * @param yPos Y position of the mouse (in window coordinates)
 	 */
 	static void processMouseMovement(GLFWwindow* window, double xPos, double yPos);
+
+	/**
+	 * Processes mouse scroll events by evaluating what (if any) actions are mapped to mouse scrolling via the input
+	 * controller associated with the window.
+	 * @param glfwWindow GLFW window pointer
+	 * @param xOffset Scroll delta in the horizontal direction
+	 * @param yOffset Scroll delta in the vertical direction
+	 */
+	static void processMouseScroll(GLFWwindow* window, double xOffset, double yOffset);
 
 	/**
 	 * Creates an input value object for a given digital input action mapping

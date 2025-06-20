@@ -103,7 +103,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 	float time = getTime();
 	float deltaTime = time - _timeOfLastFrame;
 	_timeOfLastFrame = time;
-	_window->getInputController()->poll(deltaTime);
+	_window->getInputController()->pollForKeyHolds(deltaTime);
 
 	// Recursively parse and draw entities
 	renderEntity(camera, scene, scene->getMatrix());

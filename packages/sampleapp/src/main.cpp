@@ -59,10 +59,11 @@ std::vector<MeshPtr> createBoxes(ScenePtr scene)
  */
 CameraPtr createCamera(WindowPtr window)
 {
-    CameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
+    PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
     InputAction move("Move", InputValueType::VECTOR_2D);
     InputAction look("Look", InputValueType::VECTOR_2D);
+    InputAction zoom("Zoom", InputValueType::SCALAR);
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
@@ -71,6 +72,7 @@ CameraPtr createCamera(WindowPtr window)
     context->add(DigitalInput::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
     context->add(DigitalInput::KEY_S, InputTrigger::HELD, move, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
     context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
+    context->add(AxisInput::MOUSE_SCROLL, zoom, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
 
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
@@ -94,6 +96,15 @@ CameraPtr createCamera(WindowPtr window)
         Vector2 v = value.get2D();
         camera->addYaw(v.x);
         camera->addPitch(v.y);
+    });
+
+    // Bind zoom action
+    inputController->bind(zoom, [camera](InputValue value, float deltaTime)
+    {
+        float fov = camera->getFOV();
+        fov -= value.getScalar();
+        fov = clamp(fov, 1.f, 45.f);
+        camera->setFOV(fov);
     });
 
     return camera;
