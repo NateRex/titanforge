@@ -22,6 +22,7 @@ BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 	context->add(DigitalInput::KEY_0, InputTrigger::PRESSED, action);
 	context->add(DigitalInput::KEY_1, InputTrigger::PRESSED, action);
 	context->add(AxisInput::MOUSE_MOVE, action);
+	context->add(AxisInput::MOUSE_SCROLL, action);
 
 	// Add context to controller
 	controller->addContext(context);
@@ -32,19 +33,21 @@ BOOST_AUTO_TEST_CASE(InputController_actionBindings)
 		value++;
 	});
 
-	// Trigger twice via two separate keys and movement of the mouse. Value is now 3.
+	// Trigger via two separate keys, movement of the mouse, and scrolling. Value is now 4.
 	controller->processKeyEvent(GLFW_KEY_0, GLFW_PRESS, 0);
 	controller->processKeyEvent(GLFW_KEY_1, GLFW_PRESS, 0);
 	controller->processMouseMovement(1.f, 1.f);
-	BOOST_TEST(value == 3);
+	controller->processMouseScroll(1.f, 1.f);
+	BOOST_TEST(value == 4);
 
-	// Remove binding
+	// Remove bindings
 	controller->clearBindings();
 
-	// Can no longer trigger. Value is still 3.
+	// Can no longer trigger. Value is still 4.
 	controller->processKeyEvent(GLFW_KEY_0, GLFW_PRESS, 0);
 	controller->processMouseMovement(2.f, 2.f);
-	BOOST_TEST(value == 3);
+	controller->processMouseScroll(2.f, 2.f);
+	BOOST_TEST(value == 4);
 
 	// Cleanup
 	controller->clearContexts();
