@@ -1,4 +1,4 @@
-#include <graphics/entities/EntityGroup.h>
+#include <graphics/core/EntityGroup.h>
 
 EntityGroup::EntityGroup() : Entity(EntityType::GROUP)
 {

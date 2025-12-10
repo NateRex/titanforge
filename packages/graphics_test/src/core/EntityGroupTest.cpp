@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/entities/EntityGroup.h>
+#include <graphics/core/EntityGroup.h>
 #include <common/PrintHelpers.h>
 
 /**

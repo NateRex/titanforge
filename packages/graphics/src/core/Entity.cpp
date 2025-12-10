@@ -1,4 +1,4 @@
-#include <graphics/entities/Entity.h>
+#include <graphics/core/Entity.h>
 #include <math/Matrix4.h>
 #include <algorithm>
 

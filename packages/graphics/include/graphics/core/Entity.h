@@ -1,13 +1,13 @@
 #pragma once
-#include <graphics/entities/EntityType.h>
-#include <graphics/entities/pointers/EntityPtr.h>
+#include <graphics/core/EntityType.h>
+#include <graphics/core/pointers/EntityPtr.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <vector>
 
 /**
- * Base class for all entities that can be added to the scene. Contains a set of properties and methods for manipulating
+ * Base class for everything that can be added to the scene. Contains a set of properties and methods for manipulating
  * the object in 3D space. An entity can have one or more children, whose position, rotation, and scaling will be relative
  * to its parent.
  * @author Nathaniel Rex

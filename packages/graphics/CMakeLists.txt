@@ -24,10 +24,10 @@ add_library(Graphics
     src/core/windows/Window.cpp
     src/core/Buffer.cpp
     src/core/Color.cpp
+    src/core/Entity.cpp
+    src/core/EntityGroup.cpp
     src/core/Renderer.cpp
-    src/entities/Entity.cpp
-    src/entities/EntityGroup.cpp
-    src/entities/Mesh.cpp
+    src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp

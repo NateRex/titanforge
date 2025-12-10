@@ -3,7 +3,7 @@
 #include <graphics/core/windows/pointers/WindowPtr.h>
 #include <graphics/scene/pointers/ScenePtr.h>
 #include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/entities/Mesh.h>
+#include <graphics/objects/Mesh.h>
 #include <graphics/core/Color.h>
 #include <mutex>
 

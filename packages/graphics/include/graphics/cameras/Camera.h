@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/entities/Entity.h>
+#include <graphics/core/Entity.h>
 
 /**
  * Parent class to all types of cameras that can be added to the scene.

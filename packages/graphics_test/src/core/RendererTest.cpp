@@ -6,7 +6,7 @@
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/BasicMaterial.h>
-#include <graphics/entities/Mesh.h>
+#include <graphics/objects/Mesh.h>
 #include <common/PrintHelpers.h>
 
 /**
