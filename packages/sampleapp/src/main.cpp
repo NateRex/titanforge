@@ -4,7 +4,7 @@
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/materials/BasicMaterial.h>
-#include <graphics/entities/Mesh.h>
+#include <graphics/objects/Mesh.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>

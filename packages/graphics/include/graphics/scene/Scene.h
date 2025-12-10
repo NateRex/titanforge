@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/scene/pointers/ScenePtr.h>
-#include <graphics/entities/EntityGroup.h>
+#include <graphics/core/EntityGroup.h>
 
 /**
  * The scene is the top-level entity group containing everything to be rendered

@@ -27,10 +27,10 @@ add_executable(GraphicsTest
     src/core/windows/WindowTest.cpp
     src/core/BufferTest.cpp
     src/core/ColorTest.cpp
+    src/core/EntityGroupTest.cpp
+    src/core/EntityTest.cpp
     src/core/RendererTest.cpp
-    src/entities/EntityGroupTest.cpp
-    src/entities/EntityTest.cpp
-    src/entities/MeshTest.cpp
+    src/objects/MeshTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp

@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/entities/Entity.h>
+#include <graphics/core/Entity.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>

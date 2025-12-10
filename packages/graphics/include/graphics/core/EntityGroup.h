@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/entities/pointers/EntityGroupPtr.h>
-#include <graphics/entities/Entity.h>
+#include <graphics/core/pointers/EntityGroupPtr.h>
+#include <graphics/core/Entity.h>
 
 /**
  * An EntityGroup groups one or more entities, with the ability to perform an additional coordinate transformation.

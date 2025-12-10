@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/entities/Mesh.h>
+#include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/BasicMaterial.h>
 #include <common/PrintHelpers.h>

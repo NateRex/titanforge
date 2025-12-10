@@ -1,4 +1,4 @@
-#include <graphics/entities/Mesh.h>
+#include <graphics/objects/Mesh.h>
 
 Mesh::Mesh(GeometryPtr geometry, MaterialPtr material)
 	: Entity(EntityType::MESH), geometry(geometry), material(material)

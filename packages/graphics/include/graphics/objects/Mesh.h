@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/entities/pointers/MeshPtr.h>
-#include <graphics/entities/Entity.h>
+#include <graphics/objects/pointers/MeshPtr.h>
+#include <graphics/core/Entity.h>
 #include <graphics/geometry/pointers/GeometryPtr.h>
 #include <graphics/materials/pointers/MaterialPtr.h>
 
