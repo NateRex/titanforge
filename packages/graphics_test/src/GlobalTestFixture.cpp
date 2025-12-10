@@ -2,7 +2,7 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/core/windows/Window.h>
 
-Renderer* GlobalTestFixture::RENDERER = nullptr;
+RendererPtr GlobalTestFixture::RENDERER = nullptr;
 
 GlobalTestFixture::GlobalTestFixture()
 {
@@ -12,15 +12,11 @@ GlobalTestFixture::GlobalTestFixture()
 	// Set up renderer
 	if (!RENDERER)
 	{
-		RENDERER = new Renderer();
+		RENDERER = Renderer::create();
 	}
 }
 
 GlobalTestFixture::~GlobalTestFixture()
 {
-	if (RENDERER)
-	{
-		delete RENDERER;
-		RENDERER = nullptr;
-	}
+	RENDERER = nullptr;
 }

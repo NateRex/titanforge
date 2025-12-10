@@ -14,7 +14,7 @@
  */
 BOOST_AUTO_TEST_CASE(Renderer_getTime)
 {
-	Renderer* renderer = GlobalTestFixture::RENDERER;
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_TEST(renderer->getTime() > 0.0);
 }
 
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(Renderer_getTime)
  */
 BOOST_AUTO_TEST_CASE(Renderer_setBackgroundColor)
 {
-	Renderer* renderer = GlobalTestFixture::RENDERER;
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	Color oldBackground = renderer->getBackgroundColor();
 
 	renderer->setBackgroundColor(Color::BLUE);
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(Renderer_setBackgroundColor)
  */
 BOOST_AUTO_TEST_CASE(Renderer_setWindow)
 {
-	Renderer* renderer = GlobalTestFixture::RENDERER;
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	WindowPtr window = renderer->getWindow();
 	BOOST_TEST(window != nullptr);
 
@@ -63,6 +63,6 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 	scene->add(mesh);
 
 	// Render
-	Renderer* renderer = GlobalTestFixture::RENDERER;
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
 }

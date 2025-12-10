@@ -31,18 +31,7 @@ Window::Window(const char* title, unsigned int width, unsigned int height)
 
 Window::~Window()
 {
-    if (glfwGetCurrentContext() == _glfwWindow)
-    {
-        glfwMakeContextCurrent(nullptr);
-    }
-
-    delete _inputController;
-    _inputController = nullptr;
-
-    glfwDestroyWindow(_glfwWindow);
-    _glfwWindow = nullptr;
-
-    decrementWindowCount();
+    destroy();
 }
 
 void Window::setHeadlessMode(bool headlessMode)
@@ -62,7 +51,29 @@ InputController* Window::getInputController()
 
 bool Window::isOpen() const
 {
-    return !glfwWindowShouldClose(_glfwWindow);
+    return _glfwWindow && !glfwWindowShouldClose(_glfwWindow);
+}
+
+void Window::destroy()
+{
+    if (glfwGetCurrentContext() == _glfwWindow)
+    {
+        glfwMakeContextCurrent(nullptr);
+    }
+
+    if (_inputController)
+    {
+        delete _inputController;
+        _inputController = nullptr;
+    }
+
+    if (_glfwWindow)
+    {
+        glfwDestroyWindow(_glfwWindow);
+        _glfwWindow = nullptr;
+
+        decrementWindowCount();
+    }
 }
 
 void Window::incrementWindowCount()

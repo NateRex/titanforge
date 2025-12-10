@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/core/pointers/RendererPtr.h>
 #include <graphics/core/windows/pointers/WindowPtr.h>
 #include <graphics/scene/pointers/ScenePtr.h>
 #include <graphics/cameras/pointers/CameraPtr.h>
@@ -17,21 +18,17 @@ class Renderer
 public:
 
 	/**
-	 * Constructs a new renderer instance. This will automatically result in a new window being created and made the
-	 * current context.
-	 */
-	Renderer();
-
-	/**
-	 * Constructs a new renderer instance using an existing window
-	 * @param window Window target
-	 */
-	Renderer(WindowPtr window);
-
-	/**
 	 * Destructor
 	 */
 	~Renderer();
+
+	/**
+	 * Constructs a new renderer instance
+	 * @param window Existing window to attach the renderer to. Can be null, in which case a new window will automatically
+	 * be created.
+	 * @return A pointer to the new renderer instance.
+	 */
+	static RendererPtr create(WindowPtr window = nullptr);
 
 	/**
 	 * @return The total amount of time (in decimal seconds) that this renderer has been active for
@@ -66,6 +63,13 @@ public:
 	 * @param camera Camera
 	 */
 	void render(const ScenePtr scene, const CameraPtr camera);
+
+	/**
+	 * Destroys this renderer, releasing all of its resources
+	 * @param destroyWindow Boolean flag that, when true, causes the destruction of the window this renderer is
+	 * currently attached to. Defaults to false.
+	 */
+	void destroy(bool destroyWindow = false);
 
 private:
 
@@ -111,6 +115,12 @@ private:
 	 * be called once, on construction of the first renderer instance.
 	 */
 	static void applyGlobalSettings();
+
+	/**
+	 * Constructs a new renderer instance
+	 * @param window Starting window target
+	 */
+	Renderer(WindowPtr window);
 
 	/**
 	 * Recursively renders an entity belonging to the scene, along with all of its children

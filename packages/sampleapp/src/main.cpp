@@ -54,19 +54,21 @@ std::vector<MeshPtr> createBoxes(ScenePtr scene)
 
 /**
  * Creates a camera capable of being controlled via the 'a', 'w', 's', and 'd' keys
- * @param window The window context
+ * @param renderer The renderer
  * @return The camera that was created
  */
-CameraPtr createCamera(WindowPtr window)
+CameraPtr createCamera(RendererPtr renderer)
 {
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
+    InputAction quit("Quit", InputValueType::BOOLEAN);
     InputAction move("Move", InputValueType::VECTOR_2D);
     InputAction look("Look", InputValueType::VECTOR_2D);
     InputAction zoom("Zoom", InputValueType::SCALAR);
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
+    context->add(DigitalInput::KEY_ESCAPE, InputTrigger::RELEASED, quit);
     context->add(DigitalInput::KEY_D, InputTrigger::HELD, move);
     context->add(DigitalInput::KEY_A, InputTrigger::HELD, move, InputModifiers().negateX());
     context->add(DigitalInput::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
@@ -74,8 +76,15 @@ CameraPtr createCamera(WindowPtr window)
     context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
     context->add(AxisInput::MOUSE_SCROLL, zoom, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
 
+    WindowPtr window = renderer->getWindow();
     InputController* inputController = window->getInputController();
     inputController->addContext(context);
+
+    // Bind quit action
+    inputController->bind(quit, [renderer](InputValue value, float deltaTime)
+    {
+        renderer->destroy(true);
+    });
 
     // Bind move action
     inputController->bind(move, [camera](InputValue value, float deltaTime)
@@ -115,18 +124,18 @@ CameraPtr createCamera(WindowPtr window)
  */
 int main()
 {
-    Renderer renderer;
-    renderer.setBackgroundColor(Color(0.2f, 0.3f, 0.4f, 1.0f));
+    RendererPtr renderer = Renderer::create();
+    renderer->setBackgroundColor(Color(0.2f, 0.3f, 0.4f, 1.0f));
 
-    CameraPtr camera = createCamera(renderer.getWindow());
+    CameraPtr camera = createCamera(renderer);
     camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     ScenePtr scene = Scene::create();
     std::vector<MeshPtr> meshes = createBoxes(scene);
 
-    while (renderer.getWindow()->isOpen())
+    while (renderer->getWindow()->isOpen())
     {
-        float t = renderer.getTime();
+        float t = renderer->getTime();
 
         // Rotate meshes
         for (int i = 0; i < meshes.size(); i++)
@@ -136,6 +145,6 @@ int main()
         }
 
         // Render scene
-        renderer.render(scene, camera);
+        renderer->render(scene, camera);
     }
 }

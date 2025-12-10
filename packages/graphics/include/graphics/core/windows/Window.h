@@ -48,6 +48,11 @@ public:
      */
     bool isOpen() const;
 
+    /**
+     * Destroys this window, releasing all of its resources
+     */
+    void destroy();
+
 private:
 
     /**

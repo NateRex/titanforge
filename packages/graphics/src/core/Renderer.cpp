@@ -18,11 +18,6 @@
 int Renderer::_RENDERER_COUNT = 0;
 std::mutex Renderer::_MUTEX;
 
-Renderer::Renderer(): Renderer(Window::create("TitanForge", 800, 600))
-{
-
-}
-
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
 	incrementRendererCount();
@@ -32,7 +27,13 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 
 Renderer::~Renderer()
 {
-	decrementRendererCount();
+	destroy();
+}
+
+RendererPtr Renderer::create(WindowPtr window)
+{
+	WindowPtr target = window ? window : Window::create("TitanForge", 800, 600);
+	return std::shared_ptr<Renderer>(new Renderer(target));
 }
 
 float Renderer::getTime() const
@@ -91,6 +92,16 @@ Color Renderer::getBackgroundColor() const
 void Renderer::setBackgroundColor(const Color& color)
 {
 	_backgroundColor = color;
+}
+
+void Renderer::destroy(bool destroyWindow)
+{
+	decrementRendererCount();
+
+	if (destroyWindow && _window)
+	{
+		_window->destroy();
+	}
 }
 
 void Renderer::render(const ScenePtr scene, const CameraPtr camera)

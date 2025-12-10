@@ -1,7 +1,6 @@
 #pragma once
+#include <graphics/core/pointers/RendererPtr.h>
 #include <mutex>
-
-class Renderer;
 
 /**
  * Test fixture that instantiates a new static renderer instance for use across tests.
@@ -15,7 +14,7 @@ public:
     /**
      * Global renderer for use across tests
      */
-    static Renderer* RENDERER;
+    static RendererPtr RENDERER;
 
     /**
      * Code to run before all tests
