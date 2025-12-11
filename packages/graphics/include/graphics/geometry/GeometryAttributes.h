@@ -9,6 +9,11 @@ class GeometryAttributes
 public:
 
 	/**
+	 * Flag that, when true, indicates that the geometry contains per-vertex normals. Defaults to false.
+	 */
+	bool normals = false;
+
+	/**
 	 * Flag that, when true, indicates that the geometry contains per-vertex color values. Defaults to false.
 	 */
 	bool colors = false;

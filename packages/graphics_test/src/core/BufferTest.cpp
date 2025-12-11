@@ -20,6 +20,24 @@ BOOST_AUTO_TEST_CASE(Buffer_positionsOnly)
 }
 
 /**
+ * Tests the ability to create and bind a buffer using data containing vertex normals
+ */
+BOOST_AUTO_TEST_CASE(Buffer_withNormals)
+{
+	unsigned int indices[] = { 0, 1, 2 };
+	float vertices[] = {
+		1.f, 0.f, 0.f, 0.f, 0.f, 1.f,
+		0.f, 1.f, 0.f, 0.f, 0.f, 1.f,
+		0.f, 0.f, 0.f, 0.f, 0.f, 1.f
+	};
+	GeometryAttributes attrib;
+	attrib.normals = true;
+
+	Buffer buffer(attrib, vertices, 18, indices, 3);
+	BOOST_REQUIRE_NO_THROW(buffer.bind());
+}
+
+/**
  * Tests the ability to create and bind a buffer using data containing vertex colors
  */
 BOOST_AUTO_TEST_CASE(Buffer_withColors)

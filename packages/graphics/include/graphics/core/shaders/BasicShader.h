@@ -11,8 +11,9 @@ constexpr const char* BASIC_VERTEX = R"(
 
 		// Inputs
 		layout (location = 0) in vec3 vert_Pos;
-		layout (location = 1) in vec4 vert_Color;
-		layout (location = 2) in vec2 vert_TexCoord;
+		layout (location = 1) in vec3 vert_Normal;
+		layout (location = 2) in vec4 vert_Color;
+		layout (location = 3) in vec2 vert_TexCoord;
 
 		// Uniforms
 		uniform vec4 uColor;

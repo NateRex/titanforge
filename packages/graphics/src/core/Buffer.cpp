@@ -27,19 +27,27 @@ Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsi
 	glEnableVertexAttribArray(0);
 	offset += 3;
 
+	// Normal attribute (if present)
+	if (attributes.normals)
+	{
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		offset += 3;
+	}
+
 	// Color attribute (if present)
 	if (attributes.colors)
 	{
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
-		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(2);
 		offset += 4;
 	}
 
 	// Texture attribute (if present)
 	if (attributes.uvs)
 	{
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
-		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(3);
 		offset += 2;
 	}
 }

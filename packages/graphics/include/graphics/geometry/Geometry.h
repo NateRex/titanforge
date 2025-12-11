@@ -28,7 +28,8 @@ public:
 	static GeometryPtr create();
 
 	/**
-	 * Sets the vertex positions of this geometry.
+	 * Sets the vertex positions of this geometry. If the indices and vertex normals of this geometry have not yet been set,
+	 * they will additionally be computed and set automatically.
 	 * @param vertices An array where every 3 values represents the x, y, and z components of a vertex.
 	 * @param numVertices The number of vertices in the array
 	 */
@@ -36,7 +37,7 @@ public:
 
 	/**
 	 * Sets the vertex indices of this geometry.
-	 * @param indices An array whose values point to vertices, defining the ordering of positions for this geometry.
+	 * @param indices An array whose values represent the index order of vertex positions, normals, and texture coordinates.
 	 * @param numIndices The number of indices in the array
 	 */
 	void setIndices(const unsigned int* indices, unsigned int numIndices);
@@ -45,6 +46,19 @@ public:
 	 * @return The total number of indices in this geometry
 	 */
 	unsigned int size() const;
+
+	/**
+	 * Sets the normal vectors for vertices in this geometry.
+	 * @param normals An array where every 3 values represent the x, y, and z components of a vector.
+	 * @param numNormals The number of normals in the array. This is expected to match the number of vertices in this
+	 * geometry.
+	 */
+	void setNormals(const float* normals, unsigned int numNormals);
+
+	/**
+	 * Removes the normal vectors for vertices in this geometry, if currently present.
+	 */
+	void removeNormals();
 
 	/**
 	 * Sets the color for each vertex in this geometry.
@@ -108,8 +122,19 @@ protected:
 	unsigned int _numIndices = 0;
 
 	/**
+	 * Vertex normals. Can be null, implying no normals specified per-vertex, causing no effect on
+	 * lighting. When not empty, the number of normals should equal the number of vertices.
+	 */
+	Vector3* _normals = nullptr;
+
+	/**
+	 * Number of vertex normals
+	 */
+	unsigned int _numNormals = 0;
+
+	/**
 	 * Vertex colors. Can be null, implying no per-vertex coloring. When not empty,
-	 * the size of this list should be equal to the number of vertices.
+	 * the number of colors should equal the number of vertices.
 	 */
 	Color* _colors = nullptr;
 
@@ -120,7 +145,7 @@ protected:
 
 	/**
 	 * Texture coordinates. Can be null, implying no per-vertex texture mapping. When not
-	 * empty, the size of this list should be equal to the number of vertices.
+	 * empty, the number of coordinates should equal the number of vertices.
 	 */
 	Vector2* _uvs = nullptr;
 

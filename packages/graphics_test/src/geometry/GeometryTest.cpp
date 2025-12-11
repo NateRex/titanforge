@@ -10,8 +10,11 @@ BOOST_AUTO_TEST_CASE(Geometry_construction)
 {
 	GeometryPtr geom = Geometry::create();
 	BOOST_TEST(geom->size() == 0);
-	BOOST_TEST(!geom->getAttributes().colors);
-	BOOST_TEST(!geom->getAttributes().uvs);
+
+	GeometryAttributes attributes = geom->getAttributes();
+	BOOST_TEST(!attributes.normals);
+	BOOST_TEST(!attributes.colors);
+	BOOST_TEST(!attributes.uvs);
 }
 
 /**
@@ -32,6 +35,25 @@ BOOST_AUTO_TEST_CASE(Geometry_verticesAndIndices)
 	unsigned int indices[] = { 0, 1, 2, 0 };
 	geom->setIndices(indices, 4);
 	BOOST_TEST(geom->size() == 4);
+}
+
+/**
+ * Tests the ability to add and remove vertex normals from a geometry
+ */
+BOOST_AUTO_TEST_CASE(Geometry_normals)
+{
+	GeometryPtr geom = Geometry::create();
+
+	float normals[] = {
+		1.f, 0.f, 0.f,
+		1.f, 1.f, 0.f,
+		1.f, 1.f, 1.f
+	};
+	geom->setNormals(normals, 3);
+	BOOST_TEST(geom->getAttributes().normals);
+
+	geom->removeNormals();
+	BOOST_TEST(!geom->getAttributes().normals);
 }
 
 /**
