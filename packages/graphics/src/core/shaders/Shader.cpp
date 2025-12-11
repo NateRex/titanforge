@@ -90,7 +90,7 @@ unsigned int Shader::compileSource(const char* prgmName, int type, const char* s
 	return id;
 }
 
-void Shader::use() const
+void Shader::activate() const
 {
 	glUseProgram(_id);
 }

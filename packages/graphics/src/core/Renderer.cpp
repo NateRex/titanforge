@@ -157,7 +157,7 @@ void Renderer::renderMesh(const CameraPtr camera, const MeshPtr mesh, const Matr
 	// Load shader data
 	MaterialPtr material = mesh->material;
 	ShaderPtr shader = ShaderManager::getShader(material->type);
-	shader->use();
+	shader->activate();
 	shader->setModelMatrix(local2World);
 	shader->setViewMatrix(camera->getViewMatrix());
 	shader->setProjectionMatrix(camera->getProjectionMatrix());

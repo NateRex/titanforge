@@ -46,7 +46,7 @@ public:
     /**
      * Activates this shader as the current shader program used for rendering
      */
-    void use() const;
+    void activate() const;
 
 protected:
 
