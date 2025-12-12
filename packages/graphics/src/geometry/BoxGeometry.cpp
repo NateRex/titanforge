@@ -40,50 +40,42 @@ BoxGeometryPtr BoxGeometry::create(float length, float height, float depth)
 void BoxGeometry::createFace(unsigned int* vCount, unsigned int* iCount, int fixedAxis, float fixedValue,
 		int uAxis, float uStart, int vAxis, float vStart)
 {
-	Vector3 pos;
-	float* p[3] = { &pos.x, &pos.y, &pos.z };
+	Vector3 position;
+	float* p[3] = { &position.x, &position.y, &position.z };
 	*p[fixedAxis] = fixedValue;
 
-	// Helper method for computing the smooth box-corner normal for each point
-	auto computeNormal = [](const Vector3& pos) -> Vector3
-	{
-		Vector3 n(
-			(pos.x > 0.0f) ? 1.0f : (pos.x < 0.0f ? -1.0f : 0.0f),
-			(pos.y > 0.0f) ? 1.0f : (pos.y < 0.0f ? -1.0f : 0.0f),
-			(pos.z > 0.0f) ? 1.0f : (pos.z < 0.0f ? -1.0f : 0.0f)
-		);
-		n.normalize(&n);
-		return n;
-	};
+	Vector3 normal;
+	float* n[3] = { &normal.x, &normal.y, &normal.z };
+	*n[fixedAxis] = fixedValue >= 0.0f ? 1.0f : -1.0f;
 
 	// Point 1
 	*p[uAxis] = uStart;
 	*p[vAxis] = vStart;
 	_indices[(*iCount)++] = *vCount;
-	_normals[*vCount] = computeNormal(pos);
 	_uvs[*vCount] = { 0.f, 0.f };
-	_vertices[(*vCount)++] = pos;
+	_normals[*vCount] = normal;
+	_vertices[(*vCount)++] = position;
 
 	// Point 2
 	*p[uAxis] *= -1;
 	_indices[(*iCount)++] = *vCount;
-	_normals[*vCount] = computeNormal(pos);
 	_uvs[*vCount] = { 1.f, 0.f };
-	_vertices[(*vCount)++] = pos;
+	_normals[*vCount] = normal;
+	_vertices[(*vCount)++] = position;
 
 	// Point 3
 	*p[vAxis] *= -1;
 	_indices[(*iCount)++] = *vCount;
 	_indices[(*iCount)++] = *vCount;
-	_normals[*vCount] = computeNormal(pos);
 	_uvs[*vCount] = { 1.f, 1.f };
-	_vertices[(*vCount)++] = pos;
+	_normals[*vCount] = normal;
+	_vertices[(*vCount)++] = position;
 
 	// Point 4
 	*p[uAxis] *= -1;
 	_indices[(*iCount)++] = *vCount;
 	_indices[(*iCount)++] = *vCount - 3;
-	_normals[*vCount] = computeNormal(pos);
 	_uvs[*vCount] = { 0.f, 1.f };
-	_vertices[(*vCount)++] = pos;
+	_normals[*vCount] = normal;
+	_vertices[(*vCount)++] = position;
 }
