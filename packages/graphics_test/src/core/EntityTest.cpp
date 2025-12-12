@@ -100,6 +100,12 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 	
 	e.addScaling(1, 2, 3);
 	BOOST_TEST(e.getScaling() == Vector3(2, 4, 6));
+
+	e.setScaling(1);
+	BOOST_TEST(e.getScaling() == Vector3(1, 1, 1));
+
+	e.addScaling(2);
+	BOOST_TEST(e.getScaling() == Vector3(3, 3, 3));
 }
 
 /**

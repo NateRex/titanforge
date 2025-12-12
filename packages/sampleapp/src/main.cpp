@@ -15,45 +15,27 @@
 #include <cmath>
 
 /**
- * Creates several boxes and adds them to the given scene
- * @return A vector containing pointers to the meshes that were created
+ * Creates a mesh representing a box
+ * @param color Box color
+ * @param x Global x position of the box
+ * @param y Global y position of the box
+ * @param z Global z position of the box
+ * @return The newly-created mesh that's been added to the scene
  */
-std::vector<MeshPtr> createBoxes(ScenePtr scene)
+MeshPtr createBox(const Color& color, float x, float y, float z)
 {
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
+
     MaterialPtr material = BasicMaterial::create();
-    material->texture = TextureLoader::load("assets/container.jpg");
-
-    float positions[] =
-    {
-        0.0f,  0.0f,  0.0f,
-        2.0f,  5.0f, -15.0f,
-        -1.5f, -2.2f, -2.5f,
-        -3.8f, -2.0f, -12.3f,
-        2.4f, -0.4f, -3.5f,
-        -1.7f,  3.0f, -7.5f,
-        1.3f, -2.0f, -2.5f,
-        1.5f,  2.0f, -2.5f,
-        1.5f,  0.2f, -1.5f,
-        -1.3f,  1.0f, -1.5f
-    };
-
-    int numPositions = sizeof(positions) / sizeof(positions[0]);
-    std::vector<MeshPtr> meshes;
-
-    for (int i = 0; i < numPositions; i += 3)
-    {
-        MeshPtr mesh = Mesh::create(geometry, material);
-        mesh->setPosition(positions[i], positions[i + 1], positions[i + 2]);
-        scene->add(mesh);
-        meshes.push_back(mesh);
-    }
-
-    return meshes;
+    material->color = color;
+    
+    MeshPtr mesh = Mesh::create(geometry, material);
+    mesh->setPosition(x, y, z);
+    return mesh;
 }
 
 /**
- * Creates a camera capable of being controlled via the 'a', 'w', 's', and 'd' keys
+ * Creates a camera capable of being controlled via key and mouse actions
  * @param renderer The renderer
  * @return The camera that was created
  */
@@ -125,26 +107,23 @@ CameraPtr createCamera(RendererPtr renderer)
 int main()
 {
     RendererPtr renderer = Renderer::create();
-    renderer->setBackgroundColor(Color(0.2f, 0.3f, 0.4f, 1.0f));
 
     CameraPtr camera = createCamera(renderer);
     camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     ScenePtr scene = Scene::create();
-    std::vector<MeshPtr> meshes = createBoxes(scene);
+
+    // Create colored cube
+    MeshPtr colorCube = createBox(Color(1.0f, 0.5f, 0.31f), 0.f, 0.f, 0.f);
+    scene->add(colorCube);
+
+    // Create cube representing light position
+    MeshPtr lightCube = createBox(Color::WHITE, 1.2f, 1.0f, 2.0f);
+    lightCube->setScaling(0.2, 0.2, 0.2);
+    scene->add(lightCube);
 
     while (renderer->getWindow()->isOpen())
     {
-        float t = renderer->getTime();
-
-        // Rotate meshes
-        for (int i = 0; i < meshes.size(); i++)
-        {
-            MeshPtr mesh = meshes[i];
-            mesh->addRotation(Matrix3::fromRotation(Vector3(0.5f, 1.0f, 0.0f), i * 0.001));
-        }
-
-        // Render scene
         renderer->render(scene, camera);
     }
 }
