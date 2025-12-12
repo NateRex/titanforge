@@ -8,6 +8,7 @@
 #include <mutex>
 
 class Matrix4;
+struct RenderState;
 
 /**
  * The renderer is responsible for managing the current render context target and drawing the scene
@@ -123,20 +124,20 @@ private:
 	Renderer(WindowPtr window);
 
 	/**
-	 * Recursively renders an entity belonging to the scene, along with all of its children
-	 * @param camera Camera
-	 * @param entity Entity to render
-	 * @param local2World Matrix representing the transformation from local to world space for the entity. This
-	 * should be the combined transformations of all parents to the entity.
+	 * Recursively traverses the scene graph to build a render-ready state. Walks the entity hierarchy beginning
+	 * at a specified root entity, accumulating world transforms and organizing nodes for the current render pass.
+	 * This function performs **no drawing**. It strictly prepares a flattened, pass-local representation of the scene.
+	 * @param entity Entity to traverse
+	 * @param parentTransform The world-space transform of the parent to the current entity. The function will multiply this
+	 * with the entity's local transform to compute the entity's final world transform.
+	 * @param state The render state being populated for this frame and render pass. Meshes, lights, and other renderable
+	 * are appended here.
 	 */
-	void renderEntity(const CameraPtr camera, const EntityPtr entity, const Matrix4& local2World) const;
+	void traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state);
 
 	/**
-	 * Renders a mesh belonging to the scene
-	 * @param camera Camera
-	 * @param mesh Mesh to render
-	 * @param local2World Matrix representing the transformation from local to world space for the mesh. This
-	 * should be the combined transformations of all parents to the entity.
+	 * Consumes a prepared render state and submits draw calls for all items
+	 * @param state The render state to draw
 	 */
-	void renderMesh(const CameraPtr camera, const MeshPtr mesh, const Matrix4& local2World) const;
+	void draw(const RenderState& state);
 };

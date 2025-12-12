@@ -45,6 +45,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		in vec2 frag_TexCoord;
 
 		// Uniforms
+		uniform float lightColor;
+		uniform float uAmbientStrength;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 

@@ -1,4 +1,5 @@
 #include <graphics/core/Renderer.h>
+#include <graphics/core/RenderState.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
@@ -116,16 +117,23 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 	_timeOfLastFrame = time;
 	_window->getInputController()->pollForKeyHolds(deltaTime);
 
-	// Recursively parse and draw entities
-	renderEntity(camera, scene, scene->getMatrix());
+	// Traverse scene
+	RenderState state;
+	state.camera = camera;
+	traverseScene(scene, Matrix4::IDENTITY, state);
+
+	// Render state
+	draw(state);
 
 	// Display scene
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
 }
 
-void Renderer::renderEntity(const CameraPtr camera, const EntityPtr entity, const Matrix4& local2World) const
+void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state)
 {
+	Matrix4 transform = parentTransform.multiply(entity->getMatrix());
+
 	switch (entity->type)
 	{
 		case EntityType::GROUP:
@@ -133,17 +141,17 @@ void Renderer::renderEntity(const CameraPtr camera, const EntityPtr entity, cons
 			// Recursively handle each child
 			for (const EntityPtr child : entity->_children)
 			{
-				Matrix4 childMatrix = local2World.multiply(child->getMatrix());
-				renderEntity(camera, child, childMatrix);
+				traverseScene(child, transform, state);
 			}
 			break;
 		}
 		case EntityType::MESH:
 		{
-			// Handle mesh
-			MeshPtr mesh = cast<Mesh>(entity);
-			renderMesh(camera, mesh, local2World);
-			break;
+			RenderItem renderItem;
+			renderItem.mesh = cast<Mesh>(entity);
+			renderItem.local2World = transform;
+			
+			state.items.push_back(renderItem);
 		}
 		default:
 		{
@@ -152,21 +160,29 @@ void Renderer::renderEntity(const CameraPtr camera, const EntityPtr entity, cons
 	}
 }
 
-void Renderer::renderMesh(const CameraPtr camera, const MeshPtr mesh, const Matrix4& local2World) const
+void Renderer::draw(const RenderState& state)
 {
-	// Load shader data
-	MaterialPtr material = mesh->material;
-	ShaderPtr shader = ShaderManager::getShader(material->type);
-	shader->activate();
-	shader->setModelMatrix(local2World);
-	shader->setViewMatrix(camera->getViewMatrix());
-	shader->setProjectionMatrix(camera->getProjectionMatrix());
-	shader->setMaterial(material);
+	CameraPtr camera = state.camera;
 
-	// Draw buffer
-	Buffer* buffer = mesh->geometry->getBuffer();
-	buffer->bind();
-	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
+	for (const RenderItem& item : state.items)
+	{
+		MeshPtr mesh = item.mesh;
+		const Matrix4& local2World = item.local2World;
+
+		// Load shader data
+		MaterialPtr material = mesh->material;
+		ShaderPtr shader = ShaderManager::getShader(material->type);
+		shader->activate();
+		shader->setModelMatrix(local2World);
+		shader->setViewMatrix(camera->getViewMatrix());
+		shader->setProjectionMatrix(camera->getProjectionMatrix());
+		shader->setMaterial(material);
+
+		// Draw buffer
+		Buffer* buffer = mesh->geometry->getBuffer();
+		buffer->bind();
+		glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
+	}
 }
 
 void Renderer::incrementRendererCount()
