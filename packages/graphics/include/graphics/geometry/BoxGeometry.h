@@ -40,11 +40,11 @@ private:
 	 * be updated by this method upon the creation of new indices.
 	 * @param fixedAxis Fixed axis of this facet (0 for x, 1 for y, and 2 for z)
 	 * @param fixedValue Fixed axis value
-	 * @param axis1 First variable axis (0 for x, 1 for y, and 2 for z)
-	 * @param start1 Starting value for the first of the two variable axes
-	 * @param axis2 Second variable axis (0 for x, 1 for y, and 2 for z)
-	 * @param start2 Starting value for the second of the two variable axes
+	 * @param uAxis First variable axis (0 for x, 1 for y, and 2 for z)
+	 * @param uStart Starting value for the first variable axis
+	 * @param vAxis Second variable axis (0 for x, 1 for y, and 2 for z)
+	 * @param vStart Starting value for the second variable axss
 	 */
 	void createFace(unsigned int* vCount, unsigned int* iCount, int fixedAxis, float fixedValue,
-		int axis1, float start1, int axis2, float start2);
+		int uAxis, float uStart, int vAxis, float vStart);
 };

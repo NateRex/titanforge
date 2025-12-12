@@ -15,6 +15,8 @@ BoxGeometry::BoxGeometry(float length, float height, float depth)
 	_numVertices = 24;
 	_uvs = new Vector2[24];
 	_numUVs = 24;
+	_normals = new Vector3[24];
+	_numNormals = 24;
 
 	// 6 indices per side. 6 sides * 6 indices = 36
 	_indices = new unsigned int[36];
@@ -36,36 +38,52 @@ BoxGeometryPtr BoxGeometry::create(float length, float height, float depth)
 }
 
 void BoxGeometry::createFace(unsigned int* vCount, unsigned int* iCount, int fixedAxis, float fixedValue,
-		int axis1, float start1, int axis2, float start2)
+		int uAxis, float uStart, int vAxis, float vStart)
 {
-	Vector3 position;
-	float* p[3] = { &position.x, &position.y, &position.z };
+	Vector3 pos;
+	float* p[3] = { &pos.x, &pos.y, &pos.z };
+	*p[fixedAxis] = fixedValue;
+
+	// Helper method for computing the smooth box-corner normal for each point
+	auto computeNormal = [](const Vector3& pos) -> Vector3
+	{
+		Vector3 n(
+			(pos.x > 0.0f) ? 1.0f : (pos.x < 0.0f ? -1.0f : 0.0f),
+			(pos.y > 0.0f) ? 1.0f : (pos.y < 0.0f ? -1.0f : 0.0f),
+			(pos.z > 0.0f) ? 1.0f : (pos.z < 0.0f ? -1.0f : 0.0f)
+		);
+		n.normalize(&n);
+		return n;
+	};
 
 	// Point 1
-	*p[fixedAxis] = fixedValue;
-	*p[axis1] = start1;
-	*p[axis2] = start2;
-	_uvs[*vCount] = { 0.f, 0.f };
+	*p[uAxis] = uStart;
+	*p[vAxis] = vStart;
 	_indices[(*iCount)++] = *vCount;
-	_vertices[(*vCount)++] = position;
+	_normals[*vCount] = computeNormal(pos);
+	_uvs[*vCount] = { 0.f, 0.f };
+	_vertices[(*vCount)++] = pos;
 
 	// Point 2
-	*p[axis1] *= -1;
-	_uvs[*vCount] = { 1.f, 0.f };
+	*p[uAxis] *= -1;
 	_indices[(*iCount)++] = *vCount;
-	_vertices[(*vCount)++] = position;
+	_normals[*vCount] = computeNormal(pos);
+	_uvs[*vCount] = { 1.f, 0.f };
+	_vertices[(*vCount)++] = pos;
 
 	// Point 3
-	*p[axis2] *= -1;
+	*p[vAxis] *= -1;
+	_indices[(*iCount)++] = *vCount;
+	_indices[(*iCount)++] = *vCount;
+	_normals[*vCount] = computeNormal(pos);
 	_uvs[*vCount] = { 1.f, 1.f };
-	_indices[(*iCount)++] = *vCount;
-	_indices[(*iCount)++] = *vCount;
-	_vertices[(*vCount)++] = position;
+	_vertices[(*vCount)++] = pos;
 
 	// Point 4
-	*p[axis1] *= -1;
-	_uvs[*vCount] = { 0.f, 1.f };
+	*p[uAxis] *= -1;
 	_indices[(*iCount)++] = *vCount;
 	_indices[(*iCount)++] = *vCount - 3;
-	_vertices[(*vCount)++] = position;
+	_normals[*vCount] = computeNormal(pos);
+	_uvs[*vCount] = { 0.f, 1.f };
+	_vertices[(*vCount)++] = pos;
 }

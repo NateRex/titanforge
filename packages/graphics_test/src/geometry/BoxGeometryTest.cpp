@@ -11,6 +11,7 @@ BOOST_AUTO_TEST_CASE(BoxGeometry_basics)
 	BOOST_TEST(geom->size() == 36);
 
 	GeometryAttributes attributes = geom->getAttributes();
+	BOOST_TEST(attributes.normals);
 	BOOST_TEST(attributes.uvs);
 	BOOST_TEST(!attributes.colors);
 }

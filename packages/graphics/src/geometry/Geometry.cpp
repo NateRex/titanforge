@@ -19,17 +19,20 @@ Geometry::~Geometry()
 	delete _buffer;
 	delete[] _vertices;
 	delete[] _indices;
+	delete[] _normals;
 	delete[] _colors;
 	delete[] _uvs;
 
 	_vertices = nullptr;
 	_indices = nullptr;
+	_normals = nullptr;
 	_colors = nullptr;
 	_uvs = nullptr;
 	_buffer = nullptr;
 
 	_numVertices = 0;
 	_numIndices = 0;
+	_numNormals = 0;
 	_numColors = 0;
 	_numUVs = 0;
 }
@@ -187,6 +190,14 @@ void Geometry::createBuffer()
 		vData[idx++] = p.x;
 		vData[idx++] = p.y;
 		vData[idx++] = p.z;
+
+		if (attribs.normals)
+		{
+			Vector3 n = _normals[i];
+			vData[idx++] = n.x;
+			vData[idx++] = n.y;
+			vData[idx++] = n.z;
+		}
 
 		if (attribs.colors)
 		{
