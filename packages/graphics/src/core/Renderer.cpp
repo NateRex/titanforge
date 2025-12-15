@@ -138,7 +138,7 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 
 void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state)
 {
-	Matrix4 transform = parentTransform.multiply(entity->getMatrix());
+	Matrix4 transform = parentTransform.multiply(entity->getWorldMatrix());
 
 	switch (entity->type)
 	{

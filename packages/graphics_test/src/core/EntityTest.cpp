@@ -3,6 +3,7 @@
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
+#include <cmath>
 
 /**
  * Extension of the Entity class used for testing
@@ -111,7 +112,7 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 /**
  * Tests the ability to obtain the transformation matrix for an entity
  */
-BOOST_AUTO_TEST_CASE(Entity_getMatrix)
+BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
 {
 	TestEntity e;
 
@@ -126,8 +127,27 @@ BOOST_AUTO_TEST_CASE(Entity_getMatrix)
 
 	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	Matrix4 expected = translation.multiply(rotation).multiply(scale);
-	Matrix4 transform = e.getMatrix();
+	Matrix4 transform = e.getWorldMatrix();
 	BOOST_TEST(transform.equalTo(expected));
+}
+
+/**
+ * Tests the ability to obtain the transformation matrix for this entity's normal vectors
+ */
+BOOST_AUTO_TEST_CASE(Entity_getNormalMatrix)
+{
+	TestEntity e;
+	
+	Matrix3 m = e.getNormalMatrix();
+	BOOST_TEST(m == Matrix3::IDENTITY);
+
+	e.setPosition(1.f, 2.f, 3.f);
+	e.setRotation(Matrix3::fromXRotation(deg2Rad(45.f)));
+	
+	m = e.getNormalMatrix();
+	float s = sin(deg2Rad(45.f));
+	Matrix3 expected(1.f, 0.f, 0.f, 0.f, s, -s, 0.f, s, s);
+	BOOST_TEST(m.equalTo(expected, 1.0e-6));
 }
 
 /**

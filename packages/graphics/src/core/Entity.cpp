@@ -108,10 +108,23 @@ void Entity::addScaling(float x, float y, float z)
 	_transformNeedsUpdate = true;
 }
 
-Matrix4 Entity::getMatrix()
+Matrix4 Entity::getWorldMatrix()
 {
 	updateTransform();
 	return _transform;
+}
+
+Matrix3 Entity::getNormalMatrix()
+{
+	updateTransform();
+	Matrix4 matrix;
+	if (!_transform.inverse(&matrix))
+	{
+		return Matrix3::IDENTITY;
+	}
+
+	matrix.transpose(&matrix);
+	return Matrix3(matrix);
 }
 
 void Entity::updateTransform()
