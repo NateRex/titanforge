@@ -31,11 +31,11 @@ constexpr const char* BASIC_VERTEX = R"(
 
 		void main()
 		{
-			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
 			frag_Color = uUseVertexColors == 1 ? vert_Color : uColor;
 			frag_Pos = vec3(uModel * vec4(vert_Pos, 1.0f));
 			frag_Normal = uNormalMatrix * vert_Normal;
 			frag_TexCoord = vert_TexCoord;
+			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
 		}
 )";
 
@@ -56,7 +56,7 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		uniform float uAmbientIntensity;
 		uniform vec3 uLightPos;
 		uniform vec3 uLightColor;
-		uniform vec3 uLightIntensity;
+		uniform float uLightIntensity;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 
