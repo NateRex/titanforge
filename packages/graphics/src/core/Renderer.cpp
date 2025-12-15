@@ -7,6 +7,7 @@
 #include <graphics/core/Buffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
+#include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -131,13 +132,12 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 	RenderState state;
 	state.camera = camera;
 	state.ambientLight = scene->ambientLighting;
-	traverseScene(scene, Matrix4::IDENTITY, state);
+	traverseScene(scene, nullptr, state);
 	return state;
 }
 
-void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state)
+void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, RenderState& state)
 {
-	Matrix4 transform = parentTransform.multiply(entity->getMatrix());
 
 	switch (entity->type)
 	{
@@ -146,17 +146,30 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 			// Recursively handle each child
 			for (const EntityPtr child : entity->_children)
 			{
-				traverseScene(child, transform, state);
+				traverseScene(child, entity, state);
 			}
+			break;
+		}
+		case EntityType::LIGHT:
+		{
+			state.positionalLight = cast<Light>(entity);
 			break;
 		}
 		case EntityType::MESH:
 		{
+			Matrix4 parentModel = parent ? parent->getWorldMatrix() : Matrix4::IDENTITY;
+			Matrix4 modelTransform = parentModel.multiply(entity->getWorldMatrix());
+
+			Matrix3 parentNormal = parent ? parent->getNormalMatrix() : Matrix3::IDENTITY;
+			Matrix3 normalTransform = parentNormal.multiply(entity->getNormalMatrix());
+
 			RenderItem renderItem;
 			renderItem.mesh = cast<Mesh>(entity);
-			renderItem.local2World = transform;
-			
+			renderItem.modelTransform = modelTransform;
+			renderItem.normalTransform = normalTransform;
+
 			state.items.push_back(renderItem);
+			break;
 		}
 		default:
 		{
@@ -167,22 +180,22 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 
 void Renderer::draw(const RenderState& state)
 {
-	CameraPtr camera = state.camera;
-	LightPtr ambientLighting = state.ambientLight;
-
 	for (const RenderItem& item : state.items)
 	{
 		MeshPtr mesh = item.mesh;
-		const Matrix4& local2World = item.local2World;
+		const Matrix4& modelTransform = item.modelTransform;
+		const Matrix3& normalTransform = item.normalTransform;
 
 		// Load shader data
 		MaterialPtr material = mesh->material;
 		ShaderPtr shader = ShaderManager::getShader(material->type);
 		shader->activate();
-		shader->setModelMatrix(local2World);
-		shader->setViewMatrix(camera->getViewMatrix());
-		shader->setProjectionMatrix(camera->getProjectionMatrix());
-		shader->setAmbientLighting(ambientLighting);
+		shader->setModelMatrix(modelTransform);
+		shader->setNormalMatrix(normalTransform);
+		shader->setViewMatrix(state.camera->getViewMatrix());
+		shader->setProjectionMatrix(state.camera->getProjectionMatrix());
+		shader->setAmbientLighting(state.ambientLight);
+		shader->setPositionalLight(state.positionalLight);
 		shader->setMaterial(material);
 
 		// Draw buffer

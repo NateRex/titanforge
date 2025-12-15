@@ -7,7 +7,6 @@
 #include <graphics/core/Color.h>
 #include <mutex>
 
-class Matrix4;
 struct RenderState;
 
 /**
@@ -136,13 +135,12 @@ private:
 	 * Recursively traverses the scene graph to build a render-ready state. Walks the entity hierarchy beginning
 	 * at a specified root entity, accumulating world transforms and organizing nodes for the current render pass.
 	 * This function performs **no drawing**. It strictly prepares a flattened, pass-local representation of the scene.
-	 * @param entity Entity to traverse
-	 * @param parentTransform The world-space transform of the parent to the current entity. The function will multiply this
-	 * with the entity's local transform to compute the entity's final world transform.
+	 * @param entity Current entity we are traversing over in the tree
+	 * @param parent Parent entity
 	 * @param state The render state being populated for this frame and render pass. Meshes, lights, and other renderable
 	 * are appended here.
 	 */
-	void traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state);
+	void traverseScene(const EntityPtr entity, const EntityPtr parent, RenderState& state);
 
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items

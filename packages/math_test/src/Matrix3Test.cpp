@@ -1,5 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <math/Matrix3.h>
+#include <math/Matrix4.h>
+#include <math/Matrix4.h>
 #include <math/Vector3.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
@@ -26,11 +28,23 @@ BOOST_AUTO_TEST_CASE(Matrix3_basics)
 }
 
 /**
+ * Tests construction of a 3-dimensional matrix using a 4-dimensional matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix3_fromMatrix4)
+{
+	Matrix3 expected(1.f, 2.f, 3.f, 5.f, 6.f, 7.f, 9.f, 10.f, 11.f);
+
+	Matrix4 fourByFour(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f);
+	Matrix3 actual(fourByFour);
+	BOOST_TEST(actual == expected);
+}
+
+/**
  * Tests construction of a matrix using row and column vectors
  */
 BOOST_AUTO_TEST_CASE(Matrix3_fromRowsAndColumns)
 {
-	Matrix3 expected = Matrix3(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
+	Matrix3 expected(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
 
 	Matrix3 m;
 	Matrix3::fromRows(Vector3(1.f, 2.f, 3.f), Vector3(4.f, 5.f, 6.f), Vector3(7.f, 8.f, 9.f), &m);

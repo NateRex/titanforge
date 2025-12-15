@@ -1,4 +1,5 @@
 #include <math/Matrix3.h>
+#include <math/Matrix4.h>
 #include <math/Vector3.h>
 #include <common/Utils.h>
 #include <common/Assertions.h>
@@ -21,6 +22,11 @@ Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m1
 Matrix3::Matrix3(const Matrix3& other)
 {
 	setValues(other);
+}
+
+Matrix3::Matrix3(const Matrix4& other)
+{
+	setValues(other[0], other[1], other[2], other[4], other[5], other[6], other[8], other[9], other[10]);
 }
 
 Matrix3::~Matrix3()

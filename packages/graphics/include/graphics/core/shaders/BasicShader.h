@@ -21,16 +21,21 @@ constexpr const char* BASIC_VERTEX = R"(
 		uniform mat4 uModel;
 		uniform mat4 uView;
 		uniform mat4 uProj;
+		uniform mat3 uNormalMatrix;
 
 		// Outputs
 		out vec4 frag_Color;
+		out vec3 frag_Pos;
+		out vec3 frag_Normal;
 		out vec2 frag_TexCoord;
 
 		void main()
 		{
-			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
 			frag_Color = uUseVertexColors == 1 ? vert_Color : uColor;
+			frag_Pos = vec3(uModel * vec4(vert_Pos, 1.0f));
+			frag_Normal = uNormalMatrix * vert_Normal;
 			frag_TexCoord = vert_TexCoord;
+			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
 		}
 )";
 
@@ -42,11 +47,16 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		// Inputs
 		in vec4 frag_Color;
+		in vec3 frag_Pos;
+		in vec3 frag_Normal;
 		in vec2 frag_TexCoord;
 
 		// Uniforms
 		uniform vec3 uAmbientColor;
 		uniform float uAmbientIntensity;
+		uniform vec3 uLightPos;
+		uniform vec3 uLightColor;
+		uniform float uLightIntensity;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 
@@ -56,8 +66,14 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		void main()
 		{
 			vec4 ambient = vec4(uAmbientColor * uAmbientIntensity, 1.0);
-			vec4 color = ambient * frag_Color;
+			
+			vec4 diffuse = vec4(uLightColor * uLightIntensity, 1.0);
+			vec3 norm = normalize(frag_Normal);
+			vec3 lightDir = normalize(uLightPos - frag_Pos);
+			float diff = max(dot(norm, lightDir), 0.0);
+			diffuse = diff * diffuse;
 
+			vec4 color = (ambient + diffuse) * frag_Color;
 			if (uHasTexture == 1)
 			{
 				color *= texture(uTexture, frag_TexCoord);

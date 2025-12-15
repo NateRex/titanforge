@@ -129,7 +129,14 @@ public:
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
 	 * it's direct parent
 	 */
-	virtual Matrix4 getMatrix();
+	Matrix4 getWorldMatrix();
+
+	/**
+	 * @return A matrix representing the transformation of this entity's normal vectors from local space to the reference
+	 * frame of this entity's parent. This matrix differs from the world matrix in that it is specifically designed to
+	 * handle normal vectors, preventing wrongful scaling.
+	 */
+	Matrix3 getNormalMatrix();
 
 	/**
 	 * @return The parent of this entity. Can be null.

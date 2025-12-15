@@ -2,6 +2,7 @@
 #include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
+#include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <vector>
 
@@ -17,9 +18,14 @@ struct RenderItem {
 	MeshPtr mesh = nullptr;
 
 	/**
-	 * Local-to-world transformation, accounting for all parent entities of the mesh.
+	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.
 	 */
-	Matrix4 local2World = Matrix4::IDENTITY;
+	Matrix4 modelTransform = Matrix4::IDENTITY;
+
+	/**
+	 * Local-to-world transformation for vertex normals, accounting for all parent entities of the mesh.
+	 */
+	Matrix3 normalTransform = Matrix3::IDENTITY;
 };
 
 
@@ -38,6 +44,11 @@ struct RenderState {
 	 * Ambient lighting
 	 */
 	LightPtr ambientLight = nullptr;
+
+	/**
+	 * Positional light
+	 */
+	LightPtr positionalLight = nullptr;
 
 	/**
 	 * The items to be drawn this frame

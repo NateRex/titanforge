@@ -1,6 +1,7 @@
 #pragma once
 
 class Vector3;
+class Matrix4;
 
 /**
  * A 3x3 matrix, whose values are indexable as a row-major order array
@@ -39,6 +40,12 @@ public:
 	 * @param other Matrix to copy
 	 */
 	Matrix3(const Matrix3& other);
+
+	/**
+	 * Constructs a matrix using the upper-left 3x3 values of a 4-dimensional matrix
+	 * @param matrix Matrix to copy from
+	 */
+	Matrix3(const Matrix4& other);
 
 	/**
 	 * Destructor
