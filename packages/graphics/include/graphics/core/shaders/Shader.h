@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/materials/pointers/MaterialPtr.h>
 
 class Matrix4;
@@ -37,6 +38,13 @@ public:
     void setProjectionMatrix(const Matrix4& matrix);
 
     /**
+     * Updates the uniforms for this shader using the given ambient lighting. This method assumes that this shader
+     * is currently in-use.
+     * @param light Ambient lighting
+     */
+    void setAmbientLighting(const LightPtr light);
+
+    /**
      * Updates uniforms for this shader using the given material. This method assumes that this shader is
      * currently in-use.
      * @param material Material
@@ -46,7 +54,7 @@ public:
     /**
      * Activates this shader as the current shader program used for rendering
      */
-    void use() const;
+    void activate() const;
 
 protected:
 

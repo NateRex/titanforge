@@ -80,6 +80,11 @@ Vector3 Entity::getScaling() const
 	return _scale;
 }
 
+void Entity::setScaling(float scalar)
+{
+	setScaling(scalar, scalar, scalar);
+}
+
 void Entity::setScaling(float x, float y, float z)
 {
 	_scale.x = x;
@@ -87,6 +92,11 @@ void Entity::setScaling(float x, float y, float z)
 	_scale.z = z;
 
 	_transformNeedsUpdate = true;
+}
+
+void Entity::addScaling(float scalar)
+{
+	addScaling(scalar, scalar, scalar);
 }
 
 void Entity::addScaling(float x, float y, float z)

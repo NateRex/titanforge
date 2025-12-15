@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/scene/pointers/ScenePtr.h>
+#include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/core/EntityGroup.h>
 
 /**
@@ -8,6 +9,11 @@
  */
 class Scene : public EntityGroup {
 public:
+
+	/**
+	 * Ambient lighting
+	 */
+	LightPtr ambientLighting;
 
 	/**
 	 * Constructs a new scene instance

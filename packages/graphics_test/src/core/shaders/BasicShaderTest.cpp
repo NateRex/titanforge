@@ -4,6 +4,7 @@
 #include <graphics/materials/MaterialType.h>
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/textures/TextureLoader.h>
+#include <graphics/lights/Light.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
@@ -18,6 +19,17 @@ BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 	BOOST_REQUIRE_NO_THROW(shader->setModelMatrix(m));
 	BOOST_REQUIRE_NO_THROW(shader->setViewMatrix(m));
 	BOOST_REQUIRE_NO_THROW(shader->setProjectionMatrix(m));
+}
+
+/**
+ * Tests that the ambient lighting can be set in the basic shader
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_ambientLighting)
+{
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+
+	LightPtr light = Light::create();
+	BOOST_REQUIRE_NO_THROW(shader->setAmbientLighting(light));
 }
 
 /**

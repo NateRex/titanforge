@@ -19,17 +19,20 @@ Geometry::~Geometry()
 	delete _buffer;
 	delete[] _vertices;
 	delete[] _indices;
+	delete[] _normals;
 	delete[] _colors;
 	delete[] _uvs;
 
 	_vertices = nullptr;
 	_indices = nullptr;
+	_normals = nullptr;
 	_colors = nullptr;
 	_uvs = nullptr;
 	_buffer = nullptr;
 
 	_numVertices = 0;
 	_numIndices = 0;
+	_numNormals = 0;
 	_numColors = 0;
 	_numUVs = 0;
 }
@@ -77,6 +80,28 @@ void Geometry::setIndices(const unsigned int* indices, unsigned int numIndices)
 unsigned int Geometry::size() const
 {
 	return _numIndices;
+}
+
+void Geometry::setNormals(const float* normals, unsigned int numNormals)
+{
+	assertNotNull(normals, "Normals cannot be null when applied to a geometry");
+
+	delete _normals;
+	_normals = new Vector3[numNormals];
+	_numNormals = numNormals;
+
+	for (int i = 0; i < numNormals; i++)
+	{
+		int idx = i * 3;
+		_normals[i] = Vector3(normals[idx], normals[idx + 1], normals[idx + 2]);
+	}
+}
+
+void Geometry::removeNormals()
+{
+	delete[] _normals;
+	_normals = nullptr;
+	_numNormals = 0;
 }
 
 void Geometry::setColors(const float* colors, unsigned int numColors)
@@ -130,6 +155,7 @@ void Geometry::removeTextureCoords()
 const GeometryAttributes Geometry::getAttributes() const
 {
 	return {
+		_normals != nullptr,
 		_colors != nullptr,
 		_uvs != nullptr
 	};
@@ -150,8 +176,9 @@ void Geometry::createBuffer()
 	GeometryAttributes attribs = getAttributes();
 	assertNotNull(_vertices, "Geometry must contain vertex positions to render");
 	assertNotNull(_indices, "Geometry must contain vertex indices to render");
-	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors on a geometry must match the number of vertices");
-	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates on a geometry must match the number of vertices");
+	assertTrue(!attribs.normals || _numNormals == _numVertices, "Number of vertex normals must match the number of vertices");
+	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors must match the number of vertices");
+	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates must match the number of vertices");
 
 	// Interleave vertex data
 	unsigned int vSize = _numVertices * attribs.getStride();
@@ -163,6 +190,14 @@ void Geometry::createBuffer()
 		vData[idx++] = p.x;
 		vData[idx++] = p.y;
 		vData[idx++] = p.z;
+
+		if (attribs.normals)
+		{
+			Vector3 n = _normals[i];
+			vData[idx++] = n.x;
+			vData[idx++] = n.y;
+			vData[idx++] = n.z;
+		}
 
 		if (attribs.colors)
 		{

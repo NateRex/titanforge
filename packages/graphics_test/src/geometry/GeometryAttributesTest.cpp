@@ -8,10 +8,12 @@
 BOOST_AUTO_TEST_CASE(GeometryAttributes_basics)
 {
 	GeometryAttributes attrib;
+	BOOST_TEST(!attrib.normals);
 	BOOST_TEST(!attrib.colors);
 	BOOST_TEST(!attrib.uvs);
 
-	attrib = { true, true };
+	attrib = { true, true, true };
+	BOOST_TEST(attrib.normals);
 	BOOST_TEST(attrib.colors);
 	BOOST_TEST(attrib.uvs);
 }
@@ -21,13 +23,16 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_basics)
  */
 BOOST_AUTO_TEST_CASE(GeometryAttributes_equalsChecks)
 {
-	GeometryAttributes a1 = { false, false };
+	GeometryAttributes a1 = { false, false, false };
 	BOOST_TEST(a1 == a1);
 
-	GeometryAttributes a2 = { true, false };
+	GeometryAttributes a2 = { true, false, false };
 	BOOST_TEST(a1 != a2);
 
-	a2 = { false, true };
+	a2 = { false, true, false };
+	BOOST_TEST(a1 != a2);
+
+	a2 = { false, false, true };
 	BOOST_TEST(a1 != a2);
 }
 
@@ -37,15 +42,15 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_equalsChecks)
  */
 BOOST_AUTO_TEST_CASE(GeometryAttributes_stride)
 {
-	GeometryAttributes a = { false, false };
+	GeometryAttributes a = { false, false, false };
 	BOOST_TEST(a.getStride() == 3);
 
-	a = { true, false };
+	a = { true, false, false };
+	BOOST_TEST(a.getStride() == 6);
+
+	a = { false, true, false };
 	BOOST_TEST(a.getStride() == 7);
 
-	a = { false, true };
+	a = { false, false, true };
 	BOOST_TEST(a.getStride() == 5);
-
-	a = { true, true };
-	BOOST_TEST(a.getStride() == 9);
 }

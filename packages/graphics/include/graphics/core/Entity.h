@@ -98,6 +98,12 @@ public:
 	Vector3 getScaling() const;
 
 	/**
+	 * Sets a uniform scaling of this entity relative to its parent.
+	 * @param scalar Uniform scale value to be applied in all directions
+	 */
+	virtual void setScaling(float scalar);
+
+	/**
 	 * Sets the scaling of this entity relative to its parent.
 	 * @param x Scaling in the x direction
 	 * @param y Scaling in the y direction
@@ -106,7 +112,13 @@ public:
 	virtual void setScaling(float x, float y, float z);
 
 	/**
-	 * Applies additional scaling to this entity relative to its parent.
+	 * Applies additional uniform scaling of this entity relative to its parent
+	 * @param scalar Uniform scale value to be applied in all directions
+	 */
+	virtual void addScaling(float scalar);
+
+	/**
+	 * Applies additional scaling of this entity relative to its parent.
 	 * @param x Scaling in the x direction
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction

@@ -11,8 +11,9 @@ constexpr const char* BASIC_VERTEX = R"(
 
 		// Inputs
 		layout (location = 0) in vec3 vert_Pos;
-		layout (location = 1) in vec4 vert_Color;
-		layout (location = 2) in vec2 vert_TexCoord;
+		layout (location = 1) in vec3 vert_Normal;
+		layout (location = 2) in vec4 vert_Color;
+		layout (location = 3) in vec2 vert_TexCoord;
 
 		// Uniforms
 		uniform vec4 uColor;
@@ -44,6 +45,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		in vec2 frag_TexCoord;
 
 		// Uniforms
+		uniform vec3 uAmbientColor;
+		uniform float uAmbientIntensity;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 
@@ -52,12 +55,13 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		void main()
 		{
-			vec4 color = frag_Color;
+			vec4 ambient = vec4(uAmbientColor * uAmbientIntensity, 1.0);
+			vec4 color = ambient * frag_Color;
+
 			if (uHasTexture == 1)
 			{
 				color *= texture(uTexture, frag_TexCoord);
 			}
-
 			FragColor = color;
 		} 
 )";

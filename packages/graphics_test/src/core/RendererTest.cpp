@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(Renderer_setWindow)
 }
 
 /**
- * Tests the ability to render an entity
+ * Tests the ability to render an entity with lighting
  */
 BOOST_AUTO_TEST_CASE(Renderer_render)
 {
