@@ -35,12 +35,12 @@ BOOST_AUTO_TEST_CASE(BasicShader_ambientLighting)
 /**
  * Tests that a positional light can be set
  */
-BOOST_AUTO_TEST_CASE(BasicShader_light)
+BOOST_AUTO_TEST_CASE(BasicShader_positionalLight)
 {
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 
 	LightPtr light = Light::create();
-	BOOST_REQUIRE_NO_THROW(shader->setLight(light));
+	BOOST_REQUIRE_NO_THROW(shader->setPositionalLight(light));
 }
 
 /**

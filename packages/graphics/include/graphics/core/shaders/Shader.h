@@ -49,7 +49,7 @@ public:
      * shader is currently in-use.
      * @param light Light entity
      */
-    void setLight(const LightPtr light);
+    void setPositionalLight(const LightPtr light);
 
     /**
      * Updates uniforms for this shader using the given material. This method assumes that this shader is

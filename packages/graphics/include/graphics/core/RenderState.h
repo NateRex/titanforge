@@ -40,6 +40,11 @@ struct RenderState {
 	LightPtr ambientLight = nullptr;
 
 	/**
+	 * Positional light
+	 */
+	LightPtr positionalLight = nullptr;
+
+	/**
 	 * The items to be drawn this frame
 	 */
 	std::vector<RenderItem> items;

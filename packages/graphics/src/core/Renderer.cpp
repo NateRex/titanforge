@@ -7,6 +7,7 @@
 #include <graphics/core/Buffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
+#include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -150,6 +151,10 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 			}
 			break;
 		}
+		case EntityType::LIGHT:
+		{
+			state.positionalLight = cast<Light>(entity);
+		}
 		case EntityType::MESH:
 		{
 			RenderItem renderItem;
@@ -167,9 +172,6 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 
 void Renderer::draw(const RenderState& state)
 {
-	CameraPtr camera = state.camera;
-	LightPtr ambientLighting = state.ambientLight;
-
 	for (const RenderItem& item : state.items)
 	{
 		MeshPtr mesh = item.mesh;
@@ -180,9 +182,10 @@ void Renderer::draw(const RenderState& state)
 		ShaderPtr shader = ShaderManager::getShader(material->type);
 		shader->activate();
 		shader->setModelMatrix(local2World);
-		shader->setViewMatrix(camera->getViewMatrix());
-		shader->setProjectionMatrix(camera->getProjectionMatrix());
-		shader->setAmbientLighting(ambientLighting);
+		shader->setViewMatrix(state.camera->getViewMatrix());
+		shader->setProjectionMatrix(state.camera->getProjectionMatrix());
+		shader->setAmbientLighting(state.ambientLight);
+		shader->setPositionalLight(state.positionalLight);
 		shader->setMaterial(material);
 
 		// Draw buffer
