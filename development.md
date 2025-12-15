@@ -46,4 +46,4 @@ After compiling, all libraries and executables generated will be located within 
 ./.build/packages/<module>/bin/<executable>.exe
 ```
 
-This method works for both unit test modules, as well as applications such as `sampleapp`.
+This method works for both unit test modules and applications such as `sampleapp`.
