@@ -124,6 +124,15 @@ private:
 	Renderer(WindowPtr window);
 
 	/**
+	 * Traverses the scene graph and builds a render-ready state. This function performs **no drawing**. It strictly
+	 * prepares a flattened, pass-local representation of the scene.
+	 * @param scene The scene to traverse
+	 * @param camera Camera
+	 * @return The render state
+	 */
+	RenderState traverseScene(const ScenePtr scene, const CameraPtr camera);
+
+	/**
 	 * Recursively traverses the scene graph to build a render-ready state. Walks the entity hierarchy beginning
 	 * at a specified root entity, accumulating world transforms and organizing nodes for the current render pass.
 	 * This function performs **no drawing**. It strictly prepares a flattened, pass-local representation of the scene.

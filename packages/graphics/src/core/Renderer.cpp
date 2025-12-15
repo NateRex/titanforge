@@ -117,17 +117,22 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 	_timeOfLastFrame = time;
 	_window->getInputController()->pollForKeyHolds(deltaTime);
 
-	// Traverse scene
-	RenderState state;
-	state.camera = camera;
-	traverseScene(scene, Matrix4::IDENTITY, state);
-
-	// Render state
+	// Traverse scene and draw to buffer
+	RenderState state = traverseScene(scene, camera);
 	draw(state);
 
-	// Display scene
+	// Swap buffers to display scene
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
+}
+
+RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera)
+{
+	RenderState state;
+	state.camera = camera;
+	state.ambientLight = scene->ambientLighting;
+	traverseScene(scene, Matrix4::IDENTITY, state);
+	return state;
 }
 
 void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state)

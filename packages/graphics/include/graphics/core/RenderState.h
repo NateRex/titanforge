@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
+#include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <math/Matrix4.h>
 #include <vector>
@@ -32,6 +33,11 @@ struct RenderState {
 	 * Camera
 	 */
 	CameraPtr camera = nullptr;
+
+	/**
+	 * Ambient lighting
+	 */
+	LightPtr ambientLight = nullptr;
 
 	/**
 	 * The items to be drawn this frame
