@@ -154,6 +154,7 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 		case EntityType::LIGHT:
 		{
 			state.positionalLight = cast<Light>(entity);
+			break;
 		}
 		case EntityType::MESH:
 		{
@@ -162,6 +163,7 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 			renderItem.local2World = transform;
 			
 			state.items.push_back(renderItem);
+			break;
 		}
 		default:
 		{

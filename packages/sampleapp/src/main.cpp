@@ -1,5 +1,6 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/scene/Scene.h>
+#include <graphics/lights/Light.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
@@ -117,8 +118,14 @@ int main()
     MeshPtr colorCube = createBox(Color(1.0f, 0.5f, 0.31f), 0.f, 0.f, 0.f);
     scene->add(colorCube);
 
+    // Create positional light
+    LightPtr light = Light::create();
+    Vector3 lightPos(1.2f, 1.0f, 2.0f);
+    light->setPosition(lightPos);
+    scene->add(light);
+
     // Create cube representing light position
-    MeshPtr lightCube = createBox(Color::WHITE, 1.2f, 1.0f, 2.0f);
+    MeshPtr lightCube = createBox(Color::WHITE, lightPos.x, lightPos.y, lightPos.z);
     lightCube->setScaling(0.2, 0.2, 0.2);
     scene->add(lightCube);
 
