@@ -9,7 +9,7 @@
 #include <common/exceptions/IllegalArgumentException.h>
 
 /**
- * Tests that the model, view, and projection matrix uniforms can be set in the basic shader
+ * Tests that the model, view, and projection matrix uniforms can be set
  */
 BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 {
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 }
 
 /**
- * Tests that the ambient lighting can be set in the basic shader
+ * Tests that ambient lighting can be set
  */
 BOOST_AUTO_TEST_CASE(BasicShader_ambientLighting)
 {
@@ -33,7 +33,18 @@ BOOST_AUTO_TEST_CASE(BasicShader_ambientLighting)
 }
 
 /**
- * Tests that the material uniforms can be set in the basic shader
+ * Tests that a positional light can be set
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_light)
+{
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+
+	LightPtr light = Light::create();
+	BOOST_REQUIRE_NO_THROW(shader->setLight(light));
+}
+
+/**
+ * Tests that the material uniforms can be set
  */
 BOOST_AUTO_TEST_CASE(BasicShader_material)
 {

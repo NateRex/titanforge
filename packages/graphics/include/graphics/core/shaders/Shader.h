@@ -45,6 +45,13 @@ public:
     void setAmbientLighting(const LightPtr light);
 
     /**
+     * Updates the uniforms for this shader using the given light present in the scene. This method assumes that this
+     * shader is currently in-use.
+     * @param light Light entity
+     */
+    void setLight(const LightPtr light);
+
+    /**
      * Updates uniforms for this shader using the given material. This method assumes that this shader is
      * currently in-use.
      * @param material Material

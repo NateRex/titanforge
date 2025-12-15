@@ -130,11 +130,28 @@ void Shader::setProjectionMatrix(const Matrix4& matrix)
 void Shader::setAmbientLighting(const LightPtr light)
 {
 	// Set color
-	Color color = light->color;
 	int loc = getUniformLocation("uAmbientColor");
+	Color color = light->color;
 	glUniform3f(loc, color.red(), color.green(), color.blue());
 
 	// Set intensity
 	loc = getUniformLocation("uAmbientIntensity");
+	glUniform1f(loc, light->intensity);
+}
+
+void Shader::setLight(const LightPtr light)
+{
+	// Set position
+	int loc = getUniformLocation("uLightPos");
+	Vector3 pos = light->getPosition();
+	glUniform3f(loc, pos.x, pos.y, pos.z);
+
+	// Set color
+	loc = getUniformLocation("uLightColor");
+	Color color = light->color;
+	glUniform3f(loc, color.red(), color.green(), color.blue());
+
+	// Set intensity
+	loc = getUniformLocation("uLightIntensity");
 	glUniform1f(loc, light->intensity);
 }
