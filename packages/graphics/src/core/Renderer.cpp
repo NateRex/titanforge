@@ -168,6 +168,7 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 void Renderer::draw(const RenderState& state)
 {
 	CameraPtr camera = state.camera;
+	LightPtr ambientLighting = state.ambientLight;
 
 	for (const RenderItem& item : state.items)
 	{
@@ -181,6 +182,7 @@ void Renderer::draw(const RenderState& state)
 		shader->setModelMatrix(local2World);
 		shader->setViewMatrix(camera->getViewMatrix());
 		shader->setProjectionMatrix(camera->getProjectionMatrix());
+		shader->setAmbientLighting(ambientLighting);
 		shader->setMaterial(material);
 
 		// Draw buffer

@@ -45,8 +45,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		in vec2 frag_TexCoord;
 
 		// Uniforms
-		uniform float lightColor;
-		uniform float uAmbientStrength;
+		uniform vec3 uAmbientColor;
+		uniform float uAmbientIntensity;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 
@@ -55,12 +55,13 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		void main()
 		{
-			vec4 color = frag_Color;
+			vec4 ambient = vec4(uAmbientColor * uAmbientIntensity, 1.0);
+			vec4 color = ambient * frag_Color;
+
 			if (uHasTexture == 1)
 			{
 				color *= texture(uTexture, frag_TexCoord);
 			}
-
 			FragColor = color;
 		} 
 )";

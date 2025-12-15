@@ -1,4 +1,5 @@
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/lights/Light.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
@@ -124,4 +125,16 @@ void Shader::setProjectionMatrix(const Matrix4& matrix)
 {
 	int loc = getUniformLocation("uProj");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
+void Shader::setAmbientLighting(const LightPtr light)
+{
+	// Set color
+	Color color = light->color;
+	int loc = getUniformLocation("uAmbientColor");
+	glUniform3f(loc, color.red(), color.green(), color.blue());
+
+	// Set intensity
+	loc = getUniformLocation("uAmbientIntensity");
+	glUniform1f(loc, light->intensity);
 }
