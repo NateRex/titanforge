@@ -21,5 +21,10 @@ enum class EntityType
 	/**
 	 * A mesh entity containing triangulated buffered data to be processed by the GPU
 	 */
-	MESH
+	MESH,
+
+	/**
+	 * A light, which takes up no physical space, but affects the shading of other entities
+	 */
+	LIGHT
 };

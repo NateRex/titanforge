@@ -31,6 +31,7 @@ add_library(Graphics
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/lights/Light.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp
