@@ -9,4 +9,5 @@ BOOST_AUTO_TEST_CASE(Light_basics)
 {
 	LightPtr light = Light::create();
 	BOOST_TEST(light->color == Color::WHITE);
+	BOOST_TEST(light->intensity == 1.f);
 }

@@ -13,9 +13,14 @@ class Light : public Entity
 public:
 
 	/**
-	 * Light color
+	 * Color
 	 */
 	Color color;
+
+	/**
+	 * Intensity
+	 */
+	float intensity;
 
 	/**
 	 * Constructs a new light instance
@@ -27,5 +32,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	Light() : Entity(EntityType::LIGHT), color(Color::WHITE) {};
+	Light() : Entity(EntityType::LIGHT), color(Color::WHITE), intensity(1.f) {};
 };
