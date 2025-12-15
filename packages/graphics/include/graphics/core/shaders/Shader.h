@@ -2,6 +2,7 @@
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/materials/pointers/MaterialPtr.h>
 
+class Matrix3;
 class Matrix4;
 
 /**
@@ -36,6 +37,14 @@ public:
      * @param matrix Matrix representing the transformation from view to clipping space
      */
     void setProjectionMatrix(const Matrix4& matrix);
+
+    /**
+     * Updates the uniforms for this shader using the given normal matrix, used to transform surface normals from local
+     * space to world space, without affecting scaling or translation. This method assumes that this shader is currently
+     * in-use.
+     * @param matrix Matrix representing the transformation from local to world space for normal vectors
+     */
+    void setNormalMatrix(const Matrix3& matrix);
 
     /**
      * Updates the uniforms for this shader using the given ambient lighting. This method assumes that this shader

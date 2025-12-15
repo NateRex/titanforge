@@ -15,10 +15,13 @@ BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 {
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 
-	Matrix4 m;
-	BOOST_REQUIRE_NO_THROW(shader->setModelMatrix(m));
-	BOOST_REQUIRE_NO_THROW(shader->setViewMatrix(m));
-	BOOST_REQUIRE_NO_THROW(shader->setProjectionMatrix(m));
+	Matrix4 m1;
+	BOOST_REQUIRE_NO_THROW(shader->setModelMatrix(m1));
+	BOOST_REQUIRE_NO_THROW(shader->setViewMatrix(m1));
+	BOOST_REQUIRE_NO_THROW(shader->setProjectionMatrix(m1));
+
+	Matrix3 m2;
+	BOOST_REQUIRE_NO_THROW(shader->setNormalMatrix(m2));
 }
 
 /**

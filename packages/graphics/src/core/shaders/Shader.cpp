@@ -127,6 +127,12 @@ void Shader::setProjectionMatrix(const Matrix4& matrix)
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
+void Shader::setNormalMatrix(const Matrix3& matrix)
+{
+	int loc = getUniformLocation("uNormalMatrix");
+	glUniformMatrix3fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
 void Shader::setAmbientLighting(const LightPtr light)
 {
 	if (light)

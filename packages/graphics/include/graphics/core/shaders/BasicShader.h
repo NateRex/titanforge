@@ -21,6 +21,7 @@ constexpr const char* BASIC_VERTEX = R"(
 		uniform mat4 uModel;
 		uniform mat4 uView;
 		uniform mat4 uProj;
+		uniform mat3 uNormalMatrix;
 
 		// Outputs
 		out vec4 frag_Color;
@@ -33,7 +34,7 @@ constexpr const char* BASIC_VERTEX = R"(
 			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
 			frag_Color = uUseVertexColors == 1 ? vert_Color : uColor;
 			frag_Pos = vec3(uModel * vec4(vert_Pos, 1.0f));
-			frag_Normal = vert_Normal;
+			frag_Normal = uNormalMatrix * vert_Normal;
 			frag_TexCoord = vert_TexCoord;
 		}
 )";

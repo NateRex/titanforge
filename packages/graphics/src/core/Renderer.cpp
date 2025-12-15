@@ -132,13 +132,12 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 	RenderState state;
 	state.camera = camera;
 	state.ambientLight = scene->ambientLighting;
-	traverseScene(scene, Matrix4::IDENTITY, state);
+	traverseScene(scene, nullptr, state);
 	return state;
 }
 
-void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransform, RenderState& state)
+void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, RenderState& state)
 {
-	Matrix4 transform = parentTransform.multiply(entity->getWorldMatrix());
 
 	switch (entity->type)
 	{
@@ -147,7 +146,7 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 			// Recursively handle each child
 			for (const EntityPtr child : entity->_children)
 			{
-				traverseScene(child, transform, state);
+				traverseScene(child, entity, state);
 			}
 			break;
 		}
@@ -158,10 +157,17 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentTransf
 		}
 		case EntityType::MESH:
 		{
+			Matrix4 parentModel = parent ? parent->getWorldMatrix() : Matrix4::IDENTITY;
+			Matrix4 modelTransform = parentModel.multiply(entity->getWorldMatrix());
+
+			Matrix3 parentNormal = parent ? parent->getNormalMatrix() : Matrix3::IDENTITY;
+			Matrix3 normalTransform = parentNormal.multiply(entity->getNormalMatrix());
+
 			RenderItem renderItem;
 			renderItem.mesh = cast<Mesh>(entity);
-			renderItem.local2World = transform;
-			
+			renderItem.modelTransform = modelTransform;
+			renderItem.normalTransform = normalTransform;
+
 			state.items.push_back(renderItem);
 			break;
 		}
@@ -177,13 +183,15 @@ void Renderer::draw(const RenderState& state)
 	for (const RenderItem& item : state.items)
 	{
 		MeshPtr mesh = item.mesh;
-		const Matrix4& local2World = item.local2World;
+		const Matrix4& modelTransform = item.modelTransform;
+		const Matrix3& normalTransform = item.normalTransform;
 
 		// Load shader data
 		MaterialPtr material = mesh->material;
 		ShaderPtr shader = ShaderManager::getShader(material->type);
 		shader->activate();
-		shader->setModelMatrix(local2World);
+		shader->setModelMatrix(modelTransform);
+		shader->setNormalMatrix(normalTransform);
 		shader->setViewMatrix(state.camera->getViewMatrix());
 		shader->setProjectionMatrix(state.camera->getProjectionMatrix());
 		shader->setAmbientLighting(state.ambientLight);
