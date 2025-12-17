@@ -43,6 +43,11 @@ float Renderer::getTime() const
 	return glfwGetTime();
 }
 
+float Renderer::getDeltaTime() const
+{
+	return getTime() - _timeOfLastFrame;
+}
+
 WindowPtr Renderer::getWindow() const
 {
 	return _window;

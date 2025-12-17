@@ -128,18 +128,12 @@ int main()
     scene->add(lightCube);
 
     float angle = 0.f;
-    float prevTime = renderer->getTime();
     const float lightRadius = 5.f;
     const float angularSpeed = 1.f;
     while (renderer->getWindow()->isOpen())
     {
-        // Compute delta time
-        float currentTime = renderer->getTime();
-        float deltaTime = currentTime - prevTime;
-        prevTime = currentTime;
-
         // Rotate light
-        angle -= angularSpeed * deltaTime;
+        angle -= angularSpeed * renderer->getDeltaTime();
         Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
         light->setPosition(lightPos);
         lightCube->setPosition(lightPos);

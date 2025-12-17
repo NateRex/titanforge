@@ -36,6 +36,11 @@ public:
 	float getTime() const;
 
 	/**
+	 * @return The time (in decimal seconds) since the previous frame was rendered
+	 */
+	float getDeltaTime() const;
+
+	/**
 	 * @return The current window context that is the target of draw commands
 	 */
 	WindowPtr getWindow() const;
