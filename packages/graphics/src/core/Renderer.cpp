@@ -43,6 +43,11 @@ float Renderer::getTime() const
 	return glfwGetTime();
 }
 
+float Renderer::getDeltaTime() const
+{
+	return getTime() - _timeOfLastFrame;
+}
+
 WindowPtr Renderer::getWindow() const
 {
 	return _window;
@@ -192,8 +197,7 @@ void Renderer::draw(const RenderState& state)
 		shader->activate();
 		shader->setModelMatrix(modelTransform);
 		shader->setNormalMatrix(normalTransform);
-		shader->setViewMatrix(state.camera->getViewMatrix());
-		shader->setProjectionMatrix(state.camera->getProjectionMatrix());
+		shader->setCamera(state.camera);
 		shader->setAmbientLighting(state.ambientLight);
 		shader->setPositionalLight(state.positionalLight);
 		shader->setMaterial(material);

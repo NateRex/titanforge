@@ -22,6 +22,18 @@ public:
 	Color color = Color::WHITE;
 
 	/**
+	 * Reflectivity, expressed as a value between 0 and 1, which affects how much light is reflected on surfaces.
+	 * The larger the value, the greater the amount of light being reflected.
+	 */
+	float reflectivity = 0.5f;
+
+	/**
+	 * Shine factor, expressed as a value between 0 and 1, which affects the area of highlights on surfaces.
+	 * The larger the value, the tighter the highlight area.
+	 */
+	float shine = 0.6f;
+
+	/**
 	 * Texture. Can be null.
 	 */
 	TexturePtr texture = nullptr;

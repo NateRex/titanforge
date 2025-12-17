@@ -18,7 +18,8 @@ public:
 	Color color;
 
 	/**
-	 * Intensity
+	 * Intensity of the light, expressed as a value between 0 and 1. The greater the value, the greater the light
+	 * intensity.
 	 */
 	float intensity;
 

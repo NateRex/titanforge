@@ -120,17 +120,24 @@ int main()
 
     // Create positional light
     LightPtr light = Light::create();
-    Vector3 lightPos(1.2f, 1.0f, 2.0f);
-    light->setPosition(lightPos);
     scene->add(light);
 
-    // Create cube representing light position
-    MeshPtr lightCube = createBox(Color::WHITE, lightPos.x, lightPos.y, lightPos.z);
-    lightCube->setScaling(0.2, 0.2, 0.2);
+    // Create small cube representing light position
+    MeshPtr lightCube = createBox(Color(1.f, 1.f, 1.f), 0.f, 0.f, 0.f);
+    lightCube->setScaling(0.2);
     scene->add(lightCube);
 
+    float angle = 0.f;
+    const float lightRadius = 5.f;
+    const float angularSpeed = 1.f;
     while (renderer->getWindow()->isOpen())
     {
+        // Rotate light
+        angle -= angularSpeed * renderer->getDeltaTime();
+        Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
+        light->setPosition(lightPos);
+        lightCube->setPosition(lightPos);
+
         renderer->render(scene, camera);
     }
 }

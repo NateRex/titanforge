@@ -8,6 +8,8 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/objects/Mesh.h>
 #include <common/PrintHelpers.h>
+#include <thread>
+#include <chrono>
 
 /**
  * Tests the ability to get the current renderer time
@@ -16,6 +18,25 @@ BOOST_AUTO_TEST_CASE(Renderer_getTime)
 {
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_TEST(renderer->getTime() > 0.0);
+}
+
+/**
+ * Tests the ability to get the time since the last frame
+ */
+BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
+{
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
+	ScenePtr scene = Scene::create();
+	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+
+	// Without render having been called, time since last frame will be large
+	float dt1 = renderer->getDeltaTime();
+
+	// Calling render resets delta time
+	renderer->render(scene, camera);
+	float dt2 = renderer->getDeltaTime();
+
+	BOOST_TEST(dt2 <= dt1);
 }
 
 /**

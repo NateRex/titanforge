@@ -1,8 +1,11 @@
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
+#include <graphics/materials/Material.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
+#include <common/Utils.h>
 #include <glad/glad.h>
 #include <sstream>
 
@@ -115,18 +118,6 @@ void Shader::setModelMatrix(const Matrix4& matrix)
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
-void Shader::setViewMatrix(const Matrix4& matrix)
-{
-	int loc = getUniformLocation("uView");
-	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
-}
-
-void Shader::setProjectionMatrix(const Matrix4& matrix)
-{
-	int loc = getUniformLocation("uProj");
-	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
-}
-
 void Shader::setNormalMatrix(const Matrix3& matrix)
 {
 	int loc = getUniformLocation("uNormalMatrix");
@@ -144,7 +135,7 @@ void Shader::setAmbientLighting(const LightPtr light)
 
 		// Set intensity
 		loc = getUniformLocation("uAmbientIntensity");
-		glUniform1f(loc, light->intensity);
+		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
 	}
 }
 
@@ -164,6 +155,41 @@ void Shader::setPositionalLight(const LightPtr light)
 
 		// Set intensity
 		loc = getUniformLocation("uLightIntensity");
-		glUniform1f(loc, light->intensity);
+		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
 	}
+}
+
+void Shader::setCamera(const CameraPtr camera)
+{
+	int loc = getUniformLocation("uCameraPos");
+	Vector3 cameraPos = camera->getPosition();
+	glUniform3f(loc, cameraPos.x, cameraPos.y, cameraPos.z);
+
+	setViewMatrix(camera->getViewMatrix());
+	setProjectionMatrix(camera->getProjectionMatrix());
+}
+
+void Shader::setViewMatrix(const Matrix4& matrix)
+{
+	int loc = getUniformLocation("uView");
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
+void Shader::setProjectionMatrix(const Matrix4& matrix)
+{
+	int loc = getUniformLocation("uProj");
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
+void Shader::setMaterial(const MaterialPtr material)
+{
+	int loc = getUniformLocation("uColor");
+	Color color = material->color;
+	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
+
+	loc = getUniformLocation("uReflectivity");
+	glUniform1f(loc, clamp(material->reflectivity, 0.f, 1.f));
+
+	loc = getUniformLocation("uShine");
+	glUniform1f(loc, clamp(material->shine, 0.f, 1.f));
 }

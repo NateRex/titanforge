@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/materials/pointers/MaterialPtr.h>
 
@@ -25,20 +26,6 @@ public:
     void setModelMatrix(const Matrix4& matrix);
 
     /**
-     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
-     * is currently in-use.
-     * @param matrix Matrix representing the transformation from world to view space
-     */
-    void setViewMatrix(const Matrix4& matrix);
-
-    /**
-     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
-     * shader is currently in-use.
-     * @param matrix Matrix representing the transformation from view to clipping space
-     */
-    void setProjectionMatrix(const Matrix4& matrix);
-
-    /**
      * Updates the uniforms for this shader using the given normal matrix, used to transform surface normals from local
      * space to world space, without affecting scaling or translation. This method assumes that this shader is currently
      * in-use.
@@ -61,11 +48,17 @@ public:
     void setPositionalLight(const LightPtr light);
 
     /**
+     * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.
+     * @param camera Camera
+     */
+    void setCamera(const CameraPtr camera);
+
+    /**
      * Updates uniforms for this shader using the given material. This method assumes that this shader is
      * currently in-use.
      * @param material Material
      */
-    virtual void setMaterial(const MaterialPtr material) = 0;
+    virtual void setMaterial(const MaterialPtr material);
 
     /**
      * Activates this shader as the current shader program used for rendering
@@ -104,4 +97,18 @@ protected:
      * @return The variable location
      */
     int getUniformLocation(const char* variableName) const;
+
+    /**
+     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
+     * is currently in-use.
+     * @param matrix Matrix representing the transformation from world to view space
+     */
+    void setViewMatrix(const Matrix4& matrix);
+
+    /**
+     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
+     * shader is currently in-use.
+     * @param matrix Matrix representing the transformation from view to clipping space
+     */
+    void setProjectionMatrix(const Matrix4& matrix);
 };
