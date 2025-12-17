@@ -52,11 +52,14 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		in vec2 frag_TexCoord;
 
 		// Uniforms
+		uniform vec3 uCameraPos;
 		uniform vec3 uAmbientColor;
 		uniform float uAmbientIntensity;
 		uniform vec3 uLightPos;
 		uniform vec3 uLightColor;
 		uniform float uLightIntensity;
+		uniform float uReflectivity;
+		uniform float uShine;
 		uniform int uHasTexture;
 		uniform sampler2D uTexture;
 
@@ -73,7 +76,13 @@ constexpr const char* BASIC_FRAGMENT = R"(
 			float diff = max(dot(norm, lightDir), 0.0);
 			diffuse = diff * diffuse;
 
-			vec4 color = (ambient + diffuse) * frag_Color;
+			vec3 viewDir = normalize(uCameraPos - frag_Pos);
+			vec3 reflectDir = reflect(-lightDir, norm);
+			float specExp = exp2(round(mix(0.0, 8.0, uShine)));
+			float spec = pow(max(dot(viewDir, reflectDir), 0.0), specExp);
+			vec4 specular = vec4(uReflectivity * spec * uLightColor, 1.0);  
+
+			vec4 color = (ambient + diffuse + specular) * frag_Color;
 			if (uHasTexture == 1)
 			{
 				color *= texture(uTexture, frag_TexCoord);

@@ -17,10 +17,9 @@ BasicShaderPtr BasicShader::create()
 
 void BasicShader::setMaterial(const MaterialPtr material)
 {
-	BasicMaterialPtr mat = cast<BasicMaterial>(material);
+	Shader::setMaterial(material);
 
-	// Color
-	glUniform4f(getUniformLocation("uColor"), mat->color.red(), mat->color.green(), mat->color.blue(), mat->color.alpha());
+	BasicMaterialPtr mat = cast<BasicMaterial>(material);
 
 	// Texture
 	if (mat->texture)

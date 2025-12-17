@@ -5,6 +5,7 @@
 #include <graphics/materials/BasicMaterial.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/lights/Light.h>
+#include <graphics/cameras/PerspectiveCamera.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
@@ -17,8 +18,6 @@ BOOST_AUTO_TEST_CASE(BasicShader_matrices)
 
 	Matrix4 m1;
 	BOOST_REQUIRE_NO_THROW(shader->setModelMatrix(m1));
-	BOOST_REQUIRE_NO_THROW(shader->setViewMatrix(m1));
-	BOOST_REQUIRE_NO_THROW(shader->setProjectionMatrix(m1));
 
 	Matrix3 m2;
 	BOOST_REQUIRE_NO_THROW(shader->setNormalMatrix(m2));
@@ -44,6 +43,17 @@ BOOST_AUTO_TEST_CASE(BasicShader_positionalLight)
 
 	LightPtr light = Light::create();
 	BOOST_REQUIRE_NO_THROW(shader->setPositionalLight(light));
+}
+
+/**
+ * Tests that a camera can be set
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_camera)
+{
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+
+	CameraPtr camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+	BOOST_REQUIRE_NO_THROW(shader->setCamera(camera));
 }
 
 /**

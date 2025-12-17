@@ -1,5 +1,7 @@
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
+#include <graphics/materials/Material.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
@@ -115,18 +117,6 @@ void Shader::setModelMatrix(const Matrix4& matrix)
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
-void Shader::setViewMatrix(const Matrix4& matrix)
-{
-	int loc = getUniformLocation("uView");
-	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
-}
-
-void Shader::setProjectionMatrix(const Matrix4& matrix)
-{
-	int loc = getUniformLocation("uProj");
-	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
-}
-
 void Shader::setNormalMatrix(const Matrix3& matrix)
 {
 	int loc = getUniformLocation("uNormalMatrix");
@@ -166,4 +156,39 @@ void Shader::setPositionalLight(const LightPtr light)
 		loc = getUniformLocation("uLightIntensity");
 		glUniform1f(loc, light->intensity);
 	}
+}
+
+void Shader::setCamera(const CameraPtr camera)
+{
+	int loc = getUniformLocation("uCameraPos");
+	Vector3 cameraPos = camera->getPosition();
+	glUniform3f(loc, cameraPos.x, cameraPos.y, cameraPos.z);
+
+	setViewMatrix(camera->getViewMatrix());
+	setProjectionMatrix(camera->getProjectionMatrix());
+}
+
+void Shader::setViewMatrix(const Matrix4& matrix)
+{
+	int loc = getUniformLocation("uView");
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
+void Shader::setProjectionMatrix(const Matrix4& matrix)
+{
+	int loc = getUniformLocation("uProj");
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
+}
+
+void Shader::setMaterial(const MaterialPtr material)
+{
+	int loc = getUniformLocation("uColor");
+	Color color = material->color;
+	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
+
+	loc = getUniformLocation("uReflectivity");
+	glUniform1f(loc, material->reflectivity);
+
+	loc = getUniformLocation("uShine");
+	glUniform1f(loc, material->shine);
 }

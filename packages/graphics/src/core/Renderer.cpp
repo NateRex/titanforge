@@ -192,8 +192,7 @@ void Renderer::draw(const RenderState& state)
 		shader->activate();
 		shader->setModelMatrix(modelTransform);
 		shader->setNormalMatrix(normalTransform);
-		shader->setViewMatrix(state.camera->getViewMatrix());
-		shader->setProjectionMatrix(state.camera->getProjectionMatrix());
+		shader->setCamera(state.camera);
 		shader->setAmbientLighting(state.ambientLight);
 		shader->setPositionalLight(state.positionalLight);
 		shader->setMaterial(material);
