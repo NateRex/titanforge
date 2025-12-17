@@ -14,7 +14,7 @@ public:
 	/**
 	 * Material type
 	 */
-	const MaterialType type;
+	const MaterialType materialType;
 
 	/**
 	 * Color. Defaults to solid white.

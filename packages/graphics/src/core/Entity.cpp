@@ -2,7 +2,7 @@
 #include <math/Matrix4.h>
 #include <algorithm>
 
-Entity::Entity(EntityType type): type(type), _scale(1.f, 1.f, 1.f)
+Entity::Entity(EntityType type): entityType(type), _scale(1.f, 1.f, 1.f)
 {
 
 }
@@ -14,38 +14,22 @@ Vector3 Entity::getPosition() const
 
 void Entity::setPosition(float x, float y, float z)
 {
-	_position.x = x;
-	_position.y = y;
-	_position.z = z;
-
-	_transformNeedsUpdate = true;
+	updatePosition(x, y, z);
 }
 
 void Entity::setPosition(const Vector3& v)
 {
-	_position.x = v.x;
-	_position.y = v.y;
-	_position.z = v.z;
-
-	_transformNeedsUpdate = true;
+	updatePosition(v.x, v.y, v.z);
 }
 
 void Entity::addPosition(float x, float y, float z)
 {
-	_position.x += x;
-	_position.y += y;
-	_position.z += z;
-
-	_transformNeedsUpdate = true;
+	updatePosition(_position.x + x, _position.y + y, _position.z + z);
 }
 
 void Entity::addPosition(const Vector3& v)
 {
-	_position.x += v.x;
-	_position.y += v.y;
-	_position.z += v.z;
-
-	_transformNeedsUpdate = true;
+	updatePosition(_position.x + v.x, _position.y + v.y, _position.z + v.z);
 }
 
 Matrix3 Entity::getRotation() const
@@ -55,24 +39,20 @@ Matrix3 Entity::getRotation() const
 
 void Entity::setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
 {
-	_rotation.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
-
-	_transformNeedsUpdate = true;
+	updateRotation(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 }
 
 void Entity::setRotation(const Matrix3& rot)
 {
-	_rotation = rot;
-
-	_transformNeedsUpdate = true;
+	updateRotation(rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8]);
 }
 
 void Entity::addRotation(const Matrix3& rot)
 {
 	// Pre-multiply to apply rotation in local space
-	rot.multiply(_rotation, &_rotation);
-
-	_transformNeedsUpdate = true;
+	Matrix3 r = rot.multiply(_rotation);
+	
+	updateRotation(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8]);
 }
 
 Vector3 Entity::getScaling() const
@@ -82,30 +62,22 @@ Vector3 Entity::getScaling() const
 
 void Entity::setScaling(float scalar)
 {
-	setScaling(scalar, scalar, scalar);
+	updateScaling(scalar, scalar, scalar);
 }
 
 void Entity::setScaling(float x, float y, float z)
 {
-	_scale.x = x;
-	_scale.y = y;
-	_scale.z = z;
-
-	_transformNeedsUpdate = true;
+	updateScaling(x, y, z);
 }
 
 void Entity::addScaling(float scalar)
 {
-	addScaling(scalar, scalar, scalar);
+	updateScaling(_scale.x + scalar, _scale.y + scalar, _scale.z + scalar);
 }
 
 void Entity::addScaling(float x, float y, float z)
 {
-	_scale.x += x;
-	_scale.y += y;
-	_scale.z += z;
-
-	_transformNeedsUpdate = true;
+	updateScaling(_scale.x + x, _scale.y + y, _scale.z + z);
 }
 
 Matrix4 Entity::getWorldMatrix()
@@ -125,6 +97,28 @@ Matrix3 Entity::getNormalMatrix()
 
 	matrix.transpose(&matrix);
 	return Matrix3(matrix);
+}
+
+void Entity::updatePosition(float x, float y, float z)
+{
+	_position.x = x;
+	_position.y = y;
+	_position.z = z;
+	_transformNeedsUpdate = true;
+}
+
+void Entity::updateRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+{
+	_rotation.setValues(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	_transformNeedsUpdate = true;
+}
+
+void Entity::updateScaling(float x, float y, float z)
+{
+	_scale.x = x;
+	_scale.y = y;
+	_scale.z = z;
+	_transformNeedsUpdate = true;
 }
 
 void Entity::updateTransform()

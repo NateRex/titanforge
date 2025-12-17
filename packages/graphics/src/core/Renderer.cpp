@@ -136,7 +136,6 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 {
 	RenderState state;
 	state.camera = camera;
-	state.ambientLight = scene->ambientLighting;
 	traverseScene(scene, nullptr, state);
 	return state;
 }
@@ -144,7 +143,7 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, RenderState& state)
 {
 
-	switch (entity->type)
+	switch (entity->entityType)
 	{
 		case EntityType::GROUP:
 		{
@@ -193,7 +192,7 @@ void Renderer::draw(const RenderState& state)
 
 		// Load shader data
 		MaterialPtr material = mesh->material;
-		ShaderPtr shader = ShaderManager::getShader(material->type);
+		ShaderPtr shader = ShaderManager::getShader(material->materialType);
 		shader->activate();
 		shader->setModelMatrix(modelTransform);
 		shader->setNormalMatrix(normalTransform);

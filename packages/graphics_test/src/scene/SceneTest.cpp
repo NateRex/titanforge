@@ -9,7 +9,7 @@
 BOOST_AUTO_TEST_CASE(Scene_basics)
 {
 	ScenePtr scene = Scene::create();
-	BOOST_TEST(scene->type == EntityType::GROUP);
+	BOOST_TEST(scene->entityType == EntityType::GROUP);
 
 	LightPtr ambientLighting = scene->ambientLighting;
 	BOOST_TEST(ambientLighting->color == Color::WHITE);

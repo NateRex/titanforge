@@ -16,18 +16,6 @@ public:
 	~Camera();
 
 	/**
-	 * @override
-	 * @throws UnsupportedOperationException When called, as scaling of cameras is not supported.
-	 */
-	void setScaling(float x, float y, float z) override;
-
-	/**
-	 * @override
-	 * @throws UnsupportedOperationException When called, as scaling of cameras is not supported.
-	 */
-	void addScaling(float x, float y, float z) override;
-
-	/**
 	 * Computes the unit vector representing the "up" direction of the camera, in global space
 	 * @param result (Optional) Vector in which to store the result
 	 * @return The up vector
@@ -120,4 +108,10 @@ protected:
 	 * Constructor
 	 */
 	Camera();
+
+	/**
+	 * @override
+	 * @throws UnsupportedOperationException When called, as scaling of cameras is not supported.
+	 */
+	void updateScaling(float x, float y, float z) override;
 };

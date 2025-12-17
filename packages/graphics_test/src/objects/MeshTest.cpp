@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(Mesh_basics)
 	MaterialPtr material = BasicMaterial::create();
 	MeshPtr mesh = Mesh::create(geometry, material);
 
-	BOOST_TEST(mesh->type == EntityType::MESH);
+	BOOST_TEST(mesh->entityType == EntityType::MESH);
 	BOOST_TEST(mesh->geometry == geometry);
 	BOOST_TEST(mesh->material == material);
 }

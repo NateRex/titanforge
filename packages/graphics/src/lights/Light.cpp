@@ -1,6 +1,8 @@
+#pragma once
 #include <graphics/lights/Light.h>
+#include <common/exceptions/UnsupportedOperationException.h>
 
-LightPtr Light::create()
+void Light::updateScaling(float x, float y, float z)
 {
-	return std::shared_ptr<Light>(new Light());
+	throw UnsupportedOperationException("Scaling not supported for lights");
 }

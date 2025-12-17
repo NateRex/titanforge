@@ -8,5 +8,5 @@
 BOOST_AUTO_TEST_CASE(EntityGroup_basics)
 {
 	EntityGroupPtr group = EntityGroup::create();
-	BOOST_TEST(group->type == EntityType::GROUP);
+	BOOST_TEST(group->entityType == EntityType::GROUP);
 }
