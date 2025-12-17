@@ -5,6 +5,7 @@
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
+#include <common/Utils.h>
 #include <glad/glad.h>
 #include <sstream>
 
@@ -134,7 +135,7 @@ void Shader::setAmbientLighting(const LightPtr light)
 
 		// Set intensity
 		loc = getUniformLocation("uAmbientIntensity");
-		glUniform1f(loc, light->intensity);
+		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
 	}
 }
 
@@ -154,7 +155,7 @@ void Shader::setPositionalLight(const LightPtr light)
 
 		// Set intensity
 		loc = getUniformLocation("uLightIntensity");
-		glUniform1f(loc, light->intensity);
+		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
 	}
 }
 
@@ -187,8 +188,8 @@ void Shader::setMaterial(const MaterialPtr material)
 	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
 
 	loc = getUniformLocation("uReflectivity");
-	glUniform1f(loc, material->reflectivity);
+	glUniform1f(loc, clamp(material->reflectivity, 0.f, 1.f));
 
 	loc = getUniformLocation("uShine");
-	glUniform1f(loc, material->shine);
+	glUniform1f(loc, clamp(material->shine, 0.f, 1.f));
 }
