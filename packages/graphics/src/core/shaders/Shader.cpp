@@ -1,7 +1,10 @@
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
+#include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/Material.h>
+#include <graphics/objects/Mesh.h>
+#include <graphics/core/RenderState.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
@@ -112,6 +115,20 @@ int Shader::getUniformLocation(const char* variableName) const
 	return loc;
 }
 
+void Shader::setState(const RenderState& state)
+{
+	setCamera(state.camera);
+	setAmbientLighting(state.lighting.ambient);
+	setPositionalLight(state.lighting.positional);
+}
+
+void Shader::setItem(const RenderItem& item)
+{
+	setModelMatrix(item.modelTransform);
+	setNormalMatrix(item.normalTransform);
+	setMaterial(item.mesh->material);
+}
+
 void Shader::setModelMatrix(const Matrix4& matrix)
 {
 	int loc = getUniformLocation("uModel");
@@ -124,39 +141,37 @@ void Shader::setNormalMatrix(const Matrix3& matrix)
 	glUniformMatrix3fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
-void Shader::setAmbientLighting(const LightPtr light)
+void Shader::setAmbientLighting(const AmbientLightPtr light)
 {
+	Color color = Color::WHITE;
+	float intensity = 1.f;
+
 	if (light)
 	{
-		// Set color
-		int loc = getUniformLocation("uAmbientColor");
-		Color color = light->color;
-		glUniform3f(loc, color.red(), color.green(), color.blue());
-
-		// Set intensity
-		loc = getUniformLocation("uAmbientIntensity");
-		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
+		color = light->color;
+		intensity = clamp(light->intensity, 0.f, 1.f);
 	}
+
+	glUniform3f(getUniformLocation("uAmbientColor"), color.red(), color.green(), color.blue());
+	glUniform1f(getUniformLocation("uAmbientIntensity"), intensity);
 }
 
 void Shader::setPositionalLight(const LightPtr light)
 {
+	Vector3 pos;
+	Color color = Color::WHITE;
+	float intensity = 1.f;
+
 	if (light)
 	{
-		// Set position
-		int loc = getUniformLocation("uLightPos");
-		Vector3 pos = light->getPosition();
-		glUniform3f(loc, pos.x, pos.y, pos.z);
-
-		// Set color
-		loc = getUniformLocation("uLightColor");
-		Color color = light->color;
-		glUniform3f(loc, color.red(), color.green(), color.blue());
-
-		// Set intensity
-		loc = getUniformLocation("uLightIntensity");
-		glUniform1f(loc, clamp(light->intensity, 0.f, 1.f));
+		pos = light->getPosition();
+		color = light->color;
+		intensity = clamp(light->intensity, 0.f, 1.f);
 	}
+
+	glUniform3f(getUniformLocation("uLightPos"), pos.x, pos.y, pos.z);
+	glUniform3f(getUniformLocation("uLightColor"), color.red(), color.green(), color.blue());
+	glUniform1f(getUniformLocation("uLightIntensity"), intensity);
 }
 
 void Shader::setCamera(const CameraPtr camera)

@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/lights/pointers/LightPtr.h>
+#include <graphics/lights/LightType.h>
 #include <graphics/core/Entity.h>
 #include <graphics/core/Color.h>
 
@@ -13,6 +14,11 @@ class Light : public Entity
 public:
 
 	/**
+	 * Light type
+	 */
+	const LightType lightType;
+
+	/**
 	 * Color
 	 */
 	Color color;
@@ -23,15 +29,17 @@ public:
 	 */
 	float intensity;
 
-	/**
-	 * Constructs a new light instance
-	 */
-	static LightPtr create();
-
-private:
+protected:
 
 	/**
 	 * Constructor
+	 * @param type
 	 */
-	Light() : Entity(EntityType::LIGHT), color(Color::WHITE), intensity(1.f) {};
+	Light(const LightType type) : Entity(EntityType::LIGHT), lightType(type), color(Color::WHITE), intensity(1.f) {};
+
+	/**
+	 * @override
+	 * @throws UnsupportedOperationException When called, as scaling of lights is not supported.
+	 */
+	void updateScaling(float x, float y, float z) override;
 };

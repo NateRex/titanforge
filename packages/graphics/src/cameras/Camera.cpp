@@ -19,16 +19,6 @@ Camera::~Camera()
 	_pitch = nullptr;
 }
 
-void Camera::setScaling(float x, float y, float z)
-{
-	throw UnsupportedOperationException("Scaling not supported for cameras");
-}
-
-void Camera::addScaling(float x, float y, float z)
-{
-	throw UnsupportedOperationException("Scaling not supported for cameras");
-}
-
 Vector3 Camera::getRightVector(Vector3* result) const
 {
 	Vector3& r = getOrDefault(result, Vector3());
@@ -120,4 +110,9 @@ Matrix4 Camera::getViewMatrix()
 	);
 
 	return _viewMatrix;
+}
+
+void Camera::updateScaling(float x, float y, float z)
+{
+	throw UnsupportedOperationException("Scaling not supported for cameras");
 }

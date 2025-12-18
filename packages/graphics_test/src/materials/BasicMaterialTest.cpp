@@ -8,7 +8,7 @@
 BOOST_AUTO_TEST_CASE(BasicMaterial_properties)
 {
 	BasicMaterialPtr material = BasicMaterial::create();
-	BOOST_TEST(material->type == MaterialType::BASIC);
+	BOOST_TEST(material->materialType == MaterialType::BASIC);
 
 	material->useVertexColors = true;
 	BOOST_TEST(material->useVertexColors);

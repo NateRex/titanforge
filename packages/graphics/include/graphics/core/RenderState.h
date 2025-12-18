@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
+#include <graphics/lights/pointers/AmbientLightPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <math/Matrix3.h>
@@ -30,6 +31,24 @@ struct RenderItem {
 
 
 /**
+ * Aggregation of all the lights in the scene for a single render pass
+ * @author Nathaniel Rex
+ */
+struct Lighting {
+
+	/**
+	 * Ambient lighting
+	 */
+	AmbientLightPtr ambient = nullptr;
+
+	/**
+	 * Positional lighting
+	 */
+	LightPtr positional = nullptr;
+};
+
+
+/**
  * Aggregation of all rendering data required for a single render pass
  * @author Nathaniel rex
  */
@@ -43,12 +62,7 @@ struct RenderState {
 	/**
 	 * Ambient lighting
 	 */
-	LightPtr ambientLight = nullptr;
-
-	/**
-	 * Positional light
-	 */
-	LightPtr positionalLight = nullptr;
+	Lighting lighting;
 
 	/**
 	 * The items to be drawn this frame

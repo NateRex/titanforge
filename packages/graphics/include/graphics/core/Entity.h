@@ -21,7 +21,7 @@ public:
 	/**
 	 * Entity type
 	 */
-	const EntityType type;
+	const EntityType entityType;
 
 	/**
 	 * Destructor
@@ -39,13 +39,13 @@ public:
 	 * @param y Y coordinate
 	 * @param z Z coordinate
 	 */
-	void setPosition(float x, float y, float z);
+	virtual void setPosition(float x, float y, float z) final;
 
 	/**
 	 * Sets the position of this entity relative to its parent.
 	 * @param v Position vector, relative to the origin of this entity's parent
 	 */
-	void setPosition(const Vector3& v);
+	virtual void setPosition(const Vector3& v) final;
 
 	/**
 	 * Applies additional translation of this entity relative to its parent
@@ -53,13 +53,13 @@ public:
 	 * @param y Y coordinate
 	 * @param z Z coordinate
 	 */
-	void addPosition(float x, float y, float z);
+	virtual void addPosition(float x, float y, float z) final;
 
 	/**
 	 * Applies additional translation of this entity relative to its parent
 	 * @param v Vector to apply
 	 */
-	void addPosition(const Vector3& v);
+	virtual void addPosition(const Vector3& v) final;
 
 	/**
 	 * @return The 3x3 matrix representing the rotation of this entity relative to its parent
@@ -79,18 +79,18 @@ public:
 	 * @param m21 Row 2, column 1 rotation matrix value
 	 * @param m22 Row 2, column 2 rotation matrix value
 	 */
-	void setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
+	virtual void setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) final;
 
 	/**
 	 * Sets the rotation of this entity relative to its parent, using a rotation matrix.
 	 * @param rot Rotation matrix
 	 */
-	void setRotation(const Matrix3& rot);
+	virtual void setRotation(const Matrix3& rot) final;
 
 	/**
 	 * Applies additional rotation to this entity along its local coordinate axes
 	 */
-	void addRotation(const Matrix3& rot);
+	virtual void addRotation(const Matrix3& rot) final;
 
 	/**
 	 * @return The scaling of this entity relative to its parent across the x, y, and z axes
@@ -101,7 +101,7 @@ public:
 	 * Sets a uniform scaling of this entity relative to its parent.
 	 * @param scalar Uniform scale value to be applied in all directions
 	 */
-	virtual void setScaling(float scalar);
+	virtual void setScaling(float scalar) final;
 
 	/**
 	 * Sets the scaling of this entity relative to its parent.
@@ -109,13 +109,13 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	virtual void setScaling(float x, float y, float z);
+	virtual void setScaling(float x, float y, float z) final;
 
 	/**
 	 * Applies additional uniform scaling of this entity relative to its parent
 	 * @param scalar Uniform scale value to be applied in all directions
 	 */
-	virtual void addScaling(float scalar);
+	virtual void addScaling(float scalar) final;
 
 	/**
 	 * Applies additional scaling of this entity relative to its parent.
@@ -123,7 +123,7 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	virtual void addScaling(float x, float y, float z);
+	virtual void addScaling(float x, float y, float z) final;
 
 	/**
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
@@ -204,6 +204,39 @@ protected:
 	 * @param type Entity type
 	 */
 	Entity(EntityType type);
+
+	/**
+	 * Updates the position of this entity. This method is called by all other functions that modify position.
+	 * It is meant to be overridden by child classes specifically in cases where changes to position should not be allowed.
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param z Z coordinate
+	 */
+	virtual void updatePosition(float x, float y, float z);
+
+	/**
+	 * Updates the rotation of this entity. This method is called by all other functions that modify rotation.
+	 * It is meant to be overridden by child classes specifically in cases where changes to rotation should not be allowed.
+	 * @param m00 Row 0, column 0 rotation matrix value
+	 * @param m01 Row 0, column 1 rotation matrix value
+	 * @param m02 Row 0, column 2 rotation matrix value
+	 * @param m10 Row 1, column 0 rotation matrix value
+	 * @param m11 Row 1, column 1 rotation matrix value
+	 * @param m12 Row 1, column 2 rotation matrix value
+	 * @param m20 Row 2, column 0 rotation matrix value
+	 * @param m21 Row 2, column 1 rotation matrix value
+	 * @param m22 Row 2, column 2 rotation matrix value
+	 */
+	virtual void updateRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
+
+	/**
+	 * Updates the scaling of this entity. This method is called by all other functions that modify scaling.
+	 * It is meant to be overridden by child classes specifically in cases where changes to scaling should not be allowed.
+	 * @param x Scaling in the x direction
+	 * @param y Scaling in the y direction
+	 * @param z Scaling in the z direction
+	 */
+	virtual void updateScaling(float x, float y, float z);
 
 	/**
 	 * Checks whether or not the cached transformation matrix for this entity is out-of-date, and if so, updates it

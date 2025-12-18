@@ -105,9 +105,10 @@ public:
 	 */
 	static BasicShaderPtr create();
 
+protected:
+
 	/**
-	 * Updates uniforms for this shader using the given material. This method assumes that this shader is
-	 * currently in-use.
+	 * @override
 	 * @param material Material
 	 */
 	void setMaterial(const MaterialPtr material) override;

@@ -1,6 +1,7 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/scene/Scene.h>
-#include <graphics/lights/Light.h>
+#include <graphics/lights/AmbientLight.h>
+#include <graphics/lights/PointLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
@@ -118,25 +119,29 @@ int main()
     MeshPtr colorCube = createBox(Color(1.0f, 0.5f, 0.31f), 0.f, 0.f, 0.f);
     scene->add(colorCube);
 
-    // Create positional light
-    LightPtr light = Light::create();
-    scene->add(light);
-
-    // Create small cube representing light position
-    MeshPtr lightCube = createBox(Color(1.f, 1.f, 1.f), 0.f, 0.f, 0.f);
-    lightCube->setScaling(0.2);
-    scene->add(lightCube);
+    // Create lighting
+    LightPtr ambientLighting = AmbientLight::create();
+    LightPtr pointLight = PointLight::create();
+    pointLight->intensity = 0.5;
+    scene->add(ambientLighting);
+    scene->add(pointLight);
 
     float angle = 0.f;
     const float lightRadius = 5.f;
     const float angularSpeed = 1.f;
     while (renderer->getWindow()->isOpen())
     {
+        float angleChange = angularSpeed * renderer->getDeltaTime();
+
         // Rotate light
-        angle -= angularSpeed * renderer->getDeltaTime();
+        angle -= angleChange;
         Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
-        light->setPosition(lightPos);
-        lightCube->setPosition(lightPos);
+        pointLight->setPosition(lightPos);
+
+        // Rotate cube
+        Matrix3 rot = Matrix3::fromXRotation(angleChange);
+        rot.multiply(Matrix3::fromZRotation(angleChange), &rot);
+        colorCube->addRotation(rot);
 
         renderer->render(scene, camera);
     }
