@@ -1,4 +1,4 @@
- #pragma once
+#pragma once
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/lights/LightType.h>
 #include <graphics/core/Entity.h>

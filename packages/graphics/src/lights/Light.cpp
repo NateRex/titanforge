@@ -1,4 +1,3 @@
-#pragma once
 #include <graphics/lights/Light.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 
