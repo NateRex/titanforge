@@ -6,7 +6,7 @@
 /**
  * Tests the basic construction of an ambient light
  */
-BOOST_AUTO_TEST_CASE(AmbientLight_Basics)
+BOOST_AUTO_TEST_CASE(AmbientLight_basics)
 {
 	LightPtr light = AmbientLight::create();
 	BOOST_TEST(light->lightType == LightType::AMBIENT);
@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(AmbientLight_Basics)
 /**
  * Tests exception cases trying to position, rotate, or scale an ambient light
  */
-BOOST_AUTO_TEST_CASE(AmbientLight_ExceptionCases)
+BOOST_AUTO_TEST_CASE(AmbientLight_exceptionCases)
 {
 	LightPtr light = AmbientLight::create();
 	BOOST_REQUIRE_THROW(light->setScaling(1.f, 2.f, 3.f), UnsupportedOperationException);

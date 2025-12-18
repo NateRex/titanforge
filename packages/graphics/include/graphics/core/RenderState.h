@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
+#include <graphics/lights/pointers/AmbientLightPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <math/Matrix3.h>
@@ -38,7 +39,7 @@ struct Lighting {
 	/**
 	 * Ambient lighting
 	 */
-	LightPtr ambient = nullptr;
+	AmbientLightPtr ambient = nullptr;
 
 	/**
 	 * Positional lighting

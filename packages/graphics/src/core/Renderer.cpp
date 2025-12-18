@@ -8,6 +8,7 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
+#include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -156,7 +157,25 @@ void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, Ren
 		}
 		case EntityType::LIGHT:
 		{
-			state.positionalLight = cast<Light>(entity);
+			LightPtr light = cast<Light>(entity);
+			switch (light->lightType)
+			{
+				case LightType::AMBIENT:
+				{
+					state.lighting.ambient = cast<AmbientLight>(light);
+					break;
+				}
+				case LightType::POINT:
+				{
+					state.lighting.positional = light;
+					break;
+				}
+				default:
+				{
+					// do nothing
+				}
+			}
+
 			break;
 		}
 		case EntityType::MESH:
@@ -187,19 +206,12 @@ void Renderer::draw(const RenderState& state)
 	for (const RenderItem& item : state.items)
 	{
 		MeshPtr mesh = item.mesh;
-		const Matrix4& modelTransform = item.modelTransform;
-		const Matrix3& normalTransform = item.normalTransform;
 
 		// Load shader data
-		MaterialPtr material = mesh->material;
-		ShaderPtr shader = ShaderManager::getShader(material->materialType);
+		ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
 		shader->activate();
-		shader->setModelMatrix(modelTransform);
-		shader->setNormalMatrix(normalTransform);
-		shader->setCamera(state.camera);
-		shader->setAmbientLighting(state.ambientLight);
-		shader->setPositionalLight(state.positionalLight);
-		shader->setMaterial(material);
+		shader->setState(state);
+		shader->setItem(item);
 
 		// Draw buffer
 		Buffer* buffer = mesh->geometry->getBuffer();

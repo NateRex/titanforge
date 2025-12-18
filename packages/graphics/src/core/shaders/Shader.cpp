@@ -1,7 +1,10 @@
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
+#include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/Material.h>
+#include <graphics/objects/Mesh.h>
+#include <graphics/core/RenderState.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
@@ -112,6 +115,20 @@ int Shader::getUniformLocation(const char* variableName) const
 	return loc;
 }
 
+void Shader::setState(const RenderState& state)
+{
+	setCamera(state.camera);
+	setAmbientLighting(state.lighting.ambient);
+	setPositionalLight(state.lighting.positional);
+}
+
+void Shader::setItem(const RenderItem& item)
+{
+	setModelMatrix(item.modelTransform);
+	setNormalMatrix(item.normalTransform);
+	setMaterial(item.mesh->material);
+}
+
 void Shader::setModelMatrix(const Matrix4& matrix)
 {
 	int loc = getUniformLocation("uModel");
@@ -124,7 +141,7 @@ void Shader::setNormalMatrix(const Matrix3& matrix)
 	glUniformMatrix3fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
-void Shader::setAmbientLighting(const LightPtr light)
+void Shader::setAmbientLighting(const AmbientLightPtr light)
 {
 	if (light)
 	{
