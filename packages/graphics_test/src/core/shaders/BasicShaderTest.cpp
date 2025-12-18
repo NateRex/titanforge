@@ -14,13 +14,25 @@
 #include <common/exceptions/IllegalArgumentException.h>
 
 /**
- * Tests the ability to set the render state
+ * Tests the ability to set a fully-populated the render state
  */
 BOOST_AUTO_TEST_CASE(BasicShader_setState)
 {
 	RenderState state;
 	state.lighting.ambient = AmbientLight::create();
 	state.lighting.positional = PointLight::create();
+	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	BOOST_REQUIRE_NO_THROW(shader->setState(state));
+}
+
+/**
+ * Tests the ability to set a render state containing no lighting
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_setStateNoLighting)
+{
+	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
