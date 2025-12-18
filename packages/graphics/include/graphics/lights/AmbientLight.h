@@ -34,5 +34,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	AmbientLight() : Light(LightType::AMBIENT) {}
+	AmbientLight();
 };

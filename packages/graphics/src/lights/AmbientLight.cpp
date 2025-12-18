@@ -1,6 +1,11 @@
 #include <graphics/lights/AmbientLight.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 
+AmbientLight::AmbientLight() : Light(LightType::AMBIENT)
+{
+	intensity = 0.25f;
+}
+
 AmbientLightPtr AmbientLight::create()
 {
 	return std::shared_ptr<AmbientLight>(new AmbientLight());
