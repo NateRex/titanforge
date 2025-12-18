@@ -126,11 +126,6 @@ int main()
     scene->add(ambientLighting);
     scene->add(pointLight);
 
-    // Create small cube representing positional light
-    MeshPtr lightCube = createBox(Color(1.f, 1.f, 1.f), 0.f, 0.f, 0.f);
-    lightCube->setScaling(0.2);
-    scene->add(lightCube);
-
     float angle = 0.f;
     const float lightRadius = 5.f;
     const float angularSpeed = 1.f;
@@ -139,10 +134,9 @@ int main()
         float angleChange = angularSpeed * renderer->getDeltaTime();
 
         // Rotate light
-        angle -= angularSpeed * renderer->getDeltaTime();
+        angle -= angleChange;
         Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
         pointLight->setPosition(lightPos);
-        lightCube->setPosition(lightPos);
 
         // Rotate cube
         Matrix3 rot = Matrix3::fromXRotation(angleChange);
