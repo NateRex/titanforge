@@ -9,6 +9,22 @@
 constexpr const char* BASIC_VERTEX = R"(
 		#version 330 core
 
+		struct Transforms {
+			mat4 model;
+			mat4 view;
+			mat4 proj;
+			mat3 normal;
+		};
+
+		struct Material {
+			vec4 color;
+			int hasVertexColor;
+			float reflectivity;
+			float shine;
+			int hasTexture;
+			sampler2D texture;
+		};
+
 		// Inputs
 		layout (location = 0) in vec3 vert_Pos;
 		layout (location = 1) in vec3 vert_Normal;
@@ -16,12 +32,8 @@ constexpr const char* BASIC_VERTEX = R"(
 		layout (location = 3) in vec2 vert_TexCoord;
 
 		// Uniforms
-		uniform vec4 uColor;
-		uniform int uUseVertexColors;
-		uniform mat4 uModel;
-		uniform mat4 uView;
-		uniform mat4 uProj;
-		uniform mat3 uNormalMatrix;
+		uniform Material uMaterial;
+		uniform Transforms uTransforms;
 
 		// Outputs
 		out vec4 frag_Color;
@@ -31,11 +43,11 @@ constexpr const char* BASIC_VERTEX = R"(
 
 		void main()
 		{
-			frag_Color = uUseVertexColors == 1 ? vert_Color : uColor;
-			frag_Pos = vec3(uModel * vec4(vert_Pos, 1.0f));
-			frag_Normal = uNormalMatrix * vert_Normal;
+			frag_Color = uMaterial.hasVertexColor == 1 ? vert_Color : uMaterial.color;
+			frag_Pos = vec3(uTransforms.model * vec4(vert_Pos, 1.0f));
+			frag_Normal = uTransforms.normal * vert_Normal;
 			frag_TexCoord = vert_TexCoord;
-			gl_Position = uProj * uView * uModel * vec4(vert_Pos, 1.0f);
+			gl_Position = uTransforms.proj * uTransforms.view * uTransforms.model * vec4(vert_Pos, 1.0f);
 		}
 )";
 
@@ -45,6 +57,21 @@ constexpr const char* BASIC_VERTEX = R"(
 constexpr const char* BASIC_FRAGMENT = R"(
 		#version 330 core
 
+		struct Light {
+			vec3 position;
+			vec3 color;
+			float intensity;
+		};
+
+		struct Material {
+			vec4 color;
+			int hasVertexColor;
+			float reflectivity;
+			float shine;
+			int hasTexture;
+			sampler2D texture;
+		};
+
 		// Inputs
 		in vec4 frag_Color;
 		in vec3 frag_Pos;
@@ -53,39 +80,33 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		// Uniforms
 		uniform vec3 uCameraPos;
-		uniform vec3 uAmbientColor;
-		uniform float uAmbientIntensity;
-		uniform vec3 uLightPos;
-		uniform vec3 uLightColor;
-		uniform float uLightIntensity;
-		uniform float uReflectivity;
-		uniform float uShine;
-		uniform int uHasTexture;
-		uniform sampler2D uTexture;
+		uniform Light uAmbient;
+		uniform Light uLight;
+		uniform Material uMaterial;
 
 		// Outputs
 		out vec4 FragColor;
 
 		void main()
 		{
-			vec4 ambient = vec4(uAmbientColor * uAmbientIntensity, 1.0);
+			vec4 ambient = vec4(uAmbient.color * uAmbient.intensity, 1.0);
 			
-			vec4 diffuse = vec4(uLightColor * uLightIntensity, 1.0);
+			vec4 diffuse = vec4(uLight.color * uLight.intensity, 1.0);
 			vec3 norm = normalize(frag_Normal);
-			vec3 lightDir = normalize(uLightPos - frag_Pos);
+			vec3 lightDir = normalize(uLight.position - frag_Pos);
 			float diff = max(dot(norm, lightDir), 0.0);
 			diffuse = diff * diffuse;
 
 			vec3 viewDir = normalize(uCameraPos - frag_Pos);
 			vec3 reflectDir = reflect(-lightDir, norm);
-			float specExp = exp2(round(mix(0.0, 8.0, uShine)));
+			float specExp = exp2(round(mix(0.0, 8.0, uMaterial.shine)));
 			float spec = pow(max(dot(viewDir, reflectDir), 0.0), specExp);
-			vec4 specular = vec4(uReflectivity * spec * uLightColor, 1.0);  
+			vec4 specular = vec4(uMaterial.reflectivity * spec * uLight.color, 1.0);  
 
 			vec4 color = (ambient + diffuse + specular) * frag_Color;
-			if (uHasTexture == 1)
+			if (uMaterial.hasTexture == 1)
 			{
-				color *= texture(uTexture, frag_TexCoord);
+				color *= texture(uMaterial.texture, frag_TexCoord);
 			}
 			FragColor = color;
 		} 
