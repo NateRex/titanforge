@@ -31,7 +31,7 @@ public:
 	 * Shine factor, expressed as a value between 0 and 1, which affects the area of highlights on surfaces.
 	 * The larger the value, the tighter the highlight area.
 	 */
-	float shine = 0.6f;
+	float shine = 0.1f;
 
 	/**
 	 * Texture. Can be null.

@@ -89,14 +89,17 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		void main()
 		{
+			// Compute ambient light
 			vec4 ambient = vec4(uAmbient.color * uAmbient.intensity, 1.0);
 			
+			// Compute diffuse light
 			vec4 diffuse = vec4(uLight.color * uLight.intensity, 1.0);
 			vec3 norm = normalize(frag_Normal);
 			vec3 lightDir = normalize(uLight.position - frag_Pos);
 			float diff = max(dot(norm, lightDir), 0.0);
 			diffuse = diff * diffuse;
 
+			// Compute specular light
 			vec3 viewDir = normalize(uCameraPos - frag_Pos);
 			vec3 reflectDir = reflect(-lightDir, norm);
 			float specExp = exp2(round(mix(0.0, 8.0, uMaterial.shine)));

@@ -3,7 +3,7 @@
 #include <graphics/lights/Light.h>
 
 /**
- * A light that illuminates from a point in space
+ * A light that illuminates in all directions from a point in space
  * @author Nathaniel Rex
  */
 class PointLight : public Light {

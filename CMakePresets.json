@@ -3,11 +3,8 @@
     "configurePresets": [
         {
             "name": "default",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/.build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
+            "displayName": "Default",
+            "binaryDir": "${sourceDir}/.build"
         }
     ]
 }

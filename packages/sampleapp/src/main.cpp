@@ -122,21 +122,16 @@ int main()
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
     LightPtr pointLight = PointLight::create();
+    pointLight->setPosition(0.f, 0.f, 5.f);
     pointLight->intensity = 0.5;
     scene->add(ambientLighting);
     scene->add(pointLight);
 
     float angle = 0.f;
-    const float lightRadius = 5.f;
     const float angularSpeed = 1.f;
     while (renderer->getWindow()->isOpen())
     {
         float angleChange = angularSpeed * renderer->getDeltaTime();
-
-        // Rotate light
-        angle -= angleChange;
-        Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
-        pointLight->setPosition(lightPos);
 
         // Rotate cube
         Matrix3 rot = Matrix3::fromXRotation(angleChange);
