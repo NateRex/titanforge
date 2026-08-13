@@ -12,13 +12,10 @@ jobs:
   build:
     name: 🛠️ Build
     runs-on: ubuntu-latest
-    container: natejrex/cmake
+    container: natejrex/cmake-vcpkg
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Restore Dependency Cache
         id: cache
@@ -61,15 +58,12 @@ jobs:
   common-tests:
     name: 🧪 Common Tests
     runs-on: ubuntu-latest
-    container: natejrex/cmake
+    container: natejrex/cmake-vcpkg
     needs:
       - build
     steps:
       - name: checkout
         uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Download Artifact -> build
         uses: actions/download-artifact@v4
@@ -85,15 +79,12 @@ jobs:
   graphics-tests:
     name: 🧪 Graphics Tests
     runs-on: ubuntu-latest
-    container: natejrex/cmake
+    container: natejrex/cmake-vcpkg
     needs:
       - build
     steps:
       - name: checkout
         uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Download Artifact -> build
         uses: actions/download-artifact@v4
@@ -111,15 +102,12 @@ jobs:
   math-tests:
     name: 🧪 Math Tests
     runs-on: ubuntu-latest
-    container: natejrex/cmake
+    container: natejrex/cmake-vcpkg
     needs:
       - build
     steps:
       - name: checkout
         uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Download Artifact -> build
         uses: actions/download-artifact@v4
