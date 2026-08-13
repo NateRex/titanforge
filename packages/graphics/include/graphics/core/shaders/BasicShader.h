@@ -7,109 +7,121 @@
  * Source code for the vertex shader used to handle 'basic' materials
  */
 constexpr const char* BASIC_VERTEX = R"(
-		#version 330 core
+	#version 330 core
 
-		struct Transforms {
-			mat4 model;
-			mat4 view;
-			mat4 proj;
-			mat3 normal;
-		};
+	struct Transforms {
+		mat4 model;
+		mat4 view;
+		mat4 proj;
+		mat3 normal;
+	};
 
-		struct Material {
-			vec4 color;
-			int hasVertexColor;
-			float reflectivity;
-			float shine;
-			int hasTexture;
-			sampler2D texture;
-		};
+	layout (location = 0) in vec3 vert_Pos;
+	layout (location = 1) in vec3 vert_Normal;
+	layout (location = 2) in vec4 vert_VertexColor;
+	layout (location = 3) in vec2 vert_TexCoord;
 
-		// Inputs
-		layout (location = 0) in vec3 vert_Pos;
-		layout (location = 1) in vec3 vert_Normal;
-		layout (location = 2) in vec4 vert_Color;
-		layout (location = 3) in vec2 vert_TexCoord;
+	uniform Transforms uTransforms;
 
-		// Uniforms
-		uniform Material uMaterial;
-		uniform Transforms uTransforms;
+	out vec3 frag_Pos;
+	out vec3 frag_Normal;
+	out vec4 frag_VertexColor;
+	out vec2 frag_TexCoord;
 
-		// Outputs
-		out vec4 frag_Color;
-		out vec3 frag_Pos;
-		out vec3 frag_Normal;
-		out vec2 frag_TexCoord;
+	void main()
+	{
+		vec4 worldPos = uTransforms.model * vec4(vert_Pos, 1.0);
 
-		void main()
-		{
-			frag_Color = uMaterial.hasVertexColor == 1 ? vert_Color : uMaterial.color;
-			frag_Pos = vec3(uTransforms.model * vec4(vert_Pos, 1.0f));
-			frag_Normal = uTransforms.normal * vert_Normal;
-			frag_TexCoord = vert_TexCoord;
-			gl_Position = uTransforms.proj * uTransforms.view * uTransforms.model * vec4(vert_Pos, 1.0f);
-		}
+		frag_Pos = worldPos.xyz;
+		frag_Normal = uTransforms.normal * vert_Normal;
+		frag_VertexColor = vert_VertexColor;
+		frag_TexCoord = vert_TexCoord;
+
+		gl_Position = uTransforms.proj * uTransforms.view * worldPos;
+	}
 )";
 
 /**
  * Source code for the fragment shader used to handle 'basic' materials
  */
 constexpr const char* BASIC_FRAGMENT = R"(
-		#version 330 core
+	#version 330 core
 
-		struct Light {
-			vec3 position;
-			vec3 color;
-			float intensity;
-		};
+	struct Light {
+		vec3 position;
+		vec3 color;
+		float intensity;
+	};
 
-		struct Material {
-			vec4 color;
-			int hasVertexColor;
-			float reflectivity;
-			float shine;
-			int hasTexture;
-			sampler2D texture;
-		};
+	struct Material {
+		vec4 color;
+		float reflectivity;
+		float shine;
+		int hasVertexColor;
+		int hasTexture;
+		sampler2D texture;
+		int hasDiffuseMap;
+		sampler2D diffuseMap;
+		int hasSpecularMap;
+		sampler2D specularMap;
+	};
 
-		// Inputs
-		in vec4 frag_Color;
-		in vec3 frag_Pos;
-		in vec3 frag_Normal;
-		in vec2 frag_TexCoord;
+	in vec3 frag_Pos;
+	in vec3 frag_Normal;
+	in vec4 frag_VertexColor;
+	in vec2 frag_TexCoord;
 
-		// Uniforms
-		uniform vec3 uCameraPos;
-		uniform Light uAmbient;
-		uniform Light uLight;
-		uniform Material uMaterial;
+	uniform vec3 uCameraPos;
+	uniform Light uAmbient;
+	uniform Light uLight;
+	uniform Material uMaterial;
 
-		// Outputs
-		out vec4 FragColor;
+	out vec4 FragColor;
 
-		void main()
+	void main()
+	{
+		vec4 albedo = uMaterial.hasVertexColor == 1
+			? frag_VertexColor
+			: uMaterial.color;
+
+		if (uMaterial.hasTexture != 0)
 		{
-			vec4 ambient = vec4(uAmbient.color * uAmbient.intensity, 1.0);
-			
-			vec4 diffuse = vec4(uLight.color * uLight.intensity, 1.0);
-			vec3 norm = normalize(frag_Normal);
-			vec3 lightDir = normalize(uLight.position - frag_Pos);
-			float diff = max(dot(norm, lightDir), 0.0);
-			diffuse = diff * diffuse;
+			albedo *= texture(uMaterial.texture, frag_TexCoord);
+		}
 
-			vec3 viewDir = normalize(uCameraPos - frag_Pos);
-			vec3 reflectDir = reflect(-lightDir, norm);
-			float specExp = exp2(round(mix(0.0, 8.0, uMaterial.shine)));
-			float spec = pow(max(dot(viewDir, reflectDir), 0.0), specExp);
-			vec4 specular = vec4(uMaterial.reflectivity * spec * uLight.color, 1.0);  
+		vec3 normal = normalize(frag_Normal);
+		vec3 lightDir = normalize(uLight.position - frag_Pos);
+		vec3 viewDir = normalize(uCameraPos - frag_Pos);
 
-			vec4 color = (ambient + diffuse + specular) * frag_Color;
-			if (uMaterial.hasTexture == 1)
-			{
-				color *= texture(uMaterial.texture, frag_TexCoord);
-			}
-			FragColor = color;
-		} 
+		vec3 ambient = uAmbient.color * uAmbient.intensity;
+
+		float nDotL = max(dot(normal, lightDir), 0.0);
+		vec3 diffuse = uLight.color * uLight.intensity * nDotL;
+		vec3 diffuseReflectance = vec3(1.0);
+		if (uMaterial.hasDiffuseMap != 0)
+		{
+			diffuseReflectance = texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
+		}
+
+		// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
+		vec3 halfwayDir = normalize(lightDir + viewDir);
+		float shininess = mix(2.0, 256.0, uMaterial.shine);
+		float specularFactor = nDotL > 0.0
+			? pow(max(dot(normal, halfwayDir), 0.0), shininess)
+			: 0.0;
+		float specularIntensity = uMaterial.hasSpecularMap != 0
+			? texture(uMaterial.specularMap, frag_TexCoord).r
+			: 1.0;
+		vec3 specular = uLight.color
+			* uLight.intensity
+			* uMaterial.reflectivity
+			* specularIntensity
+			* specularFactor;
+
+		// Albedo colors ambient and diffuse light, but not the specular highlight.
+		vec3 litColor = albedo.rgb * diffuseReflectance * (ambient + diffuse) + specular;
+		FragColor = vec4(litColor, albedo.a);
+	}
 )";
 
 /**

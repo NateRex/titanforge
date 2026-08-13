@@ -17,7 +17,7 @@ public:
 	const MaterialType materialType;
 
 	/**
-	 * Color. Defaults to solid white.
+	 * Base color. Defaults to solid white.
 	 */
 	Color color = Color::WHITE;
 
@@ -37,6 +37,16 @@ public:
 	 * Texture. Can be null.
 	 */
 	TexturePtr texture = nullptr;
+
+	/**
+	 * Diffuse map used to control diffuse-light contribution across a surface. Can be null.
+	 */
+	TexturePtr diffuseMap = nullptr;
+
+	/**
+	 * Specular map used to control specular-highlight intensity across a surface. Can be null.
+	 */
+	TexturePtr specularMap = nullptr;
 
 	/**
 	 * Destructor
