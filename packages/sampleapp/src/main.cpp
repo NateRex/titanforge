@@ -30,6 +30,7 @@ MeshPtr createBox(float x, float y, float z)
 
     MaterialPtr material = BasicMaterial::create();
     material->texture = Texture::create("assets/container2.png");
+    material->diffuseMap = material->texture;
 
     MeshPtr mesh = Mesh::create(geometry, material);
     mesh->setPosition(x, y, z);
