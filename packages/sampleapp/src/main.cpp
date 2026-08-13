@@ -29,8 +29,7 @@ MeshPtr createBox(float x, float y, float z)
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
 
     MaterialPtr material = BasicMaterial::create();
-    // material->texture = Texture::create("assets/container2.png");
-    material->color == Color::GREEN;
+    material->texture = Texture::create("assets/container2.png");
 
     MeshPtr mesh = Mesh::create(geometry, material);
     mesh->setPosition(x, y, z);
