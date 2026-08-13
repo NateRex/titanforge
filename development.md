@@ -12,11 +12,7 @@ This document contains instructions on how to build TitanForge on your machine.
 
 - Download [CMake](https://cmake.org/) (version 3.27.1 or above).
 
-- Clone this repository and it's submodules:
-
-    ```
-    git clone --recurse-submodules https://github.com/NateRex/titanforge.git
-    ```
+- Install [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-powershell#1---set-up-vcpkg) globally and set the `VCPKG_ROOT` environment variable to its installation directory. Ensure the vcpkg executable is also available on your `PATH`.
 
 <br>
 
