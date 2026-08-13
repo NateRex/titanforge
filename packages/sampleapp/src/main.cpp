@@ -122,7 +122,7 @@ int main()
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
     LightPtr pointLight = PointLight::create();
-    pointLight->setPosition(0.f, 0.f, 5.f);
+    pointLight->setPosition(5.f, 2.f, 5.f);
     pointLight->intensity = 0.5;
     scene->add(ambientLighting);
     scene->add(pointLight);
@@ -134,9 +134,9 @@ int main()
         float angleChange = angularSpeed * renderer->getDeltaTime();
 
         // Rotate cube
-        Matrix3 rot = Matrix3::fromXRotation(angleChange);
-        rot.multiply(Matrix3::fromZRotation(angleChange), &rot);
-        colorCube->addRotation(rot);
+        //Matrix3 rot = Matrix3::fromXRotation(angleChange);
+        //rot.multiply(Matrix3::fromZRotation(angleChange), &rot);
+        //colorCube->addRotation(rot);
 
         renderer->render(scene, camera);
     }

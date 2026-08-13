@@ -75,3 +75,22 @@ BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
+
+/**
+ * Tests the ability to set a render item consisting of a material containing a diffuse map
+ */
+// BOOST_AUTO_TEST_CASE(BasicShader_setDiffuseMapMaterial)
+// {
+// 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
+// 	MaterialPtr mat = BasicMaterial::create();
+// 	mat->diffuseMap = TextureLoader::load("assets/container.jpg");
+// 	MeshPtr mesh = Mesh::create(geom, mat);
+
+// 	RenderItem item;
+// 	item.mesh = mesh;
+// 	item.modelTransform = Matrix4::IDENTITY;
+// 	item.normalTransform = Matrix3::IDENTITY;
+
+// 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+// 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
+// }

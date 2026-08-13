@@ -60,6 +60,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		int hasVertexColor;
 		int hasTexture;
 		sampler2D texture;
+		int hasDiffuseMap;
+		sampler2D diffuseMap;
 	};
 
 	in vec3 frag_Pos;
@@ -93,6 +95,10 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		float nDotL = max(dot(normal, lightDir), 0.0);
 		vec3 diffuse = uLight.color * uLight.intensity * nDotL;
+		if (uMaterial.hasDiffuseMap != 0)
+		{
+			diffuse *= texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
+		}
 
 		// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
 		vec3 halfwayDir = normalize(lightDir + viewDir);

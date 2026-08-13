@@ -34,6 +34,19 @@ void BasicShader::setMaterial(const MaterialPtr material)
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
+	// Diffuse map
+	if (mat->diffuseMap)
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mat->diffuseMap->id());
+		glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
+		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 1);
+	}
+	else
+	{
+		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 0);
+	}
+
 	// Vertex color usage
 	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), mat->useVertexColors ? 1 : 0);
 }

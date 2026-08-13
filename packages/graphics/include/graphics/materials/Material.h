@@ -39,6 +39,11 @@ public:
 	TexturePtr texture = nullptr;
 
 	/**
+	 * Diffuse map used to control diffuse-light contribution across a surface.
+	 */
+	TexturePtr diffuseMap = nullptr;
+
+	/**
 	 * Destructor
 	 */
 	virtual ~Material() = default;
