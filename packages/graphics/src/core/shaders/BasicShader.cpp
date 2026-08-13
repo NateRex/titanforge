@@ -26,8 +26,12 @@ void BasicShader::setMaterial(const MaterialPtr material)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mat->texture->id());
-		glUniform1i(getUniformLocation("uMaterial.texture"), GL_TEXTURE0);
+		glUniform1i(getUniformLocation("uMaterial.texture"), 0);
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 1);
+	}
+	else
+	{
+		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
 	// Vertex color usage

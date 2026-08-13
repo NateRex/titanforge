@@ -67,6 +67,13 @@ set_target_properties(GraphicsTest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
 )
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/assets" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/bin")
+add_custom_target(GraphicsTestAssets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
+    COMMENT "Copying GraphicsTest assets"
+    VERBATIM
+)
+add_dependencies(GraphicsTest GraphicsTestAssets)
 
 add_test(NAME BoostTests COMMAND boost_tests)

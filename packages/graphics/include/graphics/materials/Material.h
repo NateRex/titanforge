@@ -17,7 +17,7 @@ public:
 	const MaterialType materialType;
 
 	/**
-	 * Color. Defaults to solid white.
+	 * Base color. Defaults to solid white.
 	 */
 	Color color = Color::WHITE;
 
