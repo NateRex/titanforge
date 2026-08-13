@@ -31,6 +31,7 @@ MeshPtr createBox(float x, float y, float z)
     MaterialPtr material = BasicMaterial::create();
     material->texture = Texture::create("assets/container2.png");
     material->diffuseMap = material->texture;
+    material->specularMap = Texture::create("assets/container2_specular.png");
 
     MeshPtr mesh = Mesh::create(geometry, material);
     mesh->setPosition(x, y, z);
@@ -123,8 +124,7 @@ int main()
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
     LightPtr pointLight = PointLight::create();
-    pointLight->setPosition(5.f, 2.f, 5.f);
-    pointLight->intensity = 0.5;
+    pointLight->setPosition(5.f, 3.f, 5.f);
     scene->add(ambientLighting);
     scene->add(pointLight);
 

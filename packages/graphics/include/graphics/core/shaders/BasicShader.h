@@ -62,6 +62,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		sampler2D texture;
 		int hasDiffuseMap;
 		sampler2D diffuseMap;
+		int hasSpecularMap;
+		sampler2D specularMap;
 	};
 
 	in vec3 frag_Pos;
@@ -95,9 +97,10 @@ constexpr const char* BASIC_FRAGMENT = R"(
 
 		float nDotL = max(dot(normal, lightDir), 0.0);
 		vec3 diffuse = uLight.color * uLight.intensity * nDotL;
+		vec3 diffuseReflectance = vec3(1.0);
 		if (uMaterial.hasDiffuseMap != 0)
 		{
-			diffuse *= texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
+			diffuseReflectance = texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
 		}
 
 		// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
@@ -106,13 +109,17 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		float specularFactor = nDotL > 0.0
 			? pow(max(dot(normal, halfwayDir), 0.0), shininess)
 			: 0.0;
+		float specularIntensity = uMaterial.hasSpecularMap != 0
+			? texture(uMaterial.specularMap, frag_TexCoord).r
+			: 1.0;
 		vec3 specular = uLight.color
 			* uLight.intensity
 			* uMaterial.reflectivity
+			* specularIntensity
 			* specularFactor;
 
 		// Albedo colors ambient and diffuse light, but not the specular highlight.
-		vec3 litColor = albedo.rgb * (ambient + diffuse) + specular;
+		vec3 litColor = albedo.rgb * diffuseReflectance * (ambient + diffuse) + specular;
 		FragColor = vec4(litColor, albedo.a);
 	}
 )";

@@ -31,7 +31,7 @@ public:
 	 * Shine factor, expressed as a value between 0 and 1, which affects the area of highlights on surfaces.
 	 * The larger the value, the tighter the highlight area.
 	 */
-	float shine = 0.1f;
+	float shine = 0.6f;
 
 	/**
 	 * Texture. Can be null.
@@ -39,9 +39,14 @@ public:
 	TexturePtr texture = nullptr;
 
 	/**
-	 * Diffuse map used to control diffuse-light contribution across a surface.
+	 * Diffuse map used to control diffuse-light contribution across a surface. Can be null.
 	 */
 	TexturePtr diffuseMap = nullptr;
+
+	/**
+	 * Specular map used to control specular-highlight intensity across a surface. Can be null.
+	 */
+	TexturePtr specularMap = nullptr;
 
 	/**
 	 * Destructor

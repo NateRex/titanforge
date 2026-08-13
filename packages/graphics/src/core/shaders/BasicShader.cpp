@@ -47,6 +47,19 @@ void BasicShader::setMaterial(const MaterialPtr material)
 		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 0);
 	}
 
+	// Specular map
+	if (mat->specularMap)
+	{
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mat->specularMap->id());
+		glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
+		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 1);
+	}
+	else
+	{
+		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 0);
+	}
+
 	// Vertex color usage
 	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), mat->useVertexColors ? 1 : 0);
 }
