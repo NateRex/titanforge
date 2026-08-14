@@ -38,7 +38,7 @@ protected:
 	Light(const LightType type) : Entity(EntityType::LIGHT), lightType(type), color(Color::WHITE), intensity(1.f) {};
 
 	/**
-	 * @override
+	 * @copydoc Entity::updateScaling(float, float, float)
 	 * @throws UnsupportedOperationException When called, as scaling of lights is not supported.
 	 */
 	void updateScaling(float x, float y, float z) override;

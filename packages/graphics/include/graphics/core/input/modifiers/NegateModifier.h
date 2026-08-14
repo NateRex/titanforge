@@ -19,9 +19,6 @@ public:
 	 */
 	NegateModifier(bool x, bool y, bool z);
 
-	/**
-	 * @override
-	 */
 	InputValue apply(const InputValue& value) const override;
 
 private:

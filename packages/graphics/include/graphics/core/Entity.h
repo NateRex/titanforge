@@ -171,13 +171,13 @@ public:
 
 	/**
 	 * Adds a child to this entity.
-	 * @param child The child entity
+	 * @param entity The child entity
 	 */
 	void add(EntityPtr entity);
 	
 	/**
 	 * Removes a child from this entity.
-	 * @param child The child entity
+	 * @param entity The child entity
 	 */
 	void remove(EntityPtr entity);
 

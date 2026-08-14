@@ -28,7 +28,7 @@ public:
 protected:
 
     /**
-	 * @override
+	 * @copydoc Entity::updatePosition(float, float, float)
 	 * @throws UnsupportedOperationException When called, as changing position of ambient lighting is not supported.
 	 */
 	void updatePosition(float x, float y, float z) override;

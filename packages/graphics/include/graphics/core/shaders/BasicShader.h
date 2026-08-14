@@ -156,10 +156,6 @@ public:
 
 protected:
 
-	/**
-	 * @override
-	 * @param material Material
-	 */
 	void setMaterial(const MaterialPtr material) override;
 
 private:

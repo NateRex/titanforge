@@ -15,8 +15,5 @@ public:
 	 */
 	UnsupportedOperationException(const std::string& msg);
 
-	/**
-	 * @override
-	 */
 	const char* what() const noexcept override;
 };

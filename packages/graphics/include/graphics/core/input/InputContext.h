@@ -61,7 +61,7 @@ public:
 
 	/**
 	 * Registers a new action mapping to this context for a digital input source (e.g., key presses)
-	 * @param input Input that triggers the action
+	 * @param key Input that triggers the action
 	 * @param trigger Trigger event
 	 * @param action Action
 	 */
@@ -69,7 +69,7 @@ public:
 
 	/**
 	 * Registers a new action mapping to this context
-	 * @param input Input that triggers the action
+	 * @param key Input that triggers the action
 	 * @param trigger Trigger event
 	 * @param action Action
 	 * @param modifiers Value modifiers

@@ -13,9 +13,6 @@ class InputModifiers : public InputModifier
 {
 public:
 
-	/**
-	 * @override
-	 */
 	InputValue apply(const InputValue& value) const override;
 
 	/**
