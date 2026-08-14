@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(Matrix3_fromMajorAxisRotations)
 /**
  * Tests the ability to fetch rows and columns from a matrix
  */
-BOOST_AUTO_TEST_CASE(Matrix3_rowsAndColumns)
+BOOST_AUTO_TEST_CASE(Matrix3_getRowsAndColumns)
 {
 	Matrix3 m(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f);
 	
@@ -105,6 +105,21 @@ BOOST_AUTO_TEST_CASE(Matrix3_rowsAndColumns)
 	BOOST_TEST(m.getColumn(0, &r) == Vector3(1.f, 4.f, 7.f));
 	BOOST_TEST(m.getColumn(1, &r) == Vector3(2.f, 5.f, 8.f));
 	BOOST_TEST(m.getColumn(2, &r) == Vector3(3.f, 6.f, 9.f));
+}
+
+/**
+ * Tests the ability to set rows and columns of a matrix
+ */
+BOOST_AUTO_TEST_CASE(Matrix3_setRowsAndColumns)
+{
+	Matrix3 m;
+	Vector3 v(2.f, 4.f, 6.f);
+
+	m.setRow(1, v);
+	BOOST_TEST(m.getRow(1) == v);
+
+	m.setColumn(2, v);
+	BOOST_TEST(m.getColumn(2) == v);
 }
 
 /**

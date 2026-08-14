@@ -46,11 +46,16 @@ constexpr const char* BASIC_VERTEX = R"(
  */
 constexpr const char* BASIC_FRAGMENT = R"(
 	#version 330 core
+	#define MAX_LIGHTS 16
 
 	struct Light {
-		vec3 position;
+		// Homogeneous light vector: point position with w=1, or the direction
+		// toward a directional light with w=0.
+		vec4 vector;
 		vec3 color;
 		float intensity;
+		// constant, linear, and quadratic distance attenuation coefficients
+		vec3 attenuation;
 	};
 
 	struct Material {
@@ -72,8 +77,9 @@ constexpr const char* BASIC_FRAGMENT = R"(
 	in vec2 frag_TexCoord;
 
 	uniform vec3 uCameraPos;
-	uniform Light uAmbient;
-	uniform Light uLight;
+	uniform vec3 uAmbient;
+	uniform int uLightCount;
+	uniform Light uLights[MAX_LIGHTS];
 	uniform Material uMaterial;
 
 	out vec4 FragColor;
@@ -90,36 +96,46 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		}
 
 		vec3 normal = normalize(frag_Normal);
-		vec3 lightDir = normalize(uLight.position - frag_Pos);
 		vec3 viewDir = normalize(uCameraPos - frag_Pos);
-
-		vec3 ambient = uAmbient.color * uAmbient.intensity;
-
-		float nDotL = max(dot(normal, lightDir), 0.0);
-		vec3 diffuse = uLight.color * uLight.intensity * nDotL;
+		vec3 diffuse = vec3(0.0);
+		vec3 specular = vec3(0.0);
 		vec3 diffuseReflectance = vec3(1.0);
 		if (uMaterial.hasDiffuseMap != 0)
 		{
 			diffuseReflectance = texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
 		}
 
-		// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
-		vec3 halfwayDir = normalize(lightDir + viewDir);
 		float shininess = mix(2.0, 256.0, uMaterial.shine);
-		float specularFactor = nDotL > 0.0
-			? pow(max(dot(normal, halfwayDir), 0.0), shininess)
-			: 0.0;
 		float specularIntensity = uMaterial.hasSpecularMap != 0
 			? texture(uMaterial.specularMap, frag_TexCoord).r
 			: 1.0;
-		vec3 specular = uLight.color
-			* uLight.intensity
-			* uMaterial.reflectivity
-			* specularIntensity
-			* specularFactor;
+
+		for (int i = 0; i < uLightCount; ++i)
+		{
+			Light light = uLights[i];
+			vec3 lightDir = normalize(light.vector.xyz - frag_Pos * light.vector.w);
+			float nDotL = max(dot(normal, lightDir), 0.0);
+			float distance = length(light.vector.xyz - frag_Pos);
+			float attenuation = 1.0 / (
+				light.attenuation.x
+				+ light.attenuation.y * distance
+				+ light.attenuation.z * distance * distance);
+			vec3 radiance = light.color * light.intensity * attenuation;
+			diffuse += radiance * nDotL;
+
+			// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
+			vec3 halfwayDir = normalize(lightDir + viewDir);
+			float specularFactor = nDotL > 0.0
+				? pow(max(dot(normal, halfwayDir), 0.0), shininess)
+				: 0.0;
+			specular += radiance
+				* uMaterial.reflectivity
+				* specularIntensity
+				* specularFactor;
+		}
 
 		// Albedo colors ambient and diffuse light, but not the specular highlight.
-		vec3 litColor = albedo.rgb * diffuseReflectance * (ambient + diffuse) + specular;
+		vec3 litColor = albedo.rgb * diffuseReflectance * (uAmbient + diffuse) + specular;
 		FragColor = vec4(litColor, albedo.a);
 	}
 )";

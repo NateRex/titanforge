@@ -14,8 +14,10 @@
 #include <graphics/textures/Texture.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
+#include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
+#include <iostream>
 
 /**
  * Creates a mesh representing a box
@@ -123,21 +125,23 @@ int main()
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
-    LightPtr pointLight = PointLight::create();
-    pointLight->setPosition(5.f, 3.f, 5.f);
+    PointLightPtr pointLight = PointLight::create();
     scene->add(ambientLighting);
     scene->add(pointLight);
 
-    float angle = 0.f;
-    const float angularSpeed = 1.f;
+    float angle = PI;
+    const float lightRadius = 5.f;
+    const float angularSpeed = 2.f;
     while (renderer->getWindow()->isOpen())
     {
         float angleChange = angularSpeed * renderer->getDeltaTime();
 
-        // Rotate cube
-        //Matrix3 rot = Matrix3::fromXRotation(angleChange);
-        //rot.multiply(Matrix3::fromZRotation(angleChange), &rot);
-        //colorCube->addRotation(rot);
+        // Rotate light
+        angle -= angleChange;
+        Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
+        pointLight->setPosition(lightPos);
+
+        std::cout << "(" << lightPos.x << ", " << lightPos.y << ", " << lightPos.z << ")" << std::endl;
 
         renderer->render(scene, camera);
     }

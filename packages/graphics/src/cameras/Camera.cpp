@@ -19,27 +19,6 @@ Camera::~Camera()
 	_pitch = nullptr;
 }
 
-Vector3 Camera::getRightVector(Vector3* result) const
-{
-	Vector3& r = getOrDefault(result, Vector3());
-	_rotation.getRow(0, &r);
-	return r.normalize(&r);
-}
-
-Vector3 Camera::getUpVector(Vector3* result) const
-{
-	Vector3& r = getOrDefault(result, Vector3());
-	_rotation.getRow(1, &r);
-	return r.normalize(&r);
-}
-
-Vector3 Camera::getForwardVector(Vector3* result) const
-{
-	Vector3& r = getOrDefault(result, Vector3());
-	_rotation.getRow(2, &r);
-	return r.normalize(&r);
-}
-
 void Camera::setMinPitch(float min)
 {
 	_minPitch = min;

@@ -1,7 +1,7 @@
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/lights/PointLight.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
-#include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/Material.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/RenderState.h>
@@ -118,8 +118,7 @@ int Shader::getUniformLocation(const char* variableName) const
 void Shader::setState(const RenderState& state)
 {
 	setCamera(state.camera);
-	setAmbientLighting(state.lighting.ambient);
-	setPositionalLight(state.lighting.positional);
+	setLighting(state.lighting);
 }
 
 void Shader::setItem(const RenderItem& item)
@@ -141,37 +140,85 @@ void Shader::setNormalMatrix(const Matrix3& matrix)
 	glUniformMatrix3fv(loc, 1, GL_TRUE, matrix.getValues());
 }
 
-void Shader::setAmbientLighting(const AmbientLightPtr light)
+void Shader::setLighting(const Lighting& lighting)
 {
-	Color color = Color::WHITE;
-	float intensity = 1.f;
+	constexpr size_t MAX_LIGHTS = 16;
+	float ambientRed = 0.f;
+	float ambientGreen = 0.f;
+	float ambientBlue = 0.f;
+	size_t lightCount = 0;
 
-	if (light)
+	for (const LightPtr& light : lighting.lights)
 	{
-		color = light->color;
-		intensity = clamp(light->intensity, 0.f, 1.f);
+		if (!light)
+		{
+			continue;
+		}
+
+		const Color color = light->color;
+		const float intensity = clamp(light->intensity, 0.f, 1.f);
+
+		// In the case of ambient lighting, aggregate values across all ambient lights
+		if (light->lightType == LightType::AMBIENT)
+		{
+			ambientRed += color.red() * intensity;
+			ambientGreen += color.green() * intensity;
+			ambientBlue += color.blue() * intensity;
+			continue;
+		}
+
+		// Stop setting uniforms if we've reached the maximum number of lights supported
+		if (lightCount >= MAX_LIGHTS)
+		{
+			continue;
+		}
+
+		// Compute the homogeneous light vector, which works differently depending on the type of light
+		Vector3 vector;
+		float w = 1.f;
+		if (light->lightType == LightType::DIRECTIONAL)
+		{
+			// Forward is the direction the rays travel; shading needs the
+			// opposite direction, from the surface toward the light.
+			vector = light->getForwardVector().scale(-1.f);
+			w = 0.f;
+		}
+		else
+		{
+			vector = light->getPosition();
+		}
+
+		// Compute attenuation for point lights
+		float constantAttenuation = 1.f;
+		float linearAttenuation = 0.f;
+		float quadraticAttenuation = 0.f;
+		if (light->lightType == LightType::POINT)
+		{
+			const PointLightPtr pointLight = std::static_pointer_cast<PointLight>(light);
+			if (pointLight->attenuation && pointLight->range > 0.f)
+			{
+				// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
+				// `range` remains the only distance users need to reason about.
+				linearAttenuation = 4.5f / pointLight->range;
+				quadraticAttenuation = 80.f / (pointLight->range * pointLight->range);
+			}
+		}
+
+		// Assign uniforms
+		const std::string prefix = "uLights[" + std::to_string(lightCount) + "].";
+		glUniform4f(getUniformLocation((prefix + "vector").c_str()), vector.x, vector.y, vector.z, w);
+		glUniform3f(getUniformLocation((prefix + "color").c_str()), color.red(), color.green(), color.blue());
+		glUniform1f(getUniformLocation((prefix + "intensity").c_str()), intensity);
+		glUniform3f(
+			getUniformLocation((prefix + "attenuation").c_str()),
+			constantAttenuation,
+			linearAttenuation,
+			quadraticAttenuation);
+		++lightCount;
 	}
 
-	glUniform3f(getUniformLocation("uAmbient.color"), color.red(), color.green(), color.blue());
-	glUniform1f(getUniformLocation("uAmbient.intensity"), intensity);
-}
-
-void Shader::setPositionalLight(const LightPtr light)
-{
-	Vector3 pos;
-	Color color = Color::WHITE;
-	float intensity = 1.f;
-
-	if (light)
-	{
-		pos = light->getPosition();
-		color = light->color;
-		intensity = clamp(light->intensity, 0.f, 1.f);
-	}
-
-	glUniform3f(getUniformLocation("uLight.position"), pos.x, pos.y, pos.z);
-	glUniform3f(getUniformLocation("uLight.color"), color.red(), color.green(), color.blue());
-	glUniform1f(getUniformLocation("uLight.intensity"), intensity);
+	glUniform3f(getUniformLocation("uAmbient"), ambientRed, ambientGreen, ambientBlue);
+	glUniform1i(getUniformLocation("uLightCount"), lightCount);
 }
 
 void Shader::setCamera(const CameraPtr camera)

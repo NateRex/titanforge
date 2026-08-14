@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/lights/pointers/AmbientLightPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <math/Matrix3.h>
@@ -37,14 +36,11 @@ struct RenderItem {
 struct Lighting {
 
 	/**
-	 * Ambient lighting
+	 * Lights affecting this render pass. The shader consumes up to its supported
+	 * maximum; keeping the full list here allows selection policies to be added
+	 * without constraining the scene itself.
 	 */
-	AmbientLightPtr ambient = nullptr;
-
-	/**
-	 * Positional lighting
-	 */
-	LightPtr positional = nullptr;
+	std::vector<LightPtr> lights;
 };
 
 
@@ -60,7 +56,7 @@ struct RenderState {
 	CameraPtr camera = nullptr;
 
 	/**
-	 * Ambient lighting
+	 * Lighting for the render pass
 	 */
 	Lighting lighting;
 

@@ -32,6 +32,7 @@ add_library(Graphics
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
     src/lights/AmbientLight.cpp
+    src/lights/DirectionalLight.cpp
     src/lights/Light.cpp
     src/lights/PointLight.cpp
     src/materials/BasicMaterial.cpp

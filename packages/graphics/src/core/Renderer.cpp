@@ -8,7 +8,6 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
-#include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -157,24 +156,7 @@ void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, Ren
 		}
 		case EntityType::LIGHT:
 		{
-			LightPtr light = cast<Light>(entity);
-			switch (light->lightType)
-			{
-				case LightType::AMBIENT:
-				{
-					state.lighting.ambient = cast<AmbientLight>(light);
-					break;
-				}
-				case LightType::POINT:
-				{
-					state.lighting.positional = light;
-					break;
-				}
-				default:
-				{
-					// do nothing
-				}
-			}
+			state.lighting.lights.push_back(cast<Light>(entity));
 
 			break;
 		}
