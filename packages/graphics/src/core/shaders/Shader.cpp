@@ -158,7 +158,7 @@ void Shader::setLighting(const Lighting& lighting)
 		}
 
 		const Color color = light->color;
-		const float intensity = clamp(light->intensity, 0.f, 1.f);
+		const float intensity = std::max(light->intensity, 0.f);
 
 		// In the case of ambient lighting, aggregate values across all ambient lights
 		if (light->lightType == LightType::AMBIENT)

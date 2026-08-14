@@ -150,6 +150,7 @@ int main()
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
     LightPtr spotLight = SpotLight::create();
+    spotLight->intensity = 2.f;
     scene->add(ambientLighting);
     scene->add(spotLight);
 

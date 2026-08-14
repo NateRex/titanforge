@@ -44,6 +44,24 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateNoLighting)
 }
 
 /**
+ * Tests that light intensity is an open-ended multiplier rather than a value
+ * limited to the [0, 1] range.
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
+{
+	RenderState state;
+	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+
+	LightPtr light = PointLight::create();
+	light->intensity = 4.f;
+	state.lighting.lights.push_back(light);
+
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	shader->activate();
+	BOOST_REQUIRE_NO_THROW(shader->setState(state));
+}
+
+/**
  * Tests the ability to set the render item consisting of a basic colored material
  */
 BOOST_AUTO_TEST_CASE(BasicShader_setColorMaterial)
