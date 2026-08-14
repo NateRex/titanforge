@@ -46,7 +46,13 @@ protected:
 	 * Constructor
 	 * @param type
 	 */
-	Light(const LightType type) : Entity(EntityType::LIGHT), lightType(type), color(Color::WHITE), intensity(1.f), attenuation(true), range(50.f) {};
+	Light(const LightType type) : Entity(EntityType::LIGHT),
+		lightType(type),
+		color(Color::WHITE),
+		intensity(1.f),
+		attenuation(true),
+		range(100.f)
+	{};
 
 	/**
 	 * @override

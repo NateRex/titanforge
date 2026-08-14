@@ -3,7 +3,7 @@
 #include <math/Matrix3.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
-SpotLight::SpotLight(const Vector3& position, const Vector3& direction): Light(LightType::SPOTLIGHT), innerAngle(30.f), outerAngle(45.f)
+SpotLight::SpotLight(const Vector3& position, const Vector3& direction): Light(LightType::SPOTLIGHT), innerAngle(5.f), outerAngle(15.f)
 {
     if (direction.isZero())
     {
