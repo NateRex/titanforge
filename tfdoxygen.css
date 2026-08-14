@@ -15,3 +15,78 @@
     display: none !important;
     pointer-events: none;
 }
+
+/* Keep generated pages usable on narrow screens. Doxygen positions the full
+ * sidebar (including the project logo) absolutely and offsets the document to
+ * match it. On phones, turn that wrapper back into a compact page header and
+ * rely on Doxygen's mobile menu for navigation. */
+@media (max-width: 767px) {
+    #side-nav {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        min-width: 0;
+        max-width: none;
+        height: auto !important;
+        padding: 0;
+        overflow: visible;
+    }
+
+    #nav-tree,
+    #splitbar {
+        display: none !important;
+    }
+
+    #projectrow {
+        height: auto;
+    }
+
+    #projectlogo {
+        display: block;
+        padding: 0.5rem 1rem;
+    }
+
+    #projectlogo img {
+        display: block;
+        width: auto;
+        max-width: min(70vw, 220px);
+        max-height: 72px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    #doc-content {
+        width: auto !important;
+        height: auto !important;
+        margin-left: 0 !important;
+        overflow-x: auto;
+    }
+
+    div.contents,
+    div.header .title,
+    div.headertitle {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    div.contents {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* API signatures and generated tables can be wider than a phone. Keep the
+     * page itself stable and allow those elements to scroll when necessary. */
+    .memitem,
+    .directory,
+    .fieldtable,
+    .markdownTable {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
