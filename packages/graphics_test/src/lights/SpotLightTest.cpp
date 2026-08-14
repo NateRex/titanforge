@@ -16,10 +16,10 @@ BOOST_AUTO_TEST_CASE(SpotLight_basics)
 	BOOST_TEST(light->color == Color::WHITE);
 	BOOST_TEST(light->intensity == 1.f);
 	SpotLightPtr spotLight = std::static_pointer_cast<SpotLight>(light);
-	BOOST_TEST(spotLight->innerAngle == 30.f);
-	BOOST_TEST(spotLight->outerAngle == 45.f);
+	BOOST_TEST(spotLight->innerAngle == 5.f);
+	BOOST_TEST(spotLight->outerAngle == 15.f);
 	BOOST_TEST(spotLight->attenuation);
-	BOOST_TEST(spotLight->range == 50.f);
+	BOOST_TEST(spotLight->range == 100.f);
     BOOST_TEST(light->getForwardVector() == Vector3::MINUS_ZHAT);
 
     light = SpotLight::create(Vector3(1.f, 0.f, 1.f), Vector3::YHAT);

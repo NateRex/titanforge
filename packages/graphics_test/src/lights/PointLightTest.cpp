@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(PointLight_basics)
 	BOOST_TEST(light->color == Color::WHITE);
 	BOOST_TEST(light->intensity == 1.f);
 	BOOST_TEST(light->attenuation);
-	BOOST_TEST(light->range == 50.f);
+	BOOST_TEST(light->range == 100.f);
 }
 
 /**
