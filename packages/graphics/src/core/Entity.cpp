@@ -1,5 +1,6 @@
 #include <graphics/core/Entity.h>
 #include <math/Matrix4.h>
+#include <common/Utils.h>
 #include <algorithm>
 
 Entity::Entity(EntityType type): entityType(type), _scale(1.f, 1.f, 1.f)
@@ -36,6 +37,28 @@ Matrix3 Entity::getRotation() const
 {
 	return _rotation;
 }
+
+Vector3 Entity::getRightVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(0, &r);
+	return r.normalize(&r);
+}
+
+Vector3 Entity::getUpVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(1, &r);
+	return r.normalize(&r);
+}
+
+Vector3 Entity::getForwardVector(Vector3* result) const
+{
+	Vector3& r = getOrDefault(result, Vector3());
+	_rotation.getRow(2, &r);
+	return r.normalize(&r);
+}
+
 
 void Entity::setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
 {

@@ -15,5 +15,10 @@ enum class LightType
 	/**
 	 * A light that illuminates from a point in space
 	 */
-	POINT
+	POINT,
+
+	/**
+	 * A light that extends infinitely in a direction
+	 */
+	DIRECTIONAL
 };

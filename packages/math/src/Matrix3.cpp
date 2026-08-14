@@ -119,6 +119,20 @@ const float* Matrix3::getValues() const
 	return _m;
 }
 
+void Matrix3::setRow(unsigned int idx, float x, float y, float z)
+{
+	assertInRange(idx, 0, 2, true, "Row index must be between 0 and 2");
+	unsigned int mIdx = idx * 3;
+	_m[mIdx] = x;
+	_m[mIdx + 1] = y;
+	_m[mIdx + 2] = z;
+}
+
+void Matrix3::setRow(unsigned int idx, const Vector3& vector)
+{
+	setRow();
+}
+
 Vector3 Matrix3::getRow(unsigned int idx, Vector3* result) const
 {
 	assertInRange(idx, 0, 2, true, "Row index must be between 0 and 2");

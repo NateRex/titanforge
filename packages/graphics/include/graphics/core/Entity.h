@@ -67,6 +67,27 @@ public:
 	Matrix3 getRotation() const;
 
 	/**
+	 * Computes the unit vector representing the "up" direction of this entity, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The up vector
+	 */
+	Vector3 getUpVector(Vector3* result = nullptr) const;
+
+	/**
+	 * Computes the unit vector representing the "forward" direction of this entity, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The forward vector
+	 */
+	Vector3 getForwardVector(Vector3* result = nullptr) const;
+
+	/**
+	 * Computes the unit vector representing the "right" direction of this entity, in global space
+	 * @param result (Optional) Vector in which to store the result
+	 * @return The right vector
+	 */
+	Vector3 getRightVector(Vector3* result = nullptr) const;
+
+	/**
 	 * Sets the rotation of this entity relative to its parent, using values for a rotation matrix specified
 	 * in row-major order.
 	 * @param m00 Row 0, column 0 rotation matrix value

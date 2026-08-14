@@ -111,12 +111,44 @@ public:
 	const float* getValues() const;
 
 	/**
+	 * Set the values for a row in this matrix
+	 * @param idx Row index. Must be a value between 0 and 2.
+	 * @param x First row value
+	 * @param y Second row value
+	 * @param z Third row value
+	 */
+	void setRow(unsigned int idx, float x, float y, float z);
+
+	/**
+	 * Set the values for a row in this matrix using a vector
+	 * @param idx Row index. Must be a value between 0 and 2.
+	 * @param vector Vector
+	 */
+	void setRow(unsigned int idx, const Vector3& vector);
+
+	/**
 	 * Fetch a row from this matrix
 	 * @param idx Row index. Must be a value between 0 and 2.
 	 * @param result (Optional) Vector in which to store the results
 	 * @return A vector containing the values of the requested row
 	 */
 	Vector3 getRow(unsigned int idx, Vector3* result = nullptr) const;
+
+	/**
+	 * Set the values for a column in this matrix
+	 * @param idx Column index. Must be a value between 0 and 2.
+	 * @param x First column value
+	 * @param y Second column value
+	 * @param z Third column value
+	 */
+	void setColumn(unsigned int idx, float x, float y, float z);
+
+	/**
+	 * Set the values for a column in this matrix using a vector
+	 * @param idx Column index. Must be a value between 0 and 2.
+	 * @param vector Vector
+	 */
+	void setColumn(unsigned int idx, const Vector3& vector);
 
 	/**
 	 * Fetch a column from this matrix
