@@ -106,9 +106,9 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		}
 
 		float shininess = mix(2.0, 256.0, uMaterial.shine);
-		float specularIntensity = uMaterial.hasSpecularMap != 0
-			? texture(uMaterial.specularMap, frag_TexCoord).r
-			: 1.0;
+		vec3 specularReflectance = uMaterial.hasSpecularMap != 0
+			? texture(uMaterial.specularMap, frag_TexCoord).rgb
+			: vec3(1.0);
 
 		for (int i = 0; i < uLightCount; ++i)
 		{
@@ -130,7 +130,7 @@ constexpr const char* BASIC_FRAGMENT = R"(
 				: 0.0;
 			specular += radiance
 				* uMaterial.reflectivity
-				* specularIntensity
+				* specularReflectance
 				* specularFactor;
 		}
 

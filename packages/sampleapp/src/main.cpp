@@ -131,7 +131,7 @@ int main()
 
     float angle = PI;
     const float lightRadius = 5.f;
-    const float angularSpeed = 2.f;
+    const float angularSpeed = 1.6f;
     while (renderer->getWindow()->isOpen())
     {
         float angleChange = angularSpeed * renderer->getDeltaTime();
