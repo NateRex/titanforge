@@ -1,6 +1,9 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/lights/DirectionalLight.h>
+#include <math/Matrix3.h>
+#include <common/Utils.h>
 #include <common/PrintHelpers.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 
 /**
@@ -16,6 +19,9 @@ BOOST_AUTO_TEST_CASE(DirectionalLight_basics)
 
     light = DirectionalLight::create(Vector3(0.f, 1.f, 0.f));
     BOOST_TEST(light->getForwardVector() == Vector3(0.f, 1.f, 0.f));
+
+    light->addRotation(Matrix3::fromXRotation(deg2Rad(90.f)));
+    BOOST_TEST(light->getForwardVector().equalTo(Vector3::ZHAT, 0.00001f));
 }
 
 /**
@@ -26,4 +32,5 @@ BOOST_AUTO_TEST_CASE(DirectionalLight_exceptionCases)
 	LightPtr light = DirectionalLight::create();
 	BOOST_REQUIRE_THROW(light->setScaling(1.f, 2.f, 3.f), UnsupportedOperationException);
 	BOOST_REQUIRE_THROW(light->setPosition(1.f, 2.f, 3.f), UnsupportedOperationException);
+	BOOST_REQUIRE_THROW(DirectionalLight::create(Vector3::ZERO), IllegalArgumentException);
 }
