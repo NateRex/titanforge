@@ -37,6 +37,7 @@ add_executable(GraphicsTest
     src/lights/AmbientLightTest.cpp
     src/lights/DirectionalLightTest.cpp
     src/lights/PointLightTest.cpp
+    src/lights/SpotLightTest.cpp
     src/materials/BasicMaterialTest.cpp
     src/materials/MaterialTest.cpp
     src/scene/SceneTest.cpp

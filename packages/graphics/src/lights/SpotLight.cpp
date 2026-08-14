@@ -11,5 +11,15 @@ SpotLight::SpotLight(const Vector3& position, const Vector3& direction): Light(L
     }
 
     setPosition(position);
-    lookAt(direction);
+    lookAt(position.plus(direction));
+}
+
+SpotLightPtr SpotLight::create()
+{
+    return std::shared_ptr<SpotLight>(new SpotLight(Vector3::ZERO, Vector3::MINUS_ZHAT));
+}
+
+SpotLightPtr SpotLight::create(const Vector3& position, const Vector3& direction)
+{
+    return std::shared_ptr<SpotLight>(new SpotLight(position, direction));
 }
