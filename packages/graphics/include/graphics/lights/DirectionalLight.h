@@ -25,6 +25,14 @@ public:
      */
     static DirectionalLightPtr create(const Vector3& direction);
 
+protected:
+
+    /**
+	 * @override
+	 * @throws UnsupportedOperationException When called, as changing position of ambient lighting is not supported.
+	 */
+	void updatePosition(float x, float y, float z) override;
+
 private:
 
     /**
