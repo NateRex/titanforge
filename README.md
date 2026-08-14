@@ -1,4 +1,5 @@
 ![Pipeline](https://github.com/naterex/titanforge/actions/workflows/pipeline.yml/badge.svg)
+[![API Documentation](https://img.shields.io/badge/API-Documentation-6f42c1)](https://naterex.github.io/titanforge/)
 
 # TitanForge 
 
