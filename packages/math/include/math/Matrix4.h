@@ -56,7 +56,7 @@ public:
 	/**
 	 * Constructs a transformation matrix representing a translation
 	 * @param v Vector representing the translation
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromTranslation(const Vector3& v, Matrix4* result = nullptr);
@@ -64,7 +64,7 @@ public:
 	/**
 	 * Constructs a transformation matrix representing a rotation
 	 * @param rot 3x3 rotation matrix
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromRotation(const Matrix3& rot, Matrix4* result = nullptr);
@@ -73,7 +73,7 @@ public:
 	 * Construct a matrix representing a rotation about a given axis
 	 * @param axis Direction vector to rotate about
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix4 fromRotation(const Vector3& axis, float radians, Matrix4* result = nullptr);
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the X-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix4 fromXRotation(float radians, Matrix4* result = nullptr);
@@ -89,7 +89,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the Y-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix4 fromYRotation(float radians, Matrix4* result = nullptr);
@@ -97,7 +97,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the Z-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix4 fromZRotation(float radians, Matrix4* result = nullptr);
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Constructs a transformation matrix representing a uniform scaling
 	 * @param scalar Value representing the scale magnitude
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromScaling(float scalar, Matrix4* result = nullptr);
@@ -115,7 +115,7 @@ public:
 	 * @param x Scaling magnitude in the x direction
 	 * @param y Scaling magnitude in the y direction
 	 * @param z Scaling magnitude in the z direction
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromScaling(float x, float y, float z, Matrix4* result = nullptr);
@@ -126,7 +126,7 @@ public:
 	 * @param height Frustum height
 	 * @param near Near plane distance
 	 * @param far Far plane distance
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromOrthographic(float width, float height, float near, float far, Matrix4* result = nullptr);
@@ -137,7 +137,7 @@ public:
 	 * @param aspect Aspect ratio
 	 * @param near Near plane distance
 	 * @param far Far plane distance
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The transformation matrix
 	 */
 	static Matrix4 fromPerspective(float fov, float aspect, float near, float far, Matrix4* result = nullptr);
@@ -177,7 +177,7 @@ public:
 	/**
 	 * Tests whether this matrix is equal to another matrix, within tolerance
 	 * @param other Matrix to evaluate against
-	 * @param (Optional) Tolerance value. Defaults to 0.
+	 * @param tol Optional tolerance value. Defaults to 0.
 	 * @return True if the two matrices are equal (within tolerance). False otherwise.
 	 */
 	bool equalTo(const Matrix4& other, float tol = 0.) const;
@@ -191,7 +191,7 @@ public:
 
 	/**
 	 * Computes the inverse of this matrix
-	 * @param Result matrix in which to store the result. This matrix will be unchanged if
+	 * @param result Matrix in which to store the result. This matrix will be unchanged if
 	 * the inverse does not exist.
 	 * @return A boolean value indicating whether or not the inverse exists.
 	 */

@@ -64,9 +64,6 @@ public:
 	 */
 	void setFarDistance(float value);
 
-	/**
-	 * @override
-	 */
 	Matrix4 getProjectionMatrix() const override;
 
 private:

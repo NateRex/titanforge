@@ -21,7 +21,7 @@ public:
 
 	/**
 	 * Constructs an input action value containing scalar data
-	 * @param value Input value
+	 * @param scalar Input value
 	 */
 	InputValue(float scalar);
 

@@ -43,7 +43,7 @@ public:
 
 	/**
 	 * Constructs a matrix using the upper-left 3x3 values of a 4-dimensional matrix
-	 * @param matrix Matrix to copy from
+	 * @param other Matrix to copy from
 	 */
 	Matrix3(const Matrix4& other);
 
@@ -76,7 +76,7 @@ public:
 	 * Construct a matrix representing a rotation about a given axis
 	 * @param axis Direction vector to rotate about
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix3 fromRotation(const Vector3& axis, float radians, Matrix3* result = nullptr);
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the X-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix3 fromXRotation(float radians, Matrix3* result = nullptr);
@@ -92,7 +92,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the Y-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix3 fromYRotation(float radians, Matrix3* result = nullptr);
@@ -100,7 +100,7 @@ public:
 	/**
 	 * Constructs a matrix representing a rotation about the Z-axis
 	 * @param radians Angle of rotation, in radians
-	 * @param (Optional) Matrix in which to store the results
+	 * @param result Optional matrix in which to store the results
 	 * @return The rotation matrix
 	 */
 	static Matrix3 fromZRotation(float radians, Matrix3* result = nullptr);
@@ -180,7 +180,7 @@ public:
 	/**
 	 * Tests whether this matrix is equal to another matrix, within tolerance
 	 * @param other Matrix to evaluate against
-	 * @param (Optional) Tolerance value. Defaults to 0.
+	 * @param tol Optional tolerance value. Defaults to 0.
 	 * @return True if the two matrices are equal (within tolerance). False otherwise.
 	 */
 	bool equalTo(const Matrix3& other, float tol = 0.) const;
@@ -194,7 +194,7 @@ public:
 
 	/**
 	 * Computes the inverse of this matrix
-	 * @param Result matrix in which to store the result. This matrix will be unchanged if
+	 * @param result Matrix in which to store the result. This matrix will be unchanged if
 	 * the inverse does not exist.
 	 * @return A boolean value indicating whether or not the inverse exists.
 	 */

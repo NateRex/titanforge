@@ -57,7 +57,7 @@ protected:
 	{};
 
 	/**
-	 * @override
+	 * @copydoc Entity::updateScaling(float, float, float)
 	 * @throws UnsupportedOperationException When called, as scaling of lights is not supported.
 	 */
 	void updateScaling(float x, float y, float z) override;

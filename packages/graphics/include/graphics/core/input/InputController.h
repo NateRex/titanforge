@@ -81,7 +81,6 @@ public:
 	/**
 	 * Processes mouse scroll events by evaluating what (if any) actions are mapped to mouse movement via the active input
 	 * contexts, and executing callbacks bound to those actions.
-	 * @param glfwWindow GLFW window pointer
 	 * @param xOffset Scroll delta in the horizontal direction
 	 * @param yOffset Scroll delta in the vertical direction
 	 */
@@ -139,10 +138,10 @@ private:
 	 * Processes a key events by evaluating what (if any) actions are mapped to that key via the input controller
 	 * associated with the window. This event-driven method of resolving inputs is used for actions bound to PRESSED
 	 * or RELEASED triggers.
-	 * @param glfwWindow GLFW window pointer
-	 * @param glfwKey GLFW key code
+	 * @param window GLFW window pointer
+	 * @param key GLFW key code
 	 * @param scancode The platform-specific scan code of the key.
-	 * @param The GLFW action type (GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT)
+	 * @param action The GLFW action type (GLFW_PRESS, GLFW_RELEASE, GLFW_REPEAT)
 	 * @param mods Bit field describing which modifier keys were held.
 	 */
 	static void processKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -150,7 +149,7 @@ private:
 	/**
 	 * Processes mouse movement events by evaluating what (if any) actions are mapped to mouse movement via the input
 	 * controller associated with the window.
-	 * @param glfwWindow GLFW window pointer
+	 * @param window GLFW window pointer
 	 * @param xPos X position of the mouse (in window coordinates)
 	 * @param yPos Y position of the mouse (in window coordinates)
 	 */
@@ -159,7 +158,7 @@ private:
 	/**
 	 * Processes mouse scroll events by evaluating what (if any) actions are mapped to mouse scrolling via the input
 	 * controller associated with the window.
-	 * @param glfwWindow GLFW window pointer
+	 * @param window GLFW window pointer
 	 * @param xOffset Scroll delta in the horizontal direction
 	 * @param yOffset Scroll delta in the vertical direction
 	 */

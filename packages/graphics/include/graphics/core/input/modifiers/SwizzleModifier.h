@@ -23,9 +23,6 @@ public:
 	 */
 	SwizzleModifier(Axis first, Axis second, Axis third);
 
-	/**
-	 * @override
-	 */
 	InputValue apply(const InputValue& value) const override;
 
 private:
