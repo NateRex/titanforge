@@ -103,6 +103,48 @@ void Entity::addScaling(float x, float y, float z)
 	updateScaling(_scale.x + x, _scale.y + y, _scale.z + z);
 }
 
+void Entity::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)
+{
+	Vector3 f = target.minus(position).normalize();
+	Vector3 r = f.cross(up).normalize();
+	Vector3 u = r.cross(f).normalize();
+
+	// set local-to-world rotation
+	setRotation(
+		r.x,	r.y,	r.z,
+		u.x,	u.y,	u.z,
+		f.x,	f.y,	f.z
+	);
+
+	// local-to-world translation
+	setPosition(position.x, position.y, position.z);
+}
+
+void Entity::lookAt(const Vector3& position, const Vector3& target)
+{
+	const Vector3 direction = target.minus(position).normalize();
+	const Vector3& referenceUp = std::abs(direction.y) < 0.999f ? Vector3::YHAT : Vector3::XHAT;
+
+	lookAt(position, target, referenceUp);
+}
+
+void Entity::lookAt(const Vector3& target)
+{
+	const Vector3 direction = target.minus(_position).normalize();
+	const Vector3& referenceUp = std::abs(direction.y) < 0.999f ? Vector3::YHAT : Vector3::XHAT;
+
+	Vector3 f = direction.normalize();
+	Vector3 r = f.cross(referenceUp).normalize();
+	Vector3 u = r.cross(f).normalize();
+
+	// set local-to-world rotation
+	setRotation(
+		r.x,	r.y,	r.z,
+		u.x,	u.y,	u.z,
+		f.x,	f.y,	f.z
+	);
+}
+
 Matrix4 Entity::getWorldMatrix()
 {
 	updateTransform();

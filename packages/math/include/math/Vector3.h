@@ -153,6 +153,14 @@ public:
     Vector3 scale(float xScalar, float yScalar, float zScalar, Vector3* result = nullptr) const;
 
     /**
+     * Adds another vector to this vector
+     * @param other Vector to add
+     * @param result (Optional) Pointer to a vector in which to store the results
+     * @return The resulting vector
+     */
+    Vector3 plus(const Vector3& other, Vector3* result = nullptr) const;
+
+    /**
      * Subtracts another vector from this vector.
      * @param other The vector to subtract by
      * @param result (Optional) Pointer to a vector in which to store the results

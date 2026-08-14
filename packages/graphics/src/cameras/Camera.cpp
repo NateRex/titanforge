@@ -52,23 +52,6 @@ void Camera::addPitch(float degrees)
 	*_pitch = clamped;
 }
 
-void Camera::lookAt(const Vector3& position, const Vector3& target, const Vector3& up)
-{
-	Vector3 f = target.minus(position).normalize();
-	Vector3 r = f.cross(up).normalize();
-	Vector3 u = r.cross(f).normalize();
-
-	// set local-to-world rotation
-	setRotation(
-		r.x,	r.y,	r.z,
-		u.x,	u.y,	u.z,
-		f.x,	f.y,	f.z
-	);
-
-	// local-to-world translation
-	setPosition(position.x, position.y, position.z);
-}
-
 Matrix4 Camera::getViewMatrix()
 {
 	if (!_transformNeedsUpdate)

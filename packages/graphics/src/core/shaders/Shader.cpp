@@ -1,5 +1,6 @@
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/lights/PointLight.h>
+#include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
@@ -11,6 +12,7 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 #include <sstream>
+#include <cmath>
 
 Shader::Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader)
 {
@@ -156,7 +158,7 @@ void Shader::setLighting(const Lighting& lighting)
 		}
 
 		const Color color = light->color;
-		const float intensity = clamp(light->intensity, 0.f, 1.f);
+		const float intensity = std::max(light->intensity, 0.f);
 
 		// In the case of ambient lighting, aggregate values across all ambient lights
 		if (light->lightType == LightType::AMBIENT)
@@ -188,19 +190,36 @@ void Shader::setLighting(const Lighting& lighting)
 			vector = light->getPosition();
 		}
 
-		// Compute attenuation for point lights
+		// Compute distance attenuation for local lights
 		float constantAttenuation = 1.f;
 		float linearAttenuation = 0.f;
 		float quadraticAttenuation = 0.f;
-		if (light->lightType == LightType::POINT)
+		float range = light->range;
+		if (light->attenuation && range > 0.f)
 		{
-			const PointLightPtr pointLight = std::static_pointer_cast<PointLight>(light);
-			if (pointLight->attenuation && pointLight->range > 0.f)
+			// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
+			// `range` remains the only distance users need to reason about.
+			linearAttenuation = 4.5f / range;
+			quadraticAttenuation = 80.f / (range * range);
+		}
+
+		// Encode cone falloff homogeneously. The neutral values make smoothstep
+		// evaluate to one for every possible dot product on non-spot lights.
+		Vector3 direction = Vector3::ZERO;
+		float outerCutoff = -2.f;
+		float innerCutoff = -1.f;
+		if (light->lightType == LightType::SPOTLIGHT)
+		{
+			const SpotLightPtr spotLight = std::static_pointer_cast<SpotLight>(light);
+			const float innerAngle = clamp(spotLight->innerAngle, 0.f, 180.f);
+			const float outerAngle = clamp(spotLight->outerAngle, innerAngle, 180.f);
+			direction = light->getForwardVector();
+			outerCutoff = std::cos(deg2Rad(outerAngle));
+			innerCutoff = std::cos(deg2Rad(innerAngle));
+			// GLSL smoothstep requires distinct edges.
+			if (innerCutoff - outerCutoff < 0.00001f)
 			{
-				// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
-				// `range` remains the only distance users need to reason about.
-				linearAttenuation = 4.5f / pointLight->range;
-				quadraticAttenuation = 80.f / (pointLight->range * pointLight->range);
+				outerCutoff = innerCutoff - 0.00001f;
 			}
 		}
 
@@ -214,6 +233,8 @@ void Shader::setLighting(const Lighting& lighting)
 			constantAttenuation,
 			linearAttenuation,
 			quadraticAttenuation);
+		glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
+		glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
 		++lightCount;
 	}
 

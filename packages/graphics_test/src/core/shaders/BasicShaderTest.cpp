@@ -8,6 +8,7 @@
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/PointLight.h>
 #include <graphics/lights/DirectionalLight.h>
+#include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -23,6 +24,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setState)
 	state.lighting.lights.push_back(AmbientLight::create());
 	state.lighting.lights.push_back(PointLight::create());
 	state.lighting.lights.push_back(DirectionalLight::create());
+	state.lighting.lights.push_back(SpotLight::create());
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
@@ -38,6 +40,24 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateNoLighting)
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	BOOST_REQUIRE_NO_THROW(shader->setState(state));
+}
+
+/**
+ * Tests that light intensity is an open-ended multiplier rather than a value
+ * limited to the [0, 1] range.
+ */
+BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
+{
+	RenderState state;
+	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+
+	LightPtr light = PointLight::create();
+	light->intensity = 4.f;
+	state.lighting.lights.push_back(light);
+
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	shader->activate();
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 

@@ -118,6 +118,16 @@ Vector3 Vector3::scale(float xScalar, float yScalar, float zScalar, Vector3* res
     return r;
 }
 
+Vector3 Vector3::plus(const Vector3& other, Vector3* result) const
+{
+    Vector3& r = getOrDefault(result, Vector3());
+
+    r.x = x + other.x;
+    r.y = y + other.y;
+    r.z = z + other.z;
+    return r;
+}
+
 Vector3 Vector3::minus(const Vector3& other, Vector3* result) const
 {
     Vector3& r = getOrDefault(result, Vector3());

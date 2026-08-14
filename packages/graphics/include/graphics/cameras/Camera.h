@@ -51,14 +51,6 @@ public:
 	 */
 	void addPitch(float degrees);
 
-	/**
-	 * Rotates and moves the camera to look at a given target
-	 * @param position New camera world position
-	 * @param target Target world position
-	 * @param up Vector representing the "up" direction of the camera, in world space
-	 */
-	void lookAt(const Vector3& position, const Vector3& target, const Vector3& up);
-
 protected:
 
 	/**

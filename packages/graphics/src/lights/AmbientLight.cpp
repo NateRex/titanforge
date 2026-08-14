@@ -3,7 +3,8 @@
 
 AmbientLight::AmbientLight() : Light(LightType::AMBIENT)
 {
-	intensity = 0.25f;
+	attenuation = false;
+	intensity = 0.1f;
 }
 
 AmbientLightPtr AmbientLight::create()

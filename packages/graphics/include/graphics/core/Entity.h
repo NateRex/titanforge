@@ -39,13 +39,13 @@ public:
 	 * @param y Y coordinate
 	 * @param z Z coordinate
 	 */
-	virtual void setPosition(float x, float y, float z) final;
+	void setPosition(float x, float y, float z);
 
 	/**
 	 * Sets the position of this entity relative to its parent.
 	 * @param v Position vector, relative to the origin of this entity's parent
 	 */
-	virtual void setPosition(const Vector3& v) final;
+	void setPosition(const Vector3& v);
 
 	/**
 	 * Applies additional translation of this entity relative to its parent
@@ -53,13 +53,13 @@ public:
 	 * @param y Y coordinate
 	 * @param z Z coordinate
 	 */
-	virtual void addPosition(float x, float y, float z) final;
+	void addPosition(float x, float y, float z);
 
 	/**
 	 * Applies additional translation of this entity relative to its parent
 	 * @param v Vector to apply
 	 */
-	virtual void addPosition(const Vector3& v) final;
+	void addPosition(const Vector3& v);
 
 	/**
 	 * @return The 3x3 matrix representing the rotation of this entity relative to its parent
@@ -100,18 +100,18 @@ public:
 	 * @param m21 Row 2, column 1 rotation matrix value
 	 * @param m22 Row 2, column 2 rotation matrix value
 	 */
-	virtual void setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) final;
+	void setRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 	/**
 	 * Sets the rotation of this entity relative to its parent, using a rotation matrix.
 	 * @param rot Rotation matrix
 	 */
-	virtual void setRotation(const Matrix3& rot) final;
+	void setRotation(const Matrix3& rot);
 
 	/**
 	 * Applies additional rotation to this entity along its local coordinate axes
 	 */
-	virtual void addRotation(const Matrix3& rot) final;
+	void addRotation(const Matrix3& rot);
 
 	/**
 	 * @return The scaling of this entity relative to its parent across the x, y, and z axes
@@ -122,7 +122,7 @@ public:
 	 * Sets a uniform scaling of this entity relative to its parent.
 	 * @param scalar Uniform scale value to be applied in all directions
 	 */
-	virtual void setScaling(float scalar) final;
+	void setScaling(float scalar);
 
 	/**
 	 * Sets the scaling of this entity relative to its parent.
@@ -130,13 +130,13 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	virtual void setScaling(float x, float y, float z) final;
+	void setScaling(float x, float y, float z);
 
 	/**
 	 * Applies additional uniform scaling of this entity relative to its parent
 	 * @param scalar Uniform scale value to be applied in all directions
 	 */
-	virtual void addScaling(float scalar) final;
+	void addScaling(float scalar);
 
 	/**
 	 * Applies additional scaling of this entity relative to its parent.
@@ -144,7 +144,31 @@ public:
 	 * @param y Scaling in the y direction
 	 * @param z Scaling in the z direction
 	 */
-	virtual void addScaling(float x, float y, float z) final;
+	void addScaling(float x, float y, float z);
+
+	/**
+	 * Rotates and moves the entity to be pointed in the direction of a target
+	 * @param position New entity world position
+	 * @param target Target world position
+	 * @param up Vector representing the "up" direction of the entity, in world space
+	 */
+	void lookAt(const Vector3& position, const Vector3& target, const Vector3& up);
+
+	/**
+	 * Rotates and moves the entity to be pointed in the direction of a target. An upwards direction will be dynamically chosen.
+	 * This method is useful in cases where the upwards direction does not matter (e.g., spotlights).
+	 * @param position New entity world position
+	 * @param target Target world position
+	 */
+	void lookAt(const Vector3& position, const Vector3& target);
+
+	/**
+	 * Rotates the entity to be pointed at the direction of the target. An upwards direction will be dynamically chosen. Position
+	 * will be held constant. This method is useful in cases where the position and upwards direction do not matter
+	 * (e.g., directional lights).
+	 * @param target Target world position
+	 */
+	void lookAt(const Vector3& target);
 
 	/**
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of

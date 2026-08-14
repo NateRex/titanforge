@@ -35,6 +35,7 @@ add_library(Graphics
     src/lights/DirectionalLight.cpp
     src/lights/Light.cpp
     src/lights/PointLight.cpp
+    src/lights/SpotLight.cpp
     src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp
