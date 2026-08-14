@@ -117,3 +117,41 @@ jobs:
 
       - name: Execute Commands
         run: ./.github/scripts/runTest.sh ./.build/packages/math_test/bin/MathTest
+
+  # API Documentation
+  api-docs:
+    name: Generate API Documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install --yes doxygen graphviz
+
+      - name: Generate API Documentation
+        run: doxygen Doxyfile
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .build/docs/html
+
+  # Deploy API Documentation
+  deploy-api-docs:
+    name: Deploy API Documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs:
+      - documentation
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

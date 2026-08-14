@@ -1,0 +1,17 @@
+/* Keep the logo in the title area without repeating the project name. */
+#projectname,
+#projectbrief {
+    display: none;
+}
+
+/* Lock the navigation tree to the same width as TREEVIEW_WIDTH. */
+#side-nav {
+    width: 320px !important;
+    min-width: 320px;
+    max-width: 320px;
+}
+
+#splitbar {
+    display: none !important;
+    pointer-events: none;
+}
