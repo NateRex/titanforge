@@ -167,6 +167,24 @@ BOOST_AUTO_TEST_CASE(Vector2_nonUniformScaling)
 }
 
 /**
+ * Tests the operator for adding a vector to another vector
+ */
+BOOST_AUTO_TEST_CASE(Vector2_addition)
+{
+    Vector2 v1(4, 1002);
+    BOOST_TEST(v1.plus(v1.scale(-1.f)).isZero());
+
+    Vector2 v2 = Vector2(2.5, 1001.9);
+    Vector2 addition = v1.plus(v2);
+    BOOST_TEST(equals(addition.x, 6.5, 1.0e-2));
+    BOOST_TEST(equals(addition.y, 2003.9, 1.0e-2));
+
+    Vector2 result;
+    v1.plus(v2, &result);
+    BOOST_TEST(result == addition);
+}
+
+/**
  * Tests the operator for subtracting a vector from another vector
  */
 BOOST_AUTO_TEST_CASE(Vector2_subtraction)

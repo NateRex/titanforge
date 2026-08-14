@@ -13,12 +13,17 @@ enum class LightType
 	AMBIENT,
 
 	/**
-	 * A light that illuminates from a point in space
+	 * A positioned light that illuminates radially in all directions
 	 */
 	POINT,
 
 	/**
 	 * A light that extends infinitely in a direction
 	 */
-	DIRECTIONAL
+	DIRECTIONAL,
+
+	/**
+	 * A positioned light that extends as a cone in a direction
+	 */
+	SPOTLIGHT
 };
