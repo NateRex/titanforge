@@ -17,7 +17,6 @@
 #include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
-#include <iostream>
 
 /**
  * Creates a mesh representing a box
@@ -45,7 +44,7 @@ MeshPtr createBox(float x, float y, float z)
  * @param renderer The renderer
  * @return The camera that was created
  */
-CameraPtr createCamera(RendererPtr renderer)
+CameraPtr setupCameraMovement(RendererPtr renderer)
 {
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
@@ -113,8 +112,7 @@ CameraPtr createCamera(RendererPtr renderer)
 int main()
 {
     RendererPtr renderer = Renderer::create();
-
-    CameraPtr camera = createCamera(renderer);
+    CameraPtr camera = setupCameraMovement(renderer);
     camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     ScenePtr scene = Scene::create();
@@ -140,8 +138,6 @@ int main()
         angle -= angleChange;
         Vector3 lightPos(lightRadius * cos(angle), 0.f, lightRadius * sin(angle));
         pointLight->setPosition(lightPos);
-
-        std::cout << "(" << lightPos.x << ", " << lightPos.y << ", " << lightPos.z << ")" << std::endl;
 
         renderer->render(scene, camera);
     }
