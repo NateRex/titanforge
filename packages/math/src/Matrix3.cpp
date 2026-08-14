@@ -130,7 +130,7 @@ void Matrix3::setRow(unsigned int idx, float x, float y, float z)
 
 void Matrix3::setRow(unsigned int idx, const Vector3& vector)
 {
-	setRow();
+	setRow(idx, vector.x, vector.y, vector.z);
 }
 
 Vector3 Matrix3::getRow(unsigned int idx, Vector3* result) const
@@ -144,6 +144,19 @@ Vector3 Matrix3::getRow(unsigned int idx, Vector3* result) const
 	r.z = _m[mIdx + 2];
 
 	return r;
+}
+
+void Matrix3::setColumn(unsigned int idx, float x, float y, float z)
+{
+	assertInRange(idx, 0, 2, true, "Row index must be between 0 and 2");
+	_m[idx] = x;
+	_m[3 + idx] = y;
+	_m[6 + idx] = z;
+}
+
+void Matrix3::setColumn(unsigned int idx, const Vector3& vector)
+{
+	setColumn(idx, vector.x, vector.y, vector.z);
 }
 
 Vector3 Matrix3::getColumn(unsigned int idx, Vector3* result) const

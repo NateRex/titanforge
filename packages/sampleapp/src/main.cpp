@@ -124,7 +124,7 @@ int main()
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
     LightPtr pointLight = PointLight::create();
-    pointLight->setPosition(5.f, 3.f, 5.f);
+    pointLight->setPosition(50.f, 3.f, 50.f);
     scene->add(ambientLighting);
     scene->add(pointLight);
 

@@ -3,14 +3,16 @@
 
 DirectionalLight::DirectionalLight(const Vector3& direction): Light(LightType::DIRECTIONAL)
 {
-    _rotation.setValues(
-        1.f, 0.f, 0.f,      // right
-        0.f, 1.f, 0.f,      // up
-        0.f, -1.f, 0.f
-    );
+    // Set forward vector to the -y direction
+    _rotation.setRow(2, direction);
 }
 
 DirectionalLightPtr DirectionalLight::create()
 {
-    return std::shared_ptr<DirectionalLight>(new DirectionalLight());
+    return std::shared_ptr<DirectionalLight>(new DirectionalLight(Vector3::MINUS_YHAT));
+}
+
+DirectionalLightPtr DirectionalLight::create(const Vector3& direction)
+{
+    return std::shared_ptr<DirectionalLight>(new DirectionalLight(direction));
 }

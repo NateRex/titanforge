@@ -6,7 +6,7 @@ class Vector3;
 
 /**
  * A light that gets emitted in a specific direction. It will behave as though
- * it is infinitely far away and produce rays that are all parallel. The most common
+ * it is infinitely far away, producing rays that are all parallel. The most common
  * use case for this is to simulate daylight.
  * @author Nathaniel Rex
  */
