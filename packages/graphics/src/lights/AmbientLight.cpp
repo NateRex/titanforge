@@ -3,6 +3,7 @@
 
 AmbientLight::AmbientLight() : Light(LightType::AMBIENT)
 {
+	attenuation = false;
 	intensity = 0.25f;
 }
 

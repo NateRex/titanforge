@@ -8,6 +8,7 @@
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/PointLight.h>
 #include <graphics/lights/DirectionalLight.h>
+#include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -23,6 +24,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setState)
 	state.lighting.lights.push_back(AmbientLight::create());
 	state.lighting.lights.push_back(PointLight::create());
 	state.lighting.lights.push_back(DirectionalLight::create());
+	state.lighting.lights.push_back(SpotLight::create());
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);

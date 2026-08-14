@@ -10,6 +10,7 @@ DirectionalLight::DirectionalLight(const Vector3& direction): Light(LightType::D
         throw IllegalArgumentException("Directional light direction cannot be zero");
     }
 
+    attenuation = false;
     lookAt(direction);
 }
 

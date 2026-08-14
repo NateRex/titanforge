@@ -49,13 +49,17 @@ constexpr const char* BASIC_FRAGMENT = R"(
 	#define MAX_LIGHTS 16
 
 	struct Light {
-		// Homogeneous light vector: point position with w=1, or the direction
+		// Homogeneous light vector: point and spotlight position with w=1, or the direction
 		// toward a directional light with w=0.
 		vec4 vector;
 		vec3 color;
 		float intensity;
 		// constant, linear, and quadratic distance attenuation coefficients
 		vec3 attenuation;
+		// Direction rays travel, followed by cosine of outer/inner cone angles.
+		// Non-spot lights receive neutral cone values.
+		vec3 direction;
+		vec2 cone;
 	};
 
 	struct Material {
@@ -120,7 +124,14 @@ constexpr const char* BASIC_FRAGMENT = R"(
 				light.attenuation.x
 				+ light.attenuation.y * distance
 				+ light.attenuation.z * distance * distance);
-			vec3 radiance = light.color * light.intensity * attenuation;
+			float coneIntensity = smoothstep(
+				light.cone.x,
+				light.cone.y,
+				dot(-lightDir, light.direction));
+			vec3 radiance = light.color
+				* light.intensity
+				* attenuation
+				* coneIntensity;
 			diffuse += radiance * nDotL;
 
 			// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.

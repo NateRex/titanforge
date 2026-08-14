@@ -12,20 +12,16 @@ class SpotLight : public Light {
 public:
 
     /**
-     * The angle of the cone formed by this light.
+     * Angle from the cone's center line, in degrees, within which the light is
+     * at full intensity.
      */
-    float angle;
+    float innerAngle;
 
     /**
-     * Whether the light becomes dimmer with distance.
+     * Angle from the cone's center line, in degrees, at which the light reaches
+     * zero intensity. Intensity fades smoothly between innerAngle and this angle.
      */
-    bool attenuation;
-
-    /**
-     * Approximate distance at which an attenuated light contributes 1% of its
-     * original brightness. Must be greater than zero when attenuation is enabled.
-     */
-    float range;
+    float outerAngle;
 
     /**
      * Constructs a new spotlight instance

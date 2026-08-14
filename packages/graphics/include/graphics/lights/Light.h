@@ -29,13 +29,24 @@ public:
 	 */
 	float intensity;
 
+	/**
+	 * Whether the light becomes dimmer with distance.
+	 */
+	bool attenuation;
+
+	/**
+	 * Approximate distance at which an attenuated light contributes 1% of its
+	 * original brightness. Must be greater than zero when attenuation is enabled.
+	 */
+	float range;
+
 protected:
 
 	/**
 	 * Constructor
 	 * @param type
 	 */
-	Light(const LightType type) : Entity(EntityType::LIGHT), lightType(type), color(Color::WHITE), intensity(1.f) {};
+	Light(const LightType type) : Entity(EntityType::LIGHT), lightType(type), color(Color::WHITE), intensity(1.f), attenuation(true), range(50.f) {};
 
 	/**
 	 * @override
