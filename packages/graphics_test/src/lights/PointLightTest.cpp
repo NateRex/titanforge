@@ -8,10 +8,12 @@
  */
 BOOST_AUTO_TEST_CASE(PointLight_basics)
 {
-	LightPtr light = PointLight::create();
+	PointLightPtr light = PointLight::create();
 	BOOST_TEST(light->lightType == LightType::POINT);
 	BOOST_TEST(light->color == Color::WHITE);
 	BOOST_TEST(light->intensity == 1.f);
+	BOOST_TEST(light->attenuation);
+	BOOST_TEST(light->range == 50.f);
 }
 
 /**

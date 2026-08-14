@@ -54,6 +54,8 @@ constexpr const char* BASIC_FRAGMENT = R"(
 		vec4 vector;
 		vec3 color;
 		float intensity;
+		// constant, linear, and quadratic distance attenuation coefficients
+		vec3 attenuation;
 	};
 
 	struct Material {
@@ -113,7 +115,12 @@ constexpr const char* BASIC_FRAGMENT = R"(
 			Light light = uLights[i];
 			vec3 lightDir = normalize(light.vector.xyz - frag_Pos * light.vector.w);
 			float nDotL = max(dot(normal, lightDir), 0.0);
-			vec3 radiance = light.color * light.intensity;
+			float distance = length(light.vector.xyz - frag_Pos);
+			float attenuation = 1.0 / (
+				light.attenuation.x
+				+ light.attenuation.y * distance
+				+ light.attenuation.z * distance * distance);
+			vec3 radiance = light.color * light.intensity * attenuation;
 			diffuse += radiance * nDotL;
 
 			// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.

@@ -1,4 +1,5 @@
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/lights/PointLight.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
@@ -156,6 +157,8 @@ void Shader::setLighting(const Lighting& lighting)
 
 		const Color color = light->color;
 		const float intensity = clamp(light->intensity, 0.f, 1.f);
+
+		// In the case of ambient lighting, aggregate values across all ambient lights
 		if (light->lightType == LightType::AMBIENT)
 		{
 			ambientRed += color.red() * intensity;
@@ -164,11 +167,13 @@ void Shader::setLighting(const Lighting& lighting)
 			continue;
 		}
 
+		// Stop setting uniforms if we've reached the maximum number of lights supported
 		if (lightCount >= MAX_LIGHTS)
 		{
 			continue;
 		}
 
+		// Compute the homogeneous light vector, which works differently depending on the type of light
 		Vector3 vector;
 		float w = 1.f;
 		if (light->lightType == LightType::DIRECTIONAL)
@@ -183,10 +188,32 @@ void Shader::setLighting(const Lighting& lighting)
 			vector = light->getPosition();
 		}
 
+		// Compute attenuation for point lights
+		float constantAttenuation = 1.f;
+		float linearAttenuation = 0.f;
+		float quadraticAttenuation = 0.f;
+		if (light->lightType == LightType::POINT)
+		{
+			const PointLightPtr pointLight = std::static_pointer_cast<PointLight>(light);
+			if (pointLight->attenuation && pointLight->range > 0.f)
+			{
+				// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
+				// `range` remains the only distance users need to reason about.
+				linearAttenuation = 4.5f / pointLight->range;
+				quadraticAttenuation = 80.f / (pointLight->range * pointLight->range);
+			}
+		}
+
+		// Assign uniforms
 		const std::string prefix = "uLights[" + std::to_string(lightCount) + "].";
 		glUniform4f(getUniformLocation((prefix + "vector").c_str()), vector.x, vector.y, vector.z, w);
 		glUniform3f(getUniformLocation((prefix + "color").c_str()), color.red(), color.green(), color.blue());
 		glUniform1f(getUniformLocation((prefix + "intensity").c_str()), intensity);
+		glUniform3f(
+			getUniformLocation((prefix + "attenuation").c_str()),
+			constantAttenuation,
+			linearAttenuation,
+			quadraticAttenuation);
 		++lightCount;
 	}
 
