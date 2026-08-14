@@ -15,13 +15,13 @@ BOOST_AUTO_TEST_CASE(DirectionalLight_basics)
 	BOOST_TEST(light->lightType == LightType::DIRECTIONAL);
 	BOOST_TEST(light->color == Color::WHITE);
 	BOOST_TEST(light->intensity == 1.f);
-    BOOST_TEST(light->getForwardVector() == Vector3(0.f, -1.f, 0.f));
+    BOOST_TEST(light->getForwardVector() == Vector3::MINUS_YHAT);
 
     light = DirectionalLight::create(Vector3(0.f, 1.f, 0.f));
-    BOOST_TEST(light->getForwardVector() == Vector3(0.f, 1.f, 0.f));
+    BOOST_TEST(light->getForwardVector() == Vector3::YHAT);
 
     light->addRotation(Matrix3::fromXRotation(deg2Rad(90.f)));
-    BOOST_TEST(light->getForwardVector().equalTo(Vector3::ZHAT, 0.00001f));
+    BOOST_TEST(light->getForwardVector().equalTo(Vector3::XHAT, 0.00001f));
 }
 
 /**

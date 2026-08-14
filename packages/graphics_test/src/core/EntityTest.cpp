@@ -90,6 +90,63 @@ BOOST_AUTO_TEST_CASE(Entity_rotationFromMatrix)
 }
 
 /**
+ * Tests looking at a target using an explicitly specified position and up vector
+ */
+BOOST_AUTO_TEST_CASE(Entity_lookAtWithUpVector)
+{
+	TestEntity e;
+	const Vector3 position(1.f, 2.f, 3.f);
+	const Vector3 target(1.f, 2.f, 4.f);
+
+	e.lookAt(position, target, Vector3::YHAT);
+
+	BOOST_TEST(e.getPosition() == position);
+	BOOST_TEST(e.getForwardVector().equalTo(Vector3::ZHAT, 1.0e-6f));
+	BOOST_TEST(e.getUpVector().equalTo(Vector3::YHAT, 1.0e-6f));
+	BOOST_TEST(e.getRightVector().equalTo(Vector3::MINUS_XHAT, 1.0e-6f));
+}
+
+/**
+ * Tests looking at a target with a dynamically selected up vector
+ */
+BOOST_AUTO_TEST_CASE(Entity_lookAtWithDynamicUpVector)
+{
+	const Vector3 position(2.f, 3.f, 4.f);
+	const Vector3 target(-1.f, 5.f, 8.f);
+	TestEntity dynamicUp;
+	TestEntity explicitUp;
+
+	dynamicUp.lookAt(position, target);
+	explicitUp.lookAt(position, target, Vector3::YHAT);
+
+	BOOST_TEST(dynamicUp.getPosition() == position);
+	BOOST_TEST(dynamicUp.getRotation().equalTo(explicitUp.getRotation(), 1.0e-6f));
+
+	// A Y-axis direction must choose a different up vector to avoid a degenerate basis.
+	dynamicUp.lookAt(Vector3::ZERO, Vector3::YHAT);
+	explicitUp.lookAt(Vector3::ZERO, Vector3::YHAT, Vector3::XHAT);
+	BOOST_TEST(dynamicUp.getRotation().equalTo(explicitUp.getRotation(), 1.0e-6f));
+}
+
+/**
+ * Tests looking at a target while preserving the entity's current position
+ */
+BOOST_AUTO_TEST_CASE(Entity_lookAtFromCurrentPosition)
+{
+	const Vector3 position(3.f, -2.f, 1.f);
+	const Vector3 target(-4.f, 5.f, 6.f);
+	TestEntity currentPosition;
+	TestEntity explicitPosition;
+	currentPosition.setPosition(position);
+
+	currentPosition.lookAt(target);
+	explicitPosition.lookAt(position, target);
+
+	BOOST_TEST(currentPosition.getPosition() == position);
+	BOOST_TEST(currentPosition.getRotation().equalTo(explicitPosition.getRotation(), 1.0e-6f));
+}
+
+/**
  * Tests setting and adding scale using float values
  */
 BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
