@@ -127,6 +127,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Create Documentation Folder
+        run: |
+          mkdir -p .build/docs
+
       - name: Generate Documentation
         run: doxygen Doxyfile
 
