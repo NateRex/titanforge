@@ -4,6 +4,7 @@ project(Graphics CXX)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(Stb REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
