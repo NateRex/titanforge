@@ -1,13 +1,13 @@
 #pragma once
 #include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
-#include <graphics/lights/pointers/AmbientLightPtr.h>
 #include <graphics/materials/pointers/MaterialPtr.h>
 
 class Matrix3;
 class Matrix4;
 struct RenderState;
 struct RenderItem;
+struct Lighting;
 
 /**
  * Parent class to all shared programs, managed by the shader manager
@@ -87,18 +87,11 @@ protected:
     virtual void setNormalMatrix(const Matrix3& matrix);
 
     /**
-     * Updates the uniforms for this shader using the given ambient lighting. This method assumes that this shader
+     * Updates the uniforms for this shader using the given lighting information. This method assumes that this shader
      * is currently in-use.
-     * @param light Ambient lighting
+     * @param lighting Lights affecting the render pass
      */
-    virtual void setAmbientLighting(const AmbientLightPtr light);
-
-    /**
-     * Updates the uniforms for this shader using the given light present in the scene. This method assumes that this
-     * shader is currently in-use.
-     * @param light Light entity
-     */
-    virtual void setPositionalLight(const LightPtr light);
+    virtual void setLighting(const Lighting& lighting);
 
     /**
      * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.

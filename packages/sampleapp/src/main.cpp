@@ -1,7 +1,7 @@
 #include <graphics/core/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
-#include <graphics/lights/PointLight.h>
+#include <graphics/lights/DirectionalLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
@@ -123,16 +123,17 @@ int main()
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
-    LightPtr pointLight = PointLight::create();
-    pointLight->setPosition(50.f, 3.f, 50.f);
+    LightPtr directionalLight = DirectionalLight::create();
     scene->add(ambientLighting);
-    scene->add(pointLight);
+    scene->add(directionalLight);
 
     float angle = 0.f;
     const float angularSpeed = 1.f;
     while (renderer->getWindow()->isOpen())
     {
         float angleChange = angularSpeed * renderer->getDeltaTime();
+
+        directionalLight->addRotation(Matrix3::fromXRotation(deg2Rad(0.1f)));
 
         // Rotate cube
         //Matrix3 rot = Matrix3::fromXRotation(angleChange);

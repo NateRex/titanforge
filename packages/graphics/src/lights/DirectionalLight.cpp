@@ -4,7 +4,7 @@
 
 DirectionalLight::DirectionalLight(const Vector3& direction): Light(LightType::DIRECTIONAL)
 {
-    // Set forward vector to the -y direction
+    // Set forward vector
     _rotation.setRow(2, direction);
 }
 
