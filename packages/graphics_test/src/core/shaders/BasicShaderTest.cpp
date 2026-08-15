@@ -3,7 +3,7 @@
 #include <graphics/core/shaders/BasicShader.h>
 #include <graphics/core/RenderState.h>
 #include <graphics/materials/MaterialType.h>
-#include <graphics/materials/BasicMaterial.h>
+#include <graphics/materials/Material.h>
 #include <graphics/textures/TextureLoader.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/PointLight.h>
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
 BOOST_AUTO_TEST_CASE(BasicShader_setColorMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
-	MaterialPtr mat = BasicMaterial::create();
+	MaterialPtr mat = Material::create();
 	MeshPtr mesh = Mesh::create(geom, mat);
 
 	RenderItem item;
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setColorMaterial)
 BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
-	MaterialPtr mat = BasicMaterial::create();
+	MaterialPtr mat = Material::create();
 	mat->texture = TextureLoader::load("assets/container.jpg");
 	MeshPtr mesh = Mesh::create(geom, mat);
 
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
  BOOST_AUTO_TEST_CASE(BasicShader_setDiffuseMapMaterial)
  {
  	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
- 	MaterialPtr mat = BasicMaterial::create();
+ 	MaterialPtr mat = Material::create();
 	TexturePtr img = TextureLoader::load("assets/container.jpg");
  	mat->diffuseMap = img;
 	mat->specularMap = img;

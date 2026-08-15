@@ -28,7 +28,7 @@ add_library(Graphics
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
     src/core/Renderer.cpp
-    src/loaders/ModelLoader.cpp
+    src/loaders/EntityLoader.cpp
     src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
@@ -38,7 +38,6 @@ add_library(Graphics
     src/lights/Light.cpp
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
-    src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp
     src/textures/ImageLoader.cpp

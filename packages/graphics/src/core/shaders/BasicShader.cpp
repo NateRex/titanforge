@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/BasicShader.h>
-#include <graphics/materials/BasicMaterial.h>
+#include <graphics/materials/Material.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
@@ -18,8 +18,6 @@ BasicShaderPtr BasicShader::create()
 void BasicShader::setMaterial(const MaterialPtr material)
 {
 	Shader::setMaterial(material);
-
-	BasicMaterialPtr mat = cast<BasicMaterial>(material);
 
 	// Texture
 	if (mat->texture)

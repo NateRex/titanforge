@@ -5,7 +5,7 @@
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/textures/TextureLoader.h>
-#include <graphics/materials/BasicMaterial.h>
+#include <graphics/materials/Material.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
@@ -27,7 +27,7 @@
 MeshPtr createBoxes(ScenePtr scene)
 {
     GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
-    MaterialPtr material = BasicMaterial::create();
+    MaterialPtr material = Material::create();
     material->texture = Texture::create("assets/container2.png");
     material->diffuseMap = material->texture;
     material->specularMap = Texture::create("assets/container2_specular.png");
