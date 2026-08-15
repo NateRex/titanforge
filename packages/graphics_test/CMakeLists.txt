@@ -30,6 +30,7 @@ add_executable(GraphicsTest
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
     src/core/RendererTest.cpp
+    src/loaders/ModelLoaderTest.cpp
     src/objects/MeshTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp

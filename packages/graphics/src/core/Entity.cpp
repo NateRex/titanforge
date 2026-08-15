@@ -145,13 +145,13 @@ void Entity::lookAt(const Vector3& target)
 	);
 }
 
-Matrix4 Entity::getWorldMatrix()
+Matrix4 Entity::getLocalMatrix()
 {
 	updateTransform();
 	return _transform;
 }
 
-Matrix3 Entity::getNormalMatrix()
+Matrix3 Entity::getLocalNormalMatrix()
 {
 	updateTransform();
 	Matrix4 matrix;
@@ -208,6 +208,11 @@ Entity* Entity::getParent() const
 unsigned int Entity::getNumberOfChildren() const
 {
 	return _children.size();
+}
+
+EntityPtr Entity::getChild(unsigned int index) const
+{
+	return _children.at(index);
 }
 
 void Entity::add(EntityPtr child)

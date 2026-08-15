@@ -28,6 +28,7 @@ add_library(Graphics
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
     src/core/Renderer.cpp
+    src/loaders/ModelLoader.cpp
     src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
@@ -56,6 +57,7 @@ target_include_directories(Graphics
 target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
+    PRIVATE assimp::assimp
     PRIVATE Common::Common
     PRIVATE Math::Math)
 

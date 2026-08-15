@@ -162,11 +162,11 @@ void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, Ren
 		}
 		case EntityType::MESH:
 		{
-			Matrix4 parentModel = parent ? parent->getWorldMatrix() : Matrix4::IDENTITY;
-			Matrix4 modelTransform = parentModel.multiply(entity->getWorldMatrix());
+			Matrix4 parentModel = parent ? parent->getLocalMatrix() : Matrix4::IDENTITY;
+			Matrix4 modelTransform = parentModel.multiply(entity->getLocalMatrix());
 
-			Matrix3 parentNormal = parent ? parent->getNormalMatrix() : Matrix3::IDENTITY;
-			Matrix3 normalTransform = parentNormal.multiply(entity->getNormalMatrix());
+			Matrix3 parentNormal = parent ? parent->getLocalNormalMatrix() : Matrix3::IDENTITY;
+			Matrix3 normalTransform = parentNormal.multiply(entity->getLocalNormalMatrix());
 
 			RenderItem renderItem;
 			renderItem.mesh = cast<Mesh>(entity);

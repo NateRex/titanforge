@@ -167,9 +167,10 @@ BOOST_AUTO_TEST_CASE(Entity_scaleFromFloats)
 }
 
 /**
- * Tests the ability to obtain the transformation matrix for an entity
+ * Tests the ability to obtain the transformation matrix for an entity from its local coordinate system to
+ * that of it's parent
  */
-BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
+BOOST_AUTO_TEST_CASE(Entity_getLocalMatrix)
 {
 	TestEntity e;
 
@@ -184,24 +185,24 @@ BOOST_AUTO_TEST_CASE(Entity_getWorldMatrix)
 
 	Matrix4 translation = Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f));
 	Matrix4 expected = translation.multiply(rotation).multiply(scale);
-	Matrix4 transform = e.getWorldMatrix();
+	Matrix4 transform = e.getLocalMatrix();
 	BOOST_TEST(transform.equalTo(expected));
 }
 
 /**
  * Tests the ability to obtain the transformation matrix for this entity's normal vectors
  */
-BOOST_AUTO_TEST_CASE(Entity_getNormalMatrix)
+BOOST_AUTO_TEST_CASE(Entity_getLocalNormalMatrix)
 {
 	TestEntity e;
 	
-	Matrix3 m = e.getNormalMatrix();
+	Matrix3 m = e.getLocalNormalMatrix();
 	BOOST_TEST(m == Matrix3::IDENTITY);
 
 	e.setPosition(1.f, 2.f, 3.f);
 	e.setRotation(Matrix3::fromXRotation(deg2Rad(45.f)));
 	
-	m = e.getNormalMatrix();
+	m = e.getLocalNormalMatrix();
 	float s = sin(deg2Rad(45.f));
 	Matrix3 expected(1.f, 0.f, 0.f, 0.f, s, -s, 0.f, s, s);
 	BOOST_TEST(m.equalTo(expected, 1.0e-6));
