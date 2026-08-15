@@ -3,7 +3,7 @@
 
 MaterialPtr Material::create()
 {
-	return std::shared_ptr<Material>(new Material(MaterialType::BASIC));
+	return std::shared_ptr<Material>(new Material(MaterialType::DEFAULT));
 }
 
 Material::Material(MaterialType type) : materialType(type)

@@ -1,21 +1,21 @@
-#include <graphics/core/shaders/BasicShader.h>
+#include <graphics/core/shaders/DefaultShader.h>
 #include <graphics/materials/Material.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-BasicShader::BasicShader() : Shader("BasicShader", BASIC_VERTEX, BASIC_FRAGMENT)
+DefaultShader::DefaultShader() : Shader("DefaultShader", BASIC_VERTEX, BASIC_FRAGMENT)
 {
 
 }
 
-BasicShaderPtr BasicShader::create()
+DefaultShaderPtr DefaultShader::create()
 {
-	return std::shared_ptr<BasicShader>(new BasicShader());
+	return std::shared_ptr<DefaultShader>(new DefaultShader());
 }
 
-void BasicShader::setMaterial(const MaterialPtr material)
+void DefaultShader::setMaterial(const MaterialPtr material)
 {
 	Shader::setMaterial(material);
 

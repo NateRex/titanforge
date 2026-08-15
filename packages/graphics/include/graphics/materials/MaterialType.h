@@ -8,7 +8,7 @@ enum class MaterialType
 {
 
 	/**
-	 * Basic material
+	 * Default basic material
 	 */
-	BASIC
+	DEFAULT
 };

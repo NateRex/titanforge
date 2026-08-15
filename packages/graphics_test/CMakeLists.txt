@@ -22,7 +22,7 @@ add_executable(GraphicsTest
     src/core/input/InputControllerTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
-    src/core/shaders/BasicShaderTest.cpp
+    src/core/shaders/DefaultShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/BufferTest.cpp

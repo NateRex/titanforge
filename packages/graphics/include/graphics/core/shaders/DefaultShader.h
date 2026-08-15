@@ -1,12 +1,12 @@
 #pragma once
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
-#include <graphics/core/shaders/pointers/BasicShaderPtr.h>
+#include <graphics/core/shaders/pointers/DefaultShaderPtr.h>
 
 /**
- * Source code for the vertex shader used to handle 'basic' materials
+ * Source code for the vertex shader used to handle base materials
  */
-constexpr const char* BASIC_VERTEX = R"(
+constexpr const char* DEFAULT_VERTEX = R"(
 	#version 330 core
 
 	struct Transforms {
@@ -42,9 +42,9 @@ constexpr const char* BASIC_VERTEX = R"(
 )";
 
 /**
- * Source code for the fragment shader used to handle 'basic' materials
+ * Source code for the fragment shader used to handle base materials
  */
-constexpr const char* BASIC_FRAGMENT = R"(
+constexpr const char* DEFAULT_FRAGMENT = R"(
 	#version 330 core
 	#define MAX_LIGHTS 16
 
@@ -152,18 +152,18 @@ constexpr const char* BASIC_FRAGMENT = R"(
 )";
 
 /**
- * Shader used to handle basic materials
+ * Shader used to handle base materials
  * @author Nathaniel Rex
  */
-class BasicShader : public Shader
+class DefaultShader : public Shader
 {
 public:
 
 	/**
-	 * Constructs a new BasicShader instance. This should typically only be done once, by the shader manager.
-	 * @return The new BasicShader instance
+	 * Constructs a new DefaultShader instance. This should typically only be done once, by the shader manager.
+	 * @return The new DefaultShader instance
 	 */
-	static BasicShaderPtr create();
+	static DefaultShaderPtr create();
 
 protected:
 
@@ -174,5 +174,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	BasicShader();
+	DefaultShader();
 };
