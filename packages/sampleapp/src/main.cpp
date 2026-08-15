@@ -3,68 +3,18 @@
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
-#include <graphics/geometry/BoxGeometry.h>
-#include <graphics/loaders/TextureLoader.h>
-#include <graphics/materials/Material.h>
-#include <graphics/objects/Mesh.h>
+#include <graphics/core/pointers/EntityPtr.h>
+#include <graphics/loaders/EntityLoader.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/modifiers/InputModifiers.h>
-#include <graphics/textures/Texture.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
 #include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
-
-/**
- * Creates and adds a number of boxes to the scene
- * @param scene Scene to add the boxes to
- * @return The newly-created mesh that's been added to the scene
- */
-MeshPtr createBoxes(ScenePtr scene)
-{
-    GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
-    MaterialPtr material = Material::create();
-    material->texture = Texture::create("assets/container2.png");
-    material->diffuseMap = material->texture;
-    material->specularMap = Texture::create("assets/container2_specular.png");
-
-    struct BoxTransform
-    {
-        Vector3 position;
-        Vector3 rotationAxis;
-        float rotationDegrees;
-        float scaling;
-    };
-
-    const BoxTransform transforms[] = {
-        { Vector3(  0.f,  0.f,   0.f), Vector3::YHAT, 0.f, 0.5f },
-        { Vector3(  4.f,  2.f,  -3.f), Vector3::XHAT, 25.f, 0.8f },
-        { Vector3( -6.f, -2.f,  -5.f), Vector3::YHAT, 40.f, 1.1f },
-        { Vector3(  8.f, -1.f,  -7.f), Vector3::ZHAT, 18.f, 1.4f },
-        { Vector3( -9.f,  3.f,  -9.f), Vector3(1.f, 1.f, 0.f), 55.f, 1.8f },
-        { Vector3( 10.f,  4.f, -11.f), Vector3(0.f, 1.f, 1.f), 70.f, 2.1f },
-        { Vector3(-11.f, -4.f, -12.f), Vector3(1.f, 0.f, 1.f), 32.f, 2.5f },
-        { Vector3(  6.f,  5.f, -17.f), Vector3(1.f, 1.f, 1.f), 63.f, 2.8f }
-    };
-
-    MeshPtr mesh;
-    for (const BoxTransform& transform : transforms)
-    {
-        mesh = Mesh::create(geometry, material);
-        mesh->setPosition(transform.position);
-        mesh->setRotation(Matrix3::fromRotation(
-            transform.rotationAxis,
-            deg2Rad(transform.rotationDegrees)));
-        mesh->setScaling(transform.scaling);
-        scene->add(mesh);
-    }
-
-    return mesh;
-}
 
 /**
  * Creates a camera capable of being controlled via key and mouse actions
@@ -144,8 +94,10 @@ int main()
 
     ScenePtr scene = Scene::create();
 
-    // Create textured boxes
-    createBoxes(scene);
+    // Load model
+    EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
+    entity->setPosition(0.f, 0.f, 0.f);
+    scene->add(entity);
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
@@ -154,8 +106,12 @@ int main()
     scene->add(ambientLighting);
     scene->add(spotLight);
 
+    float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
     {
+        // Rotate entity
+        entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
+        
         // Move spotlight with camera
         spotLight->lookAt(camera->getPosition(), camera->getPosition().plus(camera->getForwardVector()));
 
