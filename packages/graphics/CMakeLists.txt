@@ -4,6 +4,7 @@ project(Graphics CXX)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(Stb REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 # Library files
 add_library(Graphics
@@ -18,7 +19,7 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
-    src/core/shaders/BasicShader.cpp
+    src/core/shaders/DefaultShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
     src/core/windows/Window.cpp
@@ -27,6 +28,9 @@ add_library(Graphics
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
     src/core/Renderer.cpp
+    src/loaders/EntityLoader.cpp
+    src/loaders/ImageLoader.cpp
+    src/loaders/TextureLoader.cpp
     src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
@@ -36,12 +40,9 @@ add_library(Graphics
     src/lights/Light.cpp
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
-    src/materials/BasicMaterial.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp
-    src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
-    src/textures/TextureLoader.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 
@@ -55,6 +56,7 @@ target_include_directories(Graphics
 target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
+    PRIVATE assimp::assimp
     PRIVATE Common::Common
     PRIVATE Math::Math)
 

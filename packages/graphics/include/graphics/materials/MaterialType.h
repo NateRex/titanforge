@@ -8,7 +8,7 @@ enum class MaterialType
 {
 
 	/**
-	 * Basic material, used to render geometries in a flat or wireframe way
+	 * Default basic material
 	 */
-	BASIC
+	DEFAULT
 };

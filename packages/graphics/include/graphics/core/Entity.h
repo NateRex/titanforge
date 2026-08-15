@@ -174,14 +174,14 @@ public:
 	 * @return A matrix representing the transformation of this entity from local space to the reference frame of
 	 * it's direct parent
 	 */
-	Matrix4 getWorldMatrix();
+	Matrix4 getLocalMatrix();
 
 	/**
 	 * @return A matrix representing the transformation of this entity's normal vectors from local space to the reference
 	 * frame of this entity's parent. This matrix differs from the world matrix in that it is specifically designed to
 	 * handle normal vectors, preventing wrongful scaling.
 	 */
-	Matrix3 getNormalMatrix();
+	Matrix3 getLocalNormalMatrix();
 
 	/**
 	 * @return The parent of this entity. Can be null.
@@ -192,6 +192,14 @@ public:
 	 * @return The number of children this entity has
 	 */
 	unsigned int getNumberOfChildren() const;
+
+	/**
+	 * Returns a child of this entity.
+	 * @param index Zero-based child index
+	 * @return The child at the requested index
+	 * @throws std::out_of_range if the index is invalid
+	 */
+	EntityPtr getChild(unsigned int index) const;
 
 	/**
 	 * Adds a child to this entity.

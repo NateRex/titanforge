@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/materials/pointers/MaterialPtr.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <graphics/core/Color.h>
@@ -20,6 +21,12 @@ public:
 	 * Base color. Defaults to solid white.
 	 */
 	Color color = Color::WHITE;
+
+	/**
+	 * Flag that, when true, forces the use of colors specified on geometry vertices (when available). Defaults
+	 * to false.
+	 */
+	bool useVertexColors = false;
 
 	/**
 	 * Reflectivity, expressed as a value between 0 and 1, which affects how much light is reflected on surfaces.
@@ -52,6 +59,12 @@ public:
 	 * Destructor
 	 */
 	virtual ~Material() = default;
+
+	/**
+	 * Creates a new basic Material instance
+	 * @return The new Material instance
+	 */
+	static MaterialPtr create();
 
 protected:
 

@@ -1,14 +1,14 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/materials/BasicMaterial.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/materials/Material.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <common/PrintHelpers.h>
 
 /**
- * Tests the ability to set the public properties of a Material
+ * Tests the ability to construct and modify the properties of a material
  */
 BOOST_AUTO_TEST_CASE(Material_properties)
 {
-	MaterialPtr material = BasicMaterial::create();
+	MaterialPtr material = Material::create();
 
 	material->color = Color::RED;
 	BOOST_TEST(material->color == Color::RED);

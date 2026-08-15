@@ -9,8 +9,10 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
+#include <math/Matrix3.h>
+#include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/Assertions.h>
 #include <glad/glad.h>
@@ -136,38 +138,31 @@ RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera
 {
 	RenderState state;
 	state.camera = camera;
-	traverseScene(scene, nullptr, state);
+	traverseScene(scene, Matrix4::IDENTITY, Matrix3::IDENTITY, state);
 	return state;
 }
 
-void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, RenderState& state)
+void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentModel, const Matrix3& parentNormal, RenderState& state)
 {
+	const Matrix4 modelTransform = parentModel.multiply(entity->getLocalMatrix());
+	const Matrix3 normalTransform = parentNormal.multiply(entity->getLocalNormalMatrix());
 
 	switch (entity->entityType)
 	{
-		case EntityType::GROUP:
-		{
-			// Recursively handle each child
-			for (const EntityPtr child : entity->_children)
-			{
-				traverseScene(child, entity, state);
-			}
-			break;
-		}
 		case EntityType::LIGHT:
 		{
-			state.lighting.lights.push_back(cast<Light>(entity));
-
+			const LightPtr light = cast<Light>(entity);
+			
+			RenderLight renderLight;
+			renderLight.light = light;
+			renderLight.position = parentModel.transformPosition(light->getPosition());
+			renderLight.direction = parentModel.transformDirection(light->getForwardVector()).normalize();
+			
+			state.lighting.lights.push_back(renderLight);
 			break;
 		}
 		case EntityType::MESH:
 		{
-			Matrix4 parentModel = parent ? parent->getWorldMatrix() : Matrix4::IDENTITY;
-			Matrix4 modelTransform = parentModel.multiply(entity->getWorldMatrix());
-
-			Matrix3 parentNormal = parent ? parent->getNormalMatrix() : Matrix3::IDENTITY;
-			Matrix3 normalTransform = parentNormal.multiply(entity->getNormalMatrix());
-
 			RenderItem renderItem;
 			renderItem.mesh = cast<Mesh>(entity);
 			renderItem.modelTransform = modelTransform;
@@ -179,7 +174,14 @@ void Renderer::traverseScene(const EntityPtr entity, const EntityPtr parent, Ren
 		default:
 		{
 			// Do nothing
+			break;
 		}
+	}
+
+	// Entity type does not affect hierarchy. Any type of entity may have children.
+	for (const EntityPtr child : entity->_children)
+	{
+		traverseScene(child, modelTransform, normalTransform, state);
 	}
 }
 

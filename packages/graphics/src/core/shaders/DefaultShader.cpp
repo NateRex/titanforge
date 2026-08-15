@@ -1,31 +1,29 @@
-#include <graphics/core/shaders/BasicShader.h>
-#include <graphics/materials/BasicMaterial.h>
+#include <graphics/core/shaders/DefaultShader.h>
+#include <graphics/materials/Material.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-BasicShader::BasicShader() : Shader("BasicShader", BASIC_VERTEX, BASIC_FRAGMENT)
+DefaultShader::DefaultShader() : Shader("DefaultShader", DEFAULT_VERTEX, DEFAULT_FRAGMENT)
 {
 
 }
 
-BasicShaderPtr BasicShader::create()
+DefaultShaderPtr DefaultShader::create()
 {
-	return std::shared_ptr<BasicShader>(new BasicShader());
+	return std::shared_ptr<DefaultShader>(new DefaultShader());
 }
 
-void BasicShader::setMaterial(const MaterialPtr material)
+void DefaultShader::setMaterial(const MaterialPtr material)
 {
 	Shader::setMaterial(material);
 
-	BasicMaterialPtr mat = cast<BasicMaterial>(material);
-
 	// Texture
-	if (mat->texture)
+	if (material->texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mat->texture->id());
+		glBindTexture(GL_TEXTURE_2D, material->texture->id());
 		glUniform1i(getUniformLocation("uMaterial.texture"), 0);
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 1);
 	}
@@ -35,10 +33,10 @@ void BasicShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Diffuse map
-	if (mat->diffuseMap)
+	if (material->diffuseMap)
 	{
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mat->diffuseMap->id());
+		glBindTexture(GL_TEXTURE_2D, material->diffuseMap->id());
 		glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
 		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 1);
 	}
@@ -48,10 +46,10 @@ void BasicShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Specular map
-	if (mat->specularMap)
+	if (material->specularMap)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mat->specularMap->id());
+		glBindTexture(GL_TEXTURE_2D, material->specularMap->id());
 		glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
 		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 1);
 	}
@@ -61,5 +59,5 @@ void BasicShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Vertex color usage
-	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), mat->useVertexColors ? 1 : 0);
+	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), material->useVertexColors ? 1 : 0);
 }

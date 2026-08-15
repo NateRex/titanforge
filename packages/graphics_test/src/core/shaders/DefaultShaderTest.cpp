@@ -1,10 +1,10 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
-#include <graphics/core/shaders/BasicShader.h>
+#include <graphics/core/shaders/DefaultShader.h>
 #include <graphics/core/RenderState.h>
 #include <graphics/materials/MaterialType.h>
-#include <graphics/materials/BasicMaterial.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/materials/Material.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/PointLight.h>
 #include <graphics/lights/DirectionalLight.h>
@@ -18,28 +18,28 @@
 /**
  * Tests the ability to set a fully-populated the render state
  */
-BOOST_AUTO_TEST_CASE(BasicShader_setState)
+BOOST_AUTO_TEST_CASE(DefaultShader_setState)
 {
 	RenderState state;
-	state.lighting.lights.push_back(AmbientLight::create());
-	state.lighting.lights.push_back(PointLight::create());
-	state.lighting.lights.push_back(DirectionalLight::create());
-	state.lighting.lights.push_back(SpotLight::create());
+	state.lighting.lights.push_back({AmbientLight::create()});
+	state.lighting.lights.push_back({PointLight::create()});
+	state.lighting.lights.push_back({DirectionalLight::create()});
+	state.lighting.lights.push_back({SpotLight::create()});
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 
 /**
  * Tests the ability to set a render state containing no lighting
  */
-BOOST_AUTO_TEST_CASE(BasicShader_setStateNoLighting)
+BOOST_AUTO_TEST_CASE(DefaultShader_setStateNoLighting)
 {
 	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 
@@ -47,16 +47,16 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateNoLighting)
  * Tests that light intensity is an open-ended multiplier rather than a value
  * limited to the [0, 1] range.
  */
-BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
+BOOST_AUTO_TEST_CASE(DefaultShader_setStateHighIntensity)
 {
 	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	LightPtr light = PointLight::create();
 	light->intensity = 4.f;
-	state.lighting.lights.push_back(light);
+	state.lighting.lights.push_back({light});
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
 	shader->activate();
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
@@ -64,10 +64,10 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
 /**
  * Tests the ability to set the render item consisting of a basic colored material
  */
-BOOST_AUTO_TEST_CASE(BasicShader_setColorMaterial)
+BOOST_AUTO_TEST_CASE(DefaultShader_setColorMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
-	MaterialPtr mat = BasicMaterial::create();
+	MaterialPtr mat = Material::create();
 	MeshPtr mesh = Mesh::create(geom, mat);
 
 	RenderItem item;
@@ -75,17 +75,17 @@ BOOST_AUTO_TEST_CASE(BasicShader_setColorMaterial)
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
 
 /**
  * Tests the ability to set the render item consisting of a material containing texture
  */
-BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
+BOOST_AUTO_TEST_CASE(DefaultShader_setTextureMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
-	MaterialPtr mat = BasicMaterial::create();
+	MaterialPtr mat = Material::create();
 	mat->texture = TextureLoader::load("assets/container.jpg");
 	MeshPtr mesh = Mesh::create(geom, mat);
 
@@ -94,17 +94,17 @@ BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
 
 /**
  * Tests the ability to set a render item consisting of a material containing diffuse and specular maps
  */
- BOOST_AUTO_TEST_CASE(BasicShader_setDiffuseMapMaterial)
+ BOOST_AUTO_TEST_CASE(DefaultShader_setDiffuseMapMaterial)
  {
  	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
- 	MaterialPtr mat = BasicMaterial::create();
+ 	MaterialPtr mat = Material::create();
 	TexturePtr img = TextureLoader::load("assets/container.jpg");
  	mat->diffuseMap = img;
 	mat->specularMap = img;
@@ -115,6 +115,6 @@ BOOST_AUTO_TEST_CASE(BasicShader_setTextureMaterial)
  	item.modelTransform = Matrix4::IDENTITY;
  	item.normalTransform = Matrix3::IDENTITY;
 
- 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
+ 	ShaderPtr shader = ShaderManager::getShader(MaterialType::DEFAULT);
  	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
  }
