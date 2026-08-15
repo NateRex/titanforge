@@ -150,8 +150,9 @@ void Shader::setLighting(const Lighting& lighting)
 	float ambientBlue = 0.f;
 	size_t lightCount = 0;
 
-	for (const LightPtr& light : lighting.lights)
+	for (const RenderLight& renderLight : lighting.lights)
 	{
+		const LightPtr& light = renderLight.light;
 		if (!light)
 		{
 			continue;
@@ -182,12 +183,12 @@ void Shader::setLighting(const Lighting& lighting)
 		{
 			// Forward is the direction the rays travel; shading needs the
 			// opposite direction, from the surface toward the light.
-			vector = light->getForwardVector().scale(-1.f);
+			vector = renderLight.direction.scale(-1.f);
 			w = 0.f;
 		}
 		else
 		{
-			vector = light->getPosition();
+			vector = renderLight.position;
 		}
 
 		// Compute distance attenuation for local lights
@@ -213,7 +214,7 @@ void Shader::setLighting(const Lighting& lighting)
 			const SpotLightPtr spotLight = std::static_pointer_cast<SpotLight>(light);
 			const float innerAngle = clamp(spotLight->innerAngle, 0.f, 180.f);
 			const float outerAngle = clamp(spotLight->outerAngle, innerAngle, 180.f);
-			direction = light->getForwardVector();
+			direction = renderLight.direction;
 			outerCutoff = std::cos(deg2Rad(outerAngle));
 			innerCutoff = std::cos(deg2Rad(innerAngle));
 			// GLSL smoothstep requires distinct edges.

@@ -21,10 +21,10 @@
 BOOST_AUTO_TEST_CASE(BasicShader_setState)
 {
 	RenderState state;
-	state.lighting.lights.push_back(AmbientLight::create());
-	state.lighting.lights.push_back(PointLight::create());
-	state.lighting.lights.push_back(DirectionalLight::create());
-	state.lighting.lights.push_back(SpotLight::create());
+	state.lighting.lights.push_back({AmbientLight::create()});
+	state.lighting.lights.push_back({PointLight::create()});
+	state.lighting.lights.push_back({DirectionalLight::create()});
+	state.lighting.lights.push_back({SpotLight::create()});
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(BasicShader_setStateHighIntensity)
 
 	LightPtr light = PointLight::create();
 	light->intensity = 4.f;
-	state.lighting.lights.push_back(light);
+	state.lighting.lights.push_back({light});
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::BASIC);
 	shader->activate();

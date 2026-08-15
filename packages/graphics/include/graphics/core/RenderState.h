@@ -4,6 +4,7 @@
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
+#include <math/Vector3.h>
 #include <vector>
 
 /**
@@ -28,6 +29,27 @@ struct RenderItem {
 	Matrix3 normalTransform = Matrix3::IDENTITY;
 };
 
+/**
+ * A flattened, render-ready description of a light instance.
+ */
+struct RenderLight {
+
+	/**
+	 * Light providing this instance's color and attenuation properties.
+	 */
+	LightPtr light = nullptr;
+
+	/**
+	 * Position in world space.
+	 */
+	Vector3 position = Vector3::ZERO;
+
+	/**
+	 * Direction in which the light's rays travel, in world space.
+	 */
+	Vector3 direction = Vector3::ZERO;
+};
+
 
 /**
  * Aggregation of all the lights in the scene for a single render pass
@@ -40,7 +62,7 @@ struct Lighting {
 	 * maximum; keeping the full list here allows selection policies to be added
 	 * without constraining the scene itself.
 	 */
-	std::vector<LightPtr> lights;
+	std::vector<RenderLight> lights;
 };
 
 
