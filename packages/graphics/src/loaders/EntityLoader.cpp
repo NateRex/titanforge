@@ -1,7 +1,9 @@
 #include <graphics/loaders/EntityLoader.h>
 #include <graphics/textures/TextureLoader.h>
+#include <graphics/geometry/Geometry.h>
 #include <graphics/materials/Material.h>
 #include <graphics/core/EntityGroup.h>
+#include <graphics/objects/Mesh.h>
 #include <common/Utils.h>
 #include <common/exceptions/InstantiationException.h>
 #include <assimp/Importer.hpp>
@@ -52,6 +54,7 @@ TexturePtr loadTexture(const aiMaterial* aiMat, aiTextureType type, const std::f
 
 MaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::path& modelDirectory)
 {
+	// TODO - At the time of writing this, TitanForge only supports one kind of material
 	MaterialPtr material = Material::create();
 
 	// Color
@@ -97,19 +100,100 @@ MaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::path& m
 	return material;
 }
 
-EntityGroupPtr loadEntity(const aiNode* node, const aiScene* scene, const std::vector<MaterialPtr>& materials)
+GeometryPtr loadGeometry(const aiMesh* aiMesh)
 {
-	EntityGroupPtr entity = EntityGroup::create();
-	applyTransform(*entity, node->mTransformation);
+	std::vector<float> vertices;
+	std::vector<float> normals;
+	std::vector<float> colors;
+	std::vector<float> uvs;
+	vertices.reserve(aiMesh->mNumVertices * 3);
+	normals.reserve(aiMesh->mNumVertices * 3);
+	colors.reserve(aiMesh->mNumVertices * 4);
+	uvs.reserve(aiMesh->mNumVertices * 2);
 
-	for (int i = 0; i < node->mNumMeshes; i++)
-	{
-		const aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-		MaterialPtr material = materials.at(aiMesh->mMaterialIndex);
+	const bool hasNormals = aiMesh->HasNormals();
+	const bool hasColors = aiMesh->HasVertexColors(0);
+	const bool hasUVs = aiMesh->HasTextureCoords(0);
+
+	// Iterate over vertices
+	for (unsigned int i = 0; i < aiMesh->mNumVertices; i++) {
+		const aiVector3D& vertex = aiMesh->mVertices[i];
+		vertices.insert(vertices.end(), { vertex.x, vertex.y, vertex.z });
+
+		if (hasNormals)
+		{
+			const aiVector3D& normal = aiMesh->mNormals[i];
+			normals.insert(normals.end(), { normal.x, normal.y, normal.z });
+		}
+		if (hasColors)
+		{
+			const aiColor4D& color = aiMesh->mColors[0][i];
+			colors.insert(colors.end(), { color.r, color.g, color.b, color.a });
+		}
+		if (hasUVs)
+		{
+			const aiVector3D& uv = aiMesh->mTextureCoords[0][i];
+			uvs.push_back(std::clamp(uv.x, 0.f, 1.f));
+			uvs.push_back(std::clamp(uv.y, 0.f, 1.f));
+		}
 	}
+
+	// Iterate over indices
+	std::vector<unsigned int> indices;
+	indices.reserve(aiMesh->mNumFaces * 3);
+	for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
+	{
+		const aiFace& face = aiMesh->mFaces[i];
+		indices.insert(indices.end(), face.mIndices, face.mIndices + face.mNumIndices);
+	}
+
+	// Construct geometry
+	GeometryPtr geometry = Geometry::create();
+	geometry->setVertices(vertices.data(), aiMesh->mNumVertices);
+	geometry->setIndices(indices.data(), indices.size());
+	if (hasNormals)
+	{
+		geometry->setNormals(normals.data(), aiMesh->mNumVertices);
+	}
+	if (hasColors)
+	{
+		geometry->setColors(colors.data(), aiMesh->mNumVertices);
+	}
+	if (hasUVs)
+	{
+		geometry->setTextureCoords(uvs.data(), aiMesh->mNumVertices);
+	}
+
+	return geometry;
 }
 
-EntityGroupPtr EntityLoader::load(const std::string& path)
+EntityGroupPtr loadGroup(const aiNode* node, const aiScene* scene, const std::vector<MaterialPtr>& materials)
+{
+	EntityGroupPtr group = EntityGroup::create();
+	applyTransform(*group, node->mTransformation);
+
+	// Handle meshes at this node
+	for (unsigned int i = 0; i < node->mNumMeshes; i++)
+	{
+		const aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
+
+		GeometryPtr geometry = loadGeometry(aiMesh);
+		MaterialPtr material = materials.at(aiMesh->mMaterialIndex);
+		material->useVertexColors = aiMesh->HasVertexColors(0);
+
+		group->add(Mesh::create(geometry, material));
+	}
+
+	// Handle child nodes
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+	{
+		group->add(loadGroup(node->mChildren[i], scene, materials));
+	}
+
+	return group;
+}
+
+EntityPtr EntityLoader::load(const std::string& path)
 {
 	const std::string modelPath = resolvePath(path);
 	const std::filesystem::path modelDirectory = std::filesystem::path(path).parent_path();
@@ -132,10 +216,10 @@ EntityGroupPtr EntityLoader::load(const std::string& path)
 
 	std::vector<MaterialPtr> materials;
 	materials.reserve(scene->mNumMaterials);
-	for (int i = 0; i < scene->mNumMaterials; i++)
+	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 	{
 		materials.push_back(loadMaterial(scene->mMaterials[i], modelDirectory));
 	}
 
-	return loadEntity(scene->mRootNode, scene, materials);
+	return loadGroup(scene->mRootNode, scene, materials);
 }

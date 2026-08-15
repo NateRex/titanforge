@@ -5,7 +5,7 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-DefaultShader::DefaultShader() : Shader("DefaultShader", BASIC_VERTEX, BASIC_FRAGMENT)
+DefaultShader::DefaultShader() : Shader("DefaultShader", DEFAULT_VERTEX, DEFAULT_FRAGMENT)
 {
 
 }
@@ -20,10 +20,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	Shader::setMaterial(material);
 
 	// Texture
-	if (mat->texture)
+	if (material->texture)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mat->texture->id());
+		glBindTexture(GL_TEXTURE_2D, material->texture->id());
 		glUniform1i(getUniformLocation("uMaterial.texture"), 0);
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 1);
 	}
@@ -33,10 +33,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Diffuse map
-	if (mat->diffuseMap)
+	if (material->diffuseMap)
 	{
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mat->diffuseMap->id());
+		glBindTexture(GL_TEXTURE_2D, material->diffuseMap->id());
 		glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
 		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 1);
 	}
@@ -46,10 +46,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Specular map
-	if (mat->specularMap)
+	if (material->specularMap)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, mat->specularMap->id());
+		glBindTexture(GL_TEXTURE_2D, material->specularMap->id());
 		glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
 		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 1);
 	}
@@ -59,5 +59,5 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Vertex color usage
-	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), mat->useVertexColors ? 1 : 0);
+	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), material->useVertexColors ? 1 : 0);
 }

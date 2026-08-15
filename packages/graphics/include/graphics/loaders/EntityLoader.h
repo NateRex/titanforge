@@ -1,6 +1,6 @@
 #pragma once
 
-#include <graphics/core/pointers/EntityGroupPtr.h>
+#include <graphics/core/pointers/EntityPtr.h>
 #include <string>
 
 /**
@@ -17,5 +17,5 @@ public:
 	 * @return An entity group corresponding to the imported scene's root node
 	 * @throws InstantiationException on failure to import the entity
 	 */
-	static EntityGroupPtr load(const std::string& path);
+	static EntityPtr load(const std::string& path);
 };
