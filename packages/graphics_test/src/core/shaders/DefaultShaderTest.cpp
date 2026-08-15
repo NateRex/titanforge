@@ -4,7 +4,7 @@
 #include <graphics/core/RenderState.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/materials/Material.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/PointLight.h>
 #include <graphics/lights/DirectionalLight.h>

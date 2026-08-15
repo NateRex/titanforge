@@ -9,7 +9,7 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>

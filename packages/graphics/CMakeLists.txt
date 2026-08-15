@@ -29,6 +29,8 @@ add_library(Graphics
     src/core/EntityGroup.cpp
     src/core/Renderer.cpp
     src/loaders/EntityLoader.cpp
+    src/loaders/ImageLoader.cpp
+    src/loaders/TextureLoader.cpp
     src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
@@ -40,9 +42,7 @@ add_library(Graphics
     src/lights/SpotLight.cpp
     src/materials/Material.cpp
     src/scene/Scene.cpp
-    src/textures/ImageLoader.cpp
     src/textures/Texture.cpp
-    src/textures/TextureLoader.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 

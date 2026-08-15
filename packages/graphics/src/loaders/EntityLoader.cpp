@@ -1,5 +1,5 @@
 #include <graphics/loaders/EntityLoader.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/materials/Material.h>
 #include <graphics/core/EntityGroup.h>

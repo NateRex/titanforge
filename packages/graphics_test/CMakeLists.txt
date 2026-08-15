@@ -30,7 +30,9 @@ add_executable(GraphicsTest
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
     src/core/RendererTest.cpp
-    src/loaders/ModelLoaderTest.cpp
+    src/loaders/EntityLoaderTest.cpp
+    src/loaders/ImageLoaderTest.cpp
+    src/loaders/TextureLoaderTest.cpp
     src/objects/MeshTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
@@ -41,8 +43,6 @@ add_executable(GraphicsTest
     src/lights/SpotLightTest.cpp
     src/materials/MaterialTest.cpp
     src/scene/SceneTest.cpp
-    src/textures/ImageLoaderTest.cpp
-    src/textures/TextureLoaderTest.cpp
     src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp

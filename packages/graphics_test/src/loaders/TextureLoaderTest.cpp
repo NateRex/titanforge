@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/textures/Texture.h>
 
 /**

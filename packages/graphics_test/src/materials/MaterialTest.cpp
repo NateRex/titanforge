@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/materials/Material.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <common/PrintHelpers.h>
 
 /**

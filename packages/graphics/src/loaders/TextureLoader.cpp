@@ -1,4 +1,4 @@
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/textures/Texture.h>
 
 std::unique_ptr<TextureLoader> TextureLoader::_INSTANCE = nullptr;

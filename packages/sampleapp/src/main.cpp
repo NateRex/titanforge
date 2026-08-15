@@ -4,7 +4,7 @@
 #include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
-#include <graphics/textures/TextureLoader.h>
+#include <graphics/loaders/TextureLoader.h>
 #include <graphics/materials/Material.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/windows/Window.h>

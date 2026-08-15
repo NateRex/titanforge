@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/textures/ImageLoader.h>
+#include <graphics/loaders/ImageLoader.h>
 #include <common/Utils.h>
 
 /**
