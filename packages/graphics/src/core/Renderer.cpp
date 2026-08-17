@@ -203,13 +203,14 @@ void Renderer::draw(const RenderState& state)
 	}
 
 	const Vector3 cameraPosition = state.camera->getPosition();
-	std::stable_sort(blendedItems.begin(), blendedItems.end(), [&cameraPosition](const RenderItem* a, const RenderItem* b)
+	const Vector3 cameraForward = state.camera->getForwardVector();
+	std::stable_sort(blendedItems.begin(), blendedItems.end(), [&cameraPosition, &cameraForward](const RenderItem* a, const RenderItem* b)
 	{
 		const Vector3 aPosition = a->modelTransform.transformPosition(Vector3::ZERO);
 		const Vector3 bPosition = b->modelTransform.transformPosition(Vector3::ZERO);
-		const Vector3 aOffset = aPosition.minus(cameraPosition);
-		const Vector3 bOffset = bPosition.minus(cameraPosition);
-		return aOffset.dot(aOffset) > bOffset.dot(bOffset);
+		const float aDepth = aPosition.minus(cameraPosition).dot(cameraForward);
+		const float bDepth = bPosition.minus(cameraPosition).dot(cameraForward);
+		return aDepth > bDepth;
 	});
 
 	// Opaque pass
@@ -234,6 +235,16 @@ void Renderer::draw(const RenderState& state)
 void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 {
 	MeshPtr mesh = item.mesh;
+	if (mesh->material->doubleSided)
+	{
+		glDisable(GL_CULL_FACE);
+	}
+	else
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+
 	ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
 	shader->activate();
 	shader->setState(state);

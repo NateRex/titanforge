@@ -5,9 +5,6 @@
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/EntityLoader.h>
-#include <graphics/geometry/BoxGeometry.h>
-#include <graphics/materials/Material.h>
-#include <graphics/objects/Mesh.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
@@ -98,29 +95,9 @@ int main()
     ScenePtr scene = Scene::create();
 
     // Load model
-    // EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
-    // entity->setPosition(0.f, 0.f, 0.f);
-    // scene->add(entity);
-
-    GeometryPtr boxGeometry = BoxGeometry::create(1.5f, 1.5f, 1.5f);
-
-    MaterialPtr opaqueBoxMaterial = Material::create();
-    opaqueBoxMaterial->color = Color::RED;
-    MeshPtr opaqueBox = Mesh::create(boxGeometry, opaqueBoxMaterial);
-    opaqueBox->setPosition(-2.5f, 0.f, 0.f);
-    scene->add(opaqueBox);
-
-    MaterialPtr transparentBlueMaterial = Material::create();
-    transparentBlueMaterial->color = Color::BLUE.withAlpha(0.35f);
-    MeshPtr transparentBlueBox = Mesh::create(boxGeometry, transparentBlueMaterial);
-    transparentBlueBox->setPosition(2.2f, 0.f, 0.5f);
-    scene->add(transparentBlueBox);
-
-    MaterialPtr transparentGreenMaterial = Material::create();
-    transparentGreenMaterial->color = Color::GREEN.withAlpha(0.55f);
-    MeshPtr transparentGreenBox = Mesh::create(boxGeometry, transparentGreenMaterial);
-    transparentGreenBox->setPosition(2.7f, 0.f, -0.5f);
-    scene->add(transparentGreenBox);
+    EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
+    entity->setPosition(0.f, 0.f, 0.f);
+    scene->add(entity);
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
@@ -133,7 +110,7 @@ int main()
     while (renderer->getWindow()->isOpen())
     {
         // Rotate entity
-        // entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
+        entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
         
         // Move spotlight with camera
         spotLight->lookAt(camera->getPosition(), camera->getPosition().plus(camera->getForwardVector()));
