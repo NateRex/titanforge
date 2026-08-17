@@ -10,3 +10,13 @@ Material::Material(MaterialType type) : materialType(type)
 {
 
 }
+
+AlphaMode Material::getEffectiveAlphaMode() const
+{
+	if (alphaMode != AlphaMode::AUTO)
+	{
+		return alphaMode;
+	}
+
+	return color.alpha() < 1.f ? AlphaMode::BLEND : AlphaMode::OPAQUE;
+}

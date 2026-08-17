@@ -10,6 +10,7 @@
 class Matrix3;
 class Matrix4;
 struct RenderState;
+struct RenderItem;
 
 /**
  * The renderer is responsible for managing the current render context target and drawing the scene
@@ -159,4 +160,7 @@ private:
 	 * @param state The render state to draw
 	 */
 	void draw(const RenderState& state);
+
+	/** Submits a single prepared render item. */
+	void drawItem(const RenderState& state, const RenderItem& item);
 };
