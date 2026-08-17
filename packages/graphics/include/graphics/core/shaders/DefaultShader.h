@@ -64,6 +64,8 @@ constexpr const char* DEFAULT_FRAGMENT = R"(
 
 	struct Material {
 		vec4 color;
+		int alphaMode;
+		float alphaCutoff;
 		float reflectivity;
 		float shine;
 		int hasVertexColor;
@@ -97,6 +99,12 @@ constexpr const char* DEFAULT_FRAGMENT = R"(
 		if (uMaterial.hasTexture != 0)
 		{
 			albedo *= texture(uMaterial.texture, frag_TexCoord);
+		}
+
+		// AlphaMode::MASK. Other modes are handled by fixed-function render state.
+		if (uMaterial.alphaMode == 2 && albedo.a < uMaterial.alphaCutoff)
+		{
+			discard;
 		}
 
 		vec3 normal = normalize(frag_Normal);

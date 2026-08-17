@@ -32,6 +32,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
+	// Alpha settings
+	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(material->getEffectiveAlphaMode()));
+	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), material->alphaCutoff);
+
 	// Diffuse map
 	if (material->diffuseMap)
 	{

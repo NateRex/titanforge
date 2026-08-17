@@ -18,6 +18,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <sstream>
+#include <algorithm>
 
 int Renderer::_RENDERER_COUNT = 0;
 std::mutex Renderer::_MUTEX;
@@ -187,21 +188,60 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentModel,
 
 void Renderer::draw(const RenderState& state)
 {
+	// Sort opaque (solid) and transparent (blended) items
+	std::vector<const RenderItem*> solidItems;
+	std::vector<const RenderItem*> blendedItems;
 	for (const RenderItem& item : state.items)
 	{
-		MeshPtr mesh = item.mesh;
-
-		// Load shader data
-		ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
-		shader->activate();
-		shader->setState(state);
-		shader->setItem(item);
-
-		// Draw buffer
-		Buffer* buffer = mesh->geometry->getBuffer();
-		buffer->bind();
-		glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
+		if (item.mesh->material->getEffectiveAlphaMode() == AlphaMode::BLEND)
+		{
+			blendedItems.push_back(&item);
+		}
+		else {
+			solidItems.push_back(&item);
+		}
 	}
+
+	const Vector3 cameraPosition = state.camera->getPosition();
+	std::stable_sort(blendedItems.begin(), blendedItems.end(), [&cameraPosition](const RenderItem* a, const RenderItem* b)
+	{
+		const Vector3 aPosition = a->modelTransform.transformPosition(Vector3::ZERO);
+		const Vector3 bPosition = b->modelTransform.transformPosition(Vector3::ZERO);
+		const Vector3 aOffset = aPosition.minus(cameraPosition);
+		const Vector3 bOffset = bPosition.minus(cameraPosition);
+		return aOffset.dot(aOffset) > bOffset.dot(bOffset);
+	});
+
+	// Opaque pass
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	for (const RenderItem* item : solidItems)
+	{
+		drawItem(state, *item);
+	}
+
+	// Transparent pass
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	for (const RenderItem* item : blendedItems)
+	{
+		drawItem(state, *item);
+	}
+
+	glDepthMask(GL_TRUE);
+}
+
+void Renderer::drawItem(const RenderState& state, const RenderItem& item)
+{
+	MeshPtr mesh = item.mesh;
+	ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
+	shader->activate();
+	shader->setState(state);
+	shader->setItem(item);
+
+	Buffer* buffer = mesh->geometry->getBuffer();
+	buffer->bind();
+	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
 }
 
 void Renderer::incrementRendererCount()
