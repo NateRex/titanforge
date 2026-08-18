@@ -94,7 +94,7 @@ int main()
 
     ScenePtr scene = Scene::create();
 
-    // Load model
+    // Load guitar backpack model
     EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
     entity->setPosition(0.f, 0.f, 0.f);
     scene->add(entity);

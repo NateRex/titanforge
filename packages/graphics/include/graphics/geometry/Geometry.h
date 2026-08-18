@@ -28,7 +28,7 @@ public:
 	static GeometryPtr create();
 
 	/**
-	 * Sets the vertex positions of this geometry. If the indices and vertex normals of this geometry have not yet been set,
+	 * Sets the vertex positions of this geometry. If the indices of this geometry have not yet been set,
 	 * they will additionally be computed and set automatically.
 	 * @param vertices An array where every 3 values represents the x, y, and z components of a vertex.
 	 * @param numVertices The number of vertices in the array
