@@ -118,7 +118,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 {
 	// Clear
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	// Poll for input updates
 	float time = getTime();
@@ -279,4 +279,8 @@ void Renderer::applyGlobalSettings()
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
+
+	// Enable stencil test
+	glEnable(GL_STENCIL_TEST);
+	glClearStencil(0);
 }
