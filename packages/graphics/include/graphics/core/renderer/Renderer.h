@@ -49,12 +49,6 @@ public:
 	WindowPtr getWindow() const;
 
 	/**
-	 * Sets the current window context that will be the target of draw commands
-	 * @param window Window target
-	 */
-	void setWindow(WindowPtr window);
-
-	/**
 	 * @return The current background clear color for draw commands
 	 */
 	Color getBackgroundColor() const;
@@ -96,6 +90,11 @@ private:
 	 * The current window context
 	 */
 	WindowPtr _window;
+
+	/**
+	 * Boolean flag that, when true, means that this renderer has released its resources and global renderer count.
+	 */
+	bool _destroyed = false;
 
 	/**
 	 * The current background (clear) color

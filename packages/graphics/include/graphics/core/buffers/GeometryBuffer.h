@@ -3,10 +3,10 @@
 class GeometryAttributes;
 
 /**
- * A buffer capable of being loaded with vertex array data to be sent to the GPU
+ * A buffer responsible for holding the vertex array data of a geometry
  * @author Nathaniel Rex
  */
-class Buffer
+class GeometryBuffer
 {
 public:
 
@@ -23,13 +23,13 @@ public:
 	 * @param indices Array containing the vertex indices of this buffer
 	 * @param numIndices The number of indices
 	 */
-	Buffer(const GeometryAttributes& attributes, const float* vertexData, unsigned int numValues,
+	GeometryBuffer(const GeometryAttributes& attributes, const float* vertexData, unsigned int numValues,
 		const unsigned int* indices, unsigned int numIndices);
 
 	/**
 	 * Destructor
 	 */
-	~Buffer();
+	~GeometryBuffer();
 
 	/**
 	 * Binds this buffer for drawing
@@ -39,17 +39,17 @@ public:
 private:
 
 	/**
-	 * ID of the GLFW vertex buffer object (VBO) that holds the vertex data for this buffer.
+	 * OpenGL vertex buffer object (VBO) name.
 	 */
 	unsigned int _vboId = 0;
 
 	/**
-	 * ID of the GLFW element buffer object (EBO) that holds the index data for this buffer.
+	 * OpenGL element buffer object (EBO) name.
 	 */
 	unsigned int _eboId = 0;
 
 	/**
-	 * ID of the GLFW vertex array object (VAO) used to bind and unbind this buffer for rendering.
+	 * OpenGL vertex array object (VAO) name used to bind this buffer for rendering.
 	 */
 	unsigned int _vaoId = 0;
 };

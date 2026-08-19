@@ -12,4 +12,9 @@ BOOST_AUTO_TEST_CASE(TextureManager_load)
 
 	TexturePtr texture2 = TextureLoader::load("assets/container.jpg");
 	BOOST_TEST(texture2 == texture1);
+
+	// Loading orientation changes the GPU contents and therefore participates in the cache key.
+	TexturePtr flipped = TextureLoader::load("assets/container.jpg", true);
+	BOOST_TEST(flipped != texture1);
+	BOOST_TEST(TextureLoader::load("assets/container.jpg", true) == flipped);
 }

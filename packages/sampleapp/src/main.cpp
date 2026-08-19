@@ -1,4 +1,4 @@
-#include <graphics/core/Renderer.h>
+#include <graphics/core/renderer/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/SpotLight.h>
@@ -94,7 +94,7 @@ int main()
 
     ScenePtr scene = Scene::create();
 
-    // Load model
+    // Load guitar backpack model
     EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
     entity->setPosition(0.f, 0.f, 0.f);
     scene->add(entity);

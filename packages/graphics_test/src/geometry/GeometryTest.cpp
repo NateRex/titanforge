@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 
 /**
  * Tests that a geometry is initially empty on construction
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(Geometry_buffer)
 	};
 	geometry->setVertices(vertices, 3);
 
-	Buffer* buffer = geometry->getBuffer();
+	GeometryBuffer* buffer = geometry->getBuffer();
 	BOOST_TEST(buffer != nullptr);
 	BOOST_TEST(buffer->size == geometry->size());
 }

@@ -1,10 +1,10 @@
-#include <graphics/core/Renderer.h>
-#include <graphics/core/RenderState.h>
+#include <graphics/core/renderer/Renderer.h>
+#include <graphics/core/renderer/RenderState.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
@@ -26,7 +26,41 @@ std::mutex Renderer::_MUTEX;
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
 	incrementRendererCount();
-	setWindow(window);
+	
+	if (!window || !window->_glfwWindow)
+	{
+		throw std::runtime_error("Renderer window must be an open window");
+	}
+	_window = window;
+
+	// Set window as the current context
+	glfwMakeContextCurrent(window->_glfwWindow);
+
+	// Load GLAD function pointers
+	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
+	{
+		throw std::runtime_error("Failed to initialize GLAD for window");
+	}
+
+	GLint value;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
+
+	GLenum err = glGetError();
+	if (err != GL_NO_ERROR)
+	{
+		std::ostringstream oss;
+		oss << "Error occurred updating renderer window: " << err;
+		throw std::runtime_error(oss.str());
+	}
+
+	// Set the viewport dimensions
+	int width, height;
+	glfwGetFramebufferSize(window->_glfwWindow, &width, &height);
+	glViewport(0, 0, width, height);
+
+	// Hide and capture the cursor inside the window
+	glfwSetInputMode(_window->_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	applyGlobalSettings();
 }
 
@@ -56,44 +90,6 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
-void Renderer::setWindow(WindowPtr window)
-{
-	if (_window == window)
-	{
-		return;
-	}
-
-	_window = window;
-
-	// Set window as the current context
-	glfwMakeContextCurrent(window->_glfwWindow);
-
-	// Re-load GLAD function pointers
-	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-	{
-		throw std::runtime_error("Failed to initialize GLAD for window");
-	}
-
-	GLint value;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value);
-
-	GLenum err = glGetError();
-	if (err != GL_NO_ERROR)
-	{
-		std::ostringstream oss;
-		oss << "Error occurred updating renderer window: " << err;
-		throw std::runtime_error(oss.str());
-	}
-
-	// Set the viewport dimensions
-	int width, height;
-	glfwGetWindowSize(window->_glfwWindow, &width, &height);
-	glViewport(0, 0, width, height);
-
-	// Hide and capture the cursor inside the window
-	glfwSetInputMode(_window->_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-}
-
 Color Renderer::getBackgroundColor() const
 {
 	return _backgroundColor;
@@ -106,6 +102,12 @@ void Renderer::setBackgroundColor(const Color& color)
 
 void Renderer::destroy(bool destroyWindow)
 {
+	if (_destroyed)
+	{
+		return;
+	}
+
+	_destroyed = true;
 	decrementRendererCount();
 
 	if (destroyWindow && _window)
@@ -116,6 +118,11 @@ void Renderer::destroy(bool destroyWindow)
 
 void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 {
+	if (_destroyed || !_window || !_window->_glfwWindow)
+	{
+		throw std::runtime_error("Cannot render with a destroyed renderer or window");
+	}
+
 	// Clear
 	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -250,7 +257,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 	shader->setState(state);
 	shader->setItem(item);
 
-	Buffer* buffer = mesh->geometry->getBuffer();
+	GeometryBuffer* buffer = mesh->geometry->getBuffer();
 	buffer->bind();
 	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
 }
@@ -279,4 +286,7 @@ void Renderer::applyGlobalSettings()
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
+
+	// Disable stencil test by default
+	glDisable(GL_STENCIL_TEST);
 }

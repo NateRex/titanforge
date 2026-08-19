@@ -1,5 +1,6 @@
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/textures/Texture.h>
+#include <common/Utils.h>
 
 std::unique_ptr<TextureLoader> TextureLoader::_INSTANCE = nullptr;
 
@@ -26,15 +27,16 @@ TextureLoader* TextureLoader::getInstance()
 TexturePtr TextureLoader::load(const std::string& path, bool flip)
 {
 	TextureLoader* loader = getInstance();
+	const std::string cacheKey = resolvePath(path) + (flip ? "|flip" : "|no-flip");
 
-	auto existing = loader->_textures.find(path);
+	auto existing = loader->_textures.find(cacheKey);
 	if (existing != loader->_textures.end())
 	{
 		return existing->second;
 	}
 
 	TexturePtr texture = Texture::create(path, flip);
-	loader->_textures[path] = texture;
+	loader->_textures[cacheKey] = texture;
 	return texture;
 }
 

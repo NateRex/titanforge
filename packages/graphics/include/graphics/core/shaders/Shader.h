@@ -41,7 +41,7 @@ public:
 protected:
 
     /**
-	 * GLFW id
+	 * OpenGL program object name
 	 */
 	unsigned int _id;
 
