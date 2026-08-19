@@ -38,42 +38,27 @@ public:
 	/**
 	 * @return The OpenGL object name of this texture
 	 */
-	unsigned int id() const
-	{
-		return _id;
-	}
+	unsigned int id() const { return _id; }
 
 	/**
 	 * @return The texture width in texels
 	 */
-	unsigned int width() const
-	{
-		return _descriptor.width;
-	}
+	unsigned int width() const { return _descriptor.width; }
 
 	/**
 	 * @return The texture height in texels
 	 */
-	unsigned int height() const
-	{
-		return _descriptor.height;
-	}
+	unsigned int height() const { return _descriptor.height; }
 
 	/**
 	 * @return The pixel format used by this texture's storage
 	 */
-	PixelFormat format() const
-	{
-		return _descriptor.format;
-	}
+	PixelFormat format() const { return _descriptor.format; }
 
 	/**
 	 * @return The complete storage and sampler descriptor for this texture
 	 */
-	const TextureDescriptor& descriptor() const
-	{
-		return _descriptor;
-	}
+	const TextureDescriptor& descriptor() const { return _descriptor; }
 
 	/**
 	 * Reallocates texture storage while preserving its format and sampler configuration. Existing pixel contents are discarded.
