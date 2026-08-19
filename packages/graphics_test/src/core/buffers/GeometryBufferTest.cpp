@@ -1,11 +1,11 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/core/buffers/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/geometry/GeometryAttributes.h>
 
 /**
  * Tests the ability to create and bind a buffer using only vertex positions
  */
-BOOST_AUTO_TEST_CASE(Buffer_positionsOnly)
+BOOST_AUTO_TEST_CASE(GeometryBuffer_positionsOnly)
 {
 	float vertices[] = {
 		-1.f, 0.f, 0.f,
@@ -15,14 +15,14 @@ BOOST_AUTO_TEST_CASE(Buffer_positionsOnly)
 	unsigned int indices[] = { 0, 1, 2 };
 	GeometryAttributes attrib;
 
-	Buffer buffer(attrib, vertices, 9, indices, 3);
+	GeometryBuffer buffer(attrib, vertices, 9, indices, 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
 /**
  * Tests the ability to create and bind a buffer using data containing vertex normals
  */
-BOOST_AUTO_TEST_CASE(Buffer_withNormals)
+BOOST_AUTO_TEST_CASE(GeometryBuffer_withNormals)
 {
 	unsigned int indices[] = { 0, 1, 2 };
 	float vertices[] = {
@@ -33,14 +33,14 @@ BOOST_AUTO_TEST_CASE(Buffer_withNormals)
 	GeometryAttributes attrib;
 	attrib.normals = true;
 
-	Buffer buffer(attrib, vertices, 18, indices, 3);
+	GeometryBuffer buffer(attrib, vertices, 18, indices, 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
 /**
  * Tests the ability to create and bind a buffer using data containing vertex colors
  */
-BOOST_AUTO_TEST_CASE(Buffer_withColors)
+BOOST_AUTO_TEST_CASE(GeometryBuffer_withColors)
 {
 	unsigned int indices[] = { 0, 1, 2 };
 	float vertices[] = {
@@ -51,14 +51,14 @@ BOOST_AUTO_TEST_CASE(Buffer_withColors)
 	GeometryAttributes attrib;
 	attrib.colors = true;
 
-	Buffer buffer(attrib, vertices, 21, indices, 3);
+	GeometryBuffer buffer(attrib, vertices, 21, indices, 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
 /**
  * Tests the ability to create and bind a buffer using data containing texture (UV) coordinates
  */
-BOOST_AUTO_TEST_CASE(Buffer_withTextureCoords)
+BOOST_AUTO_TEST_CASE(GeometryBuffer_withTextureCoords)
 {
 	unsigned int indices[] = { 0, 1, 2 };
 	float vertices[] = {
@@ -70,6 +70,6 @@ BOOST_AUTO_TEST_CASE(Buffer_withTextureCoords)
 	attrib.colors = false;
 	attrib.uvs = true;
 
-	Buffer buffer(attrib, vertices, 15, indices, 3);
+	GeometryBuffer buffer(attrib, vertices, 15, indices, 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }

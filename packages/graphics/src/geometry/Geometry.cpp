@@ -1,7 +1,7 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/core/Color.h>
-#include <graphics/core/buffers/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Assertions.h>
@@ -161,7 +161,7 @@ const GeometryAttributes Geometry::getAttributes() const
 	};
 }
 
-Buffer* Geometry::getBuffer()
+GeometryBuffer* Geometry::getBuffer()
 {
 	if (_buffer == nullptr)
 	{
@@ -217,7 +217,7 @@ void Geometry::createBuffer()
 	}
 
 	delete _buffer;
-	_buffer = new Buffer(attribs, vData, vSize, _indices, _numIndices);
+	_buffer = new GeometryBuffer(attribs, vData, vSize, _indices, _numIndices);
 
 	delete[] vData;
 }

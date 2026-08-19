@@ -4,7 +4,7 @@
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
-#include <graphics/core/buffers/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
@@ -250,7 +250,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 	shader->setState(state);
 	shader->setItem(item);
 
-	Buffer* buffer = mesh->geometry->getBuffer();
+	GeometryBuffer* buffer = mesh->geometry->getBuffer();
 	buffer->bind();
 	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
 }

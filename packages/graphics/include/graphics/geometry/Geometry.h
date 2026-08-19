@@ -5,7 +5,7 @@ class Vector2;
 class Vector3;
 class Color;
 class GeometryAttributes;
-class Buffer;
+class GeometryBuffer;
 
 /**
  * Base class for all geometry, which defines an object, line, or point in local space. Contains vertex attributes
@@ -97,7 +97,7 @@ public:
 	 * @return The GPU buffer for this geometry, creating it if it does not yet exist. This method should typically only
 	 * be called by the renderer.
 	 */
-	Buffer* getBuffer();
+	GeometryBuffer* getBuffer();
 
 protected:
 
@@ -157,7 +157,7 @@ protected:
 	/**
 	 * The GPU buffer for this geometry. Will not be constructed until the first time this geometry is rendered.
 	 */
-	Buffer* _buffer = nullptr;
+	GeometryBuffer* _buffer = nullptr;
 
 	/**
 	 * Constructor

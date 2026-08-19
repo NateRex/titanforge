@@ -3,10 +3,10 @@
 class GeometryAttributes;
 
 /**
- * A buffer capable of being loaded with vertex array data to be sent to the GPU
+ * A buffer responsible for holding the vertex array data of a geometry
  * @author Nathaniel Rex
  */
-class Buffer
+class GeometryBuffer
 {
 public:
 
@@ -23,13 +23,13 @@ public:
 	 * @param indices Array containing the vertex indices of this buffer
 	 * @param numIndices The number of indices
 	 */
-	Buffer(const GeometryAttributes& attributes, const float* vertexData, unsigned int numValues,
+	GeometryBuffer(const GeometryAttributes& attributes, const float* vertexData, unsigned int numValues,
 		const unsigned int* indices, unsigned int numIndices);
 
 	/**
 	 * Destructor
 	 */
-	~Buffer();
+	~GeometryBuffer();
 
 	/**
 	 * Binds this buffer for drawing

@@ -1,8 +1,8 @@
-#include <graphics/core/buffers/Buffer.h>
+#include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <glad/glad.h>
 
-Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,
+GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,
 	const unsigned int* indices, unsigned int numIndices): size(numIndices)
 {
 	// Create buffers
@@ -52,7 +52,7 @@ Buffer::Buffer(const GeometryAttributes& attributes, const float* vertices, unsi
 	}
 }
 
-Buffer::~Buffer()
+GeometryBuffer::~GeometryBuffer()
 {
 	GLint boundVAO = 0;
 	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundVAO);
@@ -73,7 +73,7 @@ Buffer::~Buffer()
 	_eboId = 0;
 }
 
-void Buffer::bind() const
+void GeometryBuffer::bind() const
 {
 	glBindVertexArray(_vaoId);
 }
