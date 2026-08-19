@@ -28,6 +28,7 @@ add_library(Graphics
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
+    src/core/PixelFormat.cpp
     src/loaders/EntityLoader.cpp
     src/loaders/ImageLoader.cpp
     src/loaders/TextureLoader.cpp
@@ -43,6 +44,7 @@ add_library(Graphics
     src/materials/Material.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
+    src/textures/TextureDescriptor.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 
