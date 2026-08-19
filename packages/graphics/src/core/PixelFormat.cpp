@@ -2,7 +2,7 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-OpenGLPixelFormat toGLFormat(const PixelFormat& format)
+OpenGLPixelFormat toGLFormat(PixelFormat format)
 {
 	switch (format)
 	{

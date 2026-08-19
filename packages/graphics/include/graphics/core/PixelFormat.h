@@ -89,4 +89,14 @@ struct OpenGLPixelFormat
  * @param format Pixel format to convert.
  * @return The corresponding OpenGL format information.
  */
-OpenGLPixelFormat toGLFormat(const PixelFormat& format);
+OpenGLPixelFormat toGLFormat(PixelFormat format);
+
+/**
+ * Determines whether a pixel format stores depth information
+ * @param format Pixel format to inspect
+ * @return True if the given input is a depth or depth-stencil format. Returns false otherwise.
+ */
+constexpr bool isDepthFormat(PixelFormat format)
+{
+    return format == PixelFormat::DEPTH24_STENCIL8 || format == PixelFormat::DEPTH32F;
+}
