@@ -21,6 +21,18 @@ Texture::Texture(const std::string& path, bool flip)
 		throw InstantiationException(oss.str());
 	}
 
+	GLenum format;
+	switch (channels)
+	{
+		case 1: format = GL_RED; break;
+		case 2: format = GL_RG; break;
+		case 3: format = GL_RGB; break;
+		case 4: format = GL_RGBA; break;
+		default:
+			stbi_image_free(data);
+			throw InstantiationException("Unsupported texture channel count: " + std::to_string(channels));
+	}
+
 	// Create texture
 	glGenTextures(1, &_id);
 	glBindTexture(GL_TEXTURE_2D, _id);
@@ -31,9 +43,10 @@ Texture::Texture(const std::string& path, bool flip)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// Load image data
-	unsigned int glRgb = checkSuffix(path, ".png") ? GL_RGBA : GL_RGB;
-	glTexImage2D(GL_TEXTURE_2D, 0, glRgb, width, height, 0, glRgb, GL_UNSIGNED_BYTE, data);
+	// Load image data. Rows with RGB or single-channel data are not necessarily four-byte aligned.
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// Free the image data

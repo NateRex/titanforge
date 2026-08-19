@@ -39,17 +39,17 @@ public:
 private:
 
 	/**
-	 * ID of the GLFW vertex buffer object (VBO) that holds the vertex data for this buffer.
+	 * OpenGL vertex buffer object (VBO) name.
 	 */
 	unsigned int _vboId = 0;
 
 	/**
-	 * ID of the GLFW element buffer object (EBO) that holds the index data for this buffer.
+	 * OpenGL element buffer object (EBO) name.
 	 */
 	unsigned int _eboId = 0;
 
 	/**
-	 * ID of the GLFW vertex array object (VAO) used to bind and unbind this buffer for rendering.
+	 * OpenGL vertex array object (VAO) name used to bind this buffer for rendering.
 	 */
 	unsigned int _vaoId = 0;
 };

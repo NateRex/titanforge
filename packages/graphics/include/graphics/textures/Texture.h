@@ -27,14 +27,14 @@ public:
 	static TexturePtr create(const std::string& path, bool flip = false);
 
 	/**
-	 * @return The GLFW id of this texture
+	 * @return The OpenGL object name of this texture
 	 */
 	unsigned int id() const;
 
 private:
 
 	/**
-	 * GLFW id of this texture
+	 * OpenGL object name of this texture
 	 */
 	unsigned int _id;
 
