@@ -1,4 +1,4 @@
-#include <graphics/core/Renderer.h>
+#include <graphics/core/renderer/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/SpotLight.h>

@@ -5,7 +5,7 @@
 #include <graphics/lights/Light.h>
 #include <graphics/materials/Material.h>
 #include <graphics/objects/Mesh.h>
-#include <graphics/core/RenderState.h>
+#include <graphics/core/renderer/RenderState.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>

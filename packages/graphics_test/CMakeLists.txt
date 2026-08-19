@@ -13,6 +13,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/cameras/CameraTest.cpp
     src/cameras/PerspectiveCameraTest.cpp
+    src/core/buffers/BufferTest.cpp
     src/core/input/modifiers/InputModifiersTest.cpp
     src/core/input/modifiers/NegateModifierTest.cpp
     src/core/input/modifiers/SwizzleModifierTest.cpp
@@ -22,14 +23,13 @@ add_executable(GraphicsTest
     src/core/input/InputControllerTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
+    src/core/renderer/RendererTest.cpp
     src/core/shaders/DefaultShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/WindowTest.cpp
-    src/core/BufferTest.cpp
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
-    src/core/RendererTest.cpp
     src/loaders/EntityLoaderTest.cpp
     src/loaders/ImageLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp

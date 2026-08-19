@@ -10,6 +10,7 @@ find_package(assimp CONFIG REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/buffers/Buffer.cpp
     src/core/input/modifiers/InputModifiers.cpp
     src/core/input/modifiers/NegateModifier.cpp
     src/core/input/modifiers/SwizzleModifier.cpp
@@ -19,15 +20,14 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
+    src/core/renderer/Renderer.cpp
     src/core/shaders/DefaultShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
     src/core/windows/Window.cpp
-    src/core/Buffer.cpp
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
-    src/core/Renderer.cpp
     src/loaders/EntityLoader.cpp
     src/loaders/ImageLoader.cpp
     src/loaders/TextureLoader.cpp

@@ -1,10 +1,10 @@
-#include <graphics/core/Renderer.h>
-#include <graphics/core/RenderState.h>
+#include <graphics/core/renderer/Renderer.h>
+#include <graphics/core/renderer/RenderState.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/Buffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>

@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/Buffer.h>
 #include <graphics/geometry/GeometryAttributes.h>
 
 /**

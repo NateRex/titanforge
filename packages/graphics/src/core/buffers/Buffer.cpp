@@ -1,4 +1,4 @@
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/Buffer.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <glad/glad.h>
 

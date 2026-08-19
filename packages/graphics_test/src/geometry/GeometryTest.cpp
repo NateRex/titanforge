@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
-#include <graphics/core/Buffer.h>
+#include <graphics/core/buffers/Buffer.h>
 
 /**
  * Tests that a geometry is initially empty on construction

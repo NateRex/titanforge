@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/DefaultShader.h>
-#include <graphics/core/RenderState.h>
+#include <graphics/core/renderer/RenderState.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/materials/Material.h>
 #include <graphics/loaders/TextureLoader.h>
