@@ -59,6 +59,13 @@ public:
      */
     const RenderBufferDescriptor& descriptor() const { return _descriptor; }
 
+    /**
+     * Resizes and reallocates the renderbuffer storage
+     * @param width New width in pixels
+     * @param height New height in pixels
+     */
+    void resize(unsigned int width, unsigned int height);
+
 private:
 
     /**
