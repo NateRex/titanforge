@@ -45,7 +45,7 @@ public:
     /**
      * Creates and allocates a new renderbuffer
      * @param descriptor Storage configuration
-     * @return The newly created renderbuffer
+     * @return The newly-created renderbuffer
      */
     static RenderBufferPtr create(const RenderBufferDescriptor& descriptor);
 

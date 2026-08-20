@@ -10,6 +10,7 @@ find_package(assimp CONFIG REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/buffers/FrameBuffer.cpp
     src/core/buffers/GeometryBuffer.cpp
     src/core/buffers/RenderBuffer.cpp
     src/core/input/modifiers/InputModifiers.cpp
