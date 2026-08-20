@@ -25,6 +25,7 @@ add_library(Graphics
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/DefaultShader.cpp
+	src/core/shaders/PostProcessShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
     src/core/windows/Window.cpp
@@ -45,6 +46,7 @@ add_library(Graphics
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
     src/materials/Material.cpp
+	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
     src/textures/TextureDescriptor.cpp

@@ -10,5 +10,10 @@ enum class MaterialType
 	/**
 	 * Default basic material
 	 */
-	DEFAULT
+	DEFAULT,
+
+	/**
+	 * Full-screen post-processing material
+	 */
+	POST_PROCESS
 };

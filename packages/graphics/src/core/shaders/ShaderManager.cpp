@@ -1,6 +1,7 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/core/shaders/DefaultShader.h>
+#include <graphics/core/shaders/PostProcessShader.h>
 #include <common/Assertions.h>
 #include <glad/glad.h>
 
@@ -9,6 +10,7 @@ std::unique_ptr<ShaderManager> ShaderManager::_INSTANCE = nullptr;
 ShaderManager::ShaderManager()
 {
 	_shaders.emplace(MaterialType::DEFAULT, DefaultShader::create());
+	_shaders.emplace(MaterialType::POST_PROCESS, PostProcessShader::create());
 }
 
 ShaderManager::~ShaderManager()

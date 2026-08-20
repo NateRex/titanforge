@@ -1,7 +1,6 @@
 #pragma once
-#include <graphics/core/shaders/Shader.h>
-#include <graphics/core/shaders/pointers/ShaderPtr.h>
 #include <graphics/core/shaders/pointers/DefaultShaderPtr.h>
+#include <graphics/core/shaders/Shader.h>
 
 /**
  * Source code for the vertex shader used to handle base materials
