@@ -23,6 +23,7 @@ add_library(Graphics
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
     src/core/renderer/Renderer.cpp
+    src/core/renderer/RenderTarget.cpp
     src/core/shaders/DefaultShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
