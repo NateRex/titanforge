@@ -36,7 +36,7 @@ enum class ClearFlags : unsigned int
  * @param right Second flag set
  * @return The union of both flag sets
  */
-inline ClearFlags::operator|(ClearFlags left, ClearFlags right)
+inline ClearFlags operator|(ClearFlags left, ClearFlags right)
 {
     return static_cast<ClearFlags>(static_cast<unsigned int>(left) | static_cast<unsigned int>(right));
 }
@@ -49,7 +49,7 @@ inline ClearFlags::operator|(ClearFlags left, ClearFlags right)
  */
 inline bool hasFlag(ClearFlags flags, ClearFlags flag)
 {
-    return (static_cast<unsigned int>(flags) & static_cast<unsigned_int>(flag)) != 0;
+    return (static_cast<unsigned int>(flags) & static_cast<unsigned int>(flag)) != 0;
 }
 
 /**
@@ -96,9 +96,9 @@ struct RenderPass
     Viewport viewport;
 
     /**
-     * Buffers cleared when the pass begins. Defaults to ClearFlags::COLOR & ClearFlags::DEPTH.
+     * Buffers cleared when the pass begins. Defaults to ClearFlags::COLOR | ClearFlags::DEPTH.
      */
-    ClearFlags clearFlags;
+    ClearFlags clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
 
     /**
      * Color value used when clearing color buffers. Defaults to black.
