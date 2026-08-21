@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/DefaultShader.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
@@ -17,7 +17,13 @@ DefaultShaderPtr DefaultShader::create()
 
 void DefaultShader::setMaterial(const MaterialPtr material)
 {
+	if (!material || material->materialType != MaterialType::MESH)
+	{
+		throw IllegalArgumentException("MeshShader requires a MeshMaterial");
+	}
+
 	Shader::setMaterial(material);
+	const MeshMaterialPtr meshMat = std::static_pointer_cast<MeshMaterial>(material);
 
 	// Texture
 	if (material->texture)
@@ -33,14 +39,14 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Alpha settings
-	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(material->getEffectiveAlphaMode()));
-	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), material->alphaCutoff);
+	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(meshMat->getEffectiveAlphaMode()));
+	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), meshMat->alphaCutoff);
 
 	// Diffuse map
-	if (material->diffuseMap)
+	if (meshMat->diffuseMap)
 	{
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, material->diffuseMap->id());
+		glBindTexture(GL_TEXTURE_2D, meshMat->diffuseMap->id());
 		glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
 		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 1);
 	}
@@ -50,10 +56,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Specular map
-	if (material->specularMap)
+	if (meshMat->specularMap)
 	{
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, material->specularMap->id());
+		glBindTexture(GL_TEXTURE_2D, meshMat->specularMap->id());
 		glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
 		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 1);
 	}
@@ -63,5 +69,5 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	}
 
 	// Vertex color usage
-	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), material->useVertexColors ? 1 : 0);
+	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), meshMat->useVertexColors ? 1 : 0);
 }

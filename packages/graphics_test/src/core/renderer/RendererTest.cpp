@@ -5,7 +5,7 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/objects/Mesh.h>
 #include <common/PrintHelpers.h>
 #include <thread>
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 
 	// Create simple box mesh and add it to the scene
 	GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
-	MaterialPtr material = Material::create();
+	MeshMaterialPtr material = MeshMaterial::create();
 	MeshPtr mesh = Mesh::create(geometry, material);
 	scene->add(mesh);
 

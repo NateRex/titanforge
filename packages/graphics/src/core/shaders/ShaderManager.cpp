@@ -9,7 +9,7 @@ std::unique_ptr<ShaderManager> ShaderManager::_INSTANCE = nullptr;
 
 ShaderManager::ShaderManager()
 {
-	_shaders.emplace(MaterialType::DEFAULT, DefaultShader::create());
+	_shaders.emplace(MaterialType::MESH, DefaultShader::create());
 	_shaders.emplace(MaterialType::POST_PROCESS, PostProcessShader::create());
 }
 

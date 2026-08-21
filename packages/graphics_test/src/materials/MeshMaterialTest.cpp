@@ -1,14 +1,14 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <common/PrintHelpers.h>
 
 /**
  * Tests the ability to construct and modify the properties of a material
  */
-BOOST_AUTO_TEST_CASE(Material_properties)
+BOOST_AUTO_TEST_CASE(MeshMaterial_properties)
 {
-	MaterialPtr material = Material::create();
+	MeshMaterialPtr material = MeshMaterial::create();
 
 	material->color = Color::RED;
 	BOOST_TEST(material->color == Color::RED);
@@ -27,9 +27,9 @@ BOOST_AUTO_TEST_CASE(Material_properties)
 /**
  * Tests resolution of alpha mode settings
  */
-BOOST_AUTO_TEST_CASE(Material_alphaMode)
+BOOST_AUTO_TEST_CASE(MeshMaterial_alphaMode)
 {
-	MaterialPtr material = Material::create();
+	MeshMaterialPtr material = MeshMaterial::create();
 	BOOST_TEST(material->getEffectiveAlphaMode() == AlphaMode::OPAQUE);
 
 	material->color = Color::RED.withAlpha(0.5f);
