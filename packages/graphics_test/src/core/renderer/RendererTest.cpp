@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 }
 
 /**
- * Tests the convenience path that renders a scene through a post-process material.
+ * Tests the convenience path that renders a scene through a post-process material
  */
 BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 {
@@ -91,6 +91,6 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera, material));
 
-	// The renderer supplies its intermediate texture only for the duration of the draw.
+	// Ensure the renderer supplies its intermediate texture only for the duration of the draw.
 	BOOST_TEST(material->texture == nullptr);
 }
