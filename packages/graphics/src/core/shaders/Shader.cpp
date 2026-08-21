@@ -123,3 +123,26 @@ void Shader::setItem(const RenderItem& item)
 {
 	setMaterial(item.mesh->material);
 }
+
+ProgramBinding::ProgramBinding(const Shader* shader)
+{
+	GLint previousProgram = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
+
+	unsigned int id = shader->id();
+	_previousProgram = static_cast<unsigned int>(previousProgram);
+	_changedProgram = _previousProgram != id;
+
+	if (_changedProgram)
+	{
+		glUseProgram(id);
+	}
+}
+
+ProgramBinding::~ProgramBinding()
+{
+	if (_changedProgram)
+	{
+		glUseProgram(_previousProgram);
+	}
+}

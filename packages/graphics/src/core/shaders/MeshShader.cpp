@@ -30,6 +30,7 @@ void MeshShader::setItem(const RenderItem& item)
 
 void MeshShader::setCamera(const CameraPtr camera)
 {
+	ProgramBinding binding(this);
 	Shader::setCamera(camera);
 
 	int loc = getUniformLocation("uCameraPos");
@@ -47,6 +48,7 @@ void MeshShader::setMaterial(const MaterialPtr material)
 		throw IllegalArgumentException("MeshShader requires a MeshMaterial");
 	}
 
+	ProgramBinding binding(this);
 	Shader::setMaterial(material);
 	const MeshMaterialPtr meshMat = std::static_pointer_cast<MeshMaterial>(material);
 
@@ -108,6 +110,7 @@ void MeshShader::setMaterial(const MaterialPtr material)
 
 void MeshShader::setLighting(const Lighting& lighting)
 {
+	ProgramBinding binding(this);
 	Shader::setLighting(lighting);
 
 	constexpr size_t MAX_LIGHTS = 16;
@@ -211,20 +214,24 @@ void MeshShader::setLighting(const Lighting& lighting)
 
 void MeshShader::setModelMatrix(const Matrix4& matrix)
 {
+	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uTransforms.model"), 1, GL_TRUE, matrix.getValues());
 }
 
 void MeshShader::setViewMatrix(const Matrix4& matrix)
 {
+	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uTransforms.view"), 1, GL_TRUE, matrix.getValues());
 }
 
 void MeshShader::setProjectionMatrix(const Matrix4& matrix)
 {
+	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uTransforms.proj"), 1, GL_TRUE, matrix.getValues());
 }
 
 void MeshShader::setNormalMatrix(const Matrix3& matrix)
 {
+	ProgramBinding binding(this);
 	glUniformMatrix3fv(getUniformLocation("uTransforms.normal"), 1, GL_TRUE, matrix.getValues());
 }

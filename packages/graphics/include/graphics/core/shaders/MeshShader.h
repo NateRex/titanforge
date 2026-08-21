@@ -181,30 +181,26 @@ public:
 	void setLighting(const Lighting& lighting) override;
 
 	/**
-     * Updates uniforms for this shader using the given model matrix. This method assumes that this shader
-     * is currently in-use.
+     * Updates uniforms for this shader using the given model matrix
      * @param matrix Matrix representing the transformation from local to world space
      */
 	void setModelMatrix(const Matrix4& matrix);
 
 	/**
-     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
-     * is currently in-use.
+     * Updates the uniforms for this shader using the given view matrix
      * @param matrix Matrix representing the transformation from world to view space
      */
     void setViewMatrix(const Matrix4& matrix);
 
 	/**
-     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
-     * shader is currently in-use.
+     * Updates the uniforms for this shader using the given projection matrix
      * @param matrix Matrix representing the transformation from view to clipping space
      */
     void setProjectionMatrix(const Matrix4& matrix);
 
 	/**
-     * Updates the uniforms for this shader using the given normal matrix, used to transform surface normals from local
-     * space to world space, without affecting scaling or translation. This method assumes that this shader is currently
-     * in-use.
+     * Updates the uniforms for this shader using the given normal matrix. This matrix is typically used to
+	 * transform surface normals from local space to world space, without affecting scaling or translation.
      * @param matrix Matrix representing the transformation from local to world space for normal vectors
      */
     void setNormalMatrix(const Matrix3& matrix);

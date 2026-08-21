@@ -10,7 +10,7 @@ struct RenderItem;
 struct Lighting;
 
 /**
- * Parent class to all shared programs, managed by the shader manager
+ * Parent class to all shader programs, which are typically managed by the shader manager
  * @author Nathaniel Rex
  */
 class Shader {
@@ -20,6 +20,11 @@ public:
      * Destructor
      */
     ~Shader();
+
+    /**
+     * @return The OpenGL ID of this shader
+     */
+    unsigned int id() const { return _id; }
 
     /**
      * Updates this shader's uniforms given a render state
@@ -35,21 +40,19 @@ public:
     virtual void setItem(const RenderItem& item);
 
     /**
-     * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.
+     * Updates uniforms for this shader using the given camera.
      * @param camera Camera
      */
     virtual void setCamera(const CameraPtr camera) {}
 
     /**
-     * Updates uniforms for this shader using the given material. This method assumes that this shader is
-     * currently in-use.
+     * Updates uniforms for this shader using the given material.
      * @param material Material
      */
     virtual void setMaterial(const MaterialPtr material) {}
 
     /**
-     * Updates the uniforms for this shader using the given lighting information. This method assumes that this shader
-     * is currently in-use.
+     * Updates the uniforms for this shader using the given lighting information.
      * @param lighting Lights affecting the render pass
      */
     virtual void setLighting(const Lighting& lighting) {}
@@ -85,10 +88,44 @@ protected:
     unsigned int compileSource(const char* prgmName, int type, const char* source);
 
     /**
-     * Helper method that obtains the location of a uniform variable in this shader program (assuming it's bound),
-     * asserting that the variable exists in the process.
+     * Helper method that obtains the location of a uniform variable in this shader program, asserting that the
+     * variable exists in the process.
      * @param variableName The name of the variable
      * @return The variable location
      */
     int getUniformLocation(const char* variableName) const;
+};
+
+/**
+ * A temporary shader program binding, used to activate a shader temporarily. On destruction, the previously active
+ * shader program is restored.
+ * @author Nathaniel Rex
+ */
+class ProgramBinding
+{
+public:
+
+    /**
+     * Constructor
+     * @param shader The shader program to temporarily bind
+     */
+    ProgramBinding(const Shader* shader);
+
+    /**
+     * Destructor
+     */
+    ~ProgramBinding();
+
+private:
+
+    /**
+     * Boolean flag that, when true, indicates that the shader program temporarily bound differs from the program
+     * that was previously active.
+     */
+    bool _changedProgram;
+
+    /**
+     * The shader program that was active previous to the creation of this binding
+     */
+    unsigned int _previousProgram;
 };

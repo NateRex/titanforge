@@ -20,6 +20,7 @@ void PostProcessShader::setMaterial(const MaterialPtr material)
 		throw IllegalArgumentException("PostProcessShader requires a PostProcessMaterial");
 	}
 
+	ProgramBinding binding(this);
 	Shader::setMaterial(material);
 	const PostProcessMaterialPtr ppMat = std::static_pointer_cast<PostProcessMaterial>(material);
 
