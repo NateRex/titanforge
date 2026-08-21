@@ -91,7 +91,7 @@ struct SamplerDescriptor
  * Describes the dimensions, format, and sampling behavior of a texture
  * @author Nathaniel Rex
  */
-struct TextureDescriptor
+struct TextureConfig
 {
 	/**
 	 * Texture width in pixels

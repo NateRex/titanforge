@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/textures/pointers/TexturePtr.h>
-#include <graphics/textures/TextureDescriptor.h>
+#include <graphics/textures/TextureConfig.h>
 #include <string>
 
 /**
@@ -33,7 +33,7 @@ public:
 	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */
-	static TexturePtr create(const TextureDescriptor& descriptor, const void* data = nullptr);
+	static TexturePtr create(const TextureConfig& descriptor, const void* data = nullptr);
 
 	/**
 	 * @return The OpenGL object name of this texture
@@ -58,7 +58,7 @@ public:
 	/**
 	 * @return The complete storage and sampler descriptor for this texture
 	 */
-	const TextureDescriptor& descriptor() const { return _descriptor; }
+	const TextureConfig& descriptor() const { return _descriptor; }
 
 	/**
 	 * Reallocates texture storage while preserving its format and sampler configuration. Existing pixel contents are discarded.
@@ -77,7 +77,7 @@ private:
 	/**
 	 * Storage and sampling configuration currently applied to this texture
 	 */
-	TextureDescriptor _descriptor;
+	TextureConfig _descriptor;
 
 	/**
 	 * Constructor
@@ -92,7 +92,7 @@ private:
 	 * @param descriptor Texture storage and sampler configuration.
 	 * @param data Optional tightly packed pixel data. Can be null.
 	 */
-	Texture(const TextureDescriptor& descriptor, const void* data);
+	Texture(const TextureConfig& descriptor, const void* data);
 
 	/**
 	 * Allocates or reallocates the texture's GPU storage.

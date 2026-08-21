@@ -5,7 +5,7 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-RenderTarget::RenderTarget(const RenderTargetDescriptor& descriptor): _descriptor(descriptor)
+RenderTarget::RenderTarget(const RenderTargetConfig& descriptor): _descriptor(descriptor)
 {
     if (_descriptor.width <= 0 || _descriptor.height <= 0)
     {
@@ -78,7 +78,7 @@ void RenderTarget::build()
             throw IllegalArgumentException("A color attachment must use a color format");
         }
 
-        TextureDescriptor texConfig;
+        TextureConfig texConfig;
         texConfig.width = _descriptor.width;
         texConfig.height = _descriptor.height;
         texConfig.format = _descriptor.colorFormats[i];
@@ -118,7 +118,7 @@ void RenderTarget::build()
         {
             _depthStencilRenderBuffer = nullptr;
 
-            TextureDescriptor texConfig;
+            TextureConfig texConfig;
             texConfig.width = _descriptor.width;
             texConfig.height = _descriptor.height;
             texConfig.format = _descriptor.depthStencilFormat;
@@ -134,7 +134,7 @@ void RenderTarget::build()
         {
             _depthStencilTexture = nullptr;
 
-            RenderBufferDescriptor rbConfig;
+            RenderBufferConfig rbConfig;
             rbConfig.width = _descriptor.width;
             rbConfig.height = _descriptor.height;
             rbConfig.format = _descriptor.depthStencilFormat;

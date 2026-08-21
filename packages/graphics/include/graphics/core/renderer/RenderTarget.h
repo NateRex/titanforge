@@ -31,7 +31,7 @@ enum class DepthStencilStorage
  * Describes the dimensions and attachments of a render target
  * @author Nathaniel Rex
  */
-struct RenderTargetDescriptor
+struct RenderTargetConfig
 {
     /**
      * Render target width in pixels
@@ -75,12 +75,12 @@ public:
      * Constructor
      * @param descriptor Render target descriptor
      */
-    RenderTarget(const RenderTargetDescriptor& descriptor);
+    RenderTarget(const RenderTargetConfig& descriptor);
 
     /**
      * @return The descriptor currently used by this render target
      */
-    const RenderTargetDescriptor& descriptor() const { return _descriptor; }
+    const RenderTargetConfig& descriptor() const { return _descriptor; }
 
     /**
      * @return The frame buffer backing this render target
@@ -124,7 +124,7 @@ private:
     /**
      * Current attachment and dimension configuration
      */
-    RenderTargetDescriptor _descriptor;
+    RenderTargetConfig _descriptor;
 
     /**
      * Frame buffer containing the render target attachments

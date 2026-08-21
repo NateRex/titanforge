@@ -3,7 +3,7 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-RenderBuffer::RenderBuffer(const RenderBufferDescriptor& descriptor): _descriptor(descriptor)
+RenderBuffer::RenderBuffer(const RenderBufferConfig& descriptor): _descriptor(descriptor)
 {
     if (_descriptor.width <= 0 || _descriptor.height <= 0 || _descriptor.samples <= 0)
     {
@@ -20,7 +20,7 @@ RenderBuffer::~RenderBuffer()
     _id = 0;
 }
 
-RenderBufferPtr RenderBuffer::create(const RenderBufferDescriptor& descriptor)
+RenderBufferPtr RenderBuffer::create(const RenderBufferConfig& descriptor)
 {
     return std::shared_ptr<RenderBuffer>(new RenderBuffer(descriptor));
 }

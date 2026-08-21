@@ -50,7 +50,7 @@ add_library(Graphics
 	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
-    src/textures/TextureDescriptor.cpp
+    src/textures/TextureConfig.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 

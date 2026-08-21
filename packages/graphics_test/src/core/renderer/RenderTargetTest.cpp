@@ -11,7 +11,7 @@
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_basics)
 {
-    RenderTargetDescriptor descriptor;
+    RenderTargetConfig descriptor;
     RenderTarget renderTarget(descriptor);
 
     BOOST_REQUIRE(renderTarget.frameBuffer() != nullptr);
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_basics)
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_colorAttachments)
 {
-    RenderTargetDescriptor descriptor;
+    RenderTargetConfig descriptor;
     descriptor.width = 8;
     descriptor.height = 4;
     descriptor.colorFormats = { PixelFormat::R8, PixelFormat::RGBA16F, PixelFormat::R32UI };
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_colorAttachments)
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_depthTexture)
 {
-    RenderTargetDescriptor config;
+    RenderTargetConfig config;
     config.width = 5;
     config.height = 3;
     config.colorFormats.clear();
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_depthTexture)
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_resize)
 {
-    RenderTargetDescriptor descriptor;
+    RenderTargetConfig descriptor;
     descriptor.width = 2;
     descriptor.height = 3;
     descriptor.colorFormats = { PixelFormat::RGB8, PixelFormat::RGBA8 };
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_resize)
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_failureCases)
 {
-    RenderTargetDescriptor descriptor;
+    RenderTargetConfig descriptor;
     descriptor.width = 0;
     BOOST_CHECK_THROW(RenderTarget rt(descriptor), IllegalArgumentException);
 

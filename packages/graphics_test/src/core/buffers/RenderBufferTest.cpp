@@ -39,7 +39,7 @@ int boundRenderBuffer()
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_basics)
 {
-    RenderBufferDescriptor descriptor;
+    RenderBufferConfig descriptor;
     BOOST_TEST(descriptor.width == 1);
     BOOST_TEST(descriptor.height == 1);
     BOOST_TEST(descriptor.format == PixelFormat::DEPTH24_STENCIL8);
@@ -63,13 +63,13 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_basics)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_multiSampledStorage)
 {
-    RenderBufferDescriptor previousDescriptor;
+    RenderBufferConfig previousDescriptor;
     previousDescriptor.format = PixelFormat::RGBA8;
 
     RenderBufferPtr previous = RenderBuffer::create(previousDescriptor);
     glBindRenderbuffer(GL_RENDERBUFFER, previous->id());
 
-    RenderBufferDescriptor descriptor;
+    RenderBufferConfig descriptor;
     descriptor.width = 8;
     descriptor.height = 4;
     descriptor.format = PixelFormat::RGBA8;
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_multiSampledStorage)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_resize)
 {
-    RenderBufferDescriptor descriptor;
+    RenderBufferConfig descriptor;
     descriptor.width = 2;
     descriptor.height = 3;
     descriptor.format = PixelFormat::RGBA8;
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_resize)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_failureCases)
 {
-    RenderBufferDescriptor descriptor;
+    RenderBufferConfig descriptor;
     descriptor.width = 0;
     BOOST_CHECK_THROW(RenderBuffer::create(descriptor), IllegalArgumentException);
 

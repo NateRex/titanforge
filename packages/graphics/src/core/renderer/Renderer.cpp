@@ -152,7 +152,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	// Set up / resize offscreen render target
 	if (!_postProcessTarget)
 	{
-		RenderTargetDescriptor descriptor;
+		RenderTargetConfig descriptor;
 		descriptor.width = static_cast<unsigned int>(framebufferWidth);
 		descriptor.height = static_cast<unsigned int>(framebufferHeight);
 		descriptor.colorFormats = { PixelFormat::RGBA16F };

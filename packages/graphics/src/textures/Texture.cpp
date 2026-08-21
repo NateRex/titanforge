@@ -34,7 +34,7 @@ Texture::Texture(const std::string& path, bool flip)
 	stbi_image_free(data);
 }
 
-Texture::Texture(const TextureDescriptor& descriptor, const void* data): _descriptor(descriptor)
+Texture::Texture(const TextureConfig& descriptor, const void* data): _descriptor(descriptor)
 {
 	if (_descriptor.width == 0 || _descriptor.height == 0)
 	{
@@ -57,7 +57,7 @@ TexturePtr Texture::create(const std::string& path, bool flip)
 	return std::shared_ptr<Texture>(new Texture(path, flip));
 }
 
-TexturePtr Texture::create(const TextureDescriptor& descriptor, const void* data)
+TexturePtr Texture::create(const TextureConfig& descriptor, const void* data)
 {
 	return std::shared_ptr<Texture>(new Texture(descriptor, data));
 }

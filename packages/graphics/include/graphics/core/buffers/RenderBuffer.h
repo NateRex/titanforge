@@ -6,7 +6,7 @@
  * Describes the storage allocated to an OpenGL render buffer
  * @author Nathaniel Rex
  */
-struct RenderBufferDescriptor
+struct RenderBufferConfig
 {
     /**
      * Width in pixels
@@ -44,10 +44,10 @@ public:
 
     /**
      * Creates and allocates a new renderbuffer
-     * @param descriptor Storage configuration
+     * @param config Storage configuration
      * @return The newly-created renderbuffer
      */
-    static RenderBufferPtr create(const RenderBufferDescriptor& descriptor);
+    static RenderBufferPtr create(const RenderBufferConfig& config);
 
     /**
      * @return The OpenGL renderbuffer object identifier
@@ -55,9 +55,9 @@ public:
     unsigned int id() const { return _id; }
 
     /**
-     * @return The descriptor currently used by this renderbuffer
+     * @return The config currently used by this renderbuffer
      */
-    const RenderBufferDescriptor& descriptor() const { return _descriptor; }
+    const RenderBufferConfig& descriptor() const { return _descriptor; }
 
     /**
      * Resizes and reallocates the renderbuffer storage
@@ -76,13 +76,13 @@ private:
     /**
      * Current storage configuration
      */
-    RenderBufferDescriptor _descriptor;
+    RenderBufferConfig _descriptor;
 
     /**
      * Constructor
      * @param descriptor Renderbuffer descriptor
      */
-    RenderBuffer(const RenderBufferDescriptor& descriptor);
+    RenderBuffer(const RenderBufferConfig& descriptor);
 
     /**
      * Allocates storage according to the current descriptor

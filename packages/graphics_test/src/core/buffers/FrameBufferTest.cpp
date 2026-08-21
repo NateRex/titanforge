@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_textureAttachment)
 {
     FrameBufferPtr previous = FrameBuffer::create();
     FrameBufferPtr frameBuffer = FrameBuffer::create();
-    TextureDescriptor descriptor;
+    TextureConfig descriptor;
     descriptor.width = 4;
     descriptor.height = 4;
     TexturePtr texture = Texture::create(descriptor);
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_renderBufferAttachment)
 {
     FrameBufferPtr previous = FrameBuffer::create();
     FrameBufferPtr frameBuffer = FrameBuffer::create();
-    RenderBufferDescriptor descriptor;
+    RenderBufferConfig descriptor;
     descriptor.width = 4;
     descriptor.height = 4;
     RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
