@@ -1,14 +1,17 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
+#include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <math/Matrix3.h>
@@ -66,6 +69,11 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 
 Renderer::~Renderer()
 {
+	if (_fullScreenVertexArray != 0)
+	{
+		glDeleteVertexArrays(1, &_fullScreenVertexArray);
+		_fullScreenVertexArray = 0;
+	}
 	destroy();
 }
 
@@ -123,21 +131,130 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 		throw std::runtime_error("Cannot render with a destroyed renderer or window");
 	}
 
-	// Clear
-	glClearColor(_backgroundColor.red(), _backgroundColor.green(), _backgroundColor.blue(), _backgroundColor.alpha());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	RenderPass pass;
+	pass.clearColor = _backgroundColor;
+	renderPass(scene, camera, pass);
+	present();
+}
 
-	// Poll for input updates
-	float time = getTime();
-	float deltaTime = time - _timeOfLastFrame;
+void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
+{
+	configurePass(pass);
+	
+	try
+	{
+		draw(traverseScene(scene, camera));
+	}
+	catch (...)
+	{
+		finishPass();
+		throw;
+	}
+	finishPass();
+}
+
+void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass)
+{
+	if (!material)
+	{
+		throw std::runtime_error("Post-process material cannot be null");
+	}
+
+	configurePass(pass);
+
+	try
+	{
+		if (_fullScreenVertexArray == 0) glGenVertexArrays(1, &_fullScreenVertexArray);
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_CULL_FACE);
+		ShaderPtr shader = ShaderManager::getShader(material->materialType);
+		shader->activate();
+		shader->setMaterial(material);
+		glBindVertexArray(_fullScreenVertexArray);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+	catch (...)
+	{
+		finishPass();
+		throw;
+	}
+
+	finishPass();
+}
+
+void Renderer::configurePass(const RenderPass& pass)
+{
+	// Bind framebuffer
+	if (pass.target)
+	{
+		pass.target->frameBuffer()->bind();
+	}
+	else
+	{
+		FrameBuffer::bindDefault();
+	}
+
+	// Configure viewport
+	unsigned int width = pass.viewport.width;
+	unsigned int height = pass.viewport.height;
+	if (width == 0 || height == 0)
+	{
+		if (pass.target)
+		{
+			width = pass.target->descriptor().width;
+			height = pass.target->descriptor().height;
+		}
+		else
+		{
+			int w, h;
+			glfwGetFramebufferSize(_window->_glfwWindow, &w, &h);
+			width = static_cast<unsigned int>(w);
+			height = static_cast<unsigned int>(h);
+		}
+	}
+	glViewport(pass.viewport.x, pass.viewport.y, width, height);
+
+	// Configure depth test, blending, and face culling
+	pass.depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
+	glDepthMask(pass.depthWrite ? GL_TRUE : GL_FALSE);
+	pass.blending ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
+	pass.faceCulling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
+
+	// Clear color, depth, and stencil buffers
+	GLbitfield clearMask = 0;
+	if (hasFlag(pass.clearFlags, ClearFlags::COLOR))
+	{
+		glClearColor(pass.clearColor.red(), pass.clearColor.green(), pass.clearColor.blue(), pass.clearColor.alpha());
+		clearMask |= GL_COLOR_BUFFER_BIT;
+	}
+	if (hasFlag(pass.clearFlags, ClearFlags::DEPTH))
+	{
+		glClearDepth(pass.clearDepth);
+		clearMask |= GL_DEPTH_BUFFER_BIT;
+	}
+	if (hasFlag(pass.clearFlags, ClearFlags::STENCIL))
+	{
+		glClearStencil(pass.clearStencil);
+		clearMask |= GL_STENCIL_BUFFER_BIT;
+	}
+	if (clearMask != 0)
+	{
+		glClear(clearMask);
+	}
+}
+
+void Renderer::finishPass()
+{
+	FrameBuffer::bindDefault();
+	glDepthMask(GL_TRUE);
+}
+
+void Renderer::present()
+{
+	const float time = getTime();
+	_window->getInputController()->pollForKeyHolds(time - _timeOfLastFrame);
 	_timeOfLastFrame = time;
-	_window->getInputController()->pollForKeyHolds(deltaTime);
-
-	// Traverse scene and draw to buffer
-	RenderState state = traverseScene(scene, camera);
-	draw(state);
-
-	// Swap buffers to display scene
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
 }

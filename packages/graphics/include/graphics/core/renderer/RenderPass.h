@@ -91,7 +91,7 @@ struct RenderPass
     const RenderTarget* target = nullptr;
 
     /**
-     * Pixel region receiving rendered output
+     * Pixel region to receive rendered output. When unspecified, defaults to the dimensions of the target frame buffer.
      */
     Viewport viewport;
 
