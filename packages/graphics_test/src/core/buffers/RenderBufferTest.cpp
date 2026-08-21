@@ -78,8 +78,10 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_multiSampledStorage)
     RenderBufferPtr renderBuffer = RenderBuffer::create(config);
     BOOST_TEST(boundRenderBuffer() == previous->id());
 
+    // The requested sample count is a minimum. OpenGL implementations may allocate the next supported sample count instead,
+    // making the final count platform-dependent
+    BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_SAMPLES) >= config.samples);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_INTERNAL_FORMAT) == GL_RGBA8);
-    BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_SAMPLES) == 2);
 
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
