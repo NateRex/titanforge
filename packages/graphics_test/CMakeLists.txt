@@ -35,6 +35,7 @@ add_executable(GraphicsTest
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
+    src/core/PixelFormatTest.cpp
     src/loaders/EntityLoaderTest.cpp
     src/loaders/ImageLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
