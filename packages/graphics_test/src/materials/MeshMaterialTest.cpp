@@ -4,30 +4,28 @@
 #include <common/PrintHelpers.h>
 
 /**
- * Tests the ability to construct and modify the properties of a material
+ * Tests creation and the documented default values of a mesh material.
  */
-BOOST_AUTO_TEST_CASE(MeshMaterial_properties)
+BOOST_AUTO_TEST_CASE(MeshMaterial_defaults)
 {
 	MeshMaterialPtr material = MeshMaterial::create();
 
-	material->color = Color::RED;
-	BOOST_TEST(material->color == Color::RED);
-
-	TexturePtr img = TextureLoader::load("assets/container.jpg");
-	material->texture = img;
-	BOOST_TEST(material->texture == img);
-
-	material->diffuseMap = img;
-	BOOST_TEST(material->diffuseMap == img);
-
-	material->specularMap = img;
-	BOOST_TEST(material->specularMap == img);
+	BOOST_REQUIRE(material != nullptr);
+	BOOST_TEST(material->materialType == MaterialType::MESH);
+	BOOST_TEST(material->alphaMode == AlphaMode::AUTO);
+	BOOST_TEST(material->alphaCutoff == 0.5f);
+	BOOST_TEST(material->doubleSided == false);
+	BOOST_TEST(material->useVertexColors == false);
+	BOOST_TEST(material->reflectivity == 0.5f);
+	BOOST_TEST(material->shine == 0.6f);
+	BOOST_TEST(material->diffuseMap == nullptr);
+	BOOST_TEST(material->specularMap == nullptr);
 }
 
 /**
  * Tests resolution of alpha mode settings
  */
-BOOST_AUTO_TEST_CASE(MeshMaterial_alphaMode)
+BOOST_AUTO_TEST_CASE(MeshMaterial_alphaModeResolution)
 {
 	MeshMaterialPtr material = MeshMaterial::create();
 	BOOST_TEST(material->getEffectiveAlphaMode() == AlphaMode::OPAQUE);

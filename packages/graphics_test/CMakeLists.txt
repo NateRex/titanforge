@@ -48,6 +48,7 @@ add_executable(GraphicsTest
     src/lights/PointLightTest.cpp
     src/lights/SpotLightTest.cpp
     src/materials/MeshMaterialTest.cpp
+    src/materials/PostProcessMaterialTest.cpp
     src/scene/SceneTest.cpp
     src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
