@@ -20,7 +20,9 @@ void PostProcessShader::setMaterial(const MaterialPtr material)
 		throw IllegalArgumentException("PostProcessShader requires a PostProcessMaterial");
 	}
 
+	Shader::setMaterial(material);
 	const PostProcessMaterialPtr ppMat = std::static_pointer_cast<PostProcessMaterial>(material);
+
 	if (!ppMat->texture)
 	{
 		throw IllegalArgumentException("PostProcessMaterial requires an input texture");

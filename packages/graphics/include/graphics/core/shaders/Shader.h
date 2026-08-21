@@ -25,21 +25,34 @@ public:
      * Updates this shader's uniforms given a render state
      * @param state Render state generated via scene traversal
      */
-    virtual void setState(const RenderState& state) final;
+    virtual void setState(const RenderState& state);
 
     /**
      * Updates this shader's uniforms given a specific item being rendered. This automatically applies the item's
-     * materials as well.
+     * material as well.
      * @param item Item being rendered
      */
-    virtual void setItem(const RenderItem& item) final;
+    virtual void setItem(const RenderItem& item);
+
+    /**
+     * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.
+     * @param camera Camera
+     */
+    virtual void setCamera(const CameraPtr camera) {}
 
     /**
      * Updates uniforms for this shader using the given material. This method assumes that this shader is
      * currently in-use.
      * @param material Material
      */
-    virtual void setMaterial(const MaterialPtr material) = 0;
+    virtual void setMaterial(const MaterialPtr material) {}
+
+    /**
+     * Updates the uniforms for this shader using the given lighting information. This method assumes that this shader
+     * is currently in-use.
+     * @param lighting Lights affecting the render pass
+     */
+    virtual void setLighting(const Lighting& lighting) {}
 
     /**
      * Activates this shader as the current shader program used for rendering
@@ -78,46 +91,4 @@ protected:
      * @return The variable location
      */
     int getUniformLocation(const char* variableName) const;
-
-    /**
-     * Updates uniforms for this shader using the given model matrix. This method assumes that this shader
-     * is currently in-use.
-     * @param matrix Matrix representing the transformation from local to world space
-     */
-    virtual void setModelMatrix(const Matrix4& matrix);
-
-    /**
-     * Updates the uniforms for this shader using the given normal matrix, used to transform surface normals from local
-     * space to world space, without affecting scaling or translation. This method assumes that this shader is currently
-     * in-use.
-     * @param matrix Matrix representing the transformation from local to world space for normal vectors
-     */
-    virtual void setNormalMatrix(const Matrix3& matrix);
-
-    /**
-     * Updates the uniforms for this shader using the given lighting information. This method assumes that this shader
-     * is currently in-use.
-     * @param lighting Lights affecting the render pass
-     */
-    virtual void setLighting(const Lighting& lighting);
-
-    /**
-     * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.
-     * @param camera Camera
-     */
-    virtual void setCamera(const CameraPtr camera);
-
-    /**
-     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
-     * is currently in-use.
-     * @param matrix Matrix representing the transformation from world to view space
-     */
-    virtual void setViewMatrix(const Matrix4& matrix);
-
-    /**
-     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
-     * shader is currently in-use.
-     * @param matrix Matrix representing the transformation from view to clipping space
-     */
-    virtual void setProjectionMatrix(const Matrix4& matrix);
 };

@@ -73,8 +73,6 @@ public:
 	 */
 	static PostProcessShaderPtr create();
 
-protected:
-
 	void setMaterial(const MaterialPtr material) override;
 
 private:
