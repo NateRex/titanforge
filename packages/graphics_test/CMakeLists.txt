@@ -29,6 +29,7 @@ add_executable(GraphicsTest
     src/core/renderer/RenderPassTest.cpp
     src/core/renderer/RenderTargetTest.cpp
     src/core/shaders/MeshShaderTest.cpp
+    src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp
