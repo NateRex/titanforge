@@ -73,14 +73,14 @@ public:
 
     /**
      * Constructor
-     * @param descriptor Render target descriptor
+     * @param config Render target config
      */
-    RenderTarget(const RenderTargetConfig& descriptor);
+    RenderTarget(const RenderTargetConfig& config);
 
     /**
-     * @return The descriptor currently used by this render target
+     * @return The config currently used by this render target
      */
-    const RenderTargetConfig& descriptor() const { return _descriptor; }
+    const RenderTargetConfig& config() const { return _config; }
 
     /**
      * @return The frame buffer backing this render target
@@ -124,7 +124,7 @@ private:
     /**
      * Current attachment and dimension configuration
      */
-    RenderTargetConfig _descriptor;
+    RenderTargetConfig _config;
 
     /**
      * Frame buffer containing the render target attachments
@@ -149,7 +149,7 @@ private:
     RenderBufferPtr _depthStencilRenderBuffer;
 
     /**
-     * Builds the frame buffer and its attachments, as described by the current descriptor
+     * Builds the frame buffer and its attachments, as described by the current config
      */
     void build();
 

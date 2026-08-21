@@ -152,11 +152,11 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	// Set up / resize offscreen render target
 	if (!_postProcessTarget)
 	{
-		RenderTargetConfig descriptor;
-		descriptor.width = static_cast<unsigned int>(framebufferWidth);
-		descriptor.height = static_cast<unsigned int>(framebufferHeight);
-		descriptor.colorFormats = { PixelFormat::RGBA16F };
-		_postProcessTarget = std::make_unique<RenderTarget>(descriptor);
+		RenderTargetConfig config;
+		config.width = static_cast<unsigned int>(framebufferWidth);
+		config.height = static_cast<unsigned int>(framebufferHeight);
+		config.colorFormats = { PixelFormat::RGBA16F };
+		_postProcessTarget = std::make_unique<RenderTarget>(config);
 	}
 	else
 	{
@@ -268,8 +268,8 @@ void Renderer::configurePass(const RenderPass& pass)
 	{
 		if (pass.target)
 		{
-			width = pass.target->descriptor().width;
-			height = pass.target->descriptor().height;
+			width = pass.target->config().width;
+			height = pass.target->config().height;
 		}
 		else
 		{

@@ -57,7 +57,7 @@ public:
     /**
      * @return The config currently used by this renderbuffer
      */
-    const RenderBufferConfig& descriptor() const { return _descriptor; }
+    const RenderBufferConfig& config() const { return _config; }
 
     /**
      * Resizes and reallocates the renderbuffer storage
@@ -76,16 +76,16 @@ private:
     /**
      * Current storage configuration
      */
-    RenderBufferConfig _descriptor;
+    RenderBufferConfig _config;
 
     /**
      * Constructor
-     * @param descriptor Renderbuffer descriptor
+     * @param config Renderbuffer config
      */
-    RenderBuffer(const RenderBufferConfig& descriptor);
+    RenderBuffer(const RenderBufferConfig& config);
 
     /**
-     * Allocates storage according to the current descriptor
+     * Allocates storage according to the current config
      */
     void allocate();
 };

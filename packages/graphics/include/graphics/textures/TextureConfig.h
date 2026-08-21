@@ -59,7 +59,7 @@ enum class TextureWrap
  * Configures filtering, wrapping, and border color for texture sampling
  * @author Nathaniel Rex
  */
-struct SamplerDescriptor
+struct SamplerConfig
 {
 	/**
 	 * Filter used when the texture is minified. Defaults to TextureFilter::LINEAR.
@@ -111,7 +111,7 @@ struct TextureConfig
 	/**
 	 * Texture sampling configuration
 	 */
-	SamplerDescriptor sampler;
+	SamplerConfig sampler;
 
 	/**
 	 * Boolean flag that, when true, triggers generation of a complete mipmap chain. Defaults to false.

@@ -35,23 +35,23 @@ int boundRenderBuffer()
 }
 
 /**
- * Tests the default descriptor values and creation of a render buffer
+ * Tests the default config values and creation of a render buffer
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_basics)
 {
-    RenderBufferConfig descriptor;
-    BOOST_TEST(descriptor.width == 1);
-    BOOST_TEST(descriptor.height == 1);
-    BOOST_TEST(descriptor.format == PixelFormat::DEPTH24_STENCIL8);
-    BOOST_TEST(descriptor.samples == 1);
+    RenderBufferConfig config;
+    BOOST_TEST(config.width == 1);
+    BOOST_TEST(config.height == 1);
+    BOOST_TEST(config.format == PixelFormat::DEPTH24_STENCIL8);
+    BOOST_TEST(config.samples == 1);
 
-    RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
+    RenderBufferPtr renderBuffer = RenderBuffer::create(config);
     BOOST_REQUIRE(renderBuffer != nullptr);
     BOOST_TEST(renderBuffer->id() != 0);
-    BOOST_TEST(renderBuffer->descriptor().width == descriptor.width);
-    BOOST_TEST(renderBuffer->descriptor().height == descriptor.height);
-    BOOST_TEST(renderBuffer->descriptor().format == descriptor.format);
-    BOOST_TEST(renderBuffer->descriptor().samples == descriptor.samples);
+    BOOST_TEST(renderBuffer->config().width == config.width);
+    BOOST_TEST(renderBuffer->config().height == config.height);
+    BOOST_TEST(renderBuffer->config().format == config.format);
+    BOOST_TEST(renderBuffer->config().samples == config.samples);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_WIDTH) == 1);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_HEIGHT) == 1);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_INTERNAL_FORMAT) == GL_DEPTH24_STENCIL8);
@@ -63,19 +63,19 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_basics)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_multiSampledStorage)
 {
-    RenderBufferConfig previousDescriptor;
-    previousDescriptor.format = PixelFormat::RGBA8;
+    RenderBufferConfig previousConfig;
+    previousConfig.format = PixelFormat::RGBA8;
 
-    RenderBufferPtr previous = RenderBuffer::create(previousDescriptor);
+    RenderBufferPtr previous = RenderBuffer::create(previousConfig);
     glBindRenderbuffer(GL_RENDERBUFFER, previous->id());
 
-    RenderBufferConfig descriptor;
-    descriptor.width = 8;
-    descriptor.height = 4;
-    descriptor.format = PixelFormat::RGBA8;
-    descriptor.samples = 2;
+    RenderBufferConfig config;
+    config.width = 8;
+    config.height = 4;
+    config.format = PixelFormat::RGBA8;
+    config.samples = 2;
 
-    RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
+    RenderBufferPtr renderBuffer = RenderBuffer::create(config);
     BOOST_TEST(boundRenderBuffer() == previous->id());
 
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_INTERNAL_FORMAT) == GL_RGBA8);
@@ -89,20 +89,20 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_multiSampledStorage)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_resize)
 {
-    RenderBufferConfig descriptor;
-    descriptor.width = 2;
-    descriptor.height = 3;
-    descriptor.format = PixelFormat::RGBA8;
+    RenderBufferConfig config;
+    config.width = 2;
+    config.height = 3;
+    config.format = PixelFormat::RGBA8;
 
-    RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
-    RenderBufferPtr previous = RenderBuffer::create(descriptor);
+    RenderBufferPtr renderBuffer = RenderBuffer::create(config);
+    RenderBufferPtr previous = RenderBuffer::create(config);
     glBindRenderbuffer(GL_RENDERBUFFER, previous->id());
 
     renderBuffer->resize(7, 5);
     BOOST_TEST(boundRenderBuffer() == previous->id());
 
-    BOOST_TEST(renderBuffer->descriptor().width == 7);
-    BOOST_TEST(renderBuffer->descriptor().height == 5);
+    BOOST_TEST(renderBuffer->config().width == 7);
+    BOOST_TEST(renderBuffer->config().height == 5);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_WIDTH) == 7);
     BOOST_TEST(renderBufferParameter(*renderBuffer, GL_RENDERBUFFER_HEIGHT) == 5);
 
@@ -114,22 +114,22 @@ BOOST_AUTO_TEST_CASE(RenderBuffer_resize)
  */
 BOOST_AUTO_TEST_CASE(RenderBuffer_failureCases)
 {
-    RenderBufferConfig descriptor;
-    descriptor.width = 0;
-    BOOST_CHECK_THROW(RenderBuffer::create(descriptor), IllegalArgumentException);
+    RenderBufferConfig config;
+    config.width = 0;
+    BOOST_CHECK_THROW(RenderBuffer::create(config), IllegalArgumentException);
 
-    descriptor.width = 1;
-    descriptor.height = 0;
-    BOOST_CHECK_THROW(RenderBuffer::create(descriptor), IllegalArgumentException);
+    config.width = 1;
+    config.height = 0;
+    BOOST_CHECK_THROW(RenderBuffer::create(config), IllegalArgumentException);
 
-    descriptor.height = 1;
-    descriptor.samples = 0;
-    BOOST_CHECK_THROW(RenderBuffer::create(descriptor), IllegalArgumentException);
+    config.height = 1;
+    config.samples = 0;
+    BOOST_CHECK_THROW(RenderBuffer::create(config), IllegalArgumentException);
 
-    descriptor.samples = 1;
-    RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
+    config.samples = 1;
+    RenderBufferPtr renderBuffer = RenderBuffer::create(config);
     BOOST_CHECK_THROW(renderBuffer->resize(0, 1), IllegalArgumentException);
     BOOST_CHECK_THROW(renderBuffer->resize(1, 0), IllegalArgumentException);
-    BOOST_TEST(renderBuffer->descriptor().width == 1);
-    BOOST_TEST(renderBuffer->descriptor().height == 1);
+    BOOST_TEST(renderBuffer->config().width == 1);
+    BOOST_TEST(renderBuffer->config().height == 1);
 }

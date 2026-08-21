@@ -16,15 +16,15 @@ Texture::Texture(const std::string& path, bool flip)
 		throw InstantiationException("Failed to load texture image: " + path);
 	}
 
-	_descriptor.width = width;
-	_descriptor.height = height;
-	_descriptor.generateMipmaps = true;
-	_descriptor.sampler.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+	_config.width = width;
+	_config.height = height;
+	_config.generateMipmaps = true;
+	_config.sampler.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
 	switch (channels) {
-		case 1: _descriptor.format = PixelFormat::R8; break;
-		case 2: _descriptor.format = PixelFormat::RG8; break;
-		case 3: _descriptor.format = PixelFormat::RGB8; break;
-		case 4: _descriptor.format = PixelFormat::RGBA8; break;
+		case 1: _config.format = PixelFormat::R8; break;
+		case 2: _config.format = PixelFormat::RG8; break;
+		case 3: _config.format = PixelFormat::RGB8; break;
+		case 4: _config.format = PixelFormat::RGBA8; break;
 		default: stbi_image_free(data); throw InstantiationException("Unsupported texture channel count: " + std::to_string(channels));
 	}
 
@@ -34,9 +34,9 @@ Texture::Texture(const std::string& path, bool flip)
 	stbi_image_free(data);
 }
 
-Texture::Texture(const TextureConfig& descriptor, const void* data): _descriptor(descriptor)
+Texture::Texture(const TextureConfig& config, const void* data): _config(config)
 {
-	if (_descriptor.width == 0 || _descriptor.height == 0)
+	if (_config.width == 0 || _config.height == 0)
 	{
 		throw IllegalArgumentException("Texture dimensions must be greater than zero");
 	}
@@ -57,14 +57,14 @@ TexturePtr Texture::create(const std::string& path, bool flip)
 	return std::shared_ptr<Texture>(new Texture(path, flip));
 }
 
-TexturePtr Texture::create(const TextureConfig& descriptor, const void* data)
+TexturePtr Texture::create(const TextureConfig& config, const void* data)
 {
-	return std::shared_ptr<Texture>(new Texture(descriptor, data));
+	return std::shared_ptr<Texture>(new Texture(config, data));
 }
 
 void Texture::allocate(const void* data)
 {
-	const OpenGLPixelFormat format = toGLFormat(_descriptor.format);
+	const OpenGLPixelFormat format = toGLFormat(_config.format);
 
 	int previousTexture = 0;
 	int previousAlignment = 4;
@@ -76,9 +76,9 @@ void Texture::allocate(const void* data)
 	applySampler();
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, _descriptor.width, _descriptor.height, 0, format.format, format.type, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, _config.width, _config.height, 0, format.format, format.type, data);
 
-	if (_descriptor.generateMipmaps)
+	if (_config.generateMipmaps)
 	{
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
@@ -89,11 +89,11 @@ void Texture::allocate(const void* data)
 
 void Texture::applySampler() const
 {
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(_descriptor.sampler.minFilter));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(_descriptor.sampler.magFilter));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(_descriptor.sampler.sWrap));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrap(_descriptor.sampler.tWrap));
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, _descriptor.sampler.borderColor);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(_config.sampler.minFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(_config.sampler.magFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(_config.sampler.sWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrap(_config.sampler.tWrap));
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, _config.sampler.borderColor);
 }
 
 void Texture::resize(unsigned int width, unsigned int height)
@@ -103,7 +103,7 @@ void Texture::resize(unsigned int width, unsigned int height)
 		throw IllegalArgumentException("Texture dimensions must be greater than zero");
 	}
 
-	_descriptor.width = width;
-	_descriptor.height = height;
+	_config.width = width;
+	_config.height = height;
 	allocate(nullptr);
 }

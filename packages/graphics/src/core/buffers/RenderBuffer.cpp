@@ -3,9 +3,9 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-RenderBuffer::RenderBuffer(const RenderBufferConfig& descriptor): _descriptor(descriptor)
+RenderBuffer::RenderBuffer(const RenderBufferConfig& config): _config(config)
 {
-    if (_descriptor.width <= 0 || _descriptor.height <= 0 || _descriptor.samples <= 0)
+    if (_config.width <= 0 || _config.height <= 0 || _config.samples <= 0)
     {
         throw IllegalArgumentException("Renderbuffer dimensions and sample count must be greater than zero");
     }
@@ -20,9 +20,9 @@ RenderBuffer::~RenderBuffer()
     _id = 0;
 }
 
-RenderBufferPtr RenderBuffer::create(const RenderBufferConfig& descriptor)
+RenderBufferPtr RenderBuffer::create(const RenderBufferConfig& config)
 {
-    return std::shared_ptr<RenderBuffer>(new RenderBuffer(descriptor));
+    return std::shared_ptr<RenderBuffer>(new RenderBuffer(config));
 }
 
 void RenderBuffer::allocate()
@@ -31,13 +31,13 @@ void RenderBuffer::allocate()
     glGetIntegerv(GL_RENDERBUFFER_BINDING, &previous);
     
     glBindRenderbuffer(GL_RENDERBUFFER, _id);
-    int glFormat = toGLFormat(_descriptor.format).internalFormat;
-    if (_descriptor.samples > 1)
+    int glFormat = toGLFormat(_config.format).internalFormat;
+    if (_config.samples > 1)
     {
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, _descriptor.samples, glFormat, _descriptor.width, _descriptor.height);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, _config.samples, glFormat, _config.width, _config.height);
     }
     else {
-        glRenderbufferStorage(GL_RENDERBUFFER, glFormat, _descriptor.width, _descriptor.height);
+        glRenderbufferStorage(GL_RENDERBUFFER, glFormat, _config.width, _config.height);
     }
 
     glBindRenderbuffer(GL_RENDERBUFFER, previous);
@@ -50,7 +50,7 @@ void RenderBuffer::resize(unsigned int width, unsigned int height)
         throw IllegalArgumentException("Renderbuffer dimensions must be greater than zero");
     }
 
-    _descriptor.width = width;
-    _descriptor.height = height;
+    _config.width = width;
+    _config.height = height;
     allocate();
 }

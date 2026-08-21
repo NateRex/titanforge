@@ -28,12 +28,12 @@ public:
 	static TexturePtr create(const std::string& path, bool flip = false);
 
 	/**
-	 * Creates a two-dimensional texture from a storage descriptor.
-	 * @param descriptor Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * Creates a two-dimensional texture from a storage config.
+	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
 	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */
-	static TexturePtr create(const TextureConfig& descriptor, const void* data = nullptr);
+	static TexturePtr create(const TextureConfig& config, const void* data = nullptr);
 
 	/**
 	 * @return The OpenGL object name of this texture
@@ -43,22 +43,22 @@ public:
 	/**
 	 * @return The texture width in texels
 	 */
-	unsigned int width() const { return _descriptor.width; }
+	unsigned int width() const { return _config.width; }
 
 	/**
 	 * @return The texture height in texels
 	 */
-	unsigned int height() const { return _descriptor.height; }
+	unsigned int height() const { return _config.height; }
 
 	/**
 	 * @return The pixel format used by this texture's storage
 	 */
-	PixelFormat format() const { return _descriptor.format; }
+	PixelFormat format() const { return _config.format; }
 
 	/**
-	 * @return The complete storage and sampler descriptor for this texture
+	 * @return The complete storage and sampler config for this texture
 	 */
-	const TextureConfig& descriptor() const { return _descriptor; }
+	const TextureConfig& config() const { return _config; }
 
 	/**
 	 * Reallocates texture storage while preserving its format and sampler configuration. Existing pixel contents are discarded.
@@ -77,7 +77,7 @@ private:
 	/**
 	 * Storage and sampling configuration currently applied to this texture
 	 */
-	TextureConfig _descriptor;
+	TextureConfig _config;
 
 	/**
 	 * Constructor
@@ -88,11 +88,11 @@ private:
 	Texture(const std::string& path, bool flip);
 
 	/**
-	 * Constructs texture storage from a descriptor and optional initial data.
-	 * @param descriptor Texture storage and sampler configuration.
+	 * Constructs texture storage from a config and optional initial data.
+	 * @param config Texture storage and sampler configuration.
 	 * @param data Optional tightly packed pixel data. Can be null.
 	 */
-	Texture(const TextureConfig& descriptor, const void* data);
+	Texture(const TextureConfig& config, const void* data);
 
 	/**
 	 * Allocates or reallocates the texture's GPU storage.

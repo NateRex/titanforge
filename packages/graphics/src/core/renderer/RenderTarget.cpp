@@ -5,13 +5,13 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-RenderTarget::RenderTarget(const RenderTargetConfig& descriptor): _descriptor(descriptor)
+RenderTarget::RenderTarget(const RenderTargetConfig& config): _config(config)
 {
-    if (_descriptor.width <= 0 || _descriptor.height <= 0)
+    if (_config.width <= 0 || _config.height <= 0)
     {
         throw IllegalArgumentException("Render target dimensions must be greater than zero");
     }
-    if (_descriptor.colorFormats.size() > 4)
+    if (_config.colorFormats.size() > 4)
     {
         throw IllegalArgumentException("Render targets support at most four color attachments");
     }
@@ -30,13 +30,13 @@ void RenderTarget::resize(unsigned int width, unsigned int height)
     {
         throw IllegalArgumentException("Render target dimensions must be greater than zero");
     }
-    if (width == _descriptor.width && height == _descriptor.height)
+    if (width == _config.width && height == _config.height)
     {
         return;
     }
 
-    _descriptor.width = width;
-    _descriptor.height = height;
+    _config.width = width;
+    _config.height = height;
 
     for (TexturePtr texture : _colorTextures)
     {
@@ -71,17 +71,17 @@ void RenderTarget::build()
 
     // Set up color attachments
     std::vector<unsigned int> drawBuffers;
-    for (int i = 0; i < _descriptor.colorFormats.size(); i++)
+    for (int i = 0; i < _config.colorFormats.size(); i++)
     {
-        if (isDepthFormat(_descriptor.colorFormats[i]))
+        if (isDepthFormat(_config.colorFormats[i]))
         {
             throw IllegalArgumentException("A color attachment must use a color format");
         }
 
         TextureConfig texConfig;
-        texConfig.width = _descriptor.width;
-        texConfig.height = _descriptor.height;
-        texConfig.format = _descriptor.colorFormats[i];
+        texConfig.width = _config.width;
+        texConfig.height = _config.height;
+        texConfig.format = _config.colorFormats[i];
         texConfig.sampler.sWrap = TextureWrap::CLAMP_TO_EDGE;
         texConfig.sampler.tWrap = TextureWrap::CLAMP_TO_EDGE;
 
@@ -104,24 +104,24 @@ void RenderTarget::build()
     FrameBuffer::bindDefault();
 
     // Set up depth-stencil attachments
-    if (_descriptor.depthStencilStorage != DepthStencilStorage::NONE)
+    if (_config.depthStencilStorage != DepthStencilStorage::NONE)
     {
-        if (!isDepthFormat(_descriptor.depthStencilFormat))
+        if (!isDepthFormat(_config.depthStencilFormat))
         {
             throw IllegalArgumentException("Depth/stencil attachment must use a depth format");
         }
 
-        const FrameBufferAttachment attachment = (_descriptor.depthStencilFormat == PixelFormat::DEPTH24_STENCIL8)
+        const FrameBufferAttachment attachment = (_config.depthStencilFormat == PixelFormat::DEPTH24_STENCIL8)
             ? FrameBufferAttachment::DEPTH_STENCIL : FrameBufferAttachment::DEPTH;
 
-        if (_descriptor.depthStencilStorage == DepthStencilStorage::TEXTURE)
+        if (_config.depthStencilStorage == DepthStencilStorage::TEXTURE)
         {
             _depthStencilRenderBuffer = nullptr;
 
             TextureConfig texConfig;
-            texConfig.width = _descriptor.width;
-            texConfig.height = _descriptor.height;
-            texConfig.format = _descriptor.depthStencilFormat;
+            texConfig.width = _config.width;
+            texConfig.height = _config.height;
+            texConfig.format = _config.depthStencilFormat;
             texConfig.sampler.sWrap = TextureWrap::CLAMP_TO_EDGE;
             texConfig.sampler.tWrap = TextureWrap::CLAMP_TO_EDGE;
             texConfig.sampler.minFilter = TextureFilter::NEAREST;
@@ -135,9 +135,9 @@ void RenderTarget::build()
             _depthStencilTexture = nullptr;
 
             RenderBufferConfig rbConfig;
-            rbConfig.width = _descriptor.width;
-            rbConfig.height = _descriptor.height;
-            rbConfig.format = _descriptor.depthStencilFormat;
+            rbConfig.width = _config.width;
+            rbConfig.height = _config.height;
+            rbConfig.format = _config.depthStencilFormat;
 
             _depthStencilRenderBuffer = RenderBuffer::create(rbConfig);
             _frameBuffer->attach(attachment, _depthStencilRenderBuffer);

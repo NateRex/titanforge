@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_textureAttachment)
 {
     FrameBufferPtr previous = FrameBuffer::create();
     FrameBufferPtr frameBuffer = FrameBuffer::create();
-    TextureConfig descriptor;
-    descriptor.width = 4;
-    descriptor.height = 4;
-    TexturePtr texture = Texture::create(descriptor);
+    TextureConfig config;
+    config.width = 4;
+    config.height = 4;
+    TexturePtr texture = Texture::create(config);
 
     previous->bind();
     frameBuffer->attach(FrameBufferAttachment::COLOR0, texture);
@@ -83,10 +83,10 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_renderBufferAttachment)
 {
     FrameBufferPtr previous = FrameBuffer::create();
     FrameBufferPtr frameBuffer = FrameBuffer::create();
-    RenderBufferConfig descriptor;
-    descriptor.width = 4;
-    descriptor.height = 4;
-    RenderBufferPtr renderBuffer = RenderBuffer::create(descriptor);
+    RenderBufferConfig config;
+    config.width = 4;
+    config.height = 4;
+    RenderBufferPtr renderBuffer = RenderBuffer::create(config);
 
     previous->bind();
     frameBuffer->attach(FrameBufferAttachment::DEPTH_STENCIL, renderBuffer);
