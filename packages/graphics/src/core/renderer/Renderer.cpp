@@ -149,7 +149,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 		throw std::runtime_error("Cannot post-process a window with an empty framebuffer");
 	}
 
-	// Set up / resize offscreen render target
+	// Set up the offscreen render target
 	if (!_postProcessTarget)
 	{
 		RenderTargetConfig config;
@@ -174,7 +174,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	const TexturePtr originalTexture = postProcessMaterial->texture;
 	postProcessMaterial->texture = _postProcessTarget->colorTexture(0);
 
-	// Render post-processing effects
+	// Render post-processing effects to the default framebuffer
 	try
 	{
 		RenderPass postProcessPass;
