@@ -6,6 +6,7 @@
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/objects/Mesh.h>
 #include <common/PrintHelpers.h>
 #include <thread>
@@ -73,4 +74,23 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 	// Render
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
+}
+
+/**
+ * Tests the convenience path that renders a scene through a post-process material.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
+{
+	ScenePtr scene = Scene::create();
+	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+	PostProcessMaterialPtr material = PostProcessMaterial::create();
+	material->exposure = 1.2f;
+	material->saturation = 1.1f;
+	material->contrast = 1.15f;
+
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
+	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera, material));
+
+	// The renderer supplies its intermediate texture only for the duration of the draw.
+	BOOST_TEST(material->texture == nullptr);
 }

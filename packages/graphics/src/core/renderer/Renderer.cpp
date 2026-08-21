@@ -1,6 +1,7 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/core/renderer/RenderTarget.h>
+#include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
@@ -124,16 +125,75 @@ void Renderer::destroy(bool destroyWindow)
 	}
 }
 
-void Renderer::render(const ScenePtr scene, const CameraPtr camera)
+void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostProcessMaterialPtr& postProcessMaterial)
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
 		throw std::runtime_error("Cannot render with a destroyed renderer or window");
 	}
 
-	RenderPass pass;
-	pass.clearColor = _backgroundColor;
-	renderPass(scene, camera, pass);
+	// If there's no post-processing material, we only need a single pass to the default framebuffer
+	if (!postProcessMaterial)
+	{
+		RenderPass pass;
+		pass.clearColor = _backgroundColor;
+		renderPass(scene, camera, pass);
+		present();
+		return;
+	}
+
+	int framebufferWidth, framebufferHeight;
+	glfwGetFramebufferSize(_window->_glfwWindow, &framebufferWidth, &framebufferHeight);
+	if (framebufferWidth <= 0 || framebufferHeight <= 0)
+	{
+		throw std::runtime_error("Cannot post-process a window with an empty framebuffer");
+	}
+
+	// Set up / resize offscreen render target
+	if (!_postProcessTarget)
+	{
+		RenderTargetDescriptor descriptor;
+		descriptor.width = static_cast<unsigned int>(framebufferWidth);
+		descriptor.height = static_cast<unsigned int>(framebufferHeight);
+		descriptor.colorFormats = { PixelFormat::RGBA16F };
+		_postProcessTarget = std::make_unique<RenderTarget>(descriptor);
+	}
+	else
+	{
+		_postProcessTarget->resize(
+			static_cast<unsigned int>(framebufferWidth),
+			static_cast<unsigned int>(framebufferHeight));
+	}
+
+	// Render the scene to the offscreen render target
+	RenderPass scenePass;
+	scenePass.target = _postProcessTarget.get();
+	scenePass.clearColor = _backgroundColor;
+	renderPass(scene, camera, scenePass);
+
+	const TexturePtr originalTexture = postProcessMaterial->texture;
+	postProcessMaterial->texture = _postProcessTarget->colorTexture(0);
+
+	// Render post-processing effects
+	try
+	{
+		RenderPass postProcessPass;
+		postProcessPass.clearFlags = ClearFlags::COLOR;
+		postProcessPass.depthTest = false;
+		postProcessPass.depthWrite = false;
+		postProcessPass.blending = false;
+		postProcessPass.faceCulling = false;
+		renderPass(postProcessMaterial, postProcessPass);
+	}
+	catch (...)
+	{
+		postProcessMaterial->texture = originalTexture;
+		throw;
+	}
+
+	postProcessMaterial->texture = originalTexture;
+
+	// Present the scene
 	present();
 }
 

@@ -108,9 +108,10 @@ int main()
     scene->add(spotLight);
 
     // Create post-processing effects
-    RenderPass pass;
-    PostProcessMaterialPtr postProcessMat = PostProcessMaterial::create();
-    postProcessMat->exposure = 3.f;
+    PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
+    postProcessing->contrast = 1.1f;
+    postProcessing->saturation = 0.8f;
+    postProcessing->exposure = 1.1f;
 
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
@@ -121,7 +122,6 @@ int main()
         // Move spotlight with camera
         spotLight->lookAt(camera->getPosition(), camera->getPosition().plus(camera->getForwardVector()));
 
-        renderer->render(scene, camera);
-        renderer->renderPass(postProcessMat, pass);
+        renderer->render(scene, camera, postProcessing);
     }
 }
