@@ -15,6 +15,7 @@ unsigned int toGLAttachment(FrameBufferAttachment attachment)
 		case FrameBufferAttachment::DEPTH: return GL_DEPTH_ATTACHMENT;
         case FrameBufferAttachment::STENCIL: return GL_STENCIL_ATTACHMENT;
 		case FrameBufferAttachment::DEPTH_STENCIL: return GL_DEPTH_STENCIL_ATTACHMENT;
+        default: return GL_DEPTH_STENCIL_ATTACHMENT;
     }
 }
 

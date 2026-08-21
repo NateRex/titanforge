@@ -39,7 +39,7 @@ public:
      * currently in-use.
      * @param material Material
      */
-    virtual void setMaterial(const MaterialPtr material);
+    virtual void setMaterial(const MaterialPtr material) = 0;
 
     /**
      * Activates this shader as the current shader program used for rendering

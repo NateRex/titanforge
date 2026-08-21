@@ -3,7 +3,7 @@
 #include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <math/Matrix4.h>
@@ -263,17 +263,4 @@ void Shader::setProjectionMatrix(const Matrix4& matrix)
 {
 	int loc = getUniformLocation("uTransforms.proj");
 	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getValues());
-}
-
-void Shader::setMaterial(const MaterialPtr material)
-{
-	int loc = getUniformLocation("uMaterial.color");
-	Color color = material->color;
-	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
-
-	loc = getUniformLocation("uMaterial.reflectivity");
-	glUniform1f(loc, clamp(material->reflectivity, 0.f, 1.f));
-
-	loc = getUniformLocation("uMaterial.shine");
-	glUniform1f(loc, clamp(material->shine, 0.f, 1.f));
 }

@@ -22,8 +22,12 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 		throw IllegalArgumentException("MeshShader requires a MeshMaterial");
 	}
 
-	Shader::setMaterial(material);
 	const MeshMaterialPtr meshMat = std::static_pointer_cast<MeshMaterial>(material);
+
+	// Color
+	int loc = getUniformLocation("uMaterial.color");
+	Color color = material->color;
+	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
 
 	// Texture
 	if (material->texture)
@@ -41,6 +45,10 @@ void DefaultShader::setMaterial(const MaterialPtr material)
 	// Alpha settings
 	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(meshMat->getEffectiveAlphaMode()));
 	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), meshMat->alphaCutoff);
+
+	// Reflectivity and shine
+	glUniform1f(getUniformLocation("uMaterial.reflectivity"), clamp(meshMat->reflectivity, 0.f, 1.f));
+	glUniform1f(getUniformLocation("uMaterial.shine"), clamp(meshMat->shine, 0.f, 1.f));
 
 	// Diffuse map
 	if (meshMat->diffuseMap)
