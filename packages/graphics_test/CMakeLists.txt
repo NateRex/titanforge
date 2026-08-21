@@ -15,6 +15,7 @@ add_executable(GraphicsTest
     src/cameras/PerspectiveCameraTest.cpp
     src/core/buffers/FrameBufferTest.cpp
     src/core/buffers/GeometryBufferTest.cpp
+    src/core/buffers/RenderBufferTest.cpp
     src/core/input/modifiers/InputModifiersTest.cpp
     src/core/input/modifiers/NegateModifierTest.cpp
     src/core/input/modifiers/SwizzleModifierTest.cpp
