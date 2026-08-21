@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <common/PrintHelpers.h>
 
 /**
@@ -10,7 +10,7 @@
 BOOST_AUTO_TEST_CASE(Mesh_basics)
 {
 	GeometryPtr geometry = BoxGeometry::create(1, 1, 1);
-	MaterialPtr material = Material::create();
+	MeshMaterialPtr material = MeshMaterial::create();
 	MeshPtr mesh = Mesh::create(geometry, material);
 
 	BOOST_TEST(mesh->entityType == EntityType::MESH);

@@ -5,10 +5,13 @@
 #include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/Color.h>
+#include <graphics/core/renderer/RenderPass.h>
+#include <graphics/materials/pointers/PostProcessMaterialPtr.h>
 #include <mutex>
 
 class Matrix3;
 class Matrix4;
+class RenderTarget;
 struct RenderState;
 struct RenderItem;
 
@@ -60,11 +63,33 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders a scene
+	 * Renders a scene to the screen, optionally applying a post-process material.
 	 * @param scene Scene
 	 * @param camera Camera
+	 * @param postProcessMaterial Optional material used to apply post-processing effects. When supplied, the scene is first
+	 * rendered to an intermediate texture and the effect is applied before presentation.
 	 */
-	void render(const ScenePtr scene, const CameraPtr camera);
+	void render(
+		const ScenePtr scene,
+		const CameraPtr camera,
+		const PostProcessMaterialPtr& postProcessMaterial = nullptr);
+
+	/**
+	 * Renders a scene once using an explicit pass configuration. Unlike Renderer::render, this method does not swap the
+	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
+	 * @param scene Scene graph to render.
+	 * @param camera Camera used to view the scene.
+	 * @param pass Render target, viewport, clear operations, and fixed-function state for this draw.
+	 */
+	void renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass);
+
+	/**
+	 * Applies a post-process material once using an explicit pass configuration. Unlike Renderer::render, this method does not swap the
+	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
+	 * @param material Post-process shader material to execute.
+	 * @param pass Render target, viewport, clear operations, and fixed-function state for this draw.
+	 */
+	void renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass);
 
 	/**
 	 * Destroys this renderer, releasing all of its resources
@@ -107,6 +132,17 @@ private:
 	float _timeOfLastFrame = 0.f;
 
 	/**
+	 * OpenGL ID of the lazily created vertex array object used for full-screen post-processing draws
+	 */
+	unsigned int _fullScreenVertexArray = 0;
+
+	/**
+	 * Renderer-managed intermediate target used to produce post-processing effects in cases where no render
+	 * target is supplied by the user
+	 */
+	std::unique_ptr<RenderTarget> _postProcessTarget;
+
+	/**
 	 * Increments the global renderer count
 	 */
 	static void incrementRendererCount();
@@ -128,6 +164,22 @@ private:
 	 * @param window Starting window target
 	 */
 	Renderer(WindowPtr window);
+
+	/**
+	 * Configures the target, viewport, clear operations, and fixed-function state for one render pass
+	 * @param pass Render pass settings
+	 */
+	void configurePass(const RenderPass& pass);
+
+	/**
+	 * Completes a render pass and restores the default frame buffer.
+	 */
+	void finishPass();
+
+	/**
+	 * Presents the completed default frame buffer and processes input and window events.
+	 */
+	void present();
 
 	/**
 	 * Traverses the scene graph and builds a render-ready state. This function performs **no drawing**. It strictly

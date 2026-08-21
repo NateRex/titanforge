@@ -1,12 +1,11 @@
 #pragma once
+#include <graphics/core/shaders/pointers/MeshShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
-#include <graphics/core/shaders/pointers/ShaderPtr.h>
-#include <graphics/core/shaders/pointers/DefaultShaderPtr.h>
 
 /**
- * Source code for the vertex shader used to handle base materials
+ * Source code for the vertex shader used to handle mesh materials
  */
-constexpr const char* DEFAULT_VERTEX = R"(
+constexpr const char* MESH_VERTEX = R"(
 	#version 330 core
 
 	struct Transforms {
@@ -42,9 +41,9 @@ constexpr const char* DEFAULT_VERTEX = R"(
 )";
 
 /**
- * Source code for the fragment shader used to handle base materials
+ * Source code for the fragment shader used to handle mesh materials
  */
-constexpr const char* DEFAULT_FRAGMENT = R"(
+constexpr const char* MESH_FRAGMENT = R"(
 	#version 330 core
 	#define MAX_LIGHTS 16
 
@@ -160,27 +159,56 @@ constexpr const char* DEFAULT_FRAGMENT = R"(
 )";
 
 /**
- * Shader used to handle base materials
+ * Shader used to handle meshes and their materials
  * @author Nathaniel Rex
  */
-class DefaultShader : public Shader
+class MeshShader : public Shader
 {
 public:
 
 	/**
-	 * Constructs a new DefaultShader instance. This should typically only be done once, by the shader manager.
-	 * @return The new DefaultShader instance
+	 * Constructs a new MeshShader instance. This should typically only be done once, by the shader manager.
+	 * @return The new MeshShader instance
 	 */
-	static DefaultShaderPtr create();
+	static MeshShaderPtr create();
 
-protected:
+	void setItem(const RenderItem& item) override;
+
+	void setCamera(const CameraPtr camera) override;
 
 	void setMaterial(const MaterialPtr material) override;
+
+	void setLighting(const Lighting& lighting) override;
+
+	/**
+     * Updates uniforms for this shader using the given model matrix
+     * @param matrix Matrix representing the transformation from local to world space
+     */
+	void setModelMatrix(const Matrix4& matrix);
+
+	/**
+     * Updates the uniforms for this shader using the given view matrix
+     * @param matrix Matrix representing the transformation from world to view space
+     */
+    void setViewMatrix(const Matrix4& matrix);
+
+	/**
+     * Updates the uniforms for this shader using the given projection matrix
+     * @param matrix Matrix representing the transformation from view to clipping space
+     */
+    void setProjectionMatrix(const Matrix4& matrix);
+
+	/**
+     * Updates the uniforms for this shader using the given normal matrix. This matrix is typically used to
+	 * transform surface normals from local space to world space, without affecting scaling or translation.
+     * @param matrix Matrix representing the transformation from local to world space for normal vectors
+     */
+    void setNormalMatrix(const Matrix3& matrix);
 
 private:
 
 	/**
 	 * Constructor
 	 */
-	DefaultShader();
+	MeshShader();
 };

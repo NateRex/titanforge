@@ -10,7 +10,9 @@ find_package(assimp CONFIG REQUIRED)
 add_library(Graphics
     src/cameras/Camera.cpp
     src/cameras/PerspectiveCamera.cpp
+    src/core/buffers/FrameBuffer.cpp
     src/core/buffers/GeometryBuffer.cpp
+    src/core/buffers/RenderBuffer.cpp
     src/core/input/modifiers/InputModifiers.cpp
     src/core/input/modifiers/NegateModifier.cpp
     src/core/input/modifiers/SwizzleModifier.cpp
@@ -21,13 +23,16 @@ add_library(Graphics
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
     src/core/renderer/Renderer.cpp
-    src/core/shaders/DefaultShader.cpp
+    src/core/renderer/RenderTarget.cpp
+    src/core/shaders/MeshShader.cpp
+	src/core/shaders/PostProcessShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
     src/core/windows/Window.cpp
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
+    src/core/PixelFormat.cpp
     src/loaders/EntityLoader.cpp
     src/loaders/ImageLoader.cpp
     src/loaders/TextureLoader.cpp
@@ -41,8 +46,11 @@ add_library(Graphics
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
     src/materials/Material.cpp
+    src/materials/MeshMaterial.cpp
+	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
+    src/textures/TextureConfig.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 

@@ -1,7 +1,7 @@
 #include <graphics/loaders/EntityLoader.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
-#include <graphics/materials/Material.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/core/EntityGroup.h>
 #include <graphics/objects/Mesh.h>
 #include <common/Utils.h>
@@ -52,10 +52,9 @@ TexturePtr loadTexture(const aiMaterial* aiMat, aiTextureType type, const std::f
 	return TextureLoader::load(resolvedPath.lexically_normal().generic_string());
 }
 
-MaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::path& modelDirectory)
+MeshMaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::path& modelDirectory)
 {
-	// TODO - At the time of writing this, TitanForge only supports one kind of material
-	MaterialPtr material = Material::create();
+	MeshMaterialPtr material = MeshMaterial::create();
 
 	// Color
 	aiColor4D color;
@@ -167,7 +166,7 @@ GeometryPtr loadGeometry(const aiMesh* aiMesh)
 	return geometry;
 }
 
-EntityGroupPtr loadGroup(const aiNode* node, const aiScene* scene, const std::vector<MaterialPtr>& materials)
+EntityGroupPtr loadGroup(const aiNode* node, const aiScene* scene, const std::vector<MeshMaterialPtr>& materials)
 {
 	EntityGroupPtr group = EntityGroup::create();
 	applyTransform(*group, node->mTransformation);
@@ -178,7 +177,7 @@ EntityGroupPtr loadGroup(const aiNode* node, const aiScene* scene, const std::ve
 		const aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
 
 		GeometryPtr geometry = loadGeometry(aiMesh);
-		MaterialPtr material = materials.at(aiMesh->mMaterialIndex);
+		MeshMaterialPtr material = materials.at(aiMesh->mMaterialIndex);
 		material->useVertexColors = aiMesh->HasVertexColors(0);
 
 		group->add(Mesh::create(geometry, material));
@@ -214,7 +213,7 @@ EntityPtr EntityLoader::load(const std::string& path)
 		throw InstantiationException(msg.str());
 	}
 
-	std::vector<MaterialPtr> materials;
+	std::vector<MeshMaterialPtr> materials;
 	materials.reserve(scene->mNumMaterials);
 	for (unsigned int i = 0; i < scene->mNumMaterials; i++)
 	{

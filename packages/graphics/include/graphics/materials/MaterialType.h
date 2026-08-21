@@ -8,7 +8,12 @@ enum class MaterialType
 {
 
 	/**
-	 * Default basic material
+	 * Material applicable to meshes
 	 */
-	DEFAULT
+	MESH,
+
+	/**
+	 * Full-screen post-processing material
+	 */
+	POST_PROCESS
 };

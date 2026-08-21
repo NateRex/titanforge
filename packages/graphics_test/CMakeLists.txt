@@ -13,7 +13,9 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(GraphicsTest
     src/cameras/CameraTest.cpp
     src/cameras/PerspectiveCameraTest.cpp
+    src/core/buffers/FrameBufferTest.cpp
     src/core/buffers/GeometryBufferTest.cpp
+    src/core/buffers/RenderBufferTest.cpp
     src/core/input/modifiers/InputModifiersTest.cpp
     src/core/input/modifiers/NegateModifierTest.cpp
     src/core/input/modifiers/SwizzleModifierTest.cpp
@@ -24,12 +26,16 @@ add_executable(GraphicsTest
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
     src/core/renderer/RendererTest.cpp
-    src/core/shaders/DefaultShaderTest.cpp
+    src/core/renderer/RenderPassTest.cpp
+    src/core/renderer/RenderTargetTest.cpp
+    src/core/shaders/MeshShaderTest.cpp
+    src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
+    src/core/PixelFormatTest.cpp
     src/loaders/EntityLoaderTest.cpp
     src/loaders/ImageLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
@@ -41,8 +47,10 @@ add_executable(GraphicsTest
     src/lights/DirectionalLightTest.cpp
     src/lights/PointLightTest.cpp
     src/lights/SpotLightTest.cpp
-    src/materials/MaterialTest.cpp
+    src/materials/MeshMaterialTest.cpp
+    src/materials/PostProcessMaterialTest.cpp
     src/scene/SceneTest.cpp
+    src/textures/TextureConfigTest.cpp
     src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp

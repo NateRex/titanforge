@@ -2,6 +2,7 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/SpotLight.h>
+#include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/EntityLoader.h>
@@ -106,6 +107,12 @@ int main()
     scene->add(ambientLighting);
     scene->add(spotLight);
 
+    // Create post-processing effects
+    PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
+    postProcessing->contrast = 1.1f;
+    postProcessing->saturation = 0.8f;
+    postProcessing->exposure = 1.1f;
+
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
     {
@@ -115,6 +122,6 @@ int main()
         // Move spotlight with camera
         spotLight->lookAt(camera->getPosition(), camera->getPosition().plus(camera->getForwardVector()));
 
-        renderer->render(scene, camera);
+        renderer->render(scene, camera, postProcessing);
     }
 }

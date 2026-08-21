@@ -10,7 +10,7 @@ struct RenderItem;
 struct Lighting;
 
 /**
- * Parent class to all shared programs, managed by the shader manager
+ * Parent class to all shader programs, which are typically managed by the shader manager
  * @author Nathaniel Rex
  */
 class Shader {
@@ -22,16 +22,40 @@ public:
     ~Shader();
 
     /**
+     * @return The OpenGL ID of this shader
+     */
+    unsigned int id() const { return _id; }
+
+    /**
      * Updates this shader's uniforms given a render state
      * @param state Render state generated via scene traversal
      */
-    virtual void setState(const RenderState& state) final;
+    virtual void setState(const RenderState& state);
 
     /**
-     * Updates this shader's uniforms given a specific item being rendered
+     * Updates this shader's uniforms given a specific item being rendered. This automatically applies the item's
+     * material as well.
      * @param item Item being rendered
      */
-    virtual void setItem(const RenderItem& item) final;
+    virtual void setItem(const RenderItem& item);
+
+    /**
+     * Updates uniforms for this shader using the given camera.
+     * @param camera Camera
+     */
+    virtual void setCamera(const CameraPtr camera) {}
+
+    /**
+     * Updates uniforms for this shader using the given material.
+     * @param material Material
+     */
+    virtual void setMaterial(const MaterialPtr material) {}
+
+    /**
+     * Updates the uniforms for this shader using the given lighting information.
+     * @param lighting Lights affecting the render pass
+     */
+    virtual void setLighting(const Lighting& lighting) {}
 
     /**
      * Activates this shader as the current shader program used for rendering
@@ -64,59 +88,44 @@ protected:
     unsigned int compileSource(const char* prgmName, int type, const char* source);
 
     /**
-     * Helper method that obtains the location of a uniform variable in this shader program (assuming it's bound),
-     * asserting that the variable exists in the process.
+     * Helper method that obtains the location of a uniform variable in this shader program, asserting that the
+     * variable exists in the process.
      * @param variableName The name of the variable
      * @return The variable location
      */
     int getUniformLocation(const char* variableName) const;
+};
+
+/**
+ * A temporary shader program binding, used to activate a shader temporarily. On destruction, the previously active
+ * shader program is restored.
+ * @author Nathaniel Rex
+ */
+class ProgramBinding
+{
+public:
 
     /**
-     * Updates uniforms for this shader using the given model matrix. This method assumes that this shader
-     * is currently in-use.
-     * @param matrix Matrix representing the transformation from local to world space
+     * Constructor
+     * @param shader The shader program to temporarily bind
      */
-    virtual void setModelMatrix(const Matrix4& matrix);
+    ProgramBinding(const Shader* shader);
 
     /**
-     * Updates the uniforms for this shader using the given normal matrix, used to transform surface normals from local
-     * space to world space, without affecting scaling or translation. This method assumes that this shader is currently
-     * in-use.
-     * @param matrix Matrix representing the transformation from local to world space for normal vectors
+     * Destructor
      */
-    virtual void setNormalMatrix(const Matrix3& matrix);
+    ~ProgramBinding();
+
+private:
 
     /**
-     * Updates the uniforms for this shader using the given lighting information. This method assumes that this shader
-     * is currently in-use.
-     * @param lighting Lights affecting the render pass
+     * Boolean flag that, when true, indicates that the shader program temporarily bound differs from the program
+     * that was previously active.
      */
-    virtual void setLighting(const Lighting& lighting);
+    bool _changedProgram;
 
     /**
-     * Updates uniforms for this shader using the given camera. This method assumes that this shader is currently in-use.
-     * @param camera Camera
+     * The shader program that was active previous to the creation of this binding
      */
-    virtual void setCamera(const CameraPtr camera);
-
-    /**
-     * Updates uniforms for this shader using the given material. This method assumes that this shader is
-     * currently in-use.
-     * @param material Material
-     */
-    virtual void setMaterial(const MaterialPtr material);
-
-    /**
-     * Updates the uniforms for this shader using the given view matrix. This method assumes that this shader
-     * is currently in-use.
-     * @param matrix Matrix representing the transformation from world to view space
-     */
-    virtual void setViewMatrix(const Matrix4& matrix);
-
-    /**
-     * Updates the uniforms for this shader using the given projection matrix. This method assumes that this
-     * shader is currently in-use.
-     * @param matrix Matrix representing the transformation from view to clipping space
-     */
-    virtual void setProjectionMatrix(const Matrix4& matrix);
+    unsigned int _previousProgram;
 };

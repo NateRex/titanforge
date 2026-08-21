@@ -1,70 +1,55 @@
 #include <graphics/loaders/ImageLoader.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/InstantiationException.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
-#include <sstream>
 
 Texture::Texture(const std::string& path, bool flip)
 {
-	// Resolve image path
-	std::string fullPath = resolvePath(path);
-
-	// Load image
 	int width, height, channels;
+
 	stbi_set_flip_vertically_on_load(flip);
-	unsigned char* data = stbi_load(fullPath.c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(resolvePath(path).c_str(), &width, &height, &channels, 0);
 	if (!data)
 	{
-		std::ostringstream oss;
-		oss << "Failed to load texture image: " << path;
-		throw InstantiationException(oss.str());
+		throw InstantiationException("Failed to load texture image: " + path);
 	}
 
-	GLenum format;
-	switch (channels)
-	{
-		case 1: format = GL_RED; break;
-		case 2: format = GL_RG; break;
-		case 3: format = GL_RGB; break;
-		case 4: format = GL_RGBA; break;
-		default:
-			stbi_image_free(data);
-			throw InstantiationException("Unsupported texture channel count: " + std::to_string(channels));
+	_config.width = width;
+	_config.height = height;
+	_config.generateMipmaps = true;
+	_config.sampler.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+	switch (channels) {
+		case 1: _config.format = PixelFormat::R8; break;
+		case 2: _config.format = PixelFormat::RG8; break;
+		case 3: _config.format = PixelFormat::RGB8; break;
+		case 4: _config.format = PixelFormat::RGBA8; break;
+		default: stbi_image_free(data); throw InstantiationException("Unsupported texture channel count: " + std::to_string(channels));
 	}
 
-	// Create texture
 	glGenTextures(1, &_id);
-	glBindTexture(GL_TEXTURE_2D, _id);
 
-	// Set texture wrapping and filtering options
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Load image data. Rows with RGB or single-channel data are not necessarily four-byte aligned.
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// Free the image data
+	allocate(data);
 	stbi_image_free(data);
+}
+
+Texture::Texture(const TextureConfig& config, const void* data): _config(config)
+{
+	if (_config.width == 0 || _config.height == 0)
+	{
+		throw IllegalArgumentException("Texture dimensions must be greater than zero");
+	}
+	
+	glGenTextures(1, &_id);
+	allocate(data);
 }
 
 Texture::~Texture()
 {
-	GLint boundId;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundId);
-	if (boundId == _id)
-	{
-		// Texture is currently bound. Make sure to unbind it first.
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
 	glDeleteTextures(1, &_id);
 	_id = 0;
+
 }
 
 TexturePtr Texture::create(const std::string& path, bool flip)
@@ -72,7 +57,53 @@ TexturePtr Texture::create(const std::string& path, bool flip)
 	return std::shared_ptr<Texture>(new Texture(path, flip));
 }
 
-unsigned int Texture::id() const
+TexturePtr Texture::create(const TextureConfig& config, const void* data)
 {
-	return _id;
+	return std::shared_ptr<Texture>(new Texture(config, data));
+}
+
+void Texture::allocate(const void* data)
+{
+	const OpenGLPixelFormat format = toGLFormat(_config.format);
+
+	int previousTexture = 0;
+	int previousAlignment = 4;
+
+	glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+	glGetIntegerv(GL_UNPACK_ALIGNMENT, &previousAlignment);
+	glBindTexture(GL_TEXTURE_2D, _id);
+
+	applySampler();
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, _config.width, _config.height, 0, format.format, format.type, data);
+
+	if (_config.generateMipmaps)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, previousAlignment);
+	glBindTexture(GL_TEXTURE_2D, previousTexture);
+}
+
+void Texture::applySampler() const
+{
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(_config.sampler.minFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(_config.sampler.magFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(_config.sampler.sWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrap(_config.sampler.tWrap));
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, _config.sampler.borderColor);
+}
+
+void Texture::resize(unsigned int width, unsigned int height)
+{
+	if (width == 0 || height == 0)
+	{
+		throw IllegalArgumentException("Texture dimensions must be greater than zero");
+	}
+
+	_config.width = width;
+	_config.height = height;
+	allocate(nullptr);
 }
