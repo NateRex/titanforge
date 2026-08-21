@@ -1,21 +1,21 @@
-#include <graphics/core/shaders/DefaultShader.h>
+#include <graphics/core/shaders/MeshShader.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-DefaultShader::DefaultShader() : Shader("DefaultShader", DEFAULT_VERTEX, DEFAULT_FRAGMENT)
+MeshShader::MeshShader() : Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT)
 {
 
 }
 
-DefaultShaderPtr DefaultShader::create()
+MeshShaderPtr MeshShader::create()
 {
-	return std::shared_ptr<DefaultShader>(new DefaultShader());
+	return std::shared_ptr<MeshShader>(new MeshShader());
 }
 
-void DefaultShader::setMaterial(const MaterialPtr material)
+void MeshShader::setMaterial(const MaterialPtr material)
 {
 	if (!material || material->materialType != MaterialType::MESH)
 	{

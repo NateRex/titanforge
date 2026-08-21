@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
-#include <graphics/core/shaders/DefaultShader.h>
+#include <graphics/core/shaders/MeshShader.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/materials/MeshMaterial.h>
@@ -18,7 +18,7 @@
 /**
  * Tests the ability to set a fully-populated the render state
  */
-BOOST_AUTO_TEST_CASE(DefaultShader_setState)
+BOOST_AUTO_TEST_CASE(MeshShader_setState)
 {
 	RenderState state;
 	state.lighting.lights.push_back({AmbientLight::create()});
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(DefaultShader_setState)
 /**
  * Tests the ability to set a render state containing no lighting
  */
-BOOST_AUTO_TEST_CASE(DefaultShader_setStateNoLighting)
+BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 {
 	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(DefaultShader_setStateNoLighting)
  * Tests that light intensity is an open-ended multiplier rather than a value
  * limited to the [0, 1] range.
  */
-BOOST_AUTO_TEST_CASE(DefaultShader_setStateHighIntensity)
+BOOST_AUTO_TEST_CASE(MeshShader_setStateHighIntensity)
 {
 	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(DefaultShader_setStateHighIntensity)
 /**
  * Tests the ability to set the render item consisting of a basic colored material
  */
-BOOST_AUTO_TEST_CASE(DefaultShader_setColorMaterial)
+BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
 	MeshMaterialPtr mat = MeshMaterial::create();
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(DefaultShader_setColorMaterial)
 /**
  * Tests the ability to set the render item consisting of a material containing texture
  */
-BOOST_AUTO_TEST_CASE(DefaultShader_setTextureMaterial)
+BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 {
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
 	MeshMaterialPtr mat = MeshMaterial::create();
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(DefaultShader_setTextureMaterial)
 /**
  * Tests the ability to set a render item consisting of a material containing diffuse and specular maps
  */
- BOOST_AUTO_TEST_CASE(DefaultShader_setDiffuseMapMaterial)
+ BOOST_AUTO_TEST_CASE(MeshShader_setDiffuseMapMaterial)
  {
  	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
  	MeshMaterialPtr mat = MeshMaterial::create();

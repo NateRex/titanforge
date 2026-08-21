@@ -1,11 +1,11 @@
 #pragma once
-#include <graphics/core/shaders/pointers/DefaultShaderPtr.h>
+#include <graphics/core/shaders/pointers/MeshShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
 
 /**
- * Source code for the vertex shader used to handle base materials
+ * Source code for the vertex shader used to handle mesh materials
  */
-constexpr const char* DEFAULT_VERTEX = R"(
+constexpr const char* MESH_VERTEX = R"(
 	#version 330 core
 
 	struct Transforms {
@@ -41,9 +41,9 @@ constexpr const char* DEFAULT_VERTEX = R"(
 )";
 
 /**
- * Source code for the fragment shader used to handle base materials
+ * Source code for the fragment shader used to handle mesh materials
  */
-constexpr const char* DEFAULT_FRAGMENT = R"(
+constexpr const char* MESH_FRAGMENT = R"(
 	#version 330 core
 	#define MAX_LIGHTS 16
 
@@ -159,18 +159,18 @@ constexpr const char* DEFAULT_FRAGMENT = R"(
 )";
 
 /**
- * Shader used to handle base materials
+ * Shader used to handle meshes and their materials
  * @author Nathaniel Rex
  */
-class DefaultShader : public Shader
+class MeshShader : public Shader
 {
 public:
 
 	/**
-	 * Constructs a new DefaultShader instance. This should typically only be done once, by the shader manager.
-	 * @return The new DefaultShader instance
+	 * Constructs a new MeshShader instance. This should typically only be done once, by the shader manager.
+	 * @return The new MeshShader instance
 	 */
-	static DefaultShaderPtr create();
+	static MeshShaderPtr create();
 
 protected:
 
@@ -181,5 +181,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	DefaultShader();
+	MeshShader();
 };

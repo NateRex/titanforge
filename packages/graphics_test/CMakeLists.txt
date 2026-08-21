@@ -24,7 +24,7 @@ add_executable(GraphicsTest
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
     src/core/renderer/RendererTest.cpp
-    src/core/shaders/DefaultShaderTest.cpp
+    src/core/shaders/MeshShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp
