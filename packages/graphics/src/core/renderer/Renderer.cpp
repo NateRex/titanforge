@@ -164,13 +164,19 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 	try
 	{
-		if (_fullScreenVertexArray == 0) glGenVertexArrays(1, &_fullScreenVertexArray);
+		if (_fullScreenVertexArray == 0)
+		{
+			glGenVertexArrays(1, &_fullScreenVertexArray);
+		}
+
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glDisable(GL_CULL_FACE);
+
 		ShaderPtr shader = ShaderManager::getShader(material->materialType);
 		shader->activate();
 		shader->setMaterial(material);
+		
 		glBindVertexArray(_fullScreenVertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
