@@ -19,6 +19,11 @@ RenderTarget::RenderTarget(const RenderTargetDescriptor& descriptor): _descripto
     build();
 }
 
+const std::vector<TexturePtr>& RenderTarget::colorTextures() const
+{
+    return _colorTextures;
+}
+
 void RenderTarget::resize(unsigned int width, unsigned int height)
 {
     if (width <= 0 || height <= 0)
