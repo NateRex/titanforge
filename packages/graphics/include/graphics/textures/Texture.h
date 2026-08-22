@@ -26,7 +26,7 @@ struct TextureSampling
 	TextureWrap sWrap = TextureWrap::REPEAT;
 
 	/**
-	 * Wrap mode for veritical texture coordinate. Defaults to TextureWrap::REPEAT.
+	 * Wrap mode for vertical texture coordinate. Defaults to TextureWrap::REPEAT.
 	 */
 	TextureWrap tWrap = TextureWrap::REPEAT;
 
