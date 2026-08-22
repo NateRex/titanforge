@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/loaders/EntityLoader.h>
+#include <graphics/loaders/ModelLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/objects/Mesh.h>
@@ -24,9 +24,9 @@ MeshPtr findMesh(const EntityPtr& entity)
 	return nullptr;
 }
 
-BOOST_AUTO_TEST_CASE(EntityLoader_loadsHierarchy)
+BOOST_AUTO_TEST_CASE(ModelLoader_loadsHierarchy)
 {
-	EntityPtr model = EntityLoader::load("assets/triangle.obj");
+	EntityPtr model = ModelLoader::load("assets/triangle.obj");
 	MeshPtr mesh = findMesh(model);
 
 	BOOST_REQUIRE(model != nullptr);
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(EntityLoader_loadsHierarchy)
 	BOOST_CHECK(attributes.uvs);
 }
 
-BOOST_AUTO_TEST_CASE(EntityLoader_failureCase)
+BOOST_AUTO_TEST_CASE(ModelLoader_failureCase)
 {
-	BOOST_CHECK_THROW(EntityLoader::load("assets/missing.obj"), InstantiationException);
+	BOOST_CHECK_THROW(ModelLoader::load("assets/missing.obj"), InstantiationException);
 }

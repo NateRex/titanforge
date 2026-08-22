@@ -5,7 +5,7 @@
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/core/pointers/EntityPtr.h>
-#include <graphics/loaders/EntityLoader.h>
+#include <graphics/loaders/ModelLoader.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
@@ -96,7 +96,7 @@ int main()
     ScenePtr scene = Scene::create();
 
     // Load guitar backpack model
-    EntityPtr entity = EntityLoader::load("assets/backpack/backpack.obj");
+    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
     entity->setPosition(0.f, 0.f, 0.f);
     scene->add(entity);
 

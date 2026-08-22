@@ -33,8 +33,8 @@ add_library(Graphics
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
     src/core/PixelFormat.cpp
-    src/loaders/EntityLoader.cpp
     src/loaders/ImageLoader.cpp
+    src/loaders/ModelLoader.cpp
     src/loaders/TextureLoader.cpp
     src/objects/Mesh.cpp
     src/geometry/BoxGeometry.cpp
