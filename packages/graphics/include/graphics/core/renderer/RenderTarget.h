@@ -1,7 +1,7 @@
 #pragma once
 #include <graphics/core/buffers/pointers/FrameBufferPtr.h>
 #include <graphics/core/buffers/pointers/RenderBufferPtr.h>
-#include <graphics/core/PixelFormat.h>
+#include <graphics/core/PixelFormats.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <vector>
 

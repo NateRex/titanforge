@@ -1,4 +1,4 @@
-#include <graphics/core/PixelFormat.h>
+#include <graphics/core/PixelFormats.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 

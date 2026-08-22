@@ -35,7 +35,7 @@ add_executable(GraphicsTest
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
-    src/core/PixelFormatTest.cpp
+    src/core/PixelFormatsTest.cpp
     src/loaders/ImageLoaderTest.cpp
     src/loaders/ModelLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
@@ -50,7 +50,7 @@ add_executable(GraphicsTest
     src/materials/MeshMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
     src/scene/SceneTest.cpp
-    src/textures/TextureConfigTest.cpp
+    src/textures/TextureFormatsTest.cpp
     src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp

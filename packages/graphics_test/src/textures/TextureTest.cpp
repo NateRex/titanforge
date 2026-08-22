@@ -51,10 +51,10 @@ BOOST_AUTO_TEST_CASE(Texture_fromConfig)
 	config.width = 8;
 	config.height = 4;
 	config.format = PixelFormat::RGB8;
-	config.sampler.minFilter = TextureFilter::NEAREST;
-	config.sampler.magFilter = TextureFilter::NEAREST;
-	config.sampler.sWrap = TextureWrap::CLAMP_TO_EDGE;
-	config.sampler.tWrap = TextureWrap::MIRRORED_REPEAT;
+	config.sampling.minFilter = TextureFilter::NEAREST;
+	config.sampling.magFilter = TextureFilter::NEAREST;
+	config.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
+	config.sampling.tWrap = TextureWrap::MIRRORED_REPEAT;
 	config.generateMipmaps = true;
 
 	TexturePtr texture = Texture::create(config);
@@ -63,10 +63,10 @@ BOOST_AUTO_TEST_CASE(Texture_fromConfig)
 	BOOST_TEST(texture->width() == config.width);
 	BOOST_TEST(texture->height() == config.height);
 	BOOST_TEST(texture->format() == config.format);
-	BOOST_TEST(texture->config().sampler.minFilter == config.sampler.minFilter);
-	BOOST_TEST(texture->config().sampler.magFilter == config.sampler.magFilter);
-	BOOST_TEST(texture->config().sampler.sWrap == config.sampler.sWrap);
-	BOOST_TEST(texture->config().sampler.tWrap == config.sampler.tWrap);
+	BOOST_TEST(texture->config().sampling.minFilter == config.sampling.minFilter);
+	BOOST_TEST(texture->config().sampling.magFilter == config.sampling.magFilter);
+	BOOST_TEST(texture->config().sampling.sWrap == config.sampling.sWrap);
+	BOOST_TEST(texture->config().sampling.tWrap == config.sampling.tWrap);
 	BOOST_TEST(texture->config().generateMipmaps == config.generateMipmaps);
 	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_WIDTH) == 8);
 	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_HEIGHT) == 4);
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(Texture_resize)
 	config.width = 2;
 	config.height = 3;
 	config.format = PixelFormat::RGBA8;
-	config.sampler.sWrap = TextureWrap::CLAMP_TO_BORDER;
+	config.sampling.sWrap = TextureWrap::CLAMP_TO_BORDER;
 
 	TexturePtr texture = Texture::create(config);
 
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(Texture_resize)
 	BOOST_TEST(texture->width() == 7);
 	BOOST_TEST(texture->height() == 5);
 	BOOST_TEST(texture->format() == config.format);
-	BOOST_TEST(texture->config().sampler.sWrap == config.sampler.sWrap);
+	BOOST_TEST(texture->config().sampling.sWrap == config.sampling.sWrap);
 	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_WIDTH) == 7);
 	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_HEIGHT) == 5);
 

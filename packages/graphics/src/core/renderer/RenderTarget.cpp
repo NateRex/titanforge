@@ -82,8 +82,8 @@ void RenderTarget::build()
         texConfig.width = _config.width;
         texConfig.height = _config.height;
         texConfig.format = _config.colorFormats[i];
-        texConfig.sampler.sWrap = TextureWrap::CLAMP_TO_EDGE;
-        texConfig.sampler.tWrap = TextureWrap::CLAMP_TO_EDGE;
+        texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
+        texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
 
         TexturePtr texture = Texture::create(texConfig);
         _colorTextures.push_back(texture);
@@ -122,10 +122,10 @@ void RenderTarget::build()
             texConfig.width = _config.width;
             texConfig.height = _config.height;
             texConfig.format = _config.depthStencilFormat;
-            texConfig.sampler.sWrap = TextureWrap::CLAMP_TO_EDGE;
-            texConfig.sampler.tWrap = TextureWrap::CLAMP_TO_EDGE;
-            texConfig.sampler.minFilter = TextureFilter::NEAREST;
-            texConfig.sampler.magFilter = TextureFilter::NEAREST;
+            texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
+            texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
+            texConfig.sampling.minFilter = TextureFilter::NEAREST;
+            texConfig.sampling.magFilter = TextureFilter::NEAREST;
 
             _depthStencilTexture = Texture::create(texConfig);
             _frameBuffer->attach(attachment, _depthStencilTexture);

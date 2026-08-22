@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/core/buffers/pointers/RenderBufferPtr.h>
-#include <graphics/core/PixelFormat.h>
+#include <graphics/core/PixelFormats.h>
 
 /**
  * Describes the storage allocated to an OpenGL render buffer

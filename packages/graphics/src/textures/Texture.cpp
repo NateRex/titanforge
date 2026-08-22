@@ -19,7 +19,7 @@ Texture::Texture(const std::string& path, bool flip)
 	_config.width = width;
 	_config.height = height;
 	_config.generateMipmaps = true;
-	_config.sampler.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+	_config.sampling.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
 	switch (channels) {
 		case 1: _config.format = PixelFormat::R8; break;
 		case 2: _config.format = PixelFormat::RG8; break;
@@ -73,7 +73,7 @@ void Texture::allocate(const void* data)
 	glGetIntegerv(GL_UNPACK_ALIGNMENT, &previousAlignment);
 	glBindTexture(GL_TEXTURE_2D, _id);
 
-	applySampler();
+	applySampling();
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, format.internalFormat, _config.width, _config.height, 0, format.format, format.type, data);
@@ -87,13 +87,13 @@ void Texture::allocate(const void* data)
 	glBindTexture(GL_TEXTURE_2D, previousTexture);
 }
 
-void Texture::applySampler() const
+void Texture::applySampling() const
 {
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(_config.sampler.minFilter));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(_config.sampler.magFilter));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(_config.sampler.sWrap));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrap(_config.sampler.tWrap));
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, _config.sampler.borderColor);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, toGLFilter(_config.sampling.minFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, toGLFilter(_config.sampling.magFilter));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, toGLWrap(_config.sampling.sWrap));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, toGLWrap(_config.sampling.tWrap));
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, _config.sampling.borderColor);
 }
 
 void Texture::resize(unsigned int width, unsigned int height)

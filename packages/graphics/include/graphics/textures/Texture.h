@@ -1,10 +1,75 @@
 #pragma once
 #include <graphics/textures/pointers/TexturePtr.h>
-#include <graphics/textures/TextureConfig.h>
+#include <graphics/core/PixelFormats.h>
+#include <graphics/textures/TextureFormats.h>
 #include <string>
 
 /**
- * A texture capable of being loaded and mapped to vertices by the GPU.
+ * Configures filtering, wrapping, and border color for 2D texture sampling
+ * @author Nathaniel Rex
+ */
+struct TextureSampling
+{
+	/**
+	 * Filter used when the texture is minified. Defaults to TextureFilter::LINEAR.
+	 */
+	TextureFilter minFilter = TextureFilter::LINEAR;
+
+	/**
+	 * Filter used when the texture is magnified. Defaults to TextureFilter::LINEAR.
+	 */
+	TextureFilter magFilter = TextureFilter::LINEAR;
+
+	/**
+	 * Wrap mode for horizontal texture coordinate. Defaults to TextureWrap::REPEAT.
+	 */
+	TextureWrap sWrap = TextureWrap::REPEAT;
+
+	/**
+	 * Wrap mode for veritical texture coordinate. Defaults to TextureWrap::REPEAT.
+	 */
+	TextureWrap tWrap = TextureWrap::REPEAT;
+
+	/**
+	 * Border color used during border wrapping. Defaults to black.
+	 */
+	float borderColor[4] = {0.f, 0.f, 0.f, 0.f};
+};
+
+/**
+ * Describes the dimensions, format, and sampling behavior of a 2D texture
+ * @author Nathaniel Rex
+ */
+struct TextureConfig
+{
+	/**
+	 * Texture width in pixels
+	 */
+	unsigned int width = 1;
+
+	/**
+	 * Texture height in pixels
+	 */
+	unsigned int height = 1;
+
+	/**
+	 * Texel storage format
+	 */
+	PixelFormat format = PixelFormat::RGBA8;
+
+	/**
+	 * Texture sampling configuration
+	 */
+	TextureSampling sampling;
+
+	/**
+	 * Boolean flag that, when true, triggers generation of a complete mipmap chain. Defaults to false.
+	 */
+	bool generateMipmaps = false;
+};
+
+/**
+ * A 2D texture capable of being sampled
  * @author Nathaniel Rex
  */
 class Texture
@@ -29,7 +94,7 @@ public:
 
 	/**
 	 * Creates a two-dimensional texture from a storage config.
-	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * @param config Texture dimensions, format, mipmap behavior, and sampling configuration.
 	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */
@@ -56,12 +121,12 @@ public:
 	PixelFormat format() const { return _config.format; }
 
 	/**
-	 * @return The complete storage and sampler config for this texture
+	 * @return The complete storage and sampling config for this texture
 	 */
 	const TextureConfig& config() const { return _config; }
 
 	/**
-	 * Reallocates texture storage while preserving its format and sampler configuration. Existing pixel contents are discarded.
+	 * Reallocates texture storage while preserving its format and sampling configuration. Existing pixel contents are discarded.
 	 * @param width New width in texels. Must be greater than zero.
 	 * @param height New height in texels. Must be greater than zero.
 	 */
@@ -89,7 +154,7 @@ private:
 
 	/**
 	 * Constructs texture storage from a config and optional initial data.
-	 * @param config Texture storage and sampler configuration.
+	 * @param config Texture storage and sampling configuration.
 	 * @param data Optional tightly packed pixel data. Can be null.
 	 */
 	Texture(const TextureConfig& config, const void* data);
@@ -101,7 +166,7 @@ private:
 	void allocate(const void* data);
 
 	/**
-	 * Applies the sampler configuration to the bound texture.
+	 * Applies the sampling configuration to the bound texture.
 	 */
-	void applySampler() const;
+	void applySampling() const;
 };

@@ -32,7 +32,7 @@ add_library(Graphics
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp
-    src/core/PixelFormat.cpp
+    src/core/PixelFormats.cpp
     src/loaders/ImageLoader.cpp
     src/loaders/ModelLoader.cpp
     src/loaders/TextureLoader.cpp
@@ -50,7 +50,7 @@ add_library(Graphics
 	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
-    src/textures/TextureConfig.cpp
+    src/textures/TextureFormats.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
 
