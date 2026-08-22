@@ -2,48 +2,26 @@
 #include <graphics/textures/pointers/CubeTexturePtr.h>
 #include <graphics/core/PixelFormats.h>
 #include <graphics/textures/TextureFormats.h>
+#include <array>
 #include <string>
 
 /**
- * Configures filtering, wrapping, and border color for cube texture sampling
+ * Identifies a face of a cube texture
  * @author Nathaniel Rex
  */
-struct CubeTextureSampling
+enum class CubeTextureFace
 {
-	/**
-	 * Filter used when the texture is minified. Defaults to TextureFilter::LINEAR.
-	 */
-	TextureFilter minFilter = TextureFilter::LINEAR;
-
-	/**
-	 * Filter used when the texture is magnified. Defaults to TextureFilter::LINEAR.
-	 */
-	TextureFilter magFilter = TextureFilter::LINEAR;
-
-	/**
-	 * Wrap mode for horizontal texture coordinate. Defaults to TextureWrap::CLAMP_TO_EDGE.
-	 */
-	TextureWrap sWrap = TextureWrap::CLAMP_TO_EDGE;
-
-	/**
-	 * Wrap mode for vertical texture coordinate. Defaults to TextureWrap::CLAMP_TO_EDGE.
-	 */
-	TextureWrap tWrap = TextureWrap::CLAMP_TO_EDGE;
-
-	/**
-	 * Wrap mode for depth texture coordinate. Defaults to TextureWrap::CLAMP_TO_EDGE.
-	 */
-	TextureWrap rWrap = TextureWrap::CLAMP_TO_EDGE;
-
-	/**
-	 * Border color used during border wrapping. Defaults to black.
-	 */
-	float borderColor[4] = {0.f, 0.f, 0.f, 0.f};
+	POSITIVE_X = 0,
+	NEGATIVE_X = 1,
+	POSITIVE_Y = 2,
+	NEGATIVE_Y = 3,
+	POSITIVE_Z = 4,
+	NEGATIVE_Z = 5
 };
 
 /**
- * Describes the dimensions, format, and sampling behavior of a cube texture.
- * Every face is square and uses the same size and pixel format.
+ * Describes the dimensions, format, and sampling behavior of a cube texture. Every face is assumed to be a square
+ * and uses the same size and pixel format.
  * @author Nathaniel Rex
  */
 struct CubeTextureConfig
@@ -61,7 +39,14 @@ struct CubeTextureConfig
 	/**
 	 * Cube texture sampling configuration
 	 */
-	CubeTextureSampling sampling;
+	TextureSampling sampling = {
+		TextureFilter::LINEAR,
+		TextureFilter::LINEAR,
+		TextureWrap::CLAMP_TO_EDGE,
+		TextureWrap::CLAMP_TO_EDGE,
+		TextureWrap::CLAMP_TO_EDGE,
+		{0.f, 0.f, 0.f, 0.f}
+	};
 
 	/**
 	 * Boolean flag that, when true, triggers generation of a complete mipmap chain. Defaults to false.
@@ -75,5 +60,90 @@ struct CubeTextureConfig
  */
 class CubeTexture
 {
+public:
 
+	/**
+	 * Destructor
+	 */
+	~CubeTexture();
+
+	/**
+	 * Creates a cube texture from six image files.
+	 * @param paths Image paths, in the order right, left, top, bottom, front, and back
+	 * @param flip Boolean flag that, when true, flips each image while loading. Defaults to false.
+	 * @return The new cube texture.
+	 */
+	static CubeTexturePtr create(const std::array<std::string, 6>& paths, bool flip = false);
+
+	/**
+	 * Creates a cube texture from a storage config and optional face data.
+	 * @param config Face size, format, mipmap behavior, and sampling configuration.
+	 * @param data Optional tightly packed pixel data for each face, in the order right, left, top, bottom, front,
+	 * and back. Null entries allocate a face without initial pixel values.
+	 * @return The new cube texture.
+	 */
+	static CubeTexturePtr create(const CubeTextureConfig& config, const std::array<const void*, 6>& data = {});
+
+	/**
+	 * @return The OpenGL object name of this cube texture
+	 */
+	unsigned int id() const { return _id; }
+
+	/**
+	 * @return The width and height of each face in texels
+	 */
+	unsigned int size() const { return _config.size; }
+
+	/**
+	 * @return The pixel format used by every face
+	 */
+	PixelFormat format() const { return _config.format; }
+
+	/**
+	 * @return The complete storage and sampling config for this cube texture
+	 */
+	const CubeTextureConfig& config() const { return _config; }
+
+	/**
+	 * Reallocates all six faces. Existing pixel contents are discarded.
+	 * @param size New width and height of each face. Must be greater than zero.
+	 */
+	void resize(unsigned int size);
+
+private:
+
+	/**
+	 * OpenGL ID of this texture
+	 */
+	unsigned int _id = 0;
+
+	/**
+	 * Storage and sampling configuration currently applied to this texture
+	 */
+	CubeTextureConfig _config;
+
+	/**
+	 * Constructor
+	 * @param paths Image paths, in the order right, left, top, bottom, front, and back
+	 * @param flip Boolean flag that, when true, flips each image while loading. Defaults to false.
+	 */
+	CubeTexture(const std::array<std::string, 6>& paths, bool flip);
+	
+	/**
+	 * Constructor
+	 * @param config Face size, format, mipmap behavior, and sampling configuration.
+	 * @param data Optional tightly packed pixel data for each face, in the order right, left, top, bottom, front,
+	 * and back. Null entries allocate a face without initial pixel values.
+	 */
+	CubeTexture(const CubeTextureConfig& config, const std::array<const void*, 6>& data);
+
+	/**
+	 * Allocates or reallocates storage for all six faces.
+	 */
+	void allocate(const std::array<const void*, 6>& data);
+
+	/**
+	 * Applies the sampling configuration to the bound cube texture.
+	 */
+	void applySampling() const;
 };

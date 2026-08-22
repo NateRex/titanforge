@@ -55,6 +55,46 @@ enum class TextureWrap
 };
 
 /**
+ * Configures filtering, wrapping, and border color for texture sampling.
+ * Textures will only use the coordinate axes that apply to them.
+ * @author Nathaniel Rex
+ */
+struct TextureSampling
+{
+	/**
+	 * Filter used when the texture is minified. Defaults to TextureFilter::LINEAR.
+	 */
+	TextureFilter minFilter = TextureFilter::LINEAR;
+
+	/**
+	 * Filter used when the texture is magnified. Defaults to TextureFilter::LINEAR.
+	 */
+	TextureFilter magFilter = TextureFilter::LINEAR;
+
+	/**
+	 * Wrap mode for the first texture coordinate. Defaults to TextureWrap::REPEAT.
+	 */
+	TextureWrap sWrap = TextureWrap::REPEAT;
+
+	/**
+	 * Wrap mode for the second texture coordinate. Defaults to TextureWrap::REPEAT.
+	 */
+	TextureWrap tWrap = TextureWrap::REPEAT;
+
+	/**
+	 * Wrap mode for the third texture coordinate. Ignored by 1D and 2D textures.
+	 * Defaults to TextureWrap::REPEAT.
+	 */
+	TextureWrap rWrap = TextureWrap::REPEAT;
+
+	/**
+	 * Border color used during border wrapping. Defaults to black.
+	 */
+	float borderColor[4] = {0.f, 0.f, 0.f, 0.f};
+};
+
+
+/**
  * Converts an engine texture filter to its OpenGL representation
  * @param filter Texture filter to convert
  * @return The corresponding OpenGL filter information

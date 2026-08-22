@@ -5,38 +5,6 @@
 #include <string>
 
 /**
- * Configures filtering, wrapping, and border color for 2D texture sampling
- * @author Nathaniel Rex
- */
-struct TextureSampling
-{
-	/**
-	 * Filter used when the texture is minified. Defaults to TextureFilter::LINEAR.
-	 */
-	TextureFilter minFilter = TextureFilter::LINEAR;
-
-	/**
-	 * Filter used when the texture is magnified. Defaults to TextureFilter::LINEAR.
-	 */
-	TextureFilter magFilter = TextureFilter::LINEAR;
-
-	/**
-	 * Wrap mode for horizontal texture coordinate. Defaults to TextureWrap::REPEAT.
-	 */
-	TextureWrap sWrap = TextureWrap::REPEAT;
-
-	/**
-	 * Wrap mode for vertical texture coordinate. Defaults to TextureWrap::REPEAT.
-	 */
-	TextureWrap tWrap = TextureWrap::REPEAT;
-
-	/**
-	 * Border color used during border wrapping. Defaults to black.
-	 */
-	float borderColor[4] = {0.f, 0.f, 0.f, 0.f};
-};
-
-/**
  * Describes the dimensions, format, and sampling behavior of a 2D texture
  * @author Nathaniel Rex
  */
@@ -60,7 +28,14 @@ struct TextureConfig
 	/**
 	 * Texture sampling configuration
 	 */
-	TextureSampling sampling;
+	TextureSampling sampling = {
+		TextureFilter::LINEAR,
+		TextureFilter::LINEAR,
+		TextureWrap::REPEAT,
+		TextureWrap::REPEAT,
+		TextureWrap::REPEAT,
+		{ 0.f, 0.f, 0.f, 0.f}
+	};
 
 	/**
 	 * Boolean flag that, when true, triggers generation of a complete mipmap chain. Defaults to false.
