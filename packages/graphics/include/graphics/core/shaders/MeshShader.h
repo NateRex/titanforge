@@ -29,13 +29,20 @@ constexpr const char* MESH_VERTEX = R"(
 
 	void main()
 	{
+		// Mark vertex as a position and translate from local coordinates to world space
 		vec4 worldPos = uTransforms.model * vec4(vert_Pos, 1.0);
-
 		frag_Pos = worldPos.xyz;
+
+		// Transform surface directions into world space
 		frag_Normal = uTransforms.normal * vert_Normal;
+
+		// Passthrough the vertex's RGBA color
 		frag_VertexColor = vert_VertexColor;
+
+		// Passthrough texture coordinates
 		frag_TexCoord = vert_TexCoord;
 
+		// Transform from world position to camera's coordinate system, and then project into clip space
 		gl_Position = uTransforms.proj * uTransforms.view * worldPos;
 	}
 )";
@@ -91,16 +98,18 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 	void main()
 	{
+		// Choose surface's starting RGBA color
 		vec4 albedo = uMaterial.hasVertexColor == 1
 			? frag_VertexColor
 			: uMaterial.color;
 
+		// Sample color from the texture if one is available
 		if (uMaterial.hasTexture != 0)
 		{
 			albedo *= texture(uMaterial.texture, frag_TexCoord);
 		}
 
-		// AlphaMode::MASK. Other modes are handled by fixed-function render state.
+		// Apply alpha cutoff in MASK mode, discarding the fragment if it doesn't meet the cutoff
 		if (uMaterial.alphaMode == 2 && albedo.a < uMaterial.alphaCutoff)
 		{
 			discard;
@@ -110,35 +119,46 @@ constexpr const char* MESH_FRAGMENT = R"(
 		vec3 viewDir = normalize(uCameraPos - frag_Pos);
 		vec3 diffuse = vec3(0.0);
 		vec3 specular = vec3(0.0);
-		vec3 diffuseReflectance = vec3(1.0);
-		if (uMaterial.hasDiffuseMap != 0)
-		{
-			diffuseReflectance = texture(uMaterial.diffuseMap, frag_TexCoord).rgb;
-		}
-
-		float shininess = mix(2.0, 256.0, uMaterial.shine);
+		vec3 diffuseReflectance = uMaterial.hasDiffuseMap != 0
+			? texture(uMaterial.diffuseMap, frag_TexCoord).rgb
+			: vec3(1.0);
 		vec3 specularReflectance = uMaterial.hasSpecularMap != 0
 			? texture(uMaterial.specularMap, frag_TexCoord).rgb
 			: vec3(1.0);
 
+		// Convert shine setting from [0, 1] into an exponent from [2, 256]
+		float shininess = mix(2.0, 256.0, uMaterial.shine);
+
 		for (int i = 0; i < uLightCount; ++i)
 		{
 			Light light = uLights[i];
+
+			// For a point/spot light, w=1 so this is light position minus pixel position
+			// For a directional light, w=0 so we end up with just the direction of the light
 			vec3 lightDir = normalize(light.vector.xyz - frag_Pos * light.vector.w);
-			float nDotL = max(dot(normal, lightDir), 0.0);
 			float distance = length(light.vector.xyz - frag_Pos);
+
+			// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
 			float attenuation = 1.0 / (
 				light.attenuation.x
 				+ light.attenuation.y * distance
 				+ light.attenuation.z * distance * distance);
+
+			// In the case of a cone light, intensity will be 0 outside the outer cone, 1 inside the inner cone
+			// and soft blend between the two
 			float coneIntensity = smoothstep(
 				light.cone.x,
 				light.cone.y,
 				dot(-lightDir, light.direction));
+				
+			// Light hitting fragment = color, scaled by brightness, then distance fading, and finally spotlight-cone fading
 			vec3 radiance = light.color
 				* light.intensity
 				* attenuation
 				* coneIntensity;
+
+			// Add matte lighting, reduced by the surface/light angle
+			float nDotL = max(dot(normal, lightDir), 0.0);
 			diffuse += radiance * nDotL;
 
 			// Blinn-Phong highlight. Shine maps [0, 1] to a useful exponent range.
@@ -152,7 +172,6 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* specularFactor;
 		}
 
-		// Albedo colors ambient and diffuse light, but not the specular highlight.
 		vec3 litColor = albedo.rgb * diffuseReflectance * (uAmbient + diffuse) + specular;
 		FragColor = vec4(litColor, albedo.a);
 	}
