@@ -1,5 +1,5 @@
-#include <graphics/loaders/ImageLoader.h>
 #include <graphics/textures/Texture.h>
+#include <graphics/loaders/ImageLoader.h>
 #include <common/exceptions/InstantiationException.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
@@ -20,7 +20,8 @@ Texture::Texture(const std::string& path, bool flip)
 	_config.height = height;
 	_config.generateMipmaps = true;
 	_config.sampling.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
-	switch (channels) {
+	switch (channels)
+	{
 		case 1: _config.format = PixelFormat::R8; break;
 		case 2: _config.format = PixelFormat::RG8; break;
 		case 3: _config.format = PixelFormat::RGB8; break;
@@ -36,7 +37,7 @@ Texture::Texture(const std::string& path, bool flip)
 
 Texture::Texture(const TextureConfig& config, const void* data): _config(config)
 {
-	if (_config.width == 0 || _config.height == 0)
+	if (_config.width <= 0 || _config.height <= 0)
 	{
 		throw IllegalArgumentException("Texture dimensions must be greater than zero");
 	}
@@ -98,7 +99,7 @@ void Texture::applySampling() const
 
 void Texture::resize(unsigned int width, unsigned int height)
 {
-	if (width == 0 || height == 0)
+	if (width <= 0 || height <= 0)
 	{
 		throw IllegalArgumentException("Texture dimensions must be greater than zero");
 	}

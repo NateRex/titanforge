@@ -49,6 +49,7 @@ add_library(Graphics
     src/materials/MeshMaterial.cpp
 	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
+    src/textures/CubeTexture.cpp
     src/textures/Texture.cpp
     src/textures/TextureFormats.cpp
 )

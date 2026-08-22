@@ -6,20 +6,6 @@
 #include <string>
 
 /**
- * Identifies a face of a cube texture
- * @author Nathaniel Rex
- */
-enum class CubeTextureFace
-{
-	POSITIVE_X = 0,
-	NEGATIVE_X = 1,
-	POSITIVE_Y = 2,
-	NEGATIVE_Y = 3,
-	POSITIVE_Z = 4,
-	NEGATIVE_Z = 5
-};
-
-/**
  * Describes the dimensions, format, and sampling behavior of a cube texture. Every face is assumed to be a square
  * and uses the same size and pixel format.
  * @author Nathaniel Rex
@@ -82,7 +68,7 @@ public:
 	 * and back. Null entries allocate a face without initial pixel values.
 	 * @return The new cube texture.
 	 */
-	static CubeTexturePtr create(const CubeTextureConfig& config, const std::array<const void*, 6>& data = {});
+	static CubeTexturePtr create(const CubeTextureConfig& config, const std::array<void*, 6>& data = {});
 
 	/**
 	 * @return The OpenGL object name of this cube texture
@@ -135,12 +121,12 @@ private:
 	 * @param data Optional tightly packed pixel data for each face, in the order right, left, top, bottom, front,
 	 * and back. Null entries allocate a face without initial pixel values.
 	 */
-	CubeTexture(const CubeTextureConfig& config, const std::array<const void*, 6>& data);
+	CubeTexture(const CubeTextureConfig& config, const std::array<void*, 6>& data);
 
 	/**
 	 * Allocates or reallocates storage for all six faces.
 	 */
-	void allocate(const std::array<const void*, 6>& data);
+	void allocate(const std::array<void*, 6>& data);
 
 	/**
 	 * Applies the sampling configuration to the bound cube texture.
