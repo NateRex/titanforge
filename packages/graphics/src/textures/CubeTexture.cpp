@@ -8,31 +8,49 @@
 CubeTexture::CubeTexture(const std::array<std::string, 6>& paths, bool flip)
 {
     int width, height, channels;
-    int loadedImages = 0;
-    std::array<void*, 6> imageData;
+    std::array<void*, 6> imageData{};
 
     // Create helper lambda for releasing images once finished with it
     auto releaseImages = [&imageData]() {
-        for (int i = 0; i < imageData.size(); i++)
+        for (void* data : imageData)
         {
-            stbi_image_free(imageData[i]);
+            stbi_image_free(data);
         }
     };
 
-    // Load images
     stbi_set_flip_vertically_on_load(flip);
     for (int i = 0; i < paths.size(); i++)
     {
-        std::string path = paths[i];
-        unsigned char* data = stbi_load(resolvePath(path).c_str(), &width, &height, &channels, 0);
+        // Load image
+        const std::string& path = paths[i];
+        int faceWidth, faceHeight, faceChannels;
+        unsigned char* data = stbi_load(resolvePath(path).c_str(), &faceWidth, &faceHeight, &faceChannels, 0);
         if (!data)
         {
             releaseImages();
             throw InstantiationException("Failed to load texture image: " + path);
         }
 
+        // Assert width and height are equal
         imageData[i] = data;
-        loadedImages++;
+        if (faceWidth != faceHeight)
+        {
+            releaseImages();
+            throw InstantiationException("Cube texture faces must be square: " + path);
+        }
+
+        // Assert size and channels match previous imagery
+        if (i == 0)
+        {
+            width = faceWidth;
+            height = faceHeight;
+            channels = faceChannels;
+        }
+        else if (faceWidth != width || faceHeight != height || faceChannels != channels)
+        {
+            releaseImages();
+            throw InstantiationException("Cube texture faces must have matching dimensions and channel counts: " + path);
+        }
     }
 
     _config.size = width;
@@ -52,7 +70,7 @@ CubeTexture::CubeTexture(const std::array<std::string, 6>& paths, bool flip)
     releaseImages();
 }
 
-CubeTexture::CubeTexture(const CubeTextureConfig& config, const std::array<void*, 6>& data)
+CubeTexture::CubeTexture(const CubeTextureConfig& config, const std::array<void*, 6>& data): _config(config)
 {
     if (_config.size <= 0)
     {
@@ -69,7 +87,7 @@ CubeTexture::~CubeTexture()
     _id = 0;
 }
 
-CubeTexturePtr CubeTexture::create(const std::array<std::string, 6>& paths, bool flip = false)
+CubeTexturePtr CubeTexture::create(const std::array<std::string, 6>& paths, bool flip)
 {
     return std::shared_ptr<CubeTexture>(new CubeTexture(paths, flip));
 }
@@ -88,26 +106,23 @@ void CubeTexture::allocate(const std::array<void*, 6>& data)
 
     glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &previousTexture);
 	glGetIntegerv(GL_UNPACK_ALIGNMENT, &previousAlignment);
-	glBindTexture(GL_TEXTURE_2D, _id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _id);
 
     applySampling();
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     for (unsigned int i = 0; i < data.size(); i++)
     {
-        if (data[i])
-        {
-            glTexImage2D(
-                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                0,
-                format.internalFormat,
-                _config.size,
-                _config.size,
-                0,
-                format.format,
-                format.type,
-                data[i]);
-        }
+        glTexImage2D(
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+            0,
+            format.internalFormat,
+            _config.size,
+            _config.size,
+            0,
+            format.format,
+            format.type,
+            data[i]);
     }
 
     if (_config.generateMipmaps)
