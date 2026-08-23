@@ -49,8 +49,9 @@ add_library(Graphics
     src/materials/MeshMaterial.cpp
 	src/materials/PostProcessMaterial.cpp
     src/scene/Scene.cpp
-    src/textures/CubeTexture.cpp
     src/textures/Texture.cpp
+    src/textures/Texture2D.cpp
+    src/textures/TextureCube.cpp
     src/textures/TextureFormats.cpp
 )
 add_library(Graphics::Graphics ALIAS Graphics)
