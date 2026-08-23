@@ -5,7 +5,7 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-Texture2D::Texture2D(const std::string& path, bool flip)
+Texture2D::Texture2D(const std::string& path, bool flip): Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 {
 	// Load image
 	int width, height, channels;
@@ -31,19 +31,26 @@ Texture2D::Texture2D(const std::string& path, bool flip)
 	stbi_image_free(data);
 }
 
-Texture2D::Texture2D(const Texture2DConfig& config, const void* data): _config(config)
+Texture2D::Texture2D(const Texture2DConfig& config, const void* data): Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D), _config(config)
 {
 	if (_config.width <= 0 || _config.height <= 0) throw IllegalArgumentException("Texture dimensions must be greater than zero");
 	allocate(data);
 }
 
-Texture2DPtr Texture2D::create(const std::string& path, bool flip) { return Texture2DPtr(new Texture2D(path, flip)); }
-Texture2DPtr Texture2D::create(const Texture2DConfig& config, const void* data) { return Texture2DPtr(new Texture2D(config, data)); }
+Texture2DPtr Texture2D::create(const std::string& path, bool flip)
+{
+	return Texture2DPtr(new Texture2D(path, flip));
+}
+
+Texture2DPtr Texture2D::create(const Texture2DConfig& config, const void* data)
+{
+	return Texture2DPtr(new Texture2D(config, data));
+}
 
 void Texture2D::allocate(const void* data)
 {
-	Texture::allocate(false, [this, &data]() {
-		OpenGLPixelFormat glFormat = toGLFormat(_config.format);
+	const OpenGLPixelFormat glFormat = toGLFormat(_config.format);
+	Texture::allocate(false, [this, &glFormat, &data]() {
 		glTexImage2D(GL_TEXTURE_2D, 0, glFormat.internalFormat, _config.width, _config.height, 0, glFormat.format, glFormat.type, data);
 	});
 }

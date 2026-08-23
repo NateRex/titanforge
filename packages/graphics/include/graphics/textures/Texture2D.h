@@ -31,8 +31,7 @@ public:
 	/**
 	 * Creates a two-dimensional texture from an image. In order to ensure image textures are cached for future use, it is typically
 	 * encouraged that callers use the TextureLoader for constructing two-dimensional textures, rather than creating them directly.
-	 * @param path Relative path to the image file that will be used to generate the texture.
-	 * This path is relative to the directory containing the currently running executable.
+	 * @param path Path to the image file. This path should be relative to the current executable.
 	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped when loading.
 	 * Defaults to false
 	 * @return The new texture
@@ -82,7 +81,7 @@ private:
 	/**
 	 * Allocates or reallocates the GPU storage for this texture using the current configuration. The previously-bound texture
 	 * will be reactivated upon completion.
-	 * @param data Data to upload
+	 * @param data Optional data to upload. Can be null.
 	 */
 	void allocate(const void* data);
 };
