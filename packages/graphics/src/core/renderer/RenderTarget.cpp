@@ -1,7 +1,7 @@
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
@@ -78,14 +78,14 @@ void RenderTarget::build()
             throw IllegalArgumentException("A color attachment must use a color format");
         }
 
-        TextureConfig texConfig;
+        Texture2DConfig texConfig;
         texConfig.width = _config.width;
         texConfig.height = _config.height;
         texConfig.format = _config.colorFormats[i];
         texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
         texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
 
-        TexturePtr texture = Texture::create(texConfig);
+        TexturePtr texture = Texture2D::create(texConfig);
         _colorTextures.push_back(texture);
         _frameBuffer->attach(static_cast<FrameBufferAttachment>(static_cast<int>(FrameBufferAttachment::COLOR0) + i), texture);
         drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
@@ -118,7 +118,7 @@ void RenderTarget::build()
         {
             _depthStencilRenderBuffer = nullptr;
 
-            TextureConfig texConfig;
+            Texture2DConfig texConfig;
             texConfig.width = _config.width;
             texConfig.height = _config.height;
             texConfig.format = _config.depthStencilFormat;
@@ -127,7 +127,7 @@ void RenderTarget::build()
             texConfig.sampling.minFilter = TextureFilter::NEAREST;
             texConfig.sampling.magFilter = TextureFilter::NEAREST;
 
-            _depthStencilTexture = Texture::create(texConfig);
+            _depthStencilTexture = Texture2D::create(texConfig);
             _frameBuffer->attach(attachment, _depthStencilTexture);
         }
         else

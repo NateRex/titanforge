@@ -2,7 +2,7 @@
 #include <common/exceptions/IllegalStateException.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 #include <glad/glad.h>
 
 /**
@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_textureAttachment)
 {
     FrameBufferPtr previous = FrameBuffer::create();
     FrameBufferPtr frameBuffer = FrameBuffer::create();
-    TextureConfig config;
+    Texture2DConfig config;
     config.width = 4;
     config.height = 4;
-    TexturePtr texture = Texture::create(config);
+    TexturePtr texture = Texture2D::create(config);
 
     previous->bind();
     frameBuffer->attach(FrameBufferAttachment::COLOR0, texture);

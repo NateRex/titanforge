@@ -50,8 +50,8 @@ add_executable(GraphicsTest
     src/materials/MeshMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
     src/scene/SceneTest.cpp
+    src/textures/Texture2DTest.cpp
     src/textures/TextureFormatsTest.cpp
-    src/textures/TextureTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )

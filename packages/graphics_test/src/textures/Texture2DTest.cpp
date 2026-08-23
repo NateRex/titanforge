@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 #include <common/PrintHelpers.h>
 #include <common/exceptions/InstantiationException.h>
 #include <common/exceptions/IllegalArgumentException.h>
@@ -27,9 +27,9 @@ int textureParameter(const Texture& texture, unsigned int parameter)
 /**
  * Tests creation of a texture from an image file
  */
-BOOST_AUTO_TEST_CASE(Texture_fromImage)
+BOOST_AUTO_TEST_CASE(Texture2D_fromImage)
 {
-	TexturePtr texture = Texture::create("assets/container.jpg");
+	TexturePtr texture = Texture2D::create("assets/container.jpg");
 	BOOST_TEST(texture != nullptr);
 	BOOST_TEST(texture->id() > 0);
 }
@@ -37,17 +37,17 @@ BOOST_AUTO_TEST_CASE(Texture_fromImage)
 /**
  * Tests that creation of a texture from an image that does not exist results in exception
  */
-BOOST_AUTO_TEST_CASE(Texture_nonExistentImage)
+BOOST_AUTO_TEST_CASE(Texture2D_nonExistentImage)
 {
-	BOOST_REQUIRE_THROW(Texture::create("does-not-exist"), InstantiationException);
+	BOOST_REQUIRE_THROW(Texture2D::create("does-not-exist"), InstantiationException);
 }
 
 /**
  * Tests creation of a texture from a custom storage and sampler config
  */
-BOOST_AUTO_TEST_CASE(Texture_fromConfig)
+BOOST_AUTO_TEST_CASE(Texture2D_fromConfig)
 {
-	TextureConfig config;
+	Texture2DConfig config;
 	config.width = 8;
 	config.height = 4;
 	config.format = PixelFormat::RGB8;
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(Texture_fromConfig)
 	config.sampling.tWrap = TextureWrap::MIRRORED_REPEAT;
 	config.generateMipmaps = true;
 
-	TexturePtr texture = Texture::create(config);
+	TexturePtr texture = Texture2D::create(config);
 	BOOST_REQUIRE(texture != nullptr);
 	BOOST_TEST(texture->id() != 0);
 	BOOST_TEST(texture->width() == config.width);
@@ -76,15 +76,15 @@ BOOST_AUTO_TEST_CASE(Texture_fromConfig)
 /**
  * Tests resizing texture storage
  */
-BOOST_AUTO_TEST_CASE(Texture_resize)
+BOOST_AUTO_TEST_CASE(Texture2D_resize)
 {
-	TextureConfig config;
+	Texture2DConfig config;
 	config.width = 2;
 	config.height = 3;
 	config.format = PixelFormat::RGBA8;
 	config.sampling.sWrap = TextureWrap::CLAMP_TO_BORDER;
 
-	TexturePtr texture = Texture::create(config);
+	TexturePtr texture = Texture2D::create(config);
 
 	texture->resize(7, 5);
 	BOOST_TEST(texture->width() == 7);
@@ -100,18 +100,18 @@ BOOST_AUTO_TEST_CASE(Texture_resize)
 /**
  * Tests validation of texture dimensions during creation and resize
  */
-BOOST_AUTO_TEST_CASE(Texture_invalidDimensions)
+BOOST_AUTO_TEST_CASE(Texture2D_invalidDimensions)
 {
-	TextureConfig config;
+	Texture2DConfig config;
 	config.width = 0;
-	BOOST_CHECK_THROW(Texture::create(config), IllegalArgumentException);
+	BOOST_CHECK_THROW(Texture2D::create(config), IllegalArgumentException);
 
 	config.width = 1;
 	config.height = 0;
-	BOOST_CHECK_THROW(Texture::create(config), IllegalArgumentException);
+	BOOST_CHECK_THROW(Texture2D::create(config), IllegalArgumentException);
 
 	config.height = 1;
-	TexturePtr texture = Texture::create(config);
+	TexturePtr texture = Texture2D::create(config);
 	BOOST_CHECK_THROW(texture->resize(0, 1), IllegalArgumentException);
 	BOOST_CHECK_THROW(texture->resize(1, 0), IllegalArgumentException);
 	BOOST_TEST(texture->width() == 1);

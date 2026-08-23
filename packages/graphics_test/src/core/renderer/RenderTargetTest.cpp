@@ -4,7 +4,7 @@
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/core/renderer/RenderTarget.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 
 /**
  * Tests using the default config to construct a render target
