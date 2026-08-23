@@ -93,7 +93,6 @@ struct TextureSampling
 	float borderColor[4] = {0.f, 0.f, 0.f, 0.f};
 };
 
-
 /**
  * Converts an engine texture filter to its OpenGL representation
  * @param filter Texture filter to convert

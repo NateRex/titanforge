@@ -1,25 +1,15 @@
 #pragma once
 #include <graphics/textures/pointers/TexturePtr.h>
-#include <graphics/core/PixelFormats.h>
 #include <graphics/textures/TextureFormats.h>
-#include <string>
+#include <graphics/core/PixelFormats.h>
+#include <functional>
 
 /**
- * Describes the dimensions, format, and sampling behavior of a 2D texture
+ * Common storage and sampling configuration shared by all texture types
  * @author Nathaniel Rex
  */
 struct TextureConfig
 {
-	/**
-	 * Texture width in pixels
-	 */
-	unsigned int width = 1;
-
-	/**
-	 * Texture height in pixels
-	 */
-	unsigned int height = 1;
-
 	/**
 	 * Texel storage format
 	 */
@@ -28,14 +18,7 @@ struct TextureConfig
 	/**
 	 * Texture sampling configuration
 	 */
-	TextureSampling sampling = {
-		TextureFilter::LINEAR,
-		TextureFilter::LINEAR,
-		TextureWrap::REPEAT,
-		TextureWrap::REPEAT,
-		TextureWrap::REPEAT,
-		{ 0.f, 0.f, 0.f, 0.f}
-	};
+	TextureSampling sampling{};
 
 	/**
 	 * Boolean flag that, when true, triggers generation of a complete mipmap chain. Defaults to false.
@@ -44,7 +27,7 @@ struct TextureConfig
 };
 
 /**
- * A 2D texture capable of being sampled
+ * Abstract base for all textures
  * @author Nathaniel Rex
  */
 class Texture
@@ -54,26 +37,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	~Texture();
-
-	/**
-	 * Creates a two-dimensional texture from an image. In order to ensure image textures are cached for future use, it is typically
-	 * encouraged that callers use the TextureLoader rather than creating them directly.
-	 * @param path Relative path to the image file that will be used to generate the texture.
-	 * This path is relative to the directory containing the currently running executable.
-	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped when loading.
-	 * Defaults to false
-	 * @return The new texture
-	 */
-	static TexturePtr create(const std::string& path, bool flip = false);
-
-	/**
-	 * Creates a two-dimensional texture from a storage config.
-	 * @param config Texture dimensions, format, mipmap behavior, and sampling configuration.
-	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
-	 * @return The new texture.
-	 */
-	static TexturePtr create(const TextureConfig& config, const void* data = nullptr);
+	virtual ~Texture();
 
 	/**
 	 * @return The OpenGL object name of this texture
@@ -81,33 +45,33 @@ public:
 	unsigned int id() const { return _id; }
 
 	/**
-	 * @return The texture width in texels
-	 */
-	unsigned int width() const { return _config.width; }
-
-	/**
-	 * @return The texture height in texels
-	 */
-	unsigned int height() const { return _config.height; }
-
-	/**
 	 * @return The pixel format used by this texture's storage
 	 */
-	PixelFormat format() const { return _config.format; }
+	PixelFormat format() const { return config().format; }
 
 	/**
 	 * @return The complete storage and sampling config for this texture
 	 */
-	const TextureConfig& config() const { return _config; }
+	virtual const TextureConfig& config() const = 0;
+
+	/**
+	 * @return The texture width in texels
+	 */
+	virtual unsigned int width() const = 0;
+
+	/**
+	 * @return The texture height in texels
+	 */
+	virtual unsigned int height() const = 0;
 
 	/**
 	 * Reallocates texture storage while preserving its format and sampling configuration. Existing pixel contents are discarded.
 	 * @param width New width in texels. Must be greater than zero.
 	 * @param height New height in texels. Must be greater than zero.
 	 */
-	void resize(unsigned int width, unsigned int height);
+	virtual void resize(unsigned int width, unsigned int height) = 0;
 
-private:
+protected:
 
 	/**
 	 * OpenGL object name of this texture
@@ -115,33 +79,28 @@ private:
 	unsigned int _id = 0;
 
 	/**
+	 * OpenGL texture type
+	 */
+	unsigned int _type = 0;
+
+	/**
+	 * OpenGL texture binding query
+	 */
+	unsigned int _binding = 0;
+
+	/**
 	 * Storage and sampling configuration currently applied to this texture
+	 * @param type OpenGL texture type
+	 * @param binding OpenGL texture binding query
 	 */
-	TextureConfig _config;
+	Texture(unsigned int type, unsigned int binding);
 
 	/**
-	 * Constructor
-	 * @param path Relative path to the image file that will be used to generate the texture.
-	 * This path is relative to the directory containing the currently running executable.
-	 * @param flip Boolean flag that, when true, will cause the imagery to be flipped when loading
+	 * Allocates or reallocates the GPU storage for this texture using the current configuration. The previously-bound texture
+	 * will be reactivated upon completion.
+	 * @param includeRWrap Boolean flag that, when true, applies the wrap mode for the third texture coordinate. This should
+	 * only be applied for three-dimensional textures.
+	 * @param upload Callback function to upload texture data, assuming the texture is bound
 	 */
-	Texture(const std::string& path, bool flip);
-
-	/**
-	 * Constructs texture storage from a config and optional initial data.
-	 * @param config Texture storage and sampling configuration.
-	 * @param data Optional tightly packed pixel data. Can be null.
-	 */
-	Texture(const TextureConfig& config, const void* data);
-
-	/**
-	 * Allocates or reallocates the texture's GPU storage.
-	 * @param data Optional tightly packed initial pixel data. Can be null.
-	 */
-	void allocate(const void* data);
-
-	/**
-	 * Applies the sampling configuration to the bound texture.
-	 */
-	void applySampling() const;
+	void allocate(bool includeRWrap, const std::function<void()>& upload);
 };
