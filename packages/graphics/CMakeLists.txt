@@ -48,6 +48,7 @@ add_library(Graphics
     src/materials/Material.cpp
     src/materials/MeshMaterial.cpp
 	src/materials/PostProcessMaterial.cpp
+    src/materials/SkyboxMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
     src/textures/Texture2D.cpp

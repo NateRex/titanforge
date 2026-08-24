@@ -13,6 +13,11 @@ enum class MaterialType
 	MESH,
 
 	/**
+	 * Skybox material
+	 */
+	SKYBOX,
+
+	/**
 	 * Full-screen post-processing material
 	 */
 	POST_PROCESS
