@@ -2,6 +2,29 @@
 #include <graphics/objects/pointers/SkyboxPtr.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/materials/pointers/SkyboxMaterialPtr.h>
+#include <cstddef>
+
+/**
+ * Holds data for an embedded skybox image
+ * @author Nathaniel Rex
+ */
+struct EmbeddedImage
+{
+	/**
+	 * Image data
+	 */
+    const unsigned char* data;
+
+	/**
+	 * Image size in bytes
+	 */
+    std::size_t size;
+
+	/**
+	 * Image name
+	 */
+    const char* name;
+};
 
 /**
  * A skybox is a special type of mesh consisting of a box geometry and a cube texture. When added to a scene, it will be rendered
@@ -11,6 +34,12 @@
 class Skybox : public Mesh
 {
 public:
+
+	/**
+	 * Constructs a cube texture consisting of the default skybox imagery
+	 * @return The cube texture consisting of the default skybox imagery
+	 */
+	static TextureCubePtr createDefaultTexture();
 
     /**
 	 * Constructs a new skybox instance using the default TitanForge imagery
