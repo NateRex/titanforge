@@ -130,7 +130,7 @@ private:
 	 * Time (in decimal seconds) at which the last frame was rendered (relative to the start of rendering)
 	 */
 	float _timeOfLastFrame = 0.f;
-
+	
 	/**
 	 * OpenGL ID of the lazily created vertex array object used for full-screen post-processing draws
 	 */

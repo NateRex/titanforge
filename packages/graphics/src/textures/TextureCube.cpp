@@ -82,7 +82,7 @@ TextureCubePtr TextureCube::create(const TextureCubeConfig& config, const std::a
 void TextureCube::allocate(const std::array<void*, 6>& data)
 {
 	const OpenGLPixelFormat glFormat = toGLFormat(_config.format);
-	Texture::allocate(false, [this, &glFormat, &data]() {
+	Texture::allocate(true, [this, &glFormat, &data]() {
 		for (int i = 0; i < data.size(); i++)
 		{
 			glTexImage2D(

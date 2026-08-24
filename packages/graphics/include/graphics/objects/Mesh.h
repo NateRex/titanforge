@@ -2,6 +2,7 @@
 #include <graphics/objects/pointers/MeshPtr.h>
 #include <graphics/core/Entity.h>
 #include <graphics/geometry/pointers/GeometryPtr.h>
+#include <graphics/materials/pointers/MaterialPtr.h>
 #include <graphics/materials/pointers/MeshMaterialPtr.h>
 
 /**
@@ -20,7 +21,7 @@ public:
 	/**
 	 * Material
 	 */
-	MeshMaterialPtr material;
+	MaterialPtr material;
 
 	/**
 	 * Constructs a new mesh instance
@@ -30,12 +31,12 @@ public:
 	 */
 	static MeshPtr create(GeometryPtr geometry, MeshMaterialPtr material);
 
-private:
+protected:
 
 	/**
 	 * Constructor
 	 * @param geometry Geometry whose points are expected to form a series of triangles.
-	 * @param material Mesh material
+	 * @param material Material
 	 */
-	Mesh(GeometryPtr geometry, MeshMaterialPtr);
+	Mesh(GeometryPtr geometry, MaterialPtr material);
 };

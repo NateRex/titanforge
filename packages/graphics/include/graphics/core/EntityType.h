@@ -19,12 +19,17 @@ enum class EntityType
 	CAMERA,
 
 	/**
-	 * A mesh entity containing triangulated buffered data to be processed by the GPU
-	 */
-	MESH,
-
-	/**
 	 * A light, which takes up no physical space, but affects the shading of other entities
 	 */
-	LIGHT
+	LIGHT,
+	
+	/**
+	 * A skybox rendered as the background texture for a scene
+	 */
+	SKYBOX,
+
+	/**
+	 * A mesh entity containing triangulated buffered data to be processed by the GPU
+	 */
+	MESH
 };

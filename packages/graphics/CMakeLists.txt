@@ -26,6 +26,7 @@ add_library(Graphics
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/MeshShader.cpp
 	src/core/shaders/PostProcessShader.cpp
+    src/core/shaders/SkyboxShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
     src/core/windows/Window.cpp
@@ -37,6 +38,7 @@ add_library(Graphics
     src/loaders/ModelLoader.cpp
     src/loaders/TextureLoader.cpp
     src/objects/Mesh.cpp
+    src/objects/Skybox.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp

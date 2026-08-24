@@ -73,14 +73,14 @@ struct Lighting {
 struct RenderState {
 
 	/**
-	 * Camera
-	 */
-	CameraPtr camera = nullptr;
-
-	/**
 	 * Lighting for the render pass
 	 */
 	Lighting lighting;
+
+	/**
+	 * Camera
+	 */
+	CameraPtr camera = nullptr;
 
 	/**
 	 * The items to be drawn this frame
