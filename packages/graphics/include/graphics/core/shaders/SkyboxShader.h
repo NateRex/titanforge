@@ -17,11 +17,12 @@ constexpr const char* SKYBOX_VERTEX = R"(
 
     void main()
     {
-        // Skybox is passed to us as a box geometry with coordinates spanning [-1, 1].
-        // Convert to clip space while ignoring translation, so that skybox is always visible
+        // Skybox is passed to us as a box geometry with coordinates spanning [-1, 1]. Convert to clip space,
+        // and then assign the z component equal to the w component, so that we will always end up with a
+        // depth buffer value of 1.
         frag_TexCoord = vert_Pos;
         vec4 position = uProjection * mat4(mat3(uView)) * vec4(vert_Pos, 1.0);
-        gl_Position = position;
+        gl_Position = position.xyww;
     }
 )";
 
