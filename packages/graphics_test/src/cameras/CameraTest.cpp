@@ -3,6 +3,7 @@
 #include <common/exceptions/UnsupportedOperationException.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
+#include <cmath>
 
 /**
  * Example implementation of a Camera, used only for testing base class methods
