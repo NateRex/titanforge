@@ -106,17 +106,6 @@ void MeshShader::setMaterial(const MaterialPtr material)
 
 	// Vertex color usage
 	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), meshMat->useVertexColors ? 1 : 0);
-
-	// Double-sided
-	if (meshMat->doubleSided)
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
 }
 
 void MeshShader::setLighting(const Lighting& lighting)

@@ -33,13 +33,18 @@ void SkyboxShader::setMaterial(const MaterialPtr material)
     ProgramBinding binding(this);
     Shader::setMaterial(material);
 
+    // Cube map texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture->id());
     glUniform1i(getUniformLocation("uTexture"), 0);
 
+    // Color, intensity, rotation, and LOD uniforms
     const Color color = skyboxMat->color;
     glUniform4f(getUniformLocation("uColor"), color.red(), color.green(), color.blue(), color.alpha());
     glUniform1f(getUniformLocation("uIntensity"), std::max(skyboxMat->intensity, 0.f));
     glUniform1f(getUniformLocation("uRotation"), skyboxMat->rotation);
     glUniform1f(getUniformLocation("uLod"), std::max(skyboxMat->lod, 0.f));
+
+    // Disable face culling
+    glDisable(GL_CULL_FACE);
 }

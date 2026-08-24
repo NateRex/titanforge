@@ -46,12 +46,6 @@ public:
 	float alphaCutoff = 0.5f;
 
 	/**
-	 * Boolean flag that determines whether both sides of each facet should be renderered. When false,
-	 * back-face culling will occur. Defaults to false.
-	 */
-	bool doubleSided = false;
-
-	/**
 	 * Flag that, when true, forces the use of colors specified on geometry vertices (when available). Defaults
 	 * to false.
 	 */

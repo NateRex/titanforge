@@ -20,7 +20,8 @@ constexpr const char* SKYBOX_VERTEX = R"(
         // Skybox is passed to us as a box geometry with coordinates spanning [-1, 1].
         // Convert to clip space while ignoring translation, so that skybox is always visible
         frag_TexCoord = vert_Pos;
-        gl_Position = uProjection * mat4(mat3(uView)) * vec4(vert_Pos, 1.0);
+        vec4 position = uProjection * mat4(mat3(uView)) * vec4(vert_Pos, 1.0);
+        gl_Position = position;
     }
 )";
 
