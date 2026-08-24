@@ -28,6 +28,12 @@ void SkyboxShader::setMaterial(const MaterialPtr material)
         throw IllegalArgumentException("SkyboxShader requires a SkyboxMaterial");
 
     const SkyboxMaterialPtr skyboxMat = std::static_pointer_cast<SkyboxMaterial>(material);
+
+    if (!skyboxMat->texture)
+	{
+		throw IllegalArgumentException("SkyboxMaterial requires an input cube texture");
+	}
+
     const TextureCubePtr skyboxTexture = cast<TextureCube>(skyboxMat->texture);
 
     ProgramBinding binding(this);

@@ -30,7 +30,6 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setMaterial)
 BOOST_AUTO_TEST_CASE(PostProcessShader_setNullMaterial)
 {
 	ShaderPtr shader = PostProcessShader::create();
-
 	BOOST_REQUIRE_THROW(shader->setMaterial(nullptr), IllegalArgumentException);
 }
 
@@ -41,7 +40,6 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setWrongMaterialType)
 {
 	ShaderPtr shader = PostProcessShader::create();
 	MeshMaterialPtr material = MeshMaterial::create();
-
 	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
 }
 
