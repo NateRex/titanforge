@@ -41,6 +41,7 @@ add_executable(GraphicsTest
     src/loaders/ModelLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
     src/objects/MeshTest.cpp
+    src/objects/SkyboxTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp
