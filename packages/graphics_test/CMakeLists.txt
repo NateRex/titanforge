@@ -82,10 +82,15 @@ set_target_properties(GraphicsTest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
 )
 add_custom_target(GraphicsTestAssets
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/../graphics/assets"
+        "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/assets"
         "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
-    COMMENT "Copying GraphicsTest assets"
+    COMMENT "Copying Graphics and GraphicsTest assets"
     VERBATIM
 )
 add_dependencies(GraphicsTest GraphicsTestAssets)
