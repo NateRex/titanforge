@@ -34,7 +34,7 @@ public:
 	void setMaxPitch(float max);
 
 	/**
-	 * Applies a yaw rotation to this camera's orientation around the global y-axis
+	 * Applies a yaw rotation to this camera's orientation around the global up axis
 	 * @param degrees The yaw angle (in degrees) to rotate the camera by
 	 */
 	void addYaw(float degrees);
