@@ -383,7 +383,7 @@ void Renderer::draw(const RenderState& state)
 	std::vector<const RenderItem*> blendedItems;
 	for (const RenderItem& item : state.items)
 	{
-		if (item.mesh->material->getEffectiveAlphaMode() == AlphaMode::BLEND)
+		if (item.mesh->material->isTransparent())
 		{
 			blendedItems.push_back(&item);
 		}
@@ -425,17 +425,9 @@ void Renderer::draw(const RenderState& state)
 void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 {
 	MeshPtr mesh = item.mesh;
-	if (mesh->material->doubleSided)
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-	}
+	MaterialPtr material = mesh->material;
 
-	ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
+	ShaderPtr shader = ShaderManager::getShader(material->materialType);
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);

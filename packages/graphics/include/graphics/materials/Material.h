@@ -1,7 +1,6 @@
 #pragma once
 #include <graphics/materials/pointers/MaterialPtr.h>
 #include <graphics/materials/MaterialType.h>
-#include <graphics/materials/AlphaMode.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <graphics/core/Color.h>
 
@@ -32,6 +31,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Material() = default;
+
+	/**
+	 * @return True if this material represents a transparent or semi-transparent object. Returns false otherwise.
+	 */
+	virtual bool isTransparent() const { return false; }
 
 protected:
 
