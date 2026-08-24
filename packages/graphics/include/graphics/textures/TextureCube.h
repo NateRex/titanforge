@@ -31,7 +31,7 @@ public:
 	/**
 	 * Creates a cube texture from a collection of images.
 	 * @param paths Relative paths to the image files that will be used to generate the texture. Each path should be releative to the
-	 * current executable. The expected image order is right, left, top, bottom, back, and front.
+	 * current executable. The expected image order is right, left, top, bottom, front, and back.
 	 * @param flip (Optional) Boolean flag that, when true, will cause each image to be flipped when loading. Defaults to false.
 	 * @return The new texture
 	 */
@@ -40,7 +40,7 @@ public:
 	/**
 	 * Creates a cube texture from a storage config.
 	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
-	 * @param data Optional tightly packed pixel data for each face. The expected ata order is right, left, top, bottom, back, front.
+	 * @param data Optional tightly packed pixel data for each face. The expected data order is right, left, top, bottom, front, and back.
 	 * When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */

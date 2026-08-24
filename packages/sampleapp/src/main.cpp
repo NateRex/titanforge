@@ -104,8 +104,8 @@ int main()
         "assets/skybox/left.jpg",
         "assets/skybox/top.jpg",
         "assets/skybox/bottom.jpg",
-        "assets/skybox/back.jpg",
         "assets/skybox/front.jpg",
+        "assets/skybox/back.jpg"
     });
     SkyboxPtr skybox = Skybox::create(skyboxMat);
     scene->add(skybox);

@@ -62,10 +62,9 @@ TextureCube::TextureCube(const std::array<std::string, 6>& paths, bool flip): Te
 	release();
 }
 
-TextureCube::TextureCube(const TextureCubeConfig& config, const std::array<void*, 6>& data): Texture(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BINDING_CUBE_MAP),  _config(config)
+TextureCube::TextureCube(const TextureCubeConfig& config, const std::array<void*, 6>& data): Texture(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BINDING_CUBE_MAP), _config(config)
 {
 	if (_config.size == 0) throw IllegalArgumentException("Cube texture size must be greater than zero");
-	_config = config;
 	allocate(data);
 }
 
