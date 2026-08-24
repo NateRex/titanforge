@@ -9,16 +9,6 @@ Camera::Camera(): Entity(EntityType::CAMERA), _minPitch(-89.f), _maxPitch(89.f)
 	lookAt(Vector3::ZERO, Vector3::MINUS_ZHAT, Vector3::YHAT);
 }
 
-Camera::~Camera()
-{
-	if (_pitch != nullptr)
-	{
-		delete _pitch;
-	}
-
-	_pitch = nullptr;
-}
-
 void Camera::setMinPitch(float min)
 {
 	_minPitch = min;
@@ -31,25 +21,42 @@ void Camera::setMaxPitch(float max)
 
 void Camera::addYaw(float degrees)
 {
-	addRotation(Matrix3::fromYRotation(deg2Rad(degrees)));
+	_yaw += degrees;
+	rebuildRotation();
 }
 
 void Camera::addPitch(float degrees)
 {
-	// Compute pitch from starting orientation if this is the first time we are calling this method
-	if (_pitch == nullptr)
-	{
-		Vector3 forward = getForwardVector();
-		float pitch = rad2Deg(asin(forward.y));
-		_pitch = new float(pitch);
-	}
-
 	// Clamp pitch to min and max values
-	float clamped = clamp(*_pitch + degrees, _minPitch, _maxPitch);
-	float delta = clamped - *_pitch;
+	_pitch = clamp(_pitch + degrees, _minPitch, _maxPitch);
+	rebuildRotation();
+}
 
-	addRotation(Matrix3::fromXRotation(deg2Rad(delta)));
-	*_pitch = clamped;
+void Camera::rebuildRotation()
+{
+	const float yaw = deg2Rad(_yaw);
+	const float pitch = deg2Rad(_pitch);
+	const float cosYaw = cos(yaw);
+	const float sinYaw = sin(yaw);
+	const float cosPitch = cos(pitch);
+	const float sinPitch = sin(pitch);
+
+	// Rows store the camera's right, up, and forward axes. Yaw is measured around world Y and pitch around the
+	// resulting right axis, so rebuilding these axes guarantees that no roll can accumulate.
+	Entity::updateRotation(
+		cosYaw, 0.f, -sinYaw,
+		sinYaw * sinPitch, cosPitch, cosYaw * sinPitch,
+		-sinYaw * cosPitch, sinPitch, -cosYaw * cosPitch
+	);
+}
+
+void Camera::updateRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+{
+	Entity::updateRotation(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+
+	const Vector3 forward = getForwardVector();
+	_pitch = rad2Deg(asin(clamp(forward.y, -1.f, 1.f)));
+	_yaw = rad2Deg(atan2(-forward.x, -forward.z));
 }
 
 Matrix4 Camera::getViewMatrix()
