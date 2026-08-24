@@ -492,6 +492,10 @@ void Renderer::decrementRendererCount()
 
 void Renderer::applyGlobalSettings()
 {
+	// Allow linear filtering across cubemap face boundaries instead of clamping
+	// each face independently, which otherwise exposes visible skybox seams.
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 	// Enable alpha channel for transparency
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

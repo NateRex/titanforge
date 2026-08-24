@@ -84,9 +84,11 @@ TextureCubePtr Skybox::createDefaultTexture()
                 throw InstantiationException("Embedded default skybox faces have mismatched dimensions");
         }
 
+        // TitanForge does not currently run a fully-managed linear/sRGB render pipeline, so we use RGB8
+        // instead of sRGB. Otherwise, it would decode darker than the same JPEGs loaded from disk.
         TextureCubeConfig config;
         config.size = static_cast<unsigned int>(size);
-        config.format = PixelFormat::SRGB8;
+        config.format = PixelFormat::RGB8;
 
         TextureCubePtr texture = TextureCube::create(config, pixels);
         release();

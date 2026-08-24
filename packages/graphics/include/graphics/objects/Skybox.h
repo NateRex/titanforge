@@ -2,6 +2,7 @@
 #include <graphics/objects/pointers/SkyboxPtr.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/materials/pointers/SkyboxMaterialPtr.h>
+#include <graphics/textures/pointers/TextureCubePtr.h>
 #include <cstddef>
 
 /**
