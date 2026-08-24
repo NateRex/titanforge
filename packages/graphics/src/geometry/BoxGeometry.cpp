@@ -24,12 +24,12 @@ BoxGeometry::BoxGeometry(float length, float height, float depth)
 
 	unsigned int vIdx = 0;
 	unsigned int iIdx = 0;
-	createFace(&vIdx, &iIdx, 2, -hz, 0, hx, 1, -hy);		// back
-	createFace(&vIdx, &iIdx, 0, -hx, 2, -hz, 1, -hy);		// left
-	createFace(&vIdx, &iIdx, 2, hz, 0, -hx, 1, -hy);		// front
 	createFace(&vIdx, &iIdx, 0, hx, 2, hz, 1, -hy);			// right
+	createFace(&vIdx, &iIdx, 0, -hx, 2, -hz, 1, -hy);		// left
 	createFace(&vIdx, &iIdx, 1, hy, 0, -hx, 2, hz);			// top
 	createFace(&vIdx, &iIdx, 1, -hy, 0, -hx, 2, -hz);		// bottom
+	createFace(&vIdx, &iIdx, 2, -hz, 0, hx, 1, -hy);		// back
+	createFace(&vIdx, &iIdx, 2, hz, 0, -hx, 1, -hy);		// front
 }
 
 BoxGeometryPtr BoxGeometry::create(float length, float height, float depth)

@@ -1,7 +1,6 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
-#include <graphics/lights/SpotLight.h>
 #include <graphics/materials/SkyboxMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
@@ -118,10 +117,8 @@ int main()
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
-    LightPtr spotLight = SpotLight::create();
-    spotLight->intensity = 2.f;
+    ambientLighting->intensity = 1.f;
     scene->add(ambientLighting);
-    scene->add(spotLight);
 
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
@@ -134,9 +131,6 @@ int main()
     {
         // Rotate entity
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
-        
-        // Move spotlight with camera
-        spotLight->lookAt(camera->getPosition(), camera->getPosition().plus(camera->getForwardVector()));
 
         renderer->render(scene, camera, postProcessing);
     }
