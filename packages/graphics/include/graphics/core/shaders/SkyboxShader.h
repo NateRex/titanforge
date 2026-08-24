@@ -36,7 +36,7 @@ constexpr const char* SKYBOX_FRAGMENT = R"(
 
     void main()
     {    
-        FragColor = texture(uSkyBox, TexCoords);
+        FragColor = texture(uSkyBox, frag_TexCoord);
     }
 )";
 
