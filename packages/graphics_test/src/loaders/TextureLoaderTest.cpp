@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/loaders/TextureLoader.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 
 /**
  * Tests the ability to load a texture, first from scratch, and then from the cache

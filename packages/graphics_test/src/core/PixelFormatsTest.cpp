@@ -1,6 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <graphics/core/PixelFormat.h>
+#include <graphics/core/PixelFormats.h>
 #include <glad/glad.h>
 
 /**

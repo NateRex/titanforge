@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <graphics/textures/TextureConfig.h>
+#include <graphics/textures/TextureFormats.h>
 #include <glad/glad.h>
 
 /**

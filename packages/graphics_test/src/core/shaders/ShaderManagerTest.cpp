@@ -8,5 +8,6 @@
 BOOST_AUTO_TEST_CASE(ShaderManager_getShader)
 {
 	BOOST_TEST(ShaderManager::getShader(MaterialType::MESH) != nullptr);
+	BOOST_TEST(ShaderManager::getShader(MaterialType::SKYBOX) != nullptr);
 	BOOST_TEST(ShaderManager::getShader(MaterialType::POST_PROCESS) != nullptr);
 }

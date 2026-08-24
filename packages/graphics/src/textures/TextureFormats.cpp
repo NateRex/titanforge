@@ -1,4 +1,4 @@
-#include <graphics/textures/TextureConfig.h>
+#include <graphics/textures/TextureFormats.h>
 #include <glad/glad.h>
 
 unsigned int toGLFilter(const TextureFilter& filter)

@@ -31,15 +31,17 @@ add_executable(GraphicsTest
     src/core/shaders/MeshShaderTest.cpp
     src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
+    src/core/shaders/SkyboxShaderTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
     src/core/EntityTest.cpp
-    src/core/PixelFormatTest.cpp
-    src/loaders/EntityLoaderTest.cpp
+    src/core/PixelFormatsTest.cpp
     src/loaders/ImageLoaderTest.cpp
+    src/loaders/ModelLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
     src/objects/MeshTest.cpp
+    src/objects/SkyboxTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp
@@ -49,9 +51,11 @@ add_executable(GraphicsTest
     src/lights/SpotLightTest.cpp
     src/materials/MeshMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
+    src/materials/SkyboxMaterialTest.cpp
     src/scene/SceneTest.cpp
-    src/textures/TextureConfigTest.cpp
-    src/textures/TextureTest.cpp
+    src/textures/Texture2DTest.cpp
+    src/textures/TextureCubeTest.cpp
+    src/textures/TextureFormatsTest.cpp
     src/GlobalTestFixture.cpp
     src/main.cpp
 )
@@ -78,10 +82,15 @@ set_target_properties(GraphicsTest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}/bin"
 )
 add_custom_target(GraphicsTestAssets
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/../graphics/assets"
+        "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/assets"
         "${CMAKE_CURRENT_BINARY_DIR}/bin/assets"
-    COMMENT "Copying GraphicsTest assets"
+    COMMENT "Copying Graphics and GraphicsTest assets"
     VERBATIM
 )
 add_dependencies(GraphicsTest GraphicsTestAssets)

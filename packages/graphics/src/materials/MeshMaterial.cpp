@@ -18,3 +18,8 @@ AlphaMode MeshMaterial::getEffectiveAlphaMode() const
 
 	return color.alpha() < 1.f ? AlphaMode::BLEND : AlphaMode::OPAQUE;
 }
+
+bool MeshMaterial::isTransparent() const
+{
+	return getEffectiveAlphaMode() == AlphaMode::BLEND;
+}

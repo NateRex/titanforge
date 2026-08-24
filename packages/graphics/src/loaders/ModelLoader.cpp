@@ -1,4 +1,4 @@
-#include <graphics/loaders/EntityLoader.h>
+#include <graphics/loaders/ModelLoader.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/materials/MeshMaterial.h>
@@ -192,7 +192,7 @@ EntityGroupPtr loadGroup(const aiNode* node, const aiScene* scene, const std::ve
 	return group;
 }
 
-EntityPtr EntityLoader::load(const std::string& path)
+EntityPtr ModelLoader::load(const std::string& path)
 {
 	const std::string modelPath = resolvePath(path);
 	const std::filesystem::path modelDirectory = std::filesystem::path(path).parent_path();

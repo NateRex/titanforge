@@ -378,23 +378,29 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentModel,
 
 void Renderer::draw(const RenderState& state)
 {
-	// Sort opaque (solid) and transparent (blended) items
-	std::vector<const RenderItem*> solidItems;
-	std::vector<const RenderItem*> blendedItems;
+	// Group opaque, background, and transparent items
+	std::vector<const RenderItem*> opaqueItems;
+	std::vector<const RenderItem*> backgroundItems;
+	std::vector<const RenderItem*> transparentItems;
 	for (const RenderItem& item : state.items)
 	{
-		if (item.mesh->material->getEffectiveAlphaMode() == AlphaMode::BLEND)
+		if (item.mesh->material->isTransparent())
 		{
-			blendedItems.push_back(&item);
+			transparentItems.push_back(&item);
+		}
+		else if (item.mesh->material->isBackground())
+		{
+			backgroundItems.push_back(&item);
 		}
 		else {
-			solidItems.push_back(&item);
+			opaqueItems.push_back(&item);
 		}
 	}
 
+	// Sort transparent items from farthest to closest, relative to the camera
 	const Vector3 cameraPosition = state.camera->getPosition();
 	const Vector3 cameraForward = state.camera->getForwardVector();
-	std::stable_sort(blendedItems.begin(), blendedItems.end(), [&cameraPosition, &cameraForward](const RenderItem* a, const RenderItem* b)
+	std::stable_sort(transparentItems.begin(), transparentItems.end(), [&cameraPosition, &cameraForward](const RenderItem* a, const RenderItem* b)
 	{
 		const Vector3 aPosition = a->modelTransform.transformPosition(Vector3::ZERO);
 		const Vector3 bPosition = b->modelTransform.transformPosition(Vector3::ZERO);
@@ -403,43 +409,66 @@ void Renderer::draw(const RenderState& state)
 		return aDepth > bDepth;
 	});
 
-	// Opaque pass
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
-	for (const RenderItem* item : solidItems)
+	// Render opaque items
+	for (const RenderItem* item : opaqueItems)
 	{
 		drawItem(state, *item);
 	}
 
-	// Transparent pass
-	glEnable(GL_BLEND);
-	glDepthMask(GL_FALSE);
-	for (const RenderItem* item : blendedItems)
+	// Render background scenery
+	for (const RenderItem* item : backgroundItems)
 	{
 		drawItem(state, *item);
 	}
 
-	glDepthMask(GL_TRUE);
+	// Render transparent items
+	for (const RenderItem* item : transparentItems)
+	{
+		drawItem(state, *item);
+	}
 }
 
 void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 {
 	MeshPtr mesh = item.mesh;
-	if (mesh->material->doubleSided)
+	MaterialPtr material = mesh->material;
+
+	// Set global state
+	glDepthMask(material->depthWrite && !material->isTransparent() ? GL_TRUE : GL_FALSE);
+	switch (material->depthFunction)
 	{
-		glDisable(GL_CULL_FACE);
+		case DepthFunction::ALWAYS: glDepthFunc(GL_ALWAYS); break;
+		case DepthFunction::NEVER: glDepthFunc(GL_NEVER); break;
+		case DepthFunction::LESS: glDepthFunc(GL_LESS); break;
+		case DepthFunction::LESS_OR_EQUAL_TO: glDepthFunc(GL_LEQUAL); break;
+		case DepthFunction::GREATER: glDepthFunc(GL_GREATER); break;
+		case DepthFunction::GREATER_OR_EQUAL_TO: glDepthFunc(GL_GEQUAL); break;
+		case DepthFunction::NOT_EQUAL: glDepthFunc(GL_NOTEQUAL); break;
+		case DepthFunction::EQUAL: glDepthFunc(GL_EQUAL); break;
+		default: glDepthFunc(GL_LESS); break;
 	}
-	else
+	switch (material->cullingMode)
 	{
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		case CullingMode::NONE: glDisable(GL_CULL_FACE); break;
+		case CullingMode::FRONT: glEnable(GL_CULL_FACE); glCullFace(GL_FRONT); break;
+		case CullingMode::BACK: glEnable(GL_CULL_FACE); glCullFace(GL_BACK); break;
+		default: glDisable(GL_CULL_FACE); break;
+	}
+	if (material->isTransparent())
+	{
+		glEnable(GL_BLEND);
+	}
+	else {
+		glDisable(GL_BLEND);
 	}
 
-	ShaderPtr shader = ShaderManager::getShader(mesh->material->materialType);
+	// Activate shader
+	ShaderPtr shader = ShaderManager::getShader(material->materialType);
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
 
+	// Draw buffer
 	GeometryBuffer* buffer = mesh->geometry->getBuffer();
 	buffer->bind();
 	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
@@ -463,6 +492,10 @@ void Renderer::decrementRendererCount()
 
 void Renderer::applyGlobalSettings()
 {
+	// Allow linear filtering across cubemap face boundaries instead of clamping
+	// each face independently, which otherwise exposes visible skybox seams.
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 	// Enable alpha channel for transparency
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

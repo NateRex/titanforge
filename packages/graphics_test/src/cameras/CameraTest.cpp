@@ -3,6 +3,7 @@
 #include <common/exceptions/UnsupportedOperationException.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
+#include <cmath>
 
 /**
  * Example implementation of a Camera, used only for testing base class methods
@@ -164,4 +165,40 @@ BOOST_AUTO_TEST_CASE(Camera_lookAt)
 	camera.lookAt(position, target, Vector3::XHAT);
 	exp.setValues(0.f, 0.9701f, 0.2425f, -1.2126f, 0.7177f, 0.1688f, -0.6755f, -0.2109f, -0.6963, 0.1740f, -0.6963f, 1.2186f, 0.f, 0.f, 0.f, 1.f);
 	BOOST_TEST(camera.getViewMatrix().equalTo(exp, 1.0e-3));
+}
+
+/**
+ * Tests that combining pitch and yaw keeps the camera level relative to world up.
+ */
+BOOST_AUTO_TEST_CASE(Camera_lookDoesNotAccumulateRoll)
+{
+	TestCamera camera;
+	camera.addPitch(40.f);
+	camera.addYaw(55.f);
+	camera.addPitch(-15.f);
+	camera.addYaw(-20.f);
+
+	const Vector3 forward = camera.getForwardVector();
+	const Vector3 right = camera.getRightVector();
+	const Vector3 up = camera.getUpVector();
+
+	BOOST_TEST(equals(right.y, 0.f, 1.0e-6f));
+	BOOST_TEST(equals(right.dot(Vector3::YHAT), 0.f, 1.0e-6f));
+	BOOST_TEST(equals(up.dot(forward), 0.f, 1.0e-6f));
+	BOOST_TEST(up.dot(Vector3::YHAT) > 0.f);
+}
+
+/**
+ * Tests that lookAt updates the angles subsequently used by mouse-look.
+ */
+BOOST_AUTO_TEST_CASE(Camera_lookAtThenAddPitch)
+{
+	TestCamera camera;
+	const Vector3 initialForward = Vector3(1.f, 1.f, -1.f).normalize();
+	camera.lookAt(Vector3::ZERO, initialForward, Vector3::YHAT);
+	camera.addPitch(10.f);
+
+	const float expectedPitch = rad2Deg(asin(initialForward.y)) + 10.f;
+	BOOST_TEST(equals(camera.getForwardVector().y, sin(deg2Rad(expectedPitch)), 1.0e-6f));
+	BOOST_TEST(equals(camera.getRightVector().y, 0.f, 1.0e-6f));
 }

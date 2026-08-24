@@ -1,5 +1,5 @@
 #include <graphics/loaders/TextureLoader.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 #include <common/Utils.h>
 
 std::unique_ptr<TextureLoader> TextureLoader::_INSTANCE = nullptr;
@@ -35,7 +35,7 @@ TexturePtr TextureLoader::load(const std::string& path, bool flip)
 		return existing->second;
 	}
 
-	TexturePtr texture = Texture::create(path, flip);
+	TexturePtr texture = Texture2D::create(path, flip);
 	loader->_textures[cacheKey] = texture;
 	return texture;
 }
