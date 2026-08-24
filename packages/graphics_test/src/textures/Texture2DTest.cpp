@@ -11,7 +11,7 @@
  * @param parameter OpenGL parameter
  * @return Integer value for that parameter on the texture
  */
-int textureParameter(const Texture& texture, unsigned int parameter)
+int texture2DParameter(const Texture& texture, unsigned int parameter)
 {
 	int previous = 0;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
@@ -68,9 +68,9 @@ BOOST_AUTO_TEST_CASE(Texture2D_fromConfig)
 	BOOST_TEST(texture->config().sampling.sWrap == config.sampling.sWrap);
 	BOOST_TEST(texture->config().sampling.tWrap == config.sampling.tWrap);
 	BOOST_TEST(texture->config().generateMipmaps == config.generateMipmaps);
-	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_WIDTH) == 8);
-	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_HEIGHT) == 4);
-	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_INTERNAL_FORMAT) == GL_RGB8);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_WIDTH) == 8);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_HEIGHT) == 4);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_INTERNAL_FORMAT) == GL_RGB8);
 }
 
 /**
@@ -91,8 +91,8 @@ BOOST_AUTO_TEST_CASE(Texture2D_resize)
 	BOOST_TEST(texture->height() == 5);
 	BOOST_TEST(texture->format() == config.format);
 	BOOST_TEST(texture->config().sampling.sWrap == config.sampling.sWrap);
-	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_WIDTH) == 7);
-	BOOST_TEST(textureParameter(*texture, GL_TEXTURE_HEIGHT) == 5);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_WIDTH) == 7);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_HEIGHT) == 5);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
