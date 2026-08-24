@@ -14,7 +14,9 @@ BOOST_AUTO_TEST_CASE(MeshMaterial_defaults)
 	BOOST_TEST(material->materialType == MaterialType::MESH);
 	BOOST_TEST(material->alphaMode == AlphaMode::AUTO);
 	BOOST_TEST(material->alphaCutoff == 0.5f);
-	BOOST_TEST(material->doubleSided == false);
+	BOOST_TEST(material->cullingMode == CullingMode::BACK);
+	BOOST_TEST(material->depthWrite == true);
+	BOOST_TEST(material->depthFunction == DepthFunction::LESS);
 	BOOST_TEST(material->useVertexColors == false);
 	BOOST_TEST(material->reflectivity == 0.5f);
 	BOOST_TEST(material->shine == 0.6f);
