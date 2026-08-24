@@ -62,8 +62,6 @@ TextureCubePtr Skybox::createDefaultTexture()
         for (std::size_t i = 0; i < DEFAULT_SKYBOX_IMAGES.size(); i++)
         {
             const EmbeddedImage& image = DEFAULT_SKYBOX_IMAGES[i];
-            if (image.size > static_cast<std::size_t>(std::numeric_limits<int>::max()))
-                throw InstantiationException("Embedded default skybox face is too large: " + std::string(image.name));
 
             int width = 0, height = 0, sourceChannels = 0;
             pixels[i] = stbi_load_from_memory(
@@ -74,14 +72,17 @@ TextureCubePtr Skybox::createDefaultTexture()
                 &sourceChannels,
                 3);
 
-            if (!pixels[i])
-                throw InstantiationException("Failed to decode embedded default skybox face: " + std::string(image.name));
-            if (width != height)
-                throw InstantiationException("Embedded default skybox face is not square: " + std::string(image.name));
+            if (!pixels[i]) throw InstantiationException("Failed to decode embedded default skybox face: " + std::string(image.name));
+            if (width != height) throw InstantiationException("Embedded default skybox face is not square: " + std::string(image.name));
+            
             if (i == 0)
+            {
                 size = width;
+            }
             else if (width != size)
+            {
                 throw InstantiationException("Embedded default skybox faces have mismatched dimensions");
+            }
         }
 
         // TitanForge does not currently run a fully-managed linear/sRGB render pipeline, so we use RGB8
