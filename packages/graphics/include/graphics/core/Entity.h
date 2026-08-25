@@ -6,6 +6,8 @@
 #include <math/Matrix4.h>
 #include <vector>
 
+struct RenderState;
+
 /**
  * Base class for everything that can be added to the scene. Contains a set of properties and methods for manipulating
  * the object in 3D space. An entity can have one or more children, whose position, rotation, and scaling will be relative
@@ -15,8 +17,6 @@
 class Entity
 {
 public:
-
-	friend class Renderer;
 
 	/**
 	 * Entity type
@@ -212,6 +212,14 @@ public:
 	 * @param entity The child entity
 	 */
 	void remove(EntityPtr entity);
+
+	/**
+	 * Traverses over this entity and all of its children recursively, applying them to the given render state.
+	 * @param state The render state to modify
+	 * @param parentModel Parent transformation matrix for converting from local to world coordinates
+	 * @param parentNormal Parent transformation matrix for converting from local to world normals
+	 */
+	virtual void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal);
 
 protected:
 

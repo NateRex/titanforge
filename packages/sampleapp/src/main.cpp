@@ -1,8 +1,10 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
+#include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
+#include <graphics/geometry/BoxGeometry.h>
 #include <graphics/objects/Skybox.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
@@ -97,6 +99,13 @@ int main()
 
     // Create skybox
     scene->add(Skybox::create());
+
+    // Create glass cube
+    MeshMaterialPtr boxMat = MeshMaterial::create();
+    boxMat->refraction = 1.f;
+    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), boxMat);
+    box->setPosition(2.f, 2.f, 2.f);
+    scene->add(box);
 
     // Load guitar backpack model
     EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");

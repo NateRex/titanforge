@@ -182,36 +182,17 @@ private:
 	void present();
 
 	/**
-	 * Traverses the scene graph and builds a render-ready state. This function performs **no drawing**. It strictly
-	 * prepares a flattened, pass-local representation of the scene.
-	 * @param scene The scene to traverse
-	 * @param camera Camera
-	 * @return The render state
-	 */
-	RenderState traverseScene(const ScenePtr scene, const CameraPtr camera);
-
-	/**
-	 * Recursively traverses the scene graph to build a render-ready state. Walks the entity hierarchy beginning
-	 * at a specified root entity, accumulating world transforms and organizing nodes for the current render pass.
-	 * This function performs **no drawing**. It strictly prepares a flattened, pass-local representation of the scene.
-	 * @param entity Current entity we are traversing over in the tree
-	 * @param parentModel Accumulated local-to-world transform of the entity's parent
-	 * @param parentNormal Accumulated local-to-world normal transform of the entity's parent
-	 * @param state The render state being populated for this frame and render pass. Meshes, lights, and other renderable
-	 * are appended here.
-	 */
-	void traverseScene(
-		const EntityPtr entity,
-		const Matrix4& parentModel,
-		const Matrix3& parentNormal,
-		RenderState& state);
-
-	/**
 	 * Consumes a prepared render state and submits draw calls for all items
 	 * @param state The render state to draw
+	 * @param camera Camera
 	 */
-	void draw(const RenderState& state);
+	void draw(const RenderState& state, const CameraPtr camera);
 
-	/** Submits a single prepared render item. */
-	void drawItem(const RenderState& state, const RenderItem& item);
+	/**
+	 * Draws a single prepared render item
+	 * @param state The render state
+	 * @param item The item to draw
+	 * @param camera Camera
+	 */
+	void drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera);
 };

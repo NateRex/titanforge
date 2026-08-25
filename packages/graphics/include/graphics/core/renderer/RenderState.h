@@ -1,11 +1,14 @@
 #pragma once
-#include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/lights/pointers/LightPtr.h>
-#include <graphics/objects/pointers/MeshPtr.h>
+#include <graphics/core/Color.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <math/Vector3.h>
 #include <vector>
+
+class Mesh;
+class Light;
+class Camera;
+class TextureCube;
 
 /**
  * A flattened, render-ready description of a single mesh instance obtained during scene traversal
@@ -16,7 +19,7 @@ struct RenderItem {
 	/**
 	 * Mesh object
 	 */
-	MeshPtr mesh = nullptr;
+	Mesh* mesh = nullptr;
 
 	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.
@@ -37,7 +40,7 @@ struct RenderLight {
 	/**
 	 * Light providing this instance's color and attenuation properties.
 	 */
-	LightPtr light = nullptr;
+	Light* light = nullptr;
 
 	/**
 	 * Position in world space.
@@ -65,6 +68,37 @@ struct Lighting {
 	std::vector<RenderLight> lights;
 };
 
+/**
+ * Image-based surroundings available to shaders during a render pass
+ * @author Nathaniel Rex
+ */
+struct Environment {
+
+	/**
+	 * Image texture to sample from
+	 */
+	TextureCube* texture = nullptr;
+
+	/**
+	 * Base color to blend with the sampled texture color
+	 */
+	Color color = Color::WHITE;
+
+	/**
+	 * Linear multiplier applied to the sampled texture color
+	 */
+	float intensity = 1.f;
+
+	/**
+	 * Rotation of the background texture around the world up axis, in radians
+	 */
+	float rotation = 0.f;
+
+	/**
+	 * Explicit cubemap mip level. Values above zero provide blur when mipmaps exist.
+	 */
+	float lod = 0.f;
+};
 
 /**
  * Aggregation of all rendering data required for a single render pass
@@ -73,14 +107,14 @@ struct Lighting {
 struct RenderState {
 
 	/**
+	 * Environment used for image-based reflection and refraction
+	 */
+	Environment environment;
+
+	/**
 	 * Lighting for the render pass
 	 */
 	Lighting lighting;
-
-	/**
-	 * Camera
-	 */
-	CameraPtr camera = nullptr;
 
 	/**
 	 * The items to be drawn this frame

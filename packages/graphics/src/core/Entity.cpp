@@ -1,4 +1,5 @@
 #include <graphics/core/Entity.h>
+#include <graphics/core/renderer/RenderState.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <algorithm>
@@ -6,6 +7,16 @@
 Entity::Entity(EntityType type): entityType(type), _scale(1.f, 1.f, 1.f)
 {
 
+}
+
+void Entity::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+{
+	const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
+	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
+	for (const EntityPtr& child : _children)
+	{
+		child->traverse(state, modelTransform, normalTransform);
+	}
 }
 
 Vector3 Entity::getPosition() const

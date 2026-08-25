@@ -31,12 +31,15 @@ public:
 	 */
 	static MeshPtr create(GeometryPtr geometry, MeshMaterialPtr material);
 
+	void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+
 protected:
 
 	/**
 	 * Constructor
+	 * @param entityType Entity type. Used by child classes to override the default value of EntityType::MESH.
 	 * @param geometry Geometry whose points are expected to form a series of triangles.
 	 * @param material Material
 	 */
-	Mesh(GeometryPtr geometry, MaterialPtr material);
+	Mesh(EntityType entityType, GeometryPtr geometry, MaterialPtr material);
 };
