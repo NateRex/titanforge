@@ -31,6 +31,8 @@ public:
 	 */
 	static MeshPtr create(GeometryPtr geometry, MeshMaterialPtr material);
 
+	void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+
 protected:
 
 	/**

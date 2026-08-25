@@ -10,10 +10,7 @@
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
-#include <graphics/lights/Light.h>
 #include <graphics/materials/MeshMaterial.h>
-#include <graphics/materials/SkyboxMaterial.h>
-#include <graphics/textures/TextureCube.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -205,7 +202,9 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 	
 	try
 	{
-		draw(traverseScene(scene, camera));
+		RenderState state;
+		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+		draw(state, camera);
 	}
 	catch (...)
 	{
@@ -327,77 +326,7 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-RenderState Renderer::traverseScene(const ScenePtr scene, const CameraPtr camera)
-{
-	RenderState state;
-	state.camera = camera;
-	traverseScene(scene, Matrix4::IDENTITY, Matrix3::IDENTITY, state);
-	return state;
-}
-
-void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentModel, const Matrix3& parentNormal, RenderState& state)
-{
-	const Matrix4 modelTransform = parentModel.multiply(entity->getLocalMatrix());
-	const Matrix3 normalTransform = parentNormal.multiply(entity->getLocalNormalMatrix());
-
-	switch (entity->entityType)
-	{
-		case EntityType::LIGHT:
-		{
-			const LightPtr light = cast<Light>(entity);
-			
-			RenderLight renderLight;
-			renderLight.light = light;
-			renderLight.position = parentModel.transformPosition(light->getPosition());
-			renderLight.direction = parentModel.transformDirection(light->getForwardVector()).normalize();
-			
-			state.lighting.lights.push_back(renderLight);
-			break;
-		}
-		case EntityType::MESH:
-		{
-			RenderItem renderItem;
-			renderItem.mesh = cast<Mesh>(entity);
-			renderItem.modelTransform = modelTransform;
-			renderItem.normalTransform = normalTransform;
-
-			state.items.push_back(renderItem);
-			break;
-		}
-		case EntityType::SKYBOX:
-		{
-			RenderItem renderItem;
-			renderItem.mesh = cast<Mesh>(entity);
-			renderItem.modelTransform = modelTransform;
-			renderItem.normalTransform = normalTransform;
-
-			state.items.push_back(renderItem);
-
-			const SkyboxMaterialPtr skybox = std::static_pointer_cast<SkyboxMaterial>(renderItem.mesh->material);
-			if (skybox->texture)
-			{
-				state.environment.texture = cast<TextureCube>(skybox->texture);
-				state.environment.color = skybox->color;
-				state.environment.intensity = skybox->intensity;
-				state.environment.rotation = skybox->rotation;
-				state.environment.lod = skybox->lod;
-			}
-		}
-		default:
-		{
-			// Do nothing
-			break;
-		}
-	}
-
-	// Entity type does not affect hierarchy. Any type of entity may have children.
-	for (const EntityPtr child : entity->_children)
-	{
-		traverseScene(child, modelTransform, normalTransform, state);
-	}
-}
-
-void Renderer::draw(const RenderState& state)
+void Renderer::draw(const RenderState& state, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
 	std::vector<const RenderItem*> opaqueItems;
@@ -419,8 +348,8 @@ void Renderer::draw(const RenderState& state)
 	}
 
 	// Sort transparent items from farthest to closest, relative to the camera
-	const Vector3 cameraPosition = state.camera->getPosition();
-	const Vector3 cameraForward = state.camera->getForwardVector();
+	const Vector3 cameraPosition = camera->getPosition();
+	const Vector3 cameraForward = camera->getForwardVector();
 	std::stable_sort(transparentItems.begin(), transparentItems.end(), [&cameraPosition, &cameraForward](const RenderItem* a, const RenderItem* b)
 	{
 		const Vector3 aPosition = a->modelTransform.transformPosition(Vector3::ZERO);
@@ -433,25 +362,25 @@ void Renderer::draw(const RenderState& state)
 	// Render opaque items
 	for (const RenderItem* item : opaqueItems)
 	{
-		drawItem(state, *item);
+		drawItem(state, *item, camera);
 	}
 
 	// Render background scenery
 	for (const RenderItem* item : backgroundItems)
 	{
-		drawItem(state, *item);
+		drawItem(state, *item, camera);
 	}
 
 	// Render transparent items
 	for (const RenderItem* item : transparentItems)
 	{
-		drawItem(state, *item);
+		drawItem(state, *item, camera);
 	}
 }
 
-void Renderer::drawItem(const RenderState& state, const RenderItem& item)
+void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
 {
-	MeshPtr mesh = item.mesh;
+	Mesh* mesh = item.mesh;
 	MaterialPtr material = mesh->material;
 
 	// Set global state
@@ -488,6 +417,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item)
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
+	shader->setCamera(camera);
 
 	// Draw buffer
 	GeometryBuffer* buffer = mesh->geometry->getBuffer();

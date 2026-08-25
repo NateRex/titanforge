@@ -144,7 +144,7 @@ void MeshShader::setLighting(const Lighting& lighting)
 
 	for (const RenderLight& renderLight : lighting.lights)
 	{
-		const LightPtr& light = renderLight.light;
+		const Light* light = renderLight.light;
 		if (!light)
 		{
 			continue;
@@ -203,7 +203,7 @@ void MeshShader::setLighting(const Lighting& lighting)
 		float innerCutoff = -1.f;
 		if (light->lightType == LightType::SPOTLIGHT)
 		{
-			const SpotLightPtr spotLight = std::static_pointer_cast<SpotLight>(light);
+			const SpotLight* spotLight = static_cast<const SpotLight*>(light);
 			const float innerAngle = clamp(spotLight->innerAngle, 0.f, 180.f);
 			const float outerAngle = clamp(spotLight->outerAngle, innerAngle, 180.f);
 			direction = renderLight.direction;

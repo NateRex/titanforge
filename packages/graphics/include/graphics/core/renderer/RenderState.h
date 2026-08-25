@@ -1,13 +1,14 @@
 #pragma once
-#include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/lights/pointers/LightPtr.h>
-#include <graphics/objects/pointers/MeshPtr.h>
-#include <graphics/textures/pointers/TextureCubePtr.h>
 #include <graphics/core/Color.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <math/Vector3.h>
 #include <vector>
+
+class Mesh;
+class Light;
+class Camera;
+class TextureCube;
 
 /**
  * A flattened, render-ready description of a single mesh instance obtained during scene traversal
@@ -18,7 +19,7 @@ struct RenderItem {
 	/**
 	 * Mesh object
 	 */
-	MeshPtr mesh = nullptr;
+	Mesh* mesh = nullptr;
 
 	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.
@@ -39,7 +40,7 @@ struct RenderLight {
 	/**
 	 * Light providing this instance's color and attenuation properties.
 	 */
-	LightPtr light = nullptr;
+	Light* light = nullptr;
 
 	/**
 	 * Position in world space.
@@ -76,7 +77,7 @@ struct Environment {
 	/**
 	 * Image texture to sample from
 	 */
-	TextureCubePtr texture = nullptr;
+	TextureCube* texture = nullptr;
 
 	/**
 	 * Base color to blend with the sampled texture color
@@ -114,11 +115,6 @@ struct RenderState {
 	 * Lighting for the render pass
 	 */
 	Lighting lighting;
-
-	/**
-	 * Camera
-	 */
-	CameraPtr camera = nullptr;
 
 	/**
 	 * The items to be drawn this frame

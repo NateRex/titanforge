@@ -9,7 +9,6 @@
 #include <graphics/lights/PointLight.h>
 #include <graphics/lights/DirectionalLight.h>
 #include <graphics/lights/SpotLight.h>
-#include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/objects/Mesh.h>
 #include <graphics/objects/Skybox.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -22,11 +21,14 @@
 BOOST_AUTO_TEST_CASE(MeshShader_setState)
 {
 	RenderState state;
-	state.lighting.lights.push_back({AmbientLight::create()});
-	state.lighting.lights.push_back({PointLight::create()});
-	state.lighting.lights.push_back({DirectionalLight::create()});
-	state.lighting.lights.push_back({SpotLight::create()});
-	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+	LightPtr ambient = AmbientLight::create();
+	LightPtr point = PointLight::create();
+	LightPtr directional = DirectionalLight::create();
+	LightPtr spot = SpotLight::create();
+	state.lighting.lights.push_back({ambient.get()});
+	state.lighting.lights.push_back({point.get()});
+	state.lighting.lights.push_back({directional.get()});
+	state.lighting.lights.push_back({spot.get()});
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
@@ -38,8 +40,6 @@ BOOST_AUTO_TEST_CASE(MeshShader_setState)
 BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 {
 	RenderState state;
-	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
-
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
@@ -50,8 +50,8 @@ BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
 {
 	RenderState state;
-	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
-	state.environment.texture = Skybox::createDefaultTexture();
+	TextureCubePtr environment = Skybox::createDefaultTexture();
+	state.environment.texture = environment.get();
 	state.environment.intensity = 1.5f;
 	state.environment.rotation = 0.25f;
 
@@ -66,11 +66,10 @@ BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
 BOOST_AUTO_TEST_CASE(MeshShader_setStateHighIntensity)
 {
 	RenderState state;
-	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	LightPtr light = PointLight::create();
 	light->intensity = 4.f;
-	state.lighting.lights.push_back({light});
+	state.lighting.lights.push_back({light.get()});
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
 	shader->activate();
@@ -87,7 +86,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
 	MeshPtr mesh = Mesh::create(geom, mat);
 
 	RenderItem item;
-	item.mesh = mesh;
+	item.mesh = mesh.get();
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
@@ -106,7 +105,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 	MeshPtr mesh = Mesh::create(geom, mat);
 
 	RenderItem item;
-	item.mesh = mesh;
+	item.mesh = mesh.get();
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
@@ -127,7 +126,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
  	MeshPtr mesh = Mesh::create(geom, mat);
 
  	RenderItem item;
- 	item.mesh = mesh;
+	item.mesh = mesh.get();
  	item.modelTransform = Matrix4::IDENTITY;
  	item.normalTransform = Matrix3::IDENTITY;
 

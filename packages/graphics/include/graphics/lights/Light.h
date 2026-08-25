@@ -42,6 +42,8 @@ public:
 	 */
 	float range;
 
+	void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+
 protected:
 
 	/**

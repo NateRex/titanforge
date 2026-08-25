@@ -115,7 +115,6 @@ int Shader::getUniformLocation(const char* variableName) const
 
 void Shader::setState(const RenderState& state)
 {
-	setCamera(state.camera);
 	setLighting(state.lighting);
 	setEnvironment(state.environment);
 }
