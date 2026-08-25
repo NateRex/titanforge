@@ -217,7 +217,7 @@ public:
 	 * Traverses over this entity and all of its children recursively, applying them to the given render state.
 	 * @param state The render state to modify
 	 * @param parentModel Parent transformation matrix for converting from local to world coordinates
-	 * @param normalModel Parent transformation matrix for converting from local to world normals
+	 * @param parentNormal Parent transformation matrix for converting from local to world normals
 	 */
 	virtual void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal);
 
