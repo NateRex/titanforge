@@ -2,6 +2,8 @@
 #include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/objects/pointers/MeshPtr.h>
+#include <graphics/textures/pointers/TextureCubePtr.h>
+#include <graphics/core/Color.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <math/Vector3.h>
@@ -65,12 +67,48 @@ struct Lighting {
 	std::vector<RenderLight> lights;
 };
 
+/**
+ * Image-based surroundings available to shaders during a render pass
+ * @author Nathaniel Rex
+ */
+struct Environment {
+
+	/**
+	 * Image texture to sample from
+	 */
+	TextureCubePtr texture = nullptr;
+
+	/**
+	 * Base color to blend with the sampled texture color
+	 */
+	Color color = Color::WHITE;
+
+	/**
+	 * Linear multiplier applied to the sampled texture color
+	 */
+	float intensity = 1.f;
+
+	/**
+	 * Rotation of the background texture around the world up axis, in radians
+	 */
+	float rotation = 0.f;
+
+	/**
+	 * Explicit cubemap mip level. Values above zero provide blur when mipmaps exist.
+	 */
+	float lod = 0.f;
+};
 
 /**
  * Aggregation of all rendering data required for a single render pass
  * @author Nathaniel rex
  */
 struct RenderState {
+
+	/**
+	 * Environment used for image-based reflection and refraction
+	 */
+	Environment environment;
 
 	/**
 	 * Lighting for the render pass

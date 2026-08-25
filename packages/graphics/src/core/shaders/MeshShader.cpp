@@ -1,6 +1,7 @@
 #include <graphics/core/shaders/MeshShader.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/textures/Texture.h>
+#include <graphics/textures/TextureCube.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/SpotLight.h>
 #include <graphics/objects/Mesh.h>
@@ -77,6 +78,9 @@ void MeshShader::setMaterial(const MaterialPtr material)
 	// Reflectivity and shine
 	glUniform1f(getUniformLocation("uMaterial.reflectivity"), clamp(meshMat->reflectivity, 0.f, 1.f));
 	glUniform1f(getUniformLocation("uMaterial.shine"), clamp(meshMat->shine, 0.f, 1.f));
+	glUniform1f(getUniformLocation("uMaterial.reflection"), clamp(meshMat->reflection, 0.f, 1.f));
+	glUniform1f(getUniformLocation("uMaterial.refraction"), clamp(meshMat->refraction, 0.f, 1.f));
+	glUniform1f(getUniformLocation("uMaterial.refractiveIndex"), std::max(meshMat->refractiveIndex, 1.f));
 
 	// Diffuse map
 	if (meshMat->diffuseMap)
@@ -106,6 +110,25 @@ void MeshShader::setMaterial(const MaterialPtr material)
 
 	// Vertex color usage
 	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), meshMat->useVertexColors ? 1 : 0);
+}
+
+void MeshShader::setEnvironment(const Environment& environment)
+{
+	ProgramBinding binding(this);
+	if (!environment.texture)
+	{
+		glUniform1i(getUniformLocation("uHasEnvironment"), 0);
+		return;
+	}
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, environment.texture->id());
+	glUniform1i(getUniformLocation("uEnvironment"), 3);
+	glUniform1i(getUniformLocation("uHasEnvironment"), 1);
+	glUniform3f(getUniformLocation("uEnvironmentColor"), environment.color.red(), environment.color.green(), environment.color.blue());
+	glUniform1f(getUniformLocation("uEnvironmentIntensity"), std::max(environment.intensity, 0.f));
+	glUniform1f(getUniformLocation("uEnvironmentRotation"), environment.rotation);
+	glUniform1f(getUniformLocation("uEnvironmentLod"), std::max(environment.lod, 0.f));
 }
 
 void MeshShader::setLighting(const Lighting& lighting)

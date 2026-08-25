@@ -20,6 +20,9 @@ BOOST_AUTO_TEST_CASE(MeshMaterial_defaults)
 	BOOST_TEST(material->useVertexColors == false);
 	BOOST_TEST(material->reflectivity == 0.5f);
 	BOOST_TEST(material->shine == 0.6f);
+	BOOST_TEST(material->reflection == 0.f);
+	BOOST_TEST(material->refraction == 0.f);
+	BOOST_TEST(material->refractiveIndex == RefractiveIndex::GLASS);
 	BOOST_TEST(material->diffuseMap == nullptr);
 	BOOST_TEST(material->specularMap == nullptr);
 	BOOST_TEST(!material->isBackground());

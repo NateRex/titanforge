@@ -8,6 +8,7 @@ class Matrix4;
 struct RenderState;
 struct RenderItem;
 struct Lighting;
+struct Environment;
 
 /**
  * Parent class to all shader programs, which are typically managed by the shader manager
@@ -56,6 +57,12 @@ public:
      * @param lighting Lights affecting the render pass
      */
     virtual void setLighting(const Lighting& lighting) {}
+
+    /**
+     * Updates uniforms for this shader using the given environment map
+     * @param environment Environment settings
+     */
+    virtual void setEnvironment(const Environment& environment) {}
 
     /**
      * Activates this shader as the current shader program used for rendering

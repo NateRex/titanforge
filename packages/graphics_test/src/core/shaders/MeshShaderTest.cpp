@@ -11,6 +11,7 @@
 #include <graphics/lights/SpotLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/objects/Mesh.h>
+#include <graphics/objects/Skybox.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
@@ -38,6 +39,21 @@ BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 {
 	RenderState state;
 	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+
+	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	BOOST_REQUIRE_NO_THROW(shader->setState(state));
+}
+
+/**
+ * Tests the ability to set a render state containing environment texture
+ */
+BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
+{
+	RenderState state;
+	state.camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
+	state.environment.texture = Skybox::createDefaultTexture();
+	state.environment.intensity = 1.5f;
+	state.environment.rotation = 0.25f;
 
 	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));

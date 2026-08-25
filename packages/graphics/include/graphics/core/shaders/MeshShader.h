@@ -81,6 +81,9 @@ constexpr const char* MESH_FRAGMENT = R"(
 		sampler2D diffuseMap;
 		int hasSpecularMap;
 		sampler2D specularMap;
+		float reflection;
+		float refraction;
+		float refractiveIndex;
 	};
 
 	in vec3 frag_Pos;
@@ -93,6 +96,12 @@ constexpr const char* MESH_FRAGMENT = R"(
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
 	uniform Material uMaterial;
+	uniform int uHasEnvironment;
+	uniform samplerCube uEnvironment;
+	uniform vec3 uEnvironmentColor;
+	uniform float uEnvironmentIntensity;
+	uniform float uEnvironmentRotation;
+	uniform float uEnvironmentLod;
 
 	out vec4 FragColor;
 
@@ -173,6 +182,24 @@ constexpr const char* MESH_FRAGMENT = R"(
 		}
 
 		vec3 litColor = albedo.rgb * diffuseReflectance * (uAmbient + diffuse) + specular;
+
+		// Apply environment reflection / refraction
+		if (uHasEnvironment != 0)
+		{
+			vec3 incident = normalize(frag_Pos - uCameraPos);
+			vec3 reflectedDirection = reflect(incident, normal);
+			vec3 refractedDirection = refract(incident, normal, 1.0 / max(uMaterial.refractiveIndex, 1.0));
+			float c = cos(uEnvironmentRotation);
+			float s = sin(uEnvironmentRotation);
+			reflectedDirection.xz = mat2(c, -s, s, c) * reflectedDirection.xz;
+			refractedDirection.xz = mat2(c, -s, s, c) * refractedDirection.xz;
+			vec3 reflected = textureLod(uEnvironment, reflectedDirection, uEnvironmentLod).rgb;
+			vec3 refracted = textureLod(uEnvironment, refractedDirection, uEnvironmentLod).rgb;
+			reflected *= uEnvironmentColor * uEnvironmentIntensity;
+			refracted *= uEnvironmentColor * uEnvironmentIntensity;
+			litColor = mix(litColor, reflected, uMaterial.reflection);
+			litColor = mix(litColor, refracted, uMaterial.refraction);
+		}
 		FragColor = vec4(litColor, albedo.a);
 	}
 )";
@@ -198,6 +225,8 @@ public:
 	void setMaterial(const MaterialPtr material) override;
 
 	void setLighting(const Lighting& lighting) override;
+
+	void setEnvironment(const Environment& environment) override;
 
 	/**
      * Updates uniforms for this shader using the given model matrix
