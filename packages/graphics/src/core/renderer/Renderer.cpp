@@ -12,6 +12,8 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/Light.h>
 #include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/SkyboxMaterial.h>
+#include <graphics/textures/TextureCube.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
@@ -361,6 +363,25 @@ void Renderer::traverseScene(const EntityPtr entity, const Matrix4& parentModel,
 
 			state.items.push_back(renderItem);
 			break;
+		}
+		case EntityType::SKYBOX:
+		{
+			RenderItem renderItem;
+			renderItem.mesh = cast<Mesh>(entity);
+			renderItem.modelTransform = modelTransform;
+			renderItem.normalTransform = normalTransform;
+
+			state.items.push_back(renderItem);
+
+			const SkyboxMaterialPtr skybox = std::static_pointer_cast<SkyboxMaterial>(renderItem.mesh->material);
+			if (skybox->texture)
+			{
+				state.environment.texture = cast<TextureCube>(skybox->texture);
+				state.environment.color = skybox->color;
+				state.environment.intensity = skybox->intensity;
+				state.environment.rotation = skybox->rotation;
+				state.environment.lod = skybox->lod;
+			}
 		}
 		default:
 		{
