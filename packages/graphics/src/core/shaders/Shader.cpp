@@ -130,7 +130,7 @@ void Shader::setState(const RenderState& state)
 
 void Shader::setItem(const RenderItem& item)
 {
-	setMaterial(item.mesh->material);
+	setMaterial(item.material);
 }
 
 ProgramBinding::ProgramBinding(const Shader* shader)

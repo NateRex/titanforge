@@ -24,34 +24,32 @@ MeshShaderPtr MeshShader::create()
 void MeshShader::setItem(const RenderItem& item)
 {
 	Shader::setItem(item);
-
 	setModelMatrix(item.modelTransform);
 	setNormalMatrix(item.normalTransform);
 }
 
-void MeshShader::setCamera(const CameraPtr camera)
+void MeshShader::setCamera(Camera* camera)
 {
-	ProgramBinding binding(this);
 	Shader::setCamera(camera);
+	ProgramBinding binding(this);
 
-	int loc = getUniformLocation("uCameraPos");
 	Vector3 cameraPos = camera->getPosition();
-	glUniform3f(loc, cameraPos.x, cameraPos.y, cameraPos.z);
+	glUniform3f(getUniformLocation("uCameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
 
 	setViewMatrix(camera->getViewMatrix());
 	setProjectionMatrix(camera->getProjectionMatrix());
 }
 
-void MeshShader::setMaterial(const MaterialPtr material)
+void MeshShader::setMaterial(const Material* material)
 {
 	if (!material || material->materialType != MaterialType::MESH)
 	{
 		throw IllegalArgumentException("MeshShader requires a MeshMaterial");
 	}
 
-	ProgramBinding binding(this);
 	Shader::setMaterial(material);
-	const MeshMaterialPtr meshMat = std::static_pointer_cast<MeshMaterial>(material);
+	ProgramBinding binding(this);
+	const MeshMaterial* meshMat = static_cast<const MeshMaterial*>(material);
 
 	// Color
 	int loc = getUniformLocation("uMaterial.color");

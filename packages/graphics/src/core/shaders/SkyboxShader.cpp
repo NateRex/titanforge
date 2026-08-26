@@ -14,7 +14,7 @@ SkyboxShaderPtr SkyboxShader::create()
     return std::shared_ptr<SkyboxShader>(new SkyboxShader());
 }
 
-void SkyboxShader::setCamera(const CameraPtr camera)
+void SkyboxShader::setCamera(Camera* camera)
 {
     if (!camera) throw IllegalArgumentException("SkyboxShader requires a camera");
     ProgramBinding binding(this);
@@ -22,19 +22,23 @@ void SkyboxShader::setCamera(const CameraPtr camera)
     glUniformMatrix4fv(getUniformLocation("uProjection"), 1, GL_TRUE, camera->getProjectionMatrix().getValues());
 }
 
-void SkyboxShader::setMaterial(const MaterialPtr material)
+void SkyboxShader::setMaterial(const Material* material)
 {
     if (!material || material->materialType != MaterialType::SKYBOX)
         throw IllegalArgumentException("SkyboxShader requires a SkyboxMaterial");
 
-    const SkyboxMaterialPtr skyboxMat = std::static_pointer_cast<SkyboxMaterial>(material);
+    const SkyboxMaterial* skyboxMat = static_cast<const SkyboxMaterial*>(material);
 
     if (!skyboxMat->texture)
 	{
 		throw IllegalArgumentException("SkyboxMaterial requires an input cube texture");
 	}
 
-    const TextureCubePtr skyboxTexture = cast<TextureCube>(skyboxMat->texture);
+    const TextureCubePtr skyboxTexture = std::static_pointer_cast<TextureCube>(skyboxMat->texture);
+    if (!skyboxTexture)
+    {
+        throw IllegalArgumentException("SkyboxMaterial texture must be a cube texture");
+    }
 
     ProgramBinding binding(this);
     Shader::setMaterial(material);

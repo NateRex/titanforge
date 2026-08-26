@@ -1,10 +1,9 @@
 #pragma once
-#include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/lights/pointers/LightPtr.h>
-#include <graphics/materials/pointers/MaterialPtr.h>
 
 class Matrix3;
 class Matrix4;
+class Camera;
+class Material;
 struct RenderState;
 struct RenderItem;
 struct Lighting;
@@ -44,13 +43,13 @@ public:
      * Updates uniforms for this shader using the given camera.
      * @param camera Camera
      */
-    virtual void setCamera(const CameraPtr camera) {}
+    virtual void setCamera(Camera* camera) {}
 
     /**
      * Updates uniforms for this shader using the given material.
      * @param material Material
      */
-    virtual void setMaterial(const MaterialPtr material) {}
+    virtual void setMaterial(const Material* material) {}
 
     /**
      * Updates the uniforms for this shader using the given lighting information.

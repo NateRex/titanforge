@@ -18,7 +18,8 @@ void Mesh::traverse(RenderState& state, const Matrix4& parentModel, const Matrix
 	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
 
 	RenderItem item;
-	item.mesh = this;
+	item.geometry = geometry.get();
+	item.material = material.get();
 	item.modelTransform = modelTransform;
 	item.normalTransform = normalTransform;
 	state.items.push_back(item);

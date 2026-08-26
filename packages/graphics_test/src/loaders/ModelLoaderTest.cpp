@@ -3,6 +3,7 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/objects/Mesh.h>
+#include <common/Utils.h>
 #include <common/exceptions/InstantiationException.h>
 
 MeshPtr findMesh(const EntityPtr& entity)

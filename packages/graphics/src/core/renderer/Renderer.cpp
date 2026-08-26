@@ -236,7 +236,7 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 		ShaderPtr shader = ShaderManager::getShader(material->materialType);
 		shader->activate();
-		shader->setMaterial(material);
+		shader->setMaterial(material.get());
 		
 		glBindVertexArray(_fullScreenVertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -334,11 +334,11 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 	std::vector<const RenderItem*> transparentItems;
 	for (const RenderItem& item : state.items)
 	{
-		if (item.mesh->material->isTransparent())
+		if (item.material->isTransparent())
 		{
 			transparentItems.push_back(&item);
 		}
-		else if (item.mesh->material->isBackground())
+		else if (item.material->isBackground())
 		{
 			backgroundItems.push_back(&item);
 		}
@@ -380,8 +380,8 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 
 void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
 {
-	Mesh* mesh = item.mesh;
-	MaterialPtr material = mesh->material;
+	Geometry* geometry = item.geometry;
+	Material* material = item.material;
 
 	// Set global state
 	glDepthMask(material->depthWrite && !material->isTransparent() ? GL_TRUE : GL_FALSE);
@@ -417,10 +417,10 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
-	shader->setCamera(camera);
+	shader->setCamera(camera.get());
 
 	// Draw buffer
-	GeometryBuffer* buffer = mesh->geometry->getBuffer();
+	GeometryBuffer* buffer = geometry->getBuffer();
 	buffer->bind();
 	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
 }

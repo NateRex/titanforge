@@ -5,21 +5,27 @@
 #include <math/Vector3.h>
 #include <vector>
 
-class Mesh;
+class Geometry;
+class Material;
 class Light;
 class Camera;
 class TextureCube;
 
 /**
- * A flattened, render-ready description of a single mesh instance obtained during scene traversal
+ * A flattened, render-ready description of an object obtained during scene traversal
  * @author Nathaniel Rex
  */
 struct RenderItem {
 
 	/**
-	 * Mesh object
+	 * Geometry being rendered
 	 */
-	Mesh* mesh = nullptr;
+	Geometry* geometry = nullptr;
+
+	/**
+	 * Material to apply
+	 */
+	Material* material = nullptr;
 
 	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.

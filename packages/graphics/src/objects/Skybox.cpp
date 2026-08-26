@@ -37,10 +37,10 @@ SkyboxPtr Skybox::create()
 
 void Skybox::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
-	const SkyboxMaterialPtr skybox = cast<SkyboxMaterial>(material);
+	const SkyboxMaterialPtr skybox = std::static_pointer_cast<SkyboxMaterial>(material);
 	if (skybox->texture)
 	{
-		state.environment.texture = cast<TextureCube>(skybox->texture).get();
+		state.environment.texture = std::static_pointer_cast<TextureCube>(skybox->texture).get();
 		state.environment.color = skybox->color;
 		state.environment.intensity = skybox->intensity;
 		state.environment.rotation = skybox->rotation;

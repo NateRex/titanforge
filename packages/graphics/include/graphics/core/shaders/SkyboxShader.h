@@ -71,9 +71,9 @@ public:
 	 */
     static SkyboxShaderPtr create();
 
-    void setCamera(const CameraPtr camera) override;
+    void setCamera(Camera* camera) override;
 
-    void setMaterial(const MaterialPtr material) override;
+    void setMaterial(const Material* material) override;
 
 private:
 

@@ -85,7 +85,7 @@ public:
 	 */
 	static PostProcessShaderPtr create();
 
-	void setMaterial(const MaterialPtr material) override;
+	void setMaterial(const Material* material) override;
 
 private:
 	

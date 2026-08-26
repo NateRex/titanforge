@@ -15,10 +15,10 @@ BOOST_AUTO_TEST_CASE(Skybox_basics)
 	SkyboxPtr skybox = Skybox::create();
 	BOOST_REQUIRE(skybox);
 
-	SkyboxMaterialPtr material = cast<SkyboxMaterial>(skybox->material);
+	SkyboxMaterialPtr material = std::static_pointer_cast<SkyboxMaterial>(skybox->material);
 	BOOST_REQUIRE(material);
 
-	TextureCubePtr texture = cast<TextureCube>(material->texture);
+	TextureCubePtr texture = std::static_pointer_cast<TextureCube>(material->texture);
 	BOOST_REQUIRE(texture);
 
 	BOOST_TEST(texture->size() > 0u);
