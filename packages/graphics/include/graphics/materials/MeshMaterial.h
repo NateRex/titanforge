@@ -61,6 +61,10 @@ enum class AlphaMode
 	BLEND
 };
 
+/**
+ * Material used to render triangulated meshes
+ * @author Nathaniel Rex
+ */
 class MeshMaterial : public Material
 {
 public:

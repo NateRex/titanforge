@@ -3,7 +3,7 @@
 #include <common/Utils.h>
 #include <math.h>
 
-Camera::Camera(): Entity(EntityType::CAMERA), _minPitch(-89.f), _maxPitch(89.f)
+Camera::Camera(): _minPitch(-89.f), _maxPitch(89.f)
 {
 	// Camera starts at origin looking in -z direction
 	lookAt(Vector3::ZERO, Vector3::MINUS_ZHAT, Vector3::YHAT);

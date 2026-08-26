@@ -220,9 +220,9 @@ public:
 
 	void setItem(const RenderItem& item) override;
 
-	void setCamera(const CameraPtr camera) override;
+	void setCamera(Camera* camera) override;
 
-	void setMaterial(const MaterialPtr material) override;
+	void setMaterial(const Material* material) override;
 
 	void setLighting(const Lighting& lighting) override;
 

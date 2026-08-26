@@ -4,7 +4,7 @@
 #include <graphics/textures/pointers/TextureCubePtr.h>
 
 /**
- * A material containing the uniform values used in skybox shaders
+ * A material used to render skyboxes
  * @author Nathaniel Rex
  */
 class SkyboxMaterial : public Material

@@ -14,6 +14,7 @@
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
+#include <graphics/geometry/GeometryAttributes.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
@@ -236,8 +237,10 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 		ShaderPtr shader = ShaderManager::getShader(material->materialType);
 		shader->activate();
-		shader->setMaterial(material);
+		shader->setMaterial(material.get());
 		
+		// Post-processing shader operates on raw vertex indices, rather than actual vertex data. Therefore, we do not actually
+		// need to pass vertex values as part of the buffer.
 		glBindVertexArray(_fullScreenVertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -334,11 +337,11 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 	std::vector<const RenderItem*> transparentItems;
 	for (const RenderItem& item : state.items)
 	{
-		if (item.mesh->material->isTransparent())
+		if (item.material->isTransparent())
 		{
 			transparentItems.push_back(&item);
 		}
-		else if (item.mesh->material->isBackground())
+		else if (item.material->isBackground())
 		{
 			backgroundItems.push_back(&item);
 		}
@@ -380,8 +383,9 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 
 void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
 {
-	Mesh* mesh = item.mesh;
-	MaterialPtr material = mesh->material;
+	Geometry* geometry = item.geometry;
+	GeometryAttributes geometryAttrib = geometry->getAttributes();
+	Material* material = item.material;
 
 	// Set global state
 	glDepthMask(material->depthWrite && !material->isTransparent() ? GL_TRUE : GL_FALSE);
@@ -417,12 +421,20 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
-	shader->setCamera(camera);
+	shader->setCamera(camera.get());
 
 	// Draw buffer
-	GeometryBuffer* buffer = mesh->geometry->getBuffer();
+	GeometryBuffer* buffer = geometry->getBuffer();
+	unsigned int primitiveType = toGLPrimitive(geometry->type);
 	buffer->bind();
-	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
+	if (geometryAttrib.indices)
+	{
+		glDrawElements(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0);
+	}
+	else {
+		glDrawArrays(primitiveType, 0, buffer->size());
+	}
+	
 }
 
 void Renderer::incrementRendererCount()
@@ -446,6 +458,9 @@ void Renderer::applyGlobalSettings()
 	// Allow linear filtering across cubemap face boundaries instead of clamping
 	// each face independently, which otherwise exposes visible skybox seams.
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	// Enable setting point size in shaders for point primitive draws
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	// Enable alpha channel for transparency
 	glEnable(GL_BLEND);

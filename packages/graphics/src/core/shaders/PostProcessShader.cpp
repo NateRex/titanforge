@@ -2,6 +2,7 @@
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/textures/Texture.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <common/Utils.h>
 #include <glad/glad.h>
 
 PostProcessShader::PostProcessShader(): Shader("PostProcessShader", POST_PROCESS_VERTEX, POST_PROCESS_FRAGMENT)
@@ -13,7 +14,7 @@ PostProcessShaderPtr PostProcessShader::create()
 	return std::shared_ptr<PostProcessShader>(new PostProcessShader());
 }
 
-void PostProcessShader::setMaterial(const MaterialPtr material)
+void PostProcessShader::setMaterial(const Material* material)
 {
 	if (!material || material->materialType != MaterialType::POST_PROCESS)
 	{
@@ -22,7 +23,7 @@ void PostProcessShader::setMaterial(const MaterialPtr material)
 
 	ProgramBinding binding(this);
 	Shader::setMaterial(material);
-	const PostProcessMaterialPtr ppMat = std::static_pointer_cast<PostProcessMaterial>(material);
+	const PostProcessMaterial* ppMat = static_cast<const PostProcessMaterial*>(material);
 
 	if (!ppMat->texture)
 	{

@@ -16,7 +16,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TestEntity(): Entity(EntityType::GROUP) {}
+	TestEntity() {}
 };
 
 /**

@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setCamera)
 	CameraPtr camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
 
 	ShaderPtr shader = SkyboxShader::create();
-	BOOST_REQUIRE_NO_THROW(shader->setCamera(camera));
+	BOOST_REQUIRE_NO_THROW(shader->setCamera(camera.get()));
 }
 
 /**
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(SkyboxShader_setMaterial)
 	ShaderPtr shader = SkyboxShader::create();
 	shader->activate();
 
-	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material));
+	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material.get()));
 }
 
 /**
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(SkyboxShader_setWrongMaterialType)
 {
 	ShaderPtr shader = SkyboxShader::create();
 	MeshMaterialPtr material = MeshMaterial::create();
-	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(shader->setMaterial(material.get()), IllegalArgumentException);
 }
 
 /**
@@ -67,5 +67,5 @@ BOOST_AUTO_TEST_CASE(SkyboxShader_setMaterialWithoutTexture)
 {
 	ShaderPtr shader = SkyboxShader::create();
 	SkyboxMaterialPtr material = SkyboxMaterial::create();
-	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(shader->setMaterial(material.get()), IllegalArgumentException);
 }

@@ -1,10 +1,9 @@
 #pragma once
-#include <graphics/cameras/pointers/CameraPtr.h>
-#include <graphics/lights/pointers/LightPtr.h>
-#include <graphics/materials/pointers/MaterialPtr.h>
 
 class Matrix3;
 class Matrix4;
+class Camera;
+class Material;
 struct RenderState;
 struct RenderItem;
 struct Lighting;
@@ -44,13 +43,13 @@ public:
      * Updates uniforms for this shader using the given camera.
      * @param camera Camera
      */
-    virtual void setCamera(const CameraPtr camera) {}
+    virtual void setCamera(Camera* camera) {}
 
     /**
      * Updates uniforms for this shader using the given material.
      * @param material Material
      */
-    virtual void setMaterial(const MaterialPtr material) {}
+    virtual void setMaterial(const Material* material) {}
 
     /**
      * Updates the uniforms for this shader using the given lighting information.
@@ -84,6 +83,15 @@ protected:
      * @throws InstantiationException On failure to compile or link the shader
      */
     Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader);
+
+    /**
+     * Constructor
+     * @param prgmName Program name. Used in error messages on failure to compile or link.
+     * @param vertexShader Vertex shader source code
+     * @param geometryShader Geometry shader source code. Can be null, in which case no custom geometry shader will be applied.
+     * @param fragmentShader Fragment shader source code
+     */
+    Shader(const char* prgmName, const char* vertexShader, const char* geometryShader, const char* fragmentShader);
 
     /**
      * Compiles shader code for use in linking.

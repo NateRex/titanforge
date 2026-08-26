@@ -3,18 +3,21 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/objects/Mesh.h>
+#include <common/Utils.h>
 #include <common/exceptions/InstantiationException.h>
 
 MeshPtr findMesh(const EntityPtr& entity)
 {
-	if (entity->entityType == EntityType::MESH)
+	MeshPtr mesh = std::dynamic_pointer_cast<Mesh>(entity);
+	if (mesh)
 	{
-		return std::static_pointer_cast<Mesh>(entity);
+		return mesh;
 	}
+
 
 	for (unsigned int i = 0; i < entity->getNumberOfChildren(); ++i)
 	{
-		MeshPtr mesh = findMesh(entity->getChild(i));
+		mesh = findMesh(entity->getChild(i));
 		if (mesh != nullptr)
 		{
 			return mesh;

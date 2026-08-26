@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setMaterial)
 	ShaderPtr shader = PostProcessShader::create();
 	shader->activate();
 
-	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material));
+	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material.get()));
 }
 
 /**
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setWrongMaterialType)
 {
 	ShaderPtr shader = PostProcessShader::create();
 	MeshMaterialPtr material = MeshMaterial::create();
-	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(shader->setMaterial(material.get()), IllegalArgumentException);
 }
 
 /**
@@ -51,5 +51,5 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setMaterialWithoutTexture)
 	ShaderPtr shader = PostProcessShader::create();
 	PostProcessMaterialPtr material = PostProcessMaterial::create();
 
-	BOOST_REQUIRE_THROW(shader->setMaterial(material), IllegalArgumentException);
+	BOOST_REQUIRE_THROW(shader->setMaterial(material.get()), IllegalArgumentException);
 }

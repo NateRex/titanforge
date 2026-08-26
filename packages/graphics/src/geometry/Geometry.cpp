@@ -6,12 +6,18 @@
 #include <math/Vector3.h>
 #include <common/Assertions.h>
 #include <common/Utils.h>
+#include <glad/glad.h>
 #include <numeric>
 #include <cstring>
 
-Geometry::Geometry()
+unsigned int toGLPrimitive(PrimitiveType type)
 {
-
+	switch (type)
+	{
+		case PrimitiveType::POINTS: return GL_POINTS;
+		case PrimitiveType::TRIANGLES: return GL_TRIANGLES;
+		default: return GL_POINTS;
+	}
 }
 
 Geometry::~Geometry()
@@ -37,12 +43,12 @@ Geometry::~Geometry()
 	_numUVs = 0;
 }
 
-GeometryPtr Geometry::create()
+GeometryPtr Geometry::create(PrimitiveType primitiveType)
 {
-	return std::shared_ptr<Geometry>(new Geometry());
+	return std::shared_ptr<Geometry>(new Geometry(primitiveType));
 }
 
-void Geometry::setVertices(const float* vertices, unsigned int numVertices)
+void Geometry::setVertices(const float* vertices, unsigned int numVertices, bool updateIndices)
 {
 	assertNotNull(vertices, "Vertices cannot be null when applied to a geometry");
 
@@ -58,7 +64,7 @@ void Geometry::setVertices(const float* vertices, unsigned int numVertices)
 
 	// If indices have not been set yet, initialize them to match the number of vertices.
 	// They can always be updated later by the caller.
-	if (_indices == nullptr)
+	if (_indices == nullptr && updateIndices)
 	{
 		_indices = new unsigned int[numVertices];
 		_numIndices = numVertices;
@@ -79,7 +85,7 @@ void Geometry::setIndices(const unsigned int* indices, unsigned int numIndices)
 
 unsigned int Geometry::size() const
 {
-	return _numIndices;
+	return _indices != nullptr ? _numIndices : _numVertices;
 }
 
 void Geometry::setNormals(const float* normals, unsigned int numNormals)
@@ -155,6 +161,7 @@ void Geometry::removeTextureCoords()
 const GeometryAttributes Geometry::getAttributes() const
 {
 	return {
+		_indices != nullptr,
 		_normals != nullptr,
 		_colors != nullptr,
 		_uvs != nullptr
@@ -174,8 +181,7 @@ GeometryBuffer* Geometry::getBuffer()
 void Geometry::createBuffer()
 {
 	GeometryAttributes attribs = getAttributes();
-	assertNotNull(_vertices, "Geometry must contain vertex positions to render");
-	assertNotNull(_indices, "Geometry must contain vertex indices to render");
+	assertNotNull(_vertices, "Geometry must contain vertex positions");
 	assertTrue(!attribs.normals || _numNormals == _numVertices, "Number of vertex normals must match the number of vertices");
 	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors must match the number of vertices");
 	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates must match the number of vertices");

@@ -1,10 +1,12 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
+#include <graphics/materials/PointMaterial.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
+#include <graphics/objects/Points.h>
 #include <graphics/objects/Skybox.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
@@ -99,6 +101,17 @@ int main()
 
     // Create skybox
     scene->add(Skybox::create());
+
+    // Create point primitives
+    PointMaterialPtr pointMat = PointMaterial::create();
+    pointMat->color = Color::GREEN;
+    pointMat->size = 0.09f;
+    pointMat->sizeUnits = PointSizeUnits::WORLD;
+    PointsPtr points = Points::create({
+        Vector3(0.f, 5.f, 0.f),
+        Vector3(2.f, 6.f, 0.f)
+    }, pointMat);
+    scene->add(points);
 
     // Create glass cube
     MeshMaterialPtr boxMat = MeshMaterial::create();

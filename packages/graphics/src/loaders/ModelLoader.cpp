@@ -147,8 +147,8 @@ GeometryPtr loadGeometry(const aiMesh* aiMesh)
 	}
 
 	// Construct geometry
-	GeometryPtr geometry = Geometry::create();
-	geometry->setVertices(vertices.data(), aiMesh->mNumVertices);
+	GeometryPtr geometry = Geometry::create(PrimitiveType::TRIANGLES);
+	geometry->setVertices(vertices.data(), aiMesh->mNumVertices, false);
 	geometry->setIndices(indices.data(), indices.size());
 	if (hasNormals)
 	{

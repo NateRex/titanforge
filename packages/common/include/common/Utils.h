@@ -68,23 +68,3 @@ T& getOrDefault(T* ptr, T def)
     }
     return ptr != nullptr ? *ptr : def;
 }
-
-/**
- * Attempts to cast a dynamic pointer to the given type, throwing an error on failure.
- * @param <S> The type to cast to
- * @param <T> The current object type
- * @param ptr The pointer to cast
- * @return The casted pointer
- * @throws IllegalStateException If the cast fails
- */
-template <class S, class T>
-std::shared_ptr<S> cast(const std::shared_ptr<T>& ptr)
-{
-    std::shared_ptr<S> casted = std::dynamic_pointer_cast<S>(ptr);
-    if (!casted)
-    {
-        throw IllegalStateException("Failed to cast object to child subtype");
-    }
-
-    return casted;
-}

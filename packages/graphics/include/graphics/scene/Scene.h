@@ -20,5 +20,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	Scene();
+	Scene() {}
 };

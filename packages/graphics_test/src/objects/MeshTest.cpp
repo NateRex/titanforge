@@ -2,7 +2,6 @@
 #include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
-#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic construction of a mesh
@@ -13,7 +12,6 @@ BOOST_AUTO_TEST_CASE(Mesh_basics)
 	MeshMaterialPtr material = MeshMaterial::create();
 	MeshPtr mesh = Mesh::create(geometry, material);
 
-	BOOST_TEST(mesh->entityType == EntityType::MESH);
 	BOOST_TEST(mesh->geometry == geometry);
 	BOOST_TEST(mesh->material == material);
 }
