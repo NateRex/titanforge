@@ -80,12 +80,12 @@ enum class DepthFunction
 enum class PrimitiveSizeUnits
 {
     /**
-     * Size is measured in screen pixels
+     * Constant size measured in screen pixels
      */
     PIXELS,
 
     /**
-     * Size is measured in world-space units
+     * Size measured in world-space units
      */
     WORLD
 };

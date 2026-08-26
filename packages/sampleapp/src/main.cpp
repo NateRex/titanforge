@@ -2,11 +2,13 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/PointMaterial.h>
+#include <graphics/materials/LineMaterial.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/objects/Points.h>
+#include <graphics/objects/Lines.h>
 #include <graphics/objects/Skybox.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
@@ -112,6 +114,19 @@ int main()
         Vector3(2.f, 6.f, 0.f)
     }, pointMat);
     scene->add(points);
+
+    // Create line primitives
+    LineMaterialPtr lineMat = LineMaterial::create();
+    lineMat->color = Color::RED;
+    lineMat->width = 0.05f;
+    lineMat->widthUnits = PrimitiveSizeUnits::WORLD;
+    LinesPtr lines = Lines::createPolyline({
+        Vector3(-7.f, 0.f, 0.f),
+        Vector3(-4.f, 0.f, 0.f),
+        Vector3(-4.f, 2.f, 0.f),
+        Vector3(-7.f, 2.f, 0.f)
+    }, lineMat, true);
+    scene->add(lines);
 
     // Create glass cube
     MeshMaterialPtr boxMat = MeshMaterial::create();
