@@ -2,14 +2,14 @@
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/core/renderer/RenderState.h>
 
-Mesh::Mesh(EntityType entityType, GeometryPtr geometry, MaterialPtr material): Entity(entityType), geometry(geometry), material(material)
+Mesh::Mesh(GeometryPtr geometry, MaterialPtr material): geometry(geometry), material(material)
 {
 
 }
 
 MeshPtr Mesh::create(GeometryPtr geometry, MaterialPtr material)
 {
-	return std::shared_ptr<Mesh>(new Mesh(EntityType::MESH, geometry, material));
+	return std::shared_ptr<Mesh>(new Mesh(geometry, material));
 }
 
 void Mesh::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)

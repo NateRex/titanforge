@@ -1,5 +1,4 @@
 #pragma once
-#include <graphics/core/EntityType.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
@@ -17,11 +16,6 @@ struct RenderState;
 class Entity
 {
 public:
-
-	/**
-	 * Entity type
-	 */
-	const EntityType entityType;
 
 	/**
 	 * Destructor
@@ -262,9 +256,8 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param type Entity type
 	 */
-	Entity(EntityType type);
+	Entity();
 
 	/**
 	 * Updates the position of this entity. This method is called by all other functions that modify position.

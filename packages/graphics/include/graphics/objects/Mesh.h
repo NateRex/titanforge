@@ -37,9 +37,8 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param entityType Entity type. Used by child classes to override the default value of EntityType::MESH.
 	 * @param geometry Geometry whose points are expected to form a series of triangles.
 	 * @param material Material
 	 */
-	Mesh(EntityType entityType, GeometryPtr geometry, MaterialPtr material);
+	Mesh(GeometryPtr geometry, MaterialPtr material);
 };

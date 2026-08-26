@@ -1,4 +1,5 @@
 #include <graphics/geometry/PointGeometry.h>
+#include <math/Vector3.h>
 #include <algorithm>
 
 PointGeometry::PointGeometry(const Vector3* points, unsigned int numPoints)
@@ -16,12 +17,7 @@ PointGeometryPtr PointGeometry::create(const Vector3& point)
     return std::shared_ptr<PointGeometry>(new PointGeometry(&point, 1));
 }
 
-PointGeometryPtr PointGeometry::create(const std::vector<Vector3>& points)
+PointGeometryPtr PointGeometry::create(const Vector3* points, unsigned int numPoints)
 {
-    return std::shared_ptr<PointGeometry>(new PointGeometry(points.data(), points.size()));
-}
-
-PointGeometryPtr PointGeometry::create(std::initializer_list<Vector3> points)
-{
-    return std::shared_ptr<PointGeometry>(new PointGeometry(points.begin(), points.size()));
+    return std::shared_ptr<PointGeometry>(new PointGeometry(points, numPoints));
 }

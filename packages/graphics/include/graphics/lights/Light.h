@@ -50,7 +50,7 @@ protected:
 	 * Constructor
 	 * @param type
 	 */
-	Light(const LightType type) : Entity(EntityType::LIGHT),
+	Light(const LightType type) :
 		lightType(type),
 		color(Color::WHITE),
 		intensity(1.f),

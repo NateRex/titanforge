@@ -4,7 +4,7 @@
 #include <common/Utils.h>
 #include <algorithm>
 
-Entity::Entity(EntityType type): entityType(type), _scale(1.f, 1.f, 1.f)
+Entity::Entity(): _scale(1.f, 1.f, 1.f)
 {
 
 }

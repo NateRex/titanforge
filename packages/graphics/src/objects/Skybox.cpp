@@ -18,7 +18,7 @@ constexpr std::array<EmbeddedImage, 6> DEFAULT_SKYBOX_IMAGES {{
     { DefaultSkyboxData::back, DefaultSkyboxData::backSize, "back" }
 }};
 
-Skybox::Skybox(SkyboxMaterialPtr material): Mesh(EntityType::SKYBOX, BoxGeometry::create(2.f, 2.f, 2.f), material)
+Skybox::Skybox(SkyboxMaterialPtr material): Mesh(BoxGeometry::create(2.f, 2.f, 2.f), material)
 {
 
 }

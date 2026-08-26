@@ -20,5 +20,5 @@ protected:
 	/**
 	 * Constructor
 	 */
-	EntityGroup();
+	EntityGroup() {}
 };
