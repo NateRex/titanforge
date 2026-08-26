@@ -17,7 +17,7 @@ public:
 
     /**
      * Constructs a new points object
-     * @param point A single point defined in world-space coordinates
+     * @param point A single point
      * @param material Material
      * @return The new points instance
      */
@@ -25,7 +25,7 @@ public:
 
     /**
      * Constructs a new points object
-     * @param points A set of points defined in world-space coordinates
+     * @param points A set of points
      * @param material Material
      * @return The new points instance
      */
@@ -33,7 +33,7 @@ public:
 
     /**
      * Constructs a new points object
-     * @param points A set of points defined in world-space coordinates
+     * @param points A set of points
      * @param material Material
      * @return The new points instance
      */

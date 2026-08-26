@@ -54,7 +54,4 @@ void SkyboxShader::setMaterial(const Material* material)
     glUniform1f(getUniformLocation("uIntensity"), std::max(skyboxMat->intensity, 0.f));
     glUniform1f(getUniformLocation("uRotation"), skyboxMat->rotation);
     glUniform1f(getUniformLocation("uLod"), std::max(skyboxMat->lod, 0.f));
-
-    // Disable face culling
-    glDisable(GL_CULL_FACE);
 }
