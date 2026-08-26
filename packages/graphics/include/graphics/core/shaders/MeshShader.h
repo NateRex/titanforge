@@ -216,7 +216,10 @@ public:
 	 * Constructs a new MeshShader instance. This should typically only be done once, by the shader manager.
 	 * @return The new MeshShader instance
 	 */
-	static MeshShaderPtr create();
+	static MeshShaderPtr create()
+	{
+		return std::shared_ptr<MeshShader>(new MeshShader());
+	}
 
 	void setItem(const RenderItem& item) override;
 
@@ -258,5 +261,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	MeshShader();
+	MeshShader(): Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT) {}
 };

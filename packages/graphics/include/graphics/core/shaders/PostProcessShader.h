@@ -83,7 +83,10 @@ public:
 	 * Constructs a new PostProcessShader instance. This should typically only be done once, by the shader manager.
 	 * @return The new PostProcessShader instance
 	 */
-	static PostProcessShaderPtr create();
+	static PostProcessShaderPtr create()
+	{
+		return std::shared_ptr<PostProcessShader>(new PostProcessShader());
+	}
 
 	void setMaterial(const Material* material) override;
 
@@ -92,5 +95,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	PostProcessShader();
+	PostProcessShader(): Shader("PostProcessShader", POST_PROCESS_VERTEX, POST_PROCESS_FRAGMENT) {}
 };

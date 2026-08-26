@@ -1,12 +1,12 @@
-#include <graphics/core/shaders/PointShader.h>
+#include <graphics/core/shaders/LineShader.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/cameras/Camera.h>
-#include <graphics/materials/PointMaterial.h>
+#include <graphics/materials/LineMaterial.h>
 #include <common/Utils.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-void PointShader::setItem(const RenderItem& item)
+void LineShader::setItem(const RenderItem& item)
 {
     Shader::setItem(item);
     ProgramBinding binding(this);
@@ -14,7 +14,7 @@ void PointShader::setItem(const RenderItem& item)
     glUniformMatrix4fv(getUniformLocation("uTransforms.model"), 1, GL_TRUE, item.modelTransform.getValues());
 }
     
-void PointShader::setCamera(Camera* camera)
+void LineShader::setCamera(Camera* camera)
 {
     Shader::setCamera(camera);
     ProgramBinding binding(this);
@@ -27,22 +27,22 @@ void PointShader::setCamera(Camera* camera)
     glUniform1f(getUniformLocation("uViewportHeight"), viewport[3]);
 }
 
-void PointShader::setMaterial(const Material* material)
+void LineShader::setMaterial(const Material* material)
 {
-    if (!material || material->materialType != MaterialType::POINT)
+    if (!material || material->materialType != MaterialType::LINE)
     {
-        throw IllegalArgumentException("PointShader requires a PointMaterial");
+        throw IllegalArgumentException("LineShader requires a LineMaterial");
     }
 
     Shader::setMaterial(material);
     ProgramBinding binding(this);
-    const PointMaterial* pointMat = static_cast<const PointMaterial*>(material);
+    const LineMaterial* lineMat = static_cast<const LineMaterial*>(material);
     
     // Color
-    Color color = pointMat->color;
+    Color color = lineMat->color;
     glUniform4f(getUniformLocation("uColor"), color.red(), color.green(), color.blue(), color.alpha());
 
     // Size
-    glUniform1f(getUniformLocation("uSize"), pointMat->size);
-    glUniform1i(getUniformLocation("uUseWorldSize"), pointMat->sizeUnits == PrimitiveSizeUnits::WORLD ? 1 : 0);
+    glUniform1f(getUniformLocation("uWidth"), lineMat->width);
+    glUniform1i(getUniformLocation("uUseWorldWidth"), lineMat->widthUnits == PrimitiveSizeUnits::WORLD ? 1 : 0);
 }

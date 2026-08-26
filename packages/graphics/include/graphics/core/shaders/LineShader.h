@@ -1,11 +1,11 @@
 #pragma once
-#include <graphics/core/shaders/pointers/PointShaderPtr.h>
+#include <graphics/core/shaders/pointers/LineShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
 
 /**
- * Source code for the vertex shader used to handle point materials
+ * Source code for the vertex shader used to handle line materials
  */
-constexpr const char* POINT_VERTEX = R"(
+constexpr const char* LINE_VERTEX = R"(
     #version 330 core
 
     struct Transforms {
@@ -17,9 +17,9 @@ constexpr const char* POINT_VERTEX = R"(
     layout (location = 0) in vec3 vert_Pos;
 
     uniform Transforms uTransforms;
-    uniform float uSize;
+    uniform float uWidth;
     uniform float uViewportHeight;
-    uniform bool uUseWorldSize;
+    uniform bool uUseWorldWidth;
 
     void main()
     {
@@ -27,16 +27,16 @@ constexpr const char* POINT_VERTEX = R"(
 
         // If using world sizing, convert world-space diameter to pixels using the vertical projection scale,
         // perspective divide, and current viewport height.
-        gl_PointSize = uUseWorldSize
-            ? uSize * uTransforms.proj[1][1] * uViewportHeight / (2.0 * gl_Position.w)
-            : uSize;
+        gl_PointSize = uUseWorldWidth
+            ? uWidth * uTransforms.proj[1][1] * uViewportHeight / (2.0 * gl_Position.w)
+            : uWidth;
     }
 )";
 
 /**
- * Source code for the fragment shader used to handle point materials
+ * Source code for the fragment shader used to handle line materials
  */
-constexpr const char* POINT_FRAGMENT = R"(
+constexpr const char* LINE_FRAGMENT = R"(
     #version 330 core
 
     uniform vec4 uColor;
@@ -49,22 +49,21 @@ constexpr const char* POINT_FRAGMENT = R"(
     }
 )";
 
-
 /**
- * Shader used to handle point primitives and their materials
+ * Shader used to handle lines and their materials
  * @author Nathaniel Rex
  */
-class PointShader : public Shader
+class LineShader : public Shader
 {
 public:
 
     /**
-     * Creates a new PointShader instance
-     * @return The PointShader instance
+     * Creates a new LineShader instance
+     * @return The LineShader instance
      */
-    static PointShaderPtr create()
+    static LineShaderPtr create()
     {
-        return std::shared_ptr<PointShader>(new PointShader());
+        return std::shared_ptr<LineShader>(new LineShader());
     }
 
     void setItem(const RenderItem& item) override;
@@ -78,5 +77,5 @@ private:
     /**
      * Constructor
      */
-    PointShader(): Shader("PointShader", POINT_VERTEX, POINT_FRAGMENT) {}
+    LineShader(): Shader("LineShader", LINE_VERTEX, LINE_FRAGMENT) {}
 };

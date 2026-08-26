@@ -7,13 +7,6 @@
 #include <glad/glad.h>
 #include <algorithm>
 
-SkyboxShader::SkyboxShader() : Shader("SkyboxShader", SKYBOX_VERTEX, SKYBOX_FRAGMENT) {}
-
-SkyboxShaderPtr SkyboxShader::create()
-{
-    return std::shared_ptr<SkyboxShader>(new SkyboxShader());
-}
-
 void SkyboxShader::setCamera(Camera* camera)
 {
     if (!camera) throw IllegalArgumentException("SkyboxShader requires a camera");

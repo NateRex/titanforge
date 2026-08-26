@@ -11,16 +11,6 @@
 #include <glad/glad.h>
 #include <cmath>
 
-MeshShader::MeshShader() : Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT)
-{
-
-}
-
-MeshShaderPtr MeshShader::create()
-{
-	return std::shared_ptr<MeshShader>(new MeshShader());
-}
-
 void MeshShader::setItem(const RenderItem& item)
 {
 	Shader::setItem(item);
