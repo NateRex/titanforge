@@ -69,7 +69,10 @@ public:
 	 * Constructs a new SkyboxShader instance. This should typically only be done once, by the shader manager.
 	 * @return The new SkyboxShader instance
 	 */
-    static SkyboxShaderPtr create();
+    static SkyboxShaderPtr create()
+    {
+        return std::shared_ptr<SkyboxShader>(new SkyboxShader());
+    }
 
     void setCamera(Camera* camera) override;
 
@@ -80,5 +83,5 @@ private:
     /**
      * Constructor
      */
-    SkyboxShader();
+    SkyboxShader(): Shader("SkyboxShader", SKYBOX_VERTEX, SKYBOX_FRAGMENT) {}
 };

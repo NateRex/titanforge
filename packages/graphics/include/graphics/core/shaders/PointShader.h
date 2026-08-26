@@ -62,7 +62,10 @@ public:
      * Creates a new PointShader instance
      * @return The PointShader instance
      */
-    static PointShaderPtr create();
+    static PointShaderPtr create()
+    {
+        return std::shared_ptr<PointShader>(new PointShader());
+    }
 
     void setItem(const RenderItem& item) override;
 
@@ -75,5 +78,5 @@ private:
     /**
      * Constructor
      */
-    PointShader();
+    PointShader(): Shader("PointShader", POINT_VERTEX, POINT_FRAGMENT) {}
 };

@@ -5,15 +5,6 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-PostProcessShader::PostProcessShader(): Shader("PostProcessShader", POST_PROCESS_VERTEX, POST_PROCESS_FRAGMENT)
-{
-}
-
-PostProcessShaderPtr PostProcessShader::create()
-{
-	return std::shared_ptr<PostProcessShader>(new PostProcessShader());
-}
-
 void PostProcessShader::setMaterial(const Material* material)
 {
 	if (!material || material->materialType != MaterialType::POST_PROCESS)

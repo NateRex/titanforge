@@ -28,6 +28,7 @@ add_executable(GraphicsTest
     src/core/renderer/RendererTest.cpp
     src/core/renderer/RenderPassTest.cpp
     src/core/renderer/RenderTargetTest.cpp
+    src/core/shaders/LineShaderTest.cpp
     src/core/shaders/MeshShaderTest.cpp
     src/core/shaders/PointShaderTest.cpp
     src/core/shaders/PostProcessShaderTest.cpp
@@ -41,6 +42,7 @@ add_executable(GraphicsTest
     src/loaders/ImageLoaderTest.cpp
     src/loaders/ModelLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
+    src/objects/LinesTest.cpp
     src/objects/MeshTest.cpp
     src/objects/PointsTest.cpp
     src/objects/SkyboxTest.cpp
@@ -52,6 +54,7 @@ add_executable(GraphicsTest
     src/lights/DirectionalLightTest.cpp
     src/lights/PointLightTest.cpp
     src/lights/SpotLightTest.cpp
+    src/materials/LineMaterialTest.cpp
     src/materials/MeshMaterialTest.cpp
     src/materials/PointMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp

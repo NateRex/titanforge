@@ -22,10 +22,10 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND}
         -DINPUT_DIRECTORY=${DEFAULT_SKYBOX_SOURCE_DIR}
         -DOUTPUT_FILE=${DEFAULT_SKYBOX_DATA}
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/EmbedDefaultSkybox.cmake"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/EmbedDefaultSkybox.cmake"
     DEPENDS
         ${DEFAULT_SKYBOX_FACES}
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/EmbedDefaultSkybox.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/EmbedDefaultSkybox.cmake"
     COMMENT "Embedding default skybox"
     VERBATIM)
 
@@ -47,6 +47,7 @@ add_library(Graphics
     src/core/input/InputValue.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
+    src/core/shaders/LineShader.cpp
     src/core/shaders/MeshShader.cpp
     src/core/shaders/PointShader.cpp
 	src/core/shaders/PostProcessShader.cpp
@@ -61,18 +62,21 @@ add_library(Graphics
     src/loaders/ImageLoader.cpp
     src/loaders/ModelLoader.cpp
     src/loaders/TextureLoader.cpp
+    src/objects/Lines.cpp
     src/objects/Points.cpp
     src/objects/Renderable.cpp
     src/objects/Skybox.cpp
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/geometry/LineGeometry.cpp
     src/geometry/PointGeometry.cpp
     src/lights/AmbientLight.cpp
     src/lights/DirectionalLight.cpp
     src/lights/Light.cpp
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
+    src/materials/LineMaterial.cpp
     src/materials/Material.cpp
     src/materials/MeshMaterial.cpp
     src/materials/PointMaterial.cpp
