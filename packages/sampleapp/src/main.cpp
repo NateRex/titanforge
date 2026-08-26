@@ -105,6 +105,8 @@ int main()
     // Create point primitives
     PointMaterialPtr pointMat = PointMaterial::create();
     pointMat->color = Color::GREEN;
+    pointMat->size = 0.09f;
+    pointMat->sizeUnits = PointSizeUnits::WORLD;
     PointsPtr points = Points::create({
         Vector3(0.f, 5.f, 0.f),
         Vector3(2.f, 6.f, 0.f)

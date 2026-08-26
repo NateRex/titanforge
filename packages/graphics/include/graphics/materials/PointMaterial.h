@@ -33,7 +33,7 @@ public:
     PointSizeUnits sizeUnits = PointSizeUnits::PIXELS;
 
     /**
-     * Point diameter. The units for this value are determine via PointMaterial::sizeUnits.
+     * Point diameter. The units for this value are determine via PointMaterial::sizeUnits. Defaults to 6 pixels.
      */
     float size = 6.f;
 
