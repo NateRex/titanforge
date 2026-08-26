@@ -29,7 +29,7 @@ public:
      * Constructs a polyline, where consecutive points define adjoining segments.
      * @param points The points that make up the polyline
      * @param numPoints The number of points
-     * @param closed Boolean flag that, when true, automatically closes the polyline by connecting the final point to the first
+     * @param close Boolean flag that, when true, automatically closes the polyline by connecting the final point to the first
      * point from the given array. Defaults to false.
      * @return The newly-constructed line geometry
      */
