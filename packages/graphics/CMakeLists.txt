@@ -67,6 +67,7 @@ add_library(Graphics
     src/geometry/BoxGeometry.cpp
     src/geometry/Geometry.cpp
     src/geometry/GeometryAttributes.cpp
+    src/geometry/LineGeometry.cpp
     src/geometry/PointGeometry.cpp
     src/lights/AmbientLight.cpp
     src/lights/DirectionalLight.cpp

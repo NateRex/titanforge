@@ -15,6 +15,9 @@ unsigned int toGLPrimitive(PrimitiveType type)
 	switch (type)
 	{
 		case PrimitiveType::POINTS: return GL_POINTS;
+		case PrimitiveType::LINE_SEGMENTS: return GL_LINES;
+		case PrimitiveType::POLYLINE: return GL_LINE_STRIP;
+		case PrimitiveType::CLOSED_POLYLINE: return GL_LINE_LOOP;
 		case PrimitiveType::TRIANGLES: return GL_TRIANGLES;
 		default: return GL_POINTS;
 	}

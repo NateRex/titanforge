@@ -19,6 +19,21 @@ enum class PrimitiveType
 	POINTS,
 
 	/**
+	 * Independent disjoint line segments
+	 */
+	LINE_SEGMENTS,
+
+	/**
+	 * Polyline
+	 */
+	POLYLINE,
+
+	/**
+	 * Polyline, where an implicit line connects the last point to the first point to form a loop
+	 */
+	CLOSED_POLYLINE,
+
+	/**
 	 * Triangular facets consisting of three points each
 	 */
 	TRIANGLES
