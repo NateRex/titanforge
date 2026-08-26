@@ -2,7 +2,6 @@
 #include <graphics/objects/Mesh.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
-#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic construction of a mesh
