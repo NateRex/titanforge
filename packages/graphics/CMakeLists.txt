@@ -22,10 +22,10 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND}
         -DINPUT_DIRECTORY=${DEFAULT_SKYBOX_SOURCE_DIR}
         -DOUTPUT_FILE=${DEFAULT_SKYBOX_DATA}
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/EmbedDefaultSkybox.cmake"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/EmbedDefaultSkybox.cmake"
     DEPENDS
         ${DEFAULT_SKYBOX_FACES}
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/EmbedDefaultSkybox.cmake"
+        "${CMAKE_CURRENT_SOURCE_DIR}/EmbedDefaultSkybox.cmake"
     COMMENT "Embedding default skybox"
     VERBATIM)
 
