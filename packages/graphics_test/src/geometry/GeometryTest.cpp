@@ -2,13 +2,23 @@
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
+#include <glad/glad.h>
+
+/**
+ * Tests conversion from engine primitive types to OpenGL primitive types
+ */
+BOOST_AUTO_TEST_CASE(Geometry_toGLPrimitive)
+{
+	BOOST_TEST(toGLPrimitive(PrimitiveType::POINTS) == GL_POINTS);
+	BOOST_TEST(toGLPrimitive(PrimitiveType::TRIANGLES) == GL_TRIANGLES);
+}
 
 /**
  * Tests that a geometry is initially empty on construction
  */
 BOOST_AUTO_TEST_CASE(Geometry_construction)
 {
-	GeometryPtr geom = Geometry::create();
+	GeometryPtr geom = Geometry::create(PrimitiveType::TRIANGLES);
 	BOOST_TEST(geom->size() == 0);
 
 	GeometryAttributes attributes = geom->getAttributes();
@@ -22,7 +32,7 @@ BOOST_AUTO_TEST_CASE(Geometry_construction)
  */
 BOOST_AUTO_TEST_CASE(Geometry_verticesAndIndices)
 {
-	GeometryPtr geom = Geometry::create();
+	GeometryPtr geom = Geometry::create(PrimitiveType::TRIANGLES);
 
 	float vertices[] = {
 		0.f, 0.f, 0.f,
@@ -49,7 +59,7 @@ BOOST_AUTO_TEST_CASE(Geometry_verticesAndIndices)
  */
 BOOST_AUTO_TEST_CASE(Geometry_normals)
 {
-	GeometryPtr geom = Geometry::create();
+	GeometryPtr geom = Geometry::create(PrimitiveType::TRIANGLES);
 
 	float normals[] = {
 		1.f, 0.f, 0.f,
@@ -68,7 +78,7 @@ BOOST_AUTO_TEST_CASE(Geometry_normals)
  */
 BOOST_AUTO_TEST_CASE(Geometry_colors)
 {
-	GeometryPtr geom = Geometry::create();
+	GeometryPtr geom = Geometry::create(PrimitiveType::TRIANGLES);
 
 	float colors[] = {
 		1.f, 0.f, 0.f, 1.f,
@@ -88,7 +98,7 @@ BOOST_AUTO_TEST_CASE(Geometry_colors)
  */
 BOOST_AUTO_TEST_CASE(Geometry_uvs)
 {
-	GeometryPtr geom = Geometry::create();
+	GeometryPtr geom = Geometry::create(PrimitiveType::TRIANGLES);
 
 	float uvs[] = { 0.f, 0.f, 0.5f, 0.5f, 1.f, 0.f };
 	geom->setTextureCoords(uvs, 3);
@@ -103,7 +113,7 @@ BOOST_AUTO_TEST_CASE(Geometry_uvs)
  */
 BOOST_AUTO_TEST_CASE(Geometry_buffer)
 {
-	GeometryPtr geometry = Geometry::create();
+	GeometryPtr geometry = Geometry::create(PrimitiveType::TRIANGLES);
 	float vertices[] = {
 		0.f, 0.f, 0.f,
 		1.f, 2.f, 0.f,

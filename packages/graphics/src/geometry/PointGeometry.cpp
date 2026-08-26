@@ -2,7 +2,7 @@
 #include <math/Vector3.h>
 #include <algorithm>
 
-PointGeometry::PointGeometry(const Vector3* points, unsigned int numPoints)
+PointGeometry::PointGeometry(const Vector3* points, unsigned int numPoints): Geometry(PrimitiveType::POINTS)
 {
     _numVertices = numPoints;
     

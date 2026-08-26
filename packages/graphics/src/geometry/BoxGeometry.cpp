@@ -3,8 +3,9 @@
 #include <math/Vector3.h>
 #include <numeric>
 #include <cmath>
+#include <glad/glad.h>
 
-BoxGeometry::BoxGeometry(float length, float height, float depth)
+BoxGeometry::BoxGeometry(float length, float height, float depth): Geometry(PrimitiveType::TRIANGLES)
 {
 	float hx = fabs(length) / 2.f;
 	float hy = fabs(height) / 2.f;

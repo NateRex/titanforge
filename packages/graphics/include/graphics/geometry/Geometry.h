@@ -8,6 +8,30 @@ class GeometryAttributes;
 class GeometryBuffer;
 
 /**
+ * Specifies the geometric primitive used to interpret the vertex data of a geometry
+ * @author Nathaniel Rex
+ */
+enum class PrimitiveType
+{
+	/**
+	 * Individual points
+	 */
+	POINTS,
+
+	/**
+	 * Triangular facets consisting of three points each
+	 */
+	TRIANGLES
+};
+
+/**
+ * Converts an engine geometry primitive type to its OpenGL representation.
+ * @param type Geometry primitive type to convert
+ * @return The corresponding OpenGL primitive type information.
+ */
+unsigned int toGLPrimitive(PrimitiveType type);
+
+/**
  * Base class for all geometry, which defines an object, line, or point in local space. Contains vertex attributes
  * such as position, color, texture coordinates, and unit normals.
  * @author Nathaniel Rex
@@ -17,15 +41,21 @@ class Geometry
 public:
 
 	/**
+	 * The geometric primitive type used to interpret the vertex data of this geometry
+	 */
+	const PrimitiveType type;
+
+	/**
 	 * Destructor
 	 */
 	~Geometry();
 
 	/**
 	 * Constructs a new geometry instance
+	 * @param primitiveType The geometric primitive type that should be used to interpret the vertex data of this geometry
 	 * @return The new geometry instance
 	 */
-	static GeometryPtr create();
+	static GeometryPtr create(PrimitiveType type);
 
 	/**
 	 * Sets the vertex positions of this geometry. If the indices of this geometry have not yet been set,
@@ -164,8 +194,9 @@ protected:
 
 	/**
 	 * Constructor
+	 * @param type Geometry primitive type
 	 */
-	Geometry();
+	Geometry(PrimitiveType type): type(type) {}
 
 	/**
 	 * Constructs and stores the GPU buffer for this geometry using the attributes currently set on this geometry

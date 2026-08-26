@@ -9,6 +9,11 @@ class GeometryAttributes
 public:
 
 	/**
+	 * Flag that, when true, indicates that the geometry contains indices. Defaults to false.
+	 */
+	bool indices = false;
+
+	/**
 	 * Flag that, when true, indicates that the geometry contains per-vertex normals. Defaults to false.
 	 */
 	bool normals = false;

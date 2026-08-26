@@ -6,12 +6,18 @@
 #include <math/Vector3.h>
 #include <common/Assertions.h>
 #include <common/Utils.h>
+#include <glad/glad.h>
 #include <numeric>
 #include <cstring>
 
-Geometry::Geometry()
+unsigned int toGLPrimitive(PrimitiveType type)
 {
-
+	switch (type)
+	{
+		case PrimitiveType::POINTS: return GL_POINTS;
+		case PrimitiveType::TRIANGLES: return GL_TRIANGLES;
+		default: return GL_POINTS;
+	}
 }
 
 Geometry::~Geometry()
@@ -37,9 +43,9 @@ Geometry::~Geometry()
 	_numUVs = 0;
 }
 
-GeometryPtr Geometry::create()
+GeometryPtr Geometry::create(PrimitiveType type)
 {
-	return std::shared_ptr<Geometry>(new Geometry());
+	return std::shared_ptr<Geometry>(new Geometry(type));
 }
 
 void Geometry::setVertices(const float* vertices, unsigned int numVertices, bool updateIndices)
@@ -155,6 +161,7 @@ void Geometry::removeTextureCoords()
 const GeometryAttributes Geometry::getAttributes() const
 {
 	return {
+		_indices != nullptr,
 		_normals != nullptr,
 		_colors != nullptr,
 		_uvs != nullptr

@@ -91,7 +91,7 @@ void RenderTarget::build()
         drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
     }
 
-    // Select draw buffers
+    // Upload color data to framebuffer
     _frameBuffer->bind();
     if (drawBuffers.empty())
     {

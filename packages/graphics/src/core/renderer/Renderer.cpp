@@ -14,6 +14,7 @@
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
+#include <graphics/geometry/GeometryAttributes.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
@@ -238,6 +239,8 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 		shader->activate();
 		shader->setMaterial(material.get());
 		
+		// Post-processing shader operates on raw vertex indices, rather than actual vertex data. Therefore, we do not actually
+		// need to pass vertex values as part of the buffer.
 		glBindVertexArray(_fullScreenVertexArray);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -381,6 +384,7 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
 {
 	Geometry* geometry = item.geometry;
+	GeometryAttributes geometryAttrib = geometry->getAttributes();
 	Material* material = item.material;
 
 	// Set global state
@@ -421,8 +425,16 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 
 	// Draw buffer
 	GeometryBuffer* buffer = geometry->getBuffer();
+	unsigned int primitiveType = toGLPrimitive(geometry->type);
 	buffer->bind();
-	glDrawElements(GL_TRIANGLES, buffer->size, GL_UNSIGNED_INT, 0);
+	if (geometryAttrib.indices)
+	{
+		glDrawElements(primitiveType, buffer->size, GL_UNSIGNED_INT, 0);
+	}
+	else {
+		glDrawArrays(primitiveType, 0, buffer->size);
+	}
+	
 }
 
 void Renderer::incrementRendererCount()
