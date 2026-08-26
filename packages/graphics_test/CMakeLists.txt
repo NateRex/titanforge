@@ -50,6 +50,7 @@ add_executable(GraphicsTest
     src/lights/PointLightTest.cpp
     src/lights/SpotLightTest.cpp
     src/materials/MeshMaterialTest.cpp
+    src/materials/PointMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
     src/materials/SkyboxMaterialTest.cpp
     src/scene/SceneTest.cpp

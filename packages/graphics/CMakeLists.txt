@@ -72,6 +72,7 @@ add_library(Graphics
     src/lights/SpotLight.cpp
     src/materials/Material.cpp
     src/materials/MeshMaterial.cpp
+    src/materials/PointMaterial.cpp
 	src/materials/PostProcessMaterial.cpp
     src/materials/SkyboxMaterial.cpp
     src/scene/Scene.cpp

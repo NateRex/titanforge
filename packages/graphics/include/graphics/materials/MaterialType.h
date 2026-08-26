@@ -8,6 +8,11 @@ enum class MaterialType
 {
 
 	/**
+	 * Material applied to point primitives
+	 */
+	POINT,
+
+	/**
 	 * Material applicable to meshes
 	 */
 	MESH,
