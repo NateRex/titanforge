@@ -23,6 +23,11 @@ enum class MaterialType
 	MESH,
 
 	/**
+	 * Material used to render wireframe representations of a mesh
+	 */
+	WIREFRAME,
+
+	/**
 	 * Material applied to skyboxes
 	 */
 	SKYBOX,
