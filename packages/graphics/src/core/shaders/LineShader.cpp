@@ -24,7 +24,7 @@ void LineShader::setCamera(Camera* camera)
 
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
-    glUniform1f(getUniformLocation("uViewportHeight"), viewport[3]);
+    glUniform2f(getUniformLocation("uViewportSize"), viewport[2], viewport[3]);
 }
 
 void LineShader::setMaterial(const Material* material)
