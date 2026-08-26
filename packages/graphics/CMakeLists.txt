@@ -73,6 +73,7 @@ add_library(Graphics
     src/lights/Light.cpp
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
+    src/materials/LineMaterial.cpp
     src/materials/Material.cpp
     src/materials/MeshMaterial.cpp
     src/materials/PointMaterial.cpp

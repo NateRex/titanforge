@@ -74,6 +74,23 @@ enum class DepthFunction
 };
 
 /**
+ * Describes the units used to measture the size of primitives (such as points and lines)
+ * @author Nathaniel Rex
+ */
+enum class PrimitiveSizeUnits
+{
+    /**
+     * Size is measured in screen pixels
+     */
+    PIXELS,
+
+    /**
+     * Size is measured in world-space units
+     */
+    WORLD
+};
+
+/**
  * Base class for all materials that define the appearance of objects in a scene.
  * @author Nathaniel Rex
  */

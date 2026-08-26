@@ -54,5 +54,5 @@ void PointShader::setMaterial(const Material* material)
 
     // Size
     glUniform1f(getUniformLocation("uSize"), pointMat->size);
-    glUniform1i(getUniformLocation("uUseWorldSize"), pointMat->sizeUnits == PointSizeUnits::WORLD ? 1 : 0);
+    glUniform1i(getUniformLocation("uUseWorldSize"), pointMat->sizeUnits == PrimitiveSizeUnits::WORLD ? 1 : 0);
 }

@@ -52,6 +52,7 @@ add_executable(GraphicsTest
     src/lights/DirectionalLightTest.cpp
     src/lights/PointLightTest.cpp
     src/lights/SpotLightTest.cpp
+    src/materials/LineMaterialTest.cpp
     src/materials/MeshMaterialTest.cpp
     src/materials/PointMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp

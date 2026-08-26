@@ -13,12 +13,17 @@ enum class MaterialType
 	POINT,
 
 	/**
-	 * Material applicable to meshes
+	 * Material applied to line primitives
+	 */
+	LINE,
+
+	/**
+	 * Material applied to meshes
 	 */
 	MESH,
 
 	/**
-	 * Skybox material
+	 * Material applied to skyboxes
 	 */
 	SKYBOX,
 
