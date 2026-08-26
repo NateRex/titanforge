@@ -46,6 +46,7 @@ add_executable(GraphicsTest
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp
     src/geometry/GeometryTest.cpp
+    src/geometry/PointGeometryTest.cpp
     src/lights/AmbientLightTest.cpp
     src/lights/DirectionalLightTest.cpp
     src/lights/PointLightTest.cpp

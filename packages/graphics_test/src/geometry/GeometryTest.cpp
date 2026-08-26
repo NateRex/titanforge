@@ -29,9 +29,16 @@ BOOST_AUTO_TEST_CASE(Geometry_verticesAndIndices)
 		1.f, 2.f, 0.f,
 		2.f, 0.f, 0.f 
 	};
+
+	// Set vertices, no indices
+	geom->setVertices(vertices, 3, false);
+	BOOST_TEST(geom->size() == 3);
+
+	// Set vertices and indices together
 	geom->setVertices(vertices, 3);
 	BOOST_TEST(geom->size() == 3);
 
+	// Update indices so that now there are 4 vertices in total
 	unsigned int indices[] = { 0, 1, 2, 0 };
 	geom->setIndices(indices, 4);
 	BOOST_TEST(geom->size() == 4);

@@ -13,18 +13,32 @@ class PointGeometry : public Geometry
 public:
 
     /**
+     * Constructs a new point geometry instance containing a single point
+     * @param point A point defined in world-space coordinates
+     * @return The new point geometry instance
+     */
+    static PointGeometryPtr create(const Vector3& point);
+
+    /**
 	 * Constructs a new point geometry instance
-	 * @param points The set of points defined using world-space coordinates
+	 * @param points The set of points defined in world-space coordinates
 	 * @return The new point geometry instance
 	 */
 	static PointGeometryPtr create(const std::vector<Vector3>& points);
 
     /**
      * Constructs a new point geometry instance
-     * @param points The set of points defined using world-space coordinates
+     * @param points The set of points defined in world-space coordinates
      * @return The new point geometry instance
      */
-    static PointGeometryPtr craete(std::initializer_list<Vector3> points);
+    static PointGeometryPtr create(std::initializer_list<Vector3> points);
 
-    
+private:
+
+    /**
+     * Constructor
+     * @param points The set of points defined in world-space coordinates
+     * @param numPoints The number of points
+     */
+    PointGeometry(const Vector3* points, unsigned int numPoints);
 };

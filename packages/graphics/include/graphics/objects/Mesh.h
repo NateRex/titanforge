@@ -26,10 +26,10 @@ public:
 	/**
 	 * Constructs a new mesh instance
 	 * @param geometry Geometry whose points are expected to form a series of triangles
-	 * @param material Mesh material
+	 * @param material Material
 	 * @return The new mesh instance
 	 */
-	static MeshPtr create(GeometryPtr geometry, MeshMaterialPtr material);
+	static MeshPtr create(GeometryPtr geometry, MaterialPtr material);
 
 	void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 

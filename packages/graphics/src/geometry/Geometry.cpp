@@ -79,7 +79,7 @@ void Geometry::setIndices(const unsigned int* indices, unsigned int numIndices)
 
 unsigned int Geometry::size() const
 {
-	return _numIndices;
+	return _indices != nullptr ? _numIndices : _numVertices;
 }
 
 void Geometry::setNormals(const float* normals, unsigned int numNormals)

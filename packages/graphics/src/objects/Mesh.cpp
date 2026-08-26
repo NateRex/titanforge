@@ -7,7 +7,7 @@ Mesh::Mesh(EntityType entityType, GeometryPtr geometry, MaterialPtr material): E
 
 }
 
-MeshPtr Mesh::create(GeometryPtr geometry, MeshMaterialPtr material)
+MeshPtr Mesh::create(GeometryPtr geometry, MaterialPtr material)
 {
 	return std::shared_ptr<Mesh>(new Mesh(EntityType::MESH, geometry, material));
 }

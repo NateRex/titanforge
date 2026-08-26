@@ -45,7 +45,8 @@ public:
 	void setIndices(const unsigned int* indices, unsigned int numIndices);
 
 	/**
-	 * @return The total number of indices in this geometry
+	 * @return The total number of points in this geometry. If indices are set, this will be the number of indices. Otherwise, it defaults
+	 * to the number of vertices.
 	 */
 	unsigned int size() const;
 
