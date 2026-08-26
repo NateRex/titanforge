@@ -11,11 +11,6 @@ class GeometryBuffer
 public:
 
 	/**
-	 * The number of indices held inside this buffer
-	 */
-	const unsigned int size;
-
-	/**
 	 * Constructor
 	 * @param attributes Geometry attributes
 	 * @param vertexData Array of vertex data for this buffer
@@ -30,6 +25,12 @@ public:
 	 * Destructor
 	 */
 	~GeometryBuffer();
+
+	/**
+	 * @return The total number of points in this buffer. If indices are set, this will be the number of indices. Otherwise, it defaults
+	 * to the number of vertices.
+	 */
+	unsigned int size() const { return _size; }
 
 	/**
 	 * Binds this buffer for drawing
@@ -52,4 +53,10 @@ private:
 	 * OpenGL vertex array object (VAO) name used to bind this buffer for rendering.
 	 */
 	unsigned int _vaoId = 0;
+
+	/**
+	 * The total number of points in this buffer. If indices are set, this will be the number of indices. Otherwise, it defaults
+	 * to the number of vertices.
+	 */
+	unsigned int _size;
 };

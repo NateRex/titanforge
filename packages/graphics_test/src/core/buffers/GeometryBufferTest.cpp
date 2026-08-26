@@ -14,6 +14,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_positionsOnly)
 	};
 
 	GeometryBuffer buffer(GeometryAttributes(), vertices, 9, nullptr, 0);
+	BOOST_TEST(buffer.size() == 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
@@ -30,6 +31,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withIndices)
 	};
 
 	GeometryBuffer buffer(GeometryAttributes(), vertices, 9, indices, 3);
+	BOOST_TEST(buffer.size() == 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
@@ -48,6 +50,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withNormals)
 	attrib.normals = true;
 
 	GeometryBuffer buffer(attrib, vertices, 18, indices, 3);
+	BOOST_TEST(buffer.size() == 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
@@ -66,6 +69,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withColors)
 	attrib.colors = true;
 
 	GeometryBuffer buffer(attrib, vertices, 21, indices, 3);
+	BOOST_TEST(buffer.size() == 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
@@ -85,5 +89,6 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withTextureCoords)
 	attrib.uvs = true;
 
 	GeometryBuffer buffer(attrib, vertices, 15, indices, 3);
+	BOOST_TEST(buffer.size() == 3);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }

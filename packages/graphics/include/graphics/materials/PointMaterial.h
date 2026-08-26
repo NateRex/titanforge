@@ -13,7 +13,7 @@ public:
     /**
      * Point size in pixels
      */
-    float size = 5.f;
+    float size = 6.f;
 
     /**
      * Boolean flag that, when true, causes the point to appear with fixed sizing regardless of where the camera is. Defaults to false.

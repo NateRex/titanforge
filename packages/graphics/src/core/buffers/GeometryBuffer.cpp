@@ -3,9 +3,11 @@
 #include <glad/glad.h>
 
 GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,
-	const unsigned int* indices, unsigned int numIndices): size(numIndices)
+	const unsigned int* indices, unsigned int numIndices)
 {
-	bool hasIndices = indices != nullptr;
+	const bool hasIndices = indices != nullptr;
+	const int stride = attributes.getStride();
+	_size = hasIndices ? numIndices : numValues / stride;
 
 	// Create buffers
 	glGenVertexArrays(1, &_vaoId);
@@ -24,7 +26,6 @@ GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 	}
 
-	int stride = attributes.getStride();
 	long long offset = 0;
 
 	// Position attribute

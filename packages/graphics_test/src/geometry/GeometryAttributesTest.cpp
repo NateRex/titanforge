@@ -47,15 +47,22 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_equalsChecks)
  */
 BOOST_AUTO_TEST_CASE(GeometryAttributes_stride)
 {
-	GeometryAttributes a = { false, false, false };
+	GeometryAttributes a = { false, false, false, false };
 	BOOST_TEST(a.getStride() == 3);
 
-	a = { true, false, false };
+	// Normals
+	a = { false, true, false, false };
 	BOOST_TEST(a.getStride() == 6);
 
-	a = { false, true, false };
+	// Colors
+	a = { false, false, true, false };
 	BOOST_TEST(a.getStride() == 7);
 
-	a = { false, false, true };
+	// Texture coordinates
+	a = { false, false, false, true };
 	BOOST_TEST(a.getStride() == 5);
+
+	// Ensure indices have no impact on stride
+	a = { true, false, false, false };
+	BOOST_TEST(a.getStride() == 3);
 }

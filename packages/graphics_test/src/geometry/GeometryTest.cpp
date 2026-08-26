@@ -123,5 +123,5 @@ BOOST_AUTO_TEST_CASE(Geometry_buffer)
 
 	GeometryBuffer* buffer = geometry->getBuffer();
 	BOOST_TEST(buffer != nullptr);
-	BOOST_TEST(buffer->size == geometry->size());
+	BOOST_TEST(buffer->size() == geometry->size());
 }

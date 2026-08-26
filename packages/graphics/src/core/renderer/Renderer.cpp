@@ -429,10 +429,10 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	buffer->bind();
 	if (geometryAttrib.indices)
 	{
-		glDrawElements(primitiveType, buffer->size, GL_UNSIGNED_INT, 0);
+		glDrawElements(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0);
 	}
 	else {
-		glDrawArrays(primitiveType, 0, buffer->size);
+		glDrawArrays(primitiveType, 0, buffer->size());
 	}
 	
 }
@@ -458,6 +458,9 @@ void Renderer::applyGlobalSettings()
 	// Allow linear filtering across cubemap face boundaries instead of clamping
 	// each face independently, which otherwise exposes visible skybox seams.
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	// Enable setting point size in shaders for point primitive draws
+	glEnable(GL_PROGRAM_POINT_SIZE);
 
 	// Enable alpha channel for transparency
 	glEnable(GL_BLEND);
