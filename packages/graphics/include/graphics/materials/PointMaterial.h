@@ -3,6 +3,23 @@
 #include <graphics/materials/Material.h>
 
 /**
+ * Describes how a point's size is measured
+ * @author Nathaniel Rex
+ */
+enum class PointSizeUnits
+{
+    /**
+     * Point diameter is measured in screen pixels
+     */
+    PIXELS,
+
+    /**
+     * Point diameter is measured in world-space units
+     */
+    WORLD
+};
+
+/**
  * Material used to render point primitives
  * @author Nathaniel Rex
  */
@@ -11,14 +28,14 @@ class PointMaterial : public Material
 public:
 
     /**
-     * Point size in pixels
+     * Controls how the point size is interpreted. Defaults to PointSizeUnits::PIXELS.
      */
-    float size = 6.f;
+    PointSizeUnits sizeUnits = PointSizeUnits::PIXELS;
 
     /**
-     * Boolean flag that, when true, causes the point to appear with fixed sizing regardless of where the camera is. Defaults to false.
+     * Point diameter. The units for this value are determine via PointMaterial::sizeUnits.
      */
-    bool fixedSize = false;
+    float size = 6.f;
 
     /**
      * Creates a point material

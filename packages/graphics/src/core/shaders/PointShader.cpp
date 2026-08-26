@@ -31,6 +31,10 @@ void PointShader::setCamera(Camera* camera)
 
     glUniformMatrix4fv(getUniformLocation("uTransforms.view"), 1, GL_TRUE, camera->getViewMatrix().getValues());
     glUniformMatrix4fv(getUniformLocation("uTransforms.proj"), 1, GL_TRUE, camera->getProjectionMatrix().getValues());
+
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glUniform1f(getUniformLocation("uViewportHeight"), viewport[3]);
 }
 
 void PointShader::setMaterial(const Material* material)
@@ -50,4 +54,5 @@ void PointShader::setMaterial(const Material* material)
 
     // Size
     glUniform1f(getUniformLocation("uSize"), pointMat->size);
+    glUniform1i(getUniformLocation("uUseWorldSize"), pointMat->sizeUnits == PointSizeUnits::WORLD ? 1 : 0);
 }

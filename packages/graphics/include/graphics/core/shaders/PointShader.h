@@ -18,11 +18,18 @@ constexpr const char* POINT_VERTEX = R"(
 
     uniform Transforms uTransforms;
     uniform float uSize;
+    uniform float uViewportHeight;
+    uniform bool uUseWorldSize;
 
     void main()
     {
         gl_Position = uTransforms.proj * uTransforms.view * uTransforms.model * vec4(vert_Pos, 1.0);
-        gl_PointSize = uSize;
+
+        // If using world sizing, convert world-space diameter to pixels using the vertical projection scale,
+        // perspective divide, and current viewport height.
+        gl_PointSize = uUseWorldSize
+            ? uSize * uTransforms.proj[1][1] * uViewportHeight / (2.0 * gl_Position.w)
+            : uSize;
     }
 )";
 

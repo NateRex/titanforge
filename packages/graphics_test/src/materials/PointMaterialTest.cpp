@@ -15,4 +15,6 @@ BOOST_AUTO_TEST_CASE(PointMaterial_defaults)
 	BOOST_TEST(material->cullingMode == CullingMode::NONE);
 	BOOST_TEST(material->depthWrite == true);
 	BOOST_TEST(material->depthFunction == DepthFunction::LESS);
+	BOOST_TEST(material->sizeUnits == PointSizeUnits::PIXELS);
+	BOOST_TEST(material->size == 6.f);
 }
