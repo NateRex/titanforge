@@ -33,7 +33,7 @@ public:
      * point from the given array. Defaults to false.
      * @return The newly-constructed line geometry
      */
-    static LineGeometryPtr createPolyline(const Vector3* points, unsigned int numPoints, bool closed = false);
+    static LineGeometryPtr createPolyline(const Vector3* points, unsigned int numPoints, bool close = false);
 
 private:
 

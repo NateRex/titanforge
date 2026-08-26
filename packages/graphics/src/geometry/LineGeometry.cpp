@@ -17,8 +17,8 @@ LineGeometryPtr LineGeometry::createSegments(const Vector3* points, unsigned int
     return std::shared_ptr<LineGeometry>(new LineGeometry(points, numPoints, PrimitiveType::LINE_SEGMENTS));
 }
 
-LineGeometryPtr LineGeometry::createPolyline(const Vector3* points, unsigned int numPoints, bool closed)
+LineGeometryPtr LineGeometry::createPolyline(const Vector3* points, unsigned int numPoints, bool close)
 {
     return std::shared_ptr<LineGeometry>(new LineGeometry(points, numPoints,
-            closed ? PrimitiveType::CLOSED_POLYLINE : PrimitiveType::POLYLINE));
+            close ? PrimitiveType::CLOSED_POLYLINE : PrimitiveType::POLYLINE));
 }
