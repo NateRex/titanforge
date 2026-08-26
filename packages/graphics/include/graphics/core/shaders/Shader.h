@@ -86,6 +86,15 @@ protected:
     Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader);
 
     /**
+     * Constructor
+     * @param prgmName Program name. Used in error messages on failure to compile or link.
+     * @param vertexShader Vertex shader source code
+     * @param geometryShader Geometry shader source code. Can be null, in which case no custom geometry shader will be applied.
+     * @param fragmentShader Fragment shader source code
+     */
+    Shader(const char* prgmName, const char* vertexShader, const char* geometryShader, const char* fragmentShader);
+
+    /**
      * Compiles shader code for use in linking.
      * @param prgmName Program name. Used in error messages on failure to compile.
      * @param type The shader type

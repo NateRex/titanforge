@@ -10,10 +10,17 @@
 #include <glad/glad.h>
 #include <sstream>
 
-Shader::Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader)
+Shader::Shader(const char* prgmName, const char* vertexShader, const char* fragmentShader): Shader(prgmName, vertexShader, nullptr, fragmentShader)
 {
-	unsigned int vId = compileSource(prgmName, GL_VERTEX_SHADER, vertexShader);
-	unsigned int fId = compileSource(prgmName, GL_FRAGMENT_SHADER, fragmentShader);
+	
+}
+
+Shader::Shader(const char* prgmName, const char* vertexShader, const char* geometryShader, const char* fragmentShader)
+{
+	unsigned int vId, gId, fId = 0;
+	vId = compileSource(prgmName, GL_VERTEX_SHADER, vertexShader);
+	fId = compileSource(prgmName, GL_FRAGMENT_SHADER, fragmentShader);
+	if (geometryShader != nullptr) gId = compileSource(prgmName, GL_GEOMETRY_SHADER, geometryShader);
 
 	// Create program
 	_id = glCreateProgram();
@@ -26,11 +33,13 @@ Shader::Shader(const char* prgmName, const char* vertexShader, const char* fragm
 
 	// Attach shaders and link
 	glAttachShader(_id, vId);
+	if (geometryShader != nullptr) glAttachShader(_id, gId);
 	glAttachShader(_id, fId);
 	glLinkProgram(_id);
 
 	// Detach shaders
 	glDeleteShader(vId);
+	if (geometryShader != nullptr) glDeleteShader(gId);
 	glDeleteShader(fId);
 
 	// Check for errors
