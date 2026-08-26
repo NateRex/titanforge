@@ -1,6 +1,6 @@
 #pragma once
 #include <graphics/objects/pointers/SkyboxPtr.h>
-#include <graphics/objects/Mesh.h>
+#include <graphics/objects/Renderable.h>
 #include <graphics/materials/pointers/SkyboxMaterialPtr.h>
 #include <graphics/textures/pointers/TextureCubePtr.h>
 #include <cstddef>
@@ -28,11 +28,10 @@ struct EmbeddedImage
 };
 
 /**
- * A skybox is a special type of mesh consisting of a box geometry and a cube texture. When added to a scene, it will be rendered
- * as the background for the entire scene.
+ * A skybox consists of a box geometry and a cube texture. When added to a scene, it will be rendered as the background for the entire scene.
  * @author Nathaniel Rex
  */
-class Skybox : public Mesh
+class Skybox : public Renderable
 {
 public:
 

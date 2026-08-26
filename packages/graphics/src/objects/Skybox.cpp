@@ -18,7 +18,7 @@ constexpr std::array<EmbeddedImage, 6> DEFAULT_SKYBOX_IMAGES {{
     { DefaultSkyboxData::back, DefaultSkyboxData::backSize, "back" }
 }};
 
-Skybox::Skybox(SkyboxMaterialPtr material): Mesh(BoxGeometry::create(2.f, 2.f, 2.f), material)
+Skybox::Skybox(SkyboxMaterialPtr material): Renderable(BoxGeometry::create(2.f, 2.f, 2.f), material)
 {
 
 }
@@ -47,7 +47,7 @@ void Skybox::traverse(RenderState& state, const Matrix4& parentModel, const Matr
 		state.environment.lod = skybox->lod;
 	}
 
-	Mesh::traverse(state, parentModel, parentNormal);
+	Renderable::traverse(state, parentModel, parentNormal);
 }
 
 void Skybox::updateScaling(float x, float y, float z)
