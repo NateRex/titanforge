@@ -3,7 +3,7 @@
 #include <graphics/geometry/GeometryAttributes.h>
 
 /**
- * Tests the ability to create and bind a buffer using only vertex positions
+ * Tests the ability to create and bind a buffer using only vertex positions (no indices)
  */
 BOOST_AUTO_TEST_CASE(GeometryBuffer_positionsOnly)
 {
@@ -12,15 +12,29 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_positionsOnly)
 		0.f, 1.f, 0.f,
 		1.f, 0.f, 0.f
 	};
-	unsigned int indices[] = { 0, 1, 2 };
-	GeometryAttributes attrib;
 
-	GeometryBuffer buffer(attrib, vertices, 9, indices, 3);
+	GeometryBuffer buffer(GeometryAttributes(), vertices, 9, nullptr, 0);
 	BOOST_REQUIRE_NO_THROW(buffer.bind());
 }
 
 /**
- * Tests the ability to create and bind a buffer using data containing vertex normals
+ * Tests the ability to create and bind a buffer using data containing vertex positions and indices
+ */
+BOOST_AUTO_TEST_CASE(GeometryBuffer_withIndices)
+{
+	unsigned int indices[] = { 0, 1, 2 };
+	float vertices[] = {
+		-1.f, 0.f, 0.f,
+		0.f, 1.f, 0.f,
+		1.f, 0.f, 0.f
+	};
+
+	GeometryBuffer buffer(GeometryAttributes(), vertices, 9, indices, 3);
+	BOOST_REQUIRE_NO_THROW(buffer.bind());
+}
+
+/**
+ * Tests the ability to create and bind a buffer using data containing vertex positions, indices, and normals
  */
 BOOST_AUTO_TEST_CASE(GeometryBuffer_withNormals)
 {
@@ -38,7 +52,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withNormals)
 }
 
 /**
- * Tests the ability to create and bind a buffer using data containing vertex colors
+ * Tests the ability to create and bind a buffer using data containing vertex positions, indices, and colors
  */
 BOOST_AUTO_TEST_CASE(GeometryBuffer_withColors)
 {
@@ -56,7 +70,7 @@ BOOST_AUTO_TEST_CASE(GeometryBuffer_withColors)
 }
 
 /**
- * Tests the ability to create and bind a buffer using data containing texture (UV) coordinates
+ * Tests the ability to create and bind a buffer using data containing vertex positions, indices, and and texture coordinates
  */
 BOOST_AUTO_TEST_CASE(GeometryBuffer_withTextureCoords)
 {

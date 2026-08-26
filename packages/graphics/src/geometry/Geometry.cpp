@@ -42,7 +42,7 @@ GeometryPtr Geometry::create()
 	return std::shared_ptr<Geometry>(new Geometry());
 }
 
-void Geometry::setVertices(const float* vertices, unsigned int numVertices)
+void Geometry::setVertices(const float* vertices, unsigned int numVertices, bool updateIndices)
 {
 	assertNotNull(vertices, "Vertices cannot be null when applied to a geometry");
 
@@ -58,7 +58,7 @@ void Geometry::setVertices(const float* vertices, unsigned int numVertices)
 
 	// If indices have not been set yet, initialize them to match the number of vertices.
 	// They can always be updated later by the caller.
-	if (_indices == nullptr)
+	if (_indices == nullptr && updateIndices)
 	{
 		_indices = new unsigned int[numVertices];
 		_numIndices = numVertices;
@@ -174,8 +174,7 @@ GeometryBuffer* Geometry::getBuffer()
 void Geometry::createBuffer()
 {
 	GeometryAttributes attribs = getAttributes();
-	assertNotNull(_vertices, "Geometry must contain vertex positions to render");
-	assertNotNull(_indices, "Geometry must contain vertex indices to render");
+	assertNotNull(_vertices, "Geometry must contain vertex positions");
 	assertTrue(!attribs.normals || _numNormals == _numVertices, "Number of vertex normals must match the number of vertices");
 	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors must match the number of vertices");
 	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates must match the number of vertices");

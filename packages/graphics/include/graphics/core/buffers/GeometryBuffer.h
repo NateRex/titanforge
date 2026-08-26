@@ -17,11 +17,11 @@ public:
 
 	/**
 	 * Constructor
-	 * @param attributes Vertex attributes
+	 * @param attributes Geometry attributes
 	 * @param vertexData Array of vertex data for this buffer
 	 * @param numValues The number of values in the vertex data array
-	 * @param indices Array containing the vertex indices of this buffer
-	 * @param numIndices The number of indices
+	 * @param indices Array containing the vertex indices of this buffer. Can be null if the geometry does not define indices.
+	 * @param numIndices The number of indices, if present
 	 */
 	GeometryBuffer(const GeometryAttributes& attributes, const float* vertexData, unsigned int numValues,
 		const unsigned int* indices, unsigned int numIndices);
@@ -44,7 +44,7 @@ private:
 	unsigned int _vboId = 0;
 
 	/**
-	 * OpenGL element buffer object (EBO) name.
+	 * OpenGL element buffer object (EBO) name. May remain undefined if the geometry does not define indices.
 	 */
 	unsigned int _eboId = 0;
 

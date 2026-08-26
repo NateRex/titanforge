@@ -5,10 +5,12 @@
 GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,
 	const unsigned int* indices, unsigned int numIndices): size(numIndices)
 {
+	bool hasIndices = indices != nullptr;
+
 	// Create buffers
 	glGenVertexArrays(1, &_vaoId);
 	glGenBuffers(1, &_vboId);
-	glGenBuffers(1, &_eboId);
+	if (hasIndices) glGenBuffers(1, &_eboId);
 	glBindVertexArray(_vaoId);
 
 	// Load vertex data
@@ -16,8 +18,11 @@ GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float
 	glBufferData(GL_ARRAY_BUFFER, numValues * sizeof(float), vertices, GL_STATIC_DRAW);
 
 	// Load index data
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	if (hasIndices)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	}
 
 	int stride = attributes.getStride();
 	long long offset = 0;
@@ -66,7 +71,7 @@ GeometryBuffer::~GeometryBuffer()
 
 	glDeleteVertexArrays(1, &_vaoId);
 	glDeleteBuffers(1, &_vboId);
-	glDeleteBuffers(1, &_eboId);
+	if (_eboId != 0) glDeleteBuffers(1, &_eboId);
 
 	_vaoId = 0;
 	_vboId = 0;

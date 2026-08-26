@@ -32,8 +32,10 @@ public:
 	 * they will additionally be computed and set automatically.
 	 * @param vertices An array where every 3 values represents the x, y, and z components of a vertex.
 	 * @param numVertices The number of vertices in the array
+	 * @param updateIndices Boolean flag that, when true, will cause the indices of this geometry to additionally be computed and
+	 * set. This will only occur if they have not already been set explicitly via Geometry::setIndices. Defaults to true.
 	 */
-	void setVertices(const float* vertices, unsigned int numVertices);
+	void setVertices(const float* vertices, unsigned int numVertices, bool updateIndices = true);
 
 	/**
 	 * Sets the vertex indices of this geometry.
