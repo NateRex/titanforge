@@ -43,9 +43,9 @@ Geometry::~Geometry()
 	_numUVs = 0;
 }
 
-GeometryPtr Geometry::create(PrimitiveType type)
+GeometryPtr Geometry::create(PrimitiveType primitiveType)
 {
-	return std::shared_ptr<Geometry>(new Geometry(type));
+	return std::shared_ptr<Geometry>(new Geometry(primitiveType));
 }
 
 void Geometry::setVertices(const float* vertices, unsigned int numVertices, bool updateIndices)

@@ -55,7 +55,7 @@ public:
 	 * @param primitiveType The geometric primitive type that should be used to interpret the vertex data of this geometry
 	 * @return The new geometry instance
 	 */
-	static GeometryPtr create(PrimitiveType type);
+	static GeometryPtr create(PrimitiveType primitiveType);
 
 	/**
 	 * Sets the vertex positions of this geometry. If the indices of this geometry have not yet been set,
