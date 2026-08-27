@@ -4,6 +4,7 @@
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <vector>
+#include <functional>
 
 struct RenderState;
 
@@ -214,6 +215,12 @@ public:
 	 * @param parentNormal Parent transformation matrix for converting from local to world normals
 	 */
 	virtual void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal);
+
+	/**
+	 * Traverses over this entity and all of its children recursively, applying the given lambda function
+	 * @param callback Function to call with each entity
+	 */
+	void traverse(const std::function<void(Entity*)>& callback);
 
 protected:
 

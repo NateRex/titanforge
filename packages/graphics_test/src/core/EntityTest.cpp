@@ -227,3 +227,27 @@ BOOST_AUTO_TEST_CASE(Entity_children)
 	BOOST_TEST(parent1.getNumberOfChildren() == 0);
 	BOOST_TEST(parent2.getNumberOfChildren() == 1);
 }
+
+/**
+ * Tests the ability to traverse and apply a function to each entity in the tree
+ */
+BOOST_AUTO_TEST_CASE(Entity_traversal)
+{
+	EntityPtr root = std::make_shared<TestEntity>();
+	EntityPtr child1 = std::make_shared<TestEntity>();
+	EntityPtr child2 = std::make_shared<TestEntity>();
+	EntityPtr subChild = std::make_shared<TestEntity>();
+
+	root->add(child1);
+	root->add(child2);
+	child1->add(subChild);
+
+	root->traverse([](Entity* e) {
+		e->setPosition(Vector3::XHAT);
+	});
+
+	BOOST_TEST(root->getPosition() == Vector3::XHAT);
+	BOOST_TEST(child1->getPosition() == Vector3::XHAT);
+	BOOST_TEST(child2->getPosition() == Vector3::XHAT);
+	BOOST_TEST(subChild->getPosition() == Vector3::XHAT);
+}
