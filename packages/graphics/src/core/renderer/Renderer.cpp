@@ -198,6 +198,7 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 		effectPass.viewport = isLast ? pass.viewport : Viewport{};
 		effectPass.clearFlags = ClearFlags::COLOR;
 		effectPass.clearColor = pass.clearColor;
+		effectPass.depthTest = false;
 
 		const TexturePtr originalTexture = material->texture;
 		material->texture = source->colorTexture(0);
@@ -217,7 +218,6 @@ void Renderer::drawPostProcessing(PostProcessMaterial* material)
 	}
 
 	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
