@@ -3,6 +3,7 @@
 #include <graphics/materials/MaterialType.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <graphics/core/Color.h>
+#include <graphics/core/shaders/ShaderId.h>
 
 /**
  * Describes how face-culling should be applied, if at all
@@ -143,11 +144,23 @@ public:
 	 */
 	virtual bool isBackground() const { return false; }
 
+	/**
+	 * @return The shader used for this material during normal material rendering.
+	 */
+	ShaderId shaderId() const { return _shaderId; }
+
 protected:
 
 	/**
 	 * Constructor
 	 * @param type Material type
 	 */
-	Material(MaterialType type) : materialType(type) {}
+	Material(MaterialType type, ShaderId shader) : materialType(type), _shaderId(shader) {}
+
+private:
+
+	/**
+	 * Default shader used to render this material.
+	 */
+	const ShaderId _shaderId;
 };

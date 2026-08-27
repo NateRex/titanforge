@@ -34,7 +34,7 @@ private:
     /**
      * Constructor
      */
-    PointMaterial() : Material(MaterialType::POINT) {
+    PointMaterial() : Material(MaterialType::POINT, ShaderId::POINT) {
         cullingMode = CullingMode::NONE;
     }
 };

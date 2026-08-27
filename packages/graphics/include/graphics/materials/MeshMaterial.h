@@ -150,5 +150,5 @@ private:
     /**
      * Constructor
      */
-    MeshMaterial() : Material(MaterialType::MESH) {}
+    MeshMaterial() : Material(MaterialType::MESH, ShaderId::MESH) {}
 };

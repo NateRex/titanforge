@@ -39,5 +39,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	PostProcessMaterial() : Material(MaterialType::POST_PROCESS) {}
+	PostProcessMaterial() : Material(MaterialType::POST_PROCESS, ShaderId::POST_PROCESS) {}
 };
