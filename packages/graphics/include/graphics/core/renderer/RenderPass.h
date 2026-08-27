@@ -138,4 +138,8 @@ struct RenderPass
      */
     int clearStencil = 0;
 
+    /**
+     * Boolean flag that, when true, enables depth testing for this rendering pass. Defaults to true.
+     */
+    bool depthTest = true;
 };

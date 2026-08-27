@@ -11,6 +11,7 @@
 #include <graphics/objects/Points.h>
 #include <graphics/objects/Lines.h>
 #include <graphics/objects/Skybox.h>
+#include <graphics/objects/PostProcessing.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
 #include <graphics/core/windows/Window.h>
@@ -151,9 +152,7 @@ int main()
     postProcessing->contrast = 1.1f;
     postProcessing->saturation = 0.8f;
     postProcessing->exposure = 1.1f;
-
-    // Create target for offscreen rendering
-    RenderTargetPtr target = RenderTarget::create();
+    scene->add(PostProcessing::create(postProcessing));
 
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
@@ -161,23 +160,8 @@ int main()
         // Rotate entity
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
-        // Render scene to offscreen target
-        RenderPass pass;
-        pass.target = target;
-        pass.clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
-        renderer->renderPass(scene, camera, pass);
-
-        // Render normals
-        pass.mode = RenderMode::VERTEX_NORMALS;
-        pass.clearFlags = ClearFlags::NONE;
-        renderer->renderPass(scene, camera, pass);
-
-        // Post-processing effects
-        postProcessing->texture = target->colorTexture(0);
-        pass.target = nullptr;
-        pass.mode = RenderMode::MATERIAL;
-        pass.clearFlags = ClearFlags::COLOR;
-        renderer->renderPass(postProcessing, pass);
+		// Post-processing is discovered from the scene and applied after its other objects.
+		renderer->render(scene, camera);
 
 		// Present the frame after all passes are complete
 		renderer->present();

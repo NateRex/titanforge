@@ -6,12 +6,12 @@
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/Color.h>
 #include <graphics/core/renderer/RenderPass.h>
-#include <graphics/materials/pointers/PostProcessMaterialPtr.h>
 #include <mutex>
 
 class Matrix3;
 class Matrix4;
 class RenderTarget;
+class PostProcessMaterial;
 struct RenderState;
 struct RenderItem;
 
@@ -70,34 +70,21 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders a scene, optionally applying a post-process material. This method does not present the completed frame;
-	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
+	 * Renders a scene. This method does not present the completed frame.
+	 * Call Renderer::present after all render and renderPass calls belonging to the frame are complete.
 	 * @param scene Scene
 	 * @param camera Camera
-	 * @param postProcessMaterial Optional material used to apply post-processing effects. When supplied, the scene is first
-	 * rendered to an intermediate texture and the effect is applied before presentation.
 	 */
-	void render(
-		const ScenePtr scene,
-		const CameraPtr camera,
-		const PostProcessMaterialPtr& postProcessMaterial = nullptr);
+	void render(const ScenePtr scene, const CameraPtr camera);
 
 	/**
-	 * Renders a scene once using an explicit pass configuration. This method does not present the completed frame;
-	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
+	 * Renders a scene once using an explicit pass configuration. This method does not present the completed frame.
+	 * Call Renderer::present after all render and renderPass calls belonging to the frame are complete.
 	 * @param scene Scene graph to render.
 	 * @param camera Camera used to view the scene.
 	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
 	 */
 	void renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass);
-
-	/**
-	 * Applies a post-process material once using an explicit pass configuration. This method does not present the completed frame;
-	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
-	 * @param material Post-process shader material to execute.
-	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
-	 */
-	void renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass);
 
 	/**
 	 * Presents the completed default frame buffer and processes input and window events. Call this once after composing all
@@ -146,15 +133,14 @@ private:
 	float _timeOfLastFrame = 0.f;
 	
 	/**
-	 * OpenGL ID of the lazily created vertex array object used for full-screen post-processing draws
+	 * OpenGL ID for the lazily created render-managed vertex array object used for full-screen post-processing draws
 	 */
 	unsigned int _fullScreenVertexArray = 0;
 
 	/**
-	 * Renderer-managed intermediate target used to produce post-processing effects in cases where no render
-	 * target is supplied by the user
+	 * Renderer-managed intermediate targets used to chain scene post-processing effects
 	 */
-	RenderTargetPtr _postProcessTarget;
+	RenderTargetPtr _postProcessTargets[2];
 
 	/**
 	 * Increments the global renderer count
@@ -180,15 +166,18 @@ private:
 	Renderer(WindowPtr window);
 
 	/**
+	 * Resolves the pixel dimensions of a render pass destination.
+	 * @param pass Render pass settings
+	 * @param width Value in which to store the destination width
+	 * @param height Value in which to store the destination height
+	 */
+	void getPassDimensions(const RenderPass& pass, int* width, int* height) const;
+
+	/**
 	 * Configures the target, viewport, and clear operations for one render pass
 	 * @param pass Render pass settings
 	 */
 	void configurePass(const RenderPass& pass);
-
-	/**
-	 * Completes a render pass and restores the default frame buffer.
-	 */
-	void finishPass();
 
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items
@@ -205,4 +194,10 @@ private:
 	 * @param camera Camera
 	 */
 	void drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera);
+
+	/**
+	 * Draws a single full-screen post-processing effect.
+	 * @param material Post-processing material
+	 */
+	void drawPostProcessing(PostProcessMaterial* material);
 };
