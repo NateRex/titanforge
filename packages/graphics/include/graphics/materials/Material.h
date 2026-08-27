@@ -154,6 +154,7 @@ protected:
 	/**
 	 * Constructor
 	 * @param type Material type
+	 * @param shader Shader ID used when rendering in default material mode
 	 */
 	Material(MaterialType type, ShaderId shader) : materialType(type), _shaderId(shader) {}
 
