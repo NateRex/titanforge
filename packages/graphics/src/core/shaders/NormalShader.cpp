@@ -14,18 +14,53 @@ constexpr const char* NORMALS_VERTEX = R"(
 
     layout (location = 0) in vec3 vert_Pos;
     layout (location = 1) in vec3 vert_Normal;
+    layout (location = 0) out vec3 worldNormal;
 
     uniform mat4 uModel;
-    uniform mat4 uView;
-    uniform mat4 uProjection;
     uniform mat3 uNormal;
-
-    out vec3 worldNormal;
 
     void main()
     {
+        // Compute world position
+        gl_Position = model * vec4(vert_Pos, 1.0);
+
+        // Compute world normal
         worldNormal = normalize(uNormal * vert_Normal);
-        gl_Position = uProjection * uView * uModel * vec4(vert_Pos, 1.0);
+    }
+)";
+
+/**
+ * Source code for the normals geometry shader
+ */
+constexpr const char* NORMALS_GEOMETRY = R"(
+    #version 330 core
+
+    layout(triangles) in;
+    layout(line_strip, max_vertices = 6) out;
+
+    layout(location = 0) in vec3 worldNormal;
+
+    uniform mat4 uView;
+    uniform mat4 uProjection;
+
+    const float LINE_LENGTH = 0.4;
+
+    void emitNormal(mat4 viewProjection, int i)
+    {
+        gl_Position = viewProjection * gl_in[i].gl_Position;
+        EmitVertex();
+
+        gl_Position = viewProjection * (gl_in[i].gl_Position + worldNormal[i] * LINE_LENGTH);
+        EmitVertex();
+        EndPrimitive();
+    }
+
+    void main()
+    {
+        mat4 viewProjection = uProjection * uView;
+        emitNormal(viewProjection, 0);
+        emitNormal(viewProjection, 1);
+        emitNormal(viewProjection, 2);
     }
 )";
 
@@ -34,17 +69,15 @@ constexpr const char* NORMALS_VERTEX = R"(
  */
 constexpr const char* NORMALS_FRAGMENT = R"(
     #version 330 core
-
-    in vec3 worldNormal;
     out vec4 FragColor;
 
     void main()
     {
-        FragColor = vec4(normalize(worldNormal) * 0.5 + 0.5, 1.0);
+        FragColor = vec4(1.0, 1.0, 0.0, 1.0);
     }
 )";
 
-NormalShader::NormalShader(): Shader("NormalShader", NORMALS_VERTEX, NORMALS_FRAGMENT)
+NormalShader::NormalShader(): Shader("NormalShader", NORMALS_VERTEX, NORMALS_GEOMETRY, NORMALS_FRAGMENT)
 {
 }
 
