@@ -52,6 +52,13 @@ public:
 	WindowPtr getWindow() const;
 
 	/**
+	 * Get the pixel dimensions of the window's default framebuffer
+	 * @param width Value in which to store the width, in pixels
+	 * @param height Value in which to store the height, in pixels
+	 */
+	void getWindowDimensions(int& width, int& height) const;
+
+	/**
 	 * @return The current background clear color for draw commands
 	 */
 	Color getBackgroundColor() const;
@@ -147,7 +154,7 @@ private:
 	 * Renderer-managed intermediate target used to produce post-processing effects in cases where no render
 	 * target is supplied by the user
 	 */
-	std::unique_ptr<RenderTarget> _postProcessTarget;
+	RenderTargetPtr _postProcessTarget;
 
 	/**
 	 * Increments the global renderer count

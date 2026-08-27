@@ -100,6 +100,11 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
+void Renderer::getWindowDimensions(int& width, int& height) const
+{
+	return _window->getDimensions(width, height);
+}
+
 Color Renderer::getBackgroundColor() const
 {
 	return _backgroundColor;
@@ -156,18 +161,16 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 		config.width = static_cast<unsigned int>(framebufferWidth);
 		config.height = static_cast<unsigned int>(framebufferHeight);
 		config.colorFormats = { PixelFormat::RGBA16F };
-		_postProcessTarget = std::make_unique<RenderTarget>(config);
+		_postProcessTarget = RenderTarget::create(config);
 	}
 	else
 	{
-		_postProcessTarget->resize(
-			static_cast<unsigned int>(framebufferWidth),
-			static_cast<unsigned int>(framebufferHeight));
+		_postProcessTarget->resize(framebufferWidth, framebufferHeight);
 	}
 
 	// Render the scene to the offscreen render target
 	RenderPass scenePass;
-	scenePass.target = _postProcessTarget.get();
+	scenePass.target = _postProcessTarget;
 	scenePass.clearColor = _backgroundColor;
 	renderPass(scene, camera, scenePass);
 

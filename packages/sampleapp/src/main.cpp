@@ -1,4 +1,5 @@
 #include <graphics/core/renderer/Renderer.h>
+#include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/PointMaterial.h>
@@ -28,7 +29,7 @@
  * @param renderer The renderer
  * @return The camera that was created
  */
-CameraPtr setupCameraMovement(RendererPtr renderer)
+CameraPtr setupInputs(RendererPtr renderer)
 {
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
@@ -96,7 +97,7 @@ CameraPtr setupCameraMovement(RendererPtr renderer)
 int main()
 {
     RendererPtr renderer = Renderer::create();
-    CameraPtr camera = setupCameraMovement(renderer);
+    CameraPtr camera = setupInputs(renderer);
     camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     ScenePtr scene = Scene::create();
@@ -151,10 +152,10 @@ int main()
     postProcessing->saturation = 0.8f;
     postProcessing->exposure = 1.1f;
 
-    // Render pass config for surface normals
-    RenderPass normalPass;
-    normalPass.mode = RenderMode::SURFACE_NORMALS;
-    normalPass.clearFlags = ClearFlags::DEPTH;
+    // Create target for offscreen rendering
+    int width, height;
+    renderer->getWindowDimensions(width, height);
+    RenderTargetPtr target = RenderTarget::create({ width, height });
 
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
@@ -162,11 +163,25 @@ int main()
         // Rotate entity
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
-        // Render the scene with post-processing effects
-        renderer->render(scene, camera, postProcessing);
+        // Render scene to offscreen target
+        renderer->getWindowDimensions(width, height);
+        target->resize(width, height);
+        RenderPass pass;
+        pass.target = target;
+        pass.clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
+        renderer->renderPass(scene, camera, pass);
 
-        // Additional pass to render normals
-        renderer->renderPass(scene, camera, normalPass);
+        // Render normals
+        pass.mode = RenderMode::SURFACE_NORMALS;
+        pass.clearFlags = ClearFlags::NONE;
+        renderer->renderPass(scene, camera, pass);
+
+        // Post-processing effects
+        postProcessing->texture = pass.target->colorTexture(0);
+        pass.target = nullptr;
+        pass.mode = RenderMode::MATERIAL;
+        pass.clearFlags = ClearFlags::COLOR;
+        renderer->renderPass(postProcessing, pass);
 
 		// Present the frame after all passes are complete
 		renderer->present();

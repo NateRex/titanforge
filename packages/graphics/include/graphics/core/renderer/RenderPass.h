@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/core/Color.h>
+#include <graphics/core/renderer/pointers/RenderTargetPtr.h>
 #include <graphics/core/renderer/modes/RenderMode.h>
 
 class RenderTarget;
@@ -94,7 +95,7 @@ struct RenderPass
     /**
      * Destination render target, or null for the default frame buffer.
      */
-    const RenderTarget* target = nullptr;
+    RenderTargetPtr target = nullptr;
 
     /**
      * Pixel region to receive rendered output. When unspecified, defaults to the dimensions of the target frame buffer.

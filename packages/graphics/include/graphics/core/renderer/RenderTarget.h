@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/core/renderer/pointers/RenderTargetPtr.h>
 #include <graphics/core/buffers/pointers/FrameBufferPtr.h>
 #include <graphics/core/buffers/pointers/RenderBufferPtr.h>
 #include <graphics/core/PixelFormats.h>
@@ -36,12 +37,12 @@ struct RenderTargetConfig
     /**
      * Render target width in pixels
      */
-    unsigned int width = 1;
+    int width = 1;
 
     /**
      * Render target height in pixels
      */
-    unsigned int height = 1;
+    int height = 1;
 
     /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.
@@ -72,10 +73,14 @@ class RenderTarget
 public:
 
     /**
-     * Constructor
-     * @param config Render target config
+     * Creates a new render target
+     * @param config Optional configuration settings
+     * @return The new render target
      */
-    RenderTarget(const RenderTargetConfig& config);
+    static RenderTargetPtr create(const RenderTargetConfig& config = {})
+    {
+        return std::shared_ptr<RenderTarget>(new RenderTarget(config));
+    }
 
     /**
      * @return The config currently used by this render target
@@ -147,6 +152,12 @@ private:
      * or a texture is used instead.
      */
     RenderBufferPtr _depthStencilRenderBuffer;
+
+    /**
+     * Constructor
+     * @param config Render target config
+     */
+    RenderTarget(const RenderTargetConfig& config);
 
     /**
      * Builds the frame buffer and its attachments, as described by the current config

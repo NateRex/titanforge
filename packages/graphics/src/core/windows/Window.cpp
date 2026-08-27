@@ -44,6 +44,19 @@ WindowPtr Window::create(const char* title, unsigned int width, unsigned int hei
     return std::shared_ptr<Window>(new Window(title, width, height));
 }
 
+void Window::getDimensions(int& width, int& height) const
+{
+	if (_glfwWindow)
+	{
+		glfwGetFramebufferSize(_glfwWindow, &width, &height);
+	}
+	else
+    {
+        width = 0;
+        height = 0;
+    }
+}
+
 InputController* Window::getInputController()
 {
     return _inputController;

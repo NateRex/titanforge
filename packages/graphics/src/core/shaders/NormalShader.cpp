@@ -14,15 +14,16 @@ constexpr const char* NORMALS_VERTEX = R"(
 
     layout (location = 0) in vec3 vert_Pos;
     layout (location = 1) in vec3 vert_Normal;
-    layout (location = 0) out vec3 worldNormal;
 
     uniform mat4 uModel;
     uniform mat3 uNormal;
 
+    out vec3 worldNormal;
+
     void main()
     {
         // Compute world position
-        gl_Position = model * vec4(vert_Pos, 1.0);
+        gl_Position = uModel * vec4(vert_Pos, 1.0);
 
         // Compute world normal
         worldNormal = normalize(uNormal * vert_Normal);
@@ -38,7 +39,7 @@ constexpr const char* NORMALS_GEOMETRY = R"(
     layout(triangles) in;
     layout(line_strip, max_vertices = 6) out;
 
-    layout(location = 0) in vec3 worldNormal;
+    in vec3 worldNormal[];
 
     uniform mat4 uView;
     uniform mat4 uProjection;
@@ -50,7 +51,7 @@ constexpr const char* NORMALS_GEOMETRY = R"(
         gl_Position = viewProjection * gl_in[i].gl_Position;
         EmitVertex();
 
-        gl_Position = viewProjection * (gl_in[i].gl_Position + worldNormal[i] * LINE_LENGTH);
+        gl_Position = viewProjection * (gl_in[i].gl_Position + vec4(worldNormal[i] * LINE_LENGTH, 0.0));
         EmitVertex();
         EndPrimitive();
     }
