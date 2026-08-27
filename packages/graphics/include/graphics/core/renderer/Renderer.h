@@ -196,7 +196,7 @@ private:
 	 * @param mode Visualization strategy for this pass
 	 * @param camera Camera
 	 */
-	void draw(RenderState& state, const RenderMode& mode, const CameraPtr camera);
+	void draw(RenderState& state, RenderMode mode, const CameraPtr camera);
 
 	/**
 	 * Draws a single prepared render item

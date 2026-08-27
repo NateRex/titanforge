@@ -237,13 +237,13 @@ void Entity::remove(EntityPtr child)
 	}
 }
 
-void Entity::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+void Entity::traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
 	const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
 	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
 	for (const EntityPtr& child : _children)
 	{
-		child->traverse(state, modelTransform, normalTransform);
+		child->traverse(state, pass, modelTransform, normalTransform);
 	}
 }
 

@@ -57,14 +57,9 @@ struct RenderItem {
 	ShaderId shader;
 
 	/**
-	 * Boolean flag indicating whether or not this item should participate in the current render pass
-	 */
-	bool visible;
-
-	/**
 	 * Ordering and blending behavior used to draw the item
 	 */
-	RenderLayer layer;
+	RenderLayer layer = RenderLayer::OPAQUE;
 
 	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.

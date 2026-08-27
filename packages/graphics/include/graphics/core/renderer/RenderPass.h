@@ -1,9 +1,25 @@
 #pragma once
 #include <graphics/core/Color.h>
 #include <graphics/core/renderer/pointers/RenderTargetPtr.h>
-#include <graphics/core/renderer/modes/RenderMode.h>
 
 class RenderTarget;
+
+/**
+ * Strategy that decides how scene items are visualized in a render pass
+ * @author Nathaniel Rex
+ */
+enum class RenderMode
+{
+    /**
+     * Default rendering using each item's material.
+     */
+    MATERIAL,
+
+    /**
+     * Renders geometry vertex normals for three-dimensional objects
+     */
+    VERTEX_NORMALS
+};
 
 /**
  * Bit flags representing buffers cleared by a render pass
@@ -90,7 +106,7 @@ struct RenderPass
     /**
      * Visualization mode used for scene geometry. Defaults to RenderMode::MATERIAL, which is used for normal material rendering.
      */
-    RenderModePtr mode = RenderMode::MATERIAL;
+    RenderMode mode = RenderMode::MATERIAL;
 
     /**
      * Destination render target, or null for the default frame buffer.

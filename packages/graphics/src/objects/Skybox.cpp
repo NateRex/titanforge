@@ -2,6 +2,7 @@
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/SkyboxMaterial.h>
 #include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/RenderPass.h>
 #include <graphics/textures/TextureCube.h>
 #include <graphics/loaders/ImageLoader.h>
 #include <common/Utils.h>
@@ -35,19 +36,20 @@ SkyboxPtr Skybox::create()
     return create(material);
 }
 
-void Skybox::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+void Skybox::traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
-	const SkyboxMaterialPtr skybox = std::static_pointer_cast<SkyboxMaterial>(material);
-	if (skybox->texture)
-	{
-		state.environment.texture = std::static_pointer_cast<TextureCube>(skybox->texture).get();
-		state.environment.color = skybox->color;
-		state.environment.intensity = skybox->intensity;
-		state.environment.rotation = skybox->rotation;
-		state.environment.lod = skybox->lod;
-	}
 
-	Renderable::traverse(state, parentModel, parentNormal);
+    const SkyboxMaterialPtr sbMat = std::static_pointer_cast<SkyboxMaterial>(material);
+    if (sbMat->texture)
+    {
+        state.environment.texture = std::static_pointer_cast<TextureCube>(sbMat->texture).get();
+        state.environment.color = sbMat->color;
+        state.environment.intensity = sbMat->intensity;
+        state.environment.rotation = sbMat->rotation;
+        state.environment.lod = sbMat->lod;
+    }
+	
+	Renderable::traverse(state, pass, parentModel, parentNormal);
 }
 
 void Skybox::updateScaling(float x, float y, float z)

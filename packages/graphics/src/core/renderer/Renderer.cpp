@@ -195,11 +195,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
 {
-	if (!pass.mode)
-	{
-		throw IllegalArgumentException("Render pass mode cannot be null");
-	}
-
 	configurePass(pass);
 	
 	try
@@ -209,8 +204,8 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 		glEnable(GL_DEPTH_TEST);
 
 		RenderState state;
-		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, *pass.mode, camera);
+		scene->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+		draw(state, pass.mode, camera);
 	}
 	catch (...)
 	{
@@ -340,7 +335,7 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr camera)
+void Renderer::draw(RenderState& state, RenderMode mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
 	std::vector<RenderItem*> opaqueItems;
@@ -348,12 +343,6 @@ void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr 
 	std::vector<RenderItem*> transparentItems;
 	for (RenderItem& item : state.items)
 	{
-		mode.apply(item);
-		if (!item.visible)
-		{
-			continue;
-		}
-
 		switch (item.layer)
 		{
 			case RenderLayer::TRANSPARENT: transparentItems.push_back(&item); break;
