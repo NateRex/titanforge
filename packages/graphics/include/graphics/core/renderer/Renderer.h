@@ -63,7 +63,8 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders a scene to the screen, optionally applying a post-process material.
+	 * Renders a scene, optionally applying a post-process material. This method does not present the completed frame;
+	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
 	 * @param scene Scene
 	 * @param camera Camera
 	 * @param postProcessMaterial Optional material used to apply post-processing effects. When supplied, the scene is first
@@ -75,8 +76,8 @@ public:
 		const PostProcessMaterialPtr& postProcessMaterial = nullptr);
 
 	/**
-	 * Renders a scene once using an explicit pass configuration. Unlike Renderer::render, this method does not swap the
-	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
+	 * Renders a scene once using an explicit pass configuration. This method does not present the completed frame;
+	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
 	 * @param scene Scene graph to render.
 	 * @param camera Camera used to view the scene.
 	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
@@ -84,12 +85,18 @@ public:
 	void renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass);
 
 	/**
-	 * Applies a post-process material once using an explicit pass configuration. Unlike Renderer::render, this method does not swap the
-	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
+	 * Applies a post-process material once using an explicit pass configuration. This method does not present the completed frame;
+	 * call Renderer::present after all render and renderPass calls belonging to the frame are complete.
 	 * @param material Post-process shader material to execute.
 	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
 	 */
 	void renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass);
+
+	/**
+	 * Presents the completed default frame buffer and processes input and window events. Call this once after composing all
+	 * passes for a frame.
+	 */
+	void present();
 
 	/**
 	 * Destroys this renderer, releasing all of its resources
@@ -175,11 +182,6 @@ private:
 	 * Completes a render pass and restores the default frame buffer.
 	 */
 	void finishPass();
-
-	/**
-	 * Presents the completed default frame buffer and processes input and window events.
-	 */
-	void present();
 
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items

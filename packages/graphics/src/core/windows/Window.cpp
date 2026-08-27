@@ -54,6 +54,14 @@ bool Window::isOpen() const
     return _glfwWindow && !glfwWindowShouldClose(_glfwWindow);
 }
 
+void Window::close()
+{
+    if (_glfwWindow)
+    {
+        glfwSetWindowShouldClose(_glfwWindow, GLFW_TRUE);
+    }
+}
+
 void Window::destroy()
 {
     if (glfwGetCurrentContext() == _glfwWindow)

@@ -52,9 +52,9 @@ CameraPtr setupCameraMovement(RendererPtr renderer)
     inputController->addContext(context);
 
     // Bind quit action
-    inputController->bind(quit, [renderer](InputValue value, float deltaTime)
+    inputController->bind(quit, [window = window.get()](InputValue value, float deltaTime)
     {
-        renderer->destroy(true);
+        window->close();
     });
 
     // Bind move action
@@ -151,12 +151,26 @@ int main()
     postProcessing->saturation = 0.8f;
     postProcessing->exposure = 1.1f;
 
+    // Render pass config for surface normals
+    RenderPass normalPass;
+    normalPass.mode = RenderMode::SURFACE_NORMALS;
+    normalPass.clearFlags = ClearFlags::DEPTH;
+
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
     {
         // Rotate entity
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
+        // Render the scene with post-processing effects
         renderer->render(scene, camera, postProcessing);
+
+        // Additional pass to render normals
+        renderer->renderPass(scene, camera, normalPass);
+
+		// Present the frame after all passes are complete
+		renderer->present();
     }
+
+    renderer->destroy();
 }

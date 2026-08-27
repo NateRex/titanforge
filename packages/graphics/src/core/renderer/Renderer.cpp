@@ -34,7 +34,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	
 	if (!window || !window->_glfwWindow)
 	{
-		throw std::runtime_error("Renderer window must be an open window");
+		throw IllegalStateException("Renderer window must be an open window");
 	}
 	_window = window;
 
@@ -44,7 +44,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	// Load GLAD function pointers
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 	{
-		throw std::runtime_error("Failed to initialize GLAD for window");
+		throw IllegalStateException("Failed to initialize GLAD for window");
 	}
 
 	GLint value;
@@ -55,7 +55,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	{
 		std::ostringstream oss;
 		oss << "Error occurred updating renderer window: " << err;
-		throw std::runtime_error(oss.str());
+		throw IllegalStateException(oss.str());
 	}
 
 	// Set the viewport dimensions
@@ -130,7 +130,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
-		throw std::runtime_error("Cannot render with a destroyed renderer or window");
+		throw IllegalStateException("Cannot render with a destroyed renderer or window");
 	}
 
 	// If there's no post-processing material, we only need a single pass to the default framebuffer
@@ -139,7 +139,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 		RenderPass pass;
 		pass.clearColor = _backgroundColor;
 		renderPass(scene, camera, pass);
-		present();
 		return;
 	}
 
@@ -147,7 +146,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	glfwGetFramebufferSize(_window->_glfwWindow, &framebufferWidth, &framebufferHeight);
 	if (framebufferWidth <= 0 || framebufferHeight <= 0)
 	{
-		throw std::runtime_error("Cannot post-process a window with an empty framebuffer");
+		throw IllegalStateException("Cannot post-process a window with an empty framebuffer");
 	}
 
 	// Set up the offscreen render target
@@ -189,9 +188,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	}
 
 	postProcessMaterial->texture = originalTexture;
-
-	// Present the scene
-	present();
 }
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
@@ -225,7 +221,7 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 {
 	if (!material)
 	{
-		throw std::runtime_error("Post-process material cannot be null");
+		throw IllegalArgumentException("Post-process material cannot be null");
 	}
 
 	configurePass(pass);
@@ -323,6 +319,11 @@ void Renderer::finishPass()
 
 void Renderer::present()
 {
+	if (_destroyed || !_window || !_window->_glfwWindow)
+	{
+		throw IllegalStateException("Cannot present with a destroyed renderer or window");
+	}
+
 	const float time = getTime();
 	_window->getInputController()->pollForKeyHolds(time - _timeOfLastFrame);
 	_timeOfLastFrame = time;
@@ -333,9 +334,9 @@ void Renderer::present()
 void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
-	std::vector<RenderItem> opaqueItems;
-	std::vector<RenderItem> backgroundItems;
-	std::vector<RenderItem> transparentItems;
+	std::vector<RenderItem*> opaqueItems;
+	std::vector<RenderItem*> backgroundItems;
+	std::vector<RenderItem*> transparentItems;
 	for (RenderItem& item : state.items)
 	{
 		mode.apply(item);
@@ -346,10 +347,10 @@ void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr 
 
 		switch (item.layer)
 		{
-			case RenderLayer::TRANSPARENT: transparentItems.push_back(item); break;
-			case RenderLayer::BACKGROUND: backgroundItems.push_back(item); break;
-			case RenderLayer::OPAQUE: opaqueItems.push_back(item); break;
-			default: opaqueItems.push_back(item); break;
+			case RenderLayer::TRANSPARENT: transparentItems.push_back(&item); break;
+			case RenderLayer::BACKGROUND: backgroundItems.push_back(&item); break;
+			case RenderLayer::OPAQUE: opaqueItems.push_back(&item); break;
+			default: opaqueItems.push_back(&item); break;
 		}
 	}
 
@@ -366,21 +367,21 @@ void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr 
 	});
 
 	// Render opaque items
-	for (const RenderItem& item : opaqueItems)
+	for (const RenderItem* item : opaqueItems)
 	{
-		drawItem(state, item, camera);
+		drawItem(state, *item, camera);
 	}
 
 	// Render background scenery
-	for (const RenderItem& item : backgroundItems)
+	for (const RenderItem* item : backgroundItems)
 	{
-		drawItem(state, item, camera);
+		drawItem(state, *item, camera);
 	}
 
 	// Render transparent items
-	for (const RenderItem& item : transparentItems)
+	for (const RenderItem* item : transparentItems)
 	{
-		drawItem(state, item, camera);
+		drawItem(state, *item, camera);
 	}
 }
 

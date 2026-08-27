@@ -49,6 +49,12 @@ public:
     bool isOpen() const;
 
     /**
+     * Requests that this window close. The window remains valid until it is
+     * destroyed, allowing this method to be called safely from input callbacks.
+     */
+    void close();
+
+    /**
      * Destroys this window, releasing all of its resources
      */
     void destroy();
