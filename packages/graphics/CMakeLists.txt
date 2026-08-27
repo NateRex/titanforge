@@ -66,6 +66,7 @@ add_library(Graphics
     src/loaders/TextureLoader.cpp
     src/objects/Lines.cpp
     src/objects/Points.cpp
+	src/objects/PostProcessing.cpp
     src/objects/Renderable.cpp
     src/objects/Skybox.cpp
     src/geometry/BoxGeometry.cpp
