@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/core/shaders/pointers/PostProcessShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
  * Shader used to handle post-processing materials
@@ -11,10 +11,10 @@ class PostProcessShader : public Shader
 public:
 
 	/**
-	 * Constructs a new PostProcessShader instance. This should typically only be done once, by the shader manager.
+	 * Constructs a new PostProcessShader instance
 	 * @return The new PostProcessShader instance
 	 */
-	static PostProcessShaderPtr create()
+	static ShaderPtr create()
 	{
 		return std::shared_ptr<PostProcessShader>(new PostProcessShader());
 	}

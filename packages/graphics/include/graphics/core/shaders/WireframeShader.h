@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/core/shaders/pointers/WireframeShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
  * Shader used to handle wireframe materials applied to meshes
@@ -14,7 +14,7 @@ public:
      * Creates a new WireframeShader instance
      * @return The WireframeShader instance
      */
-    static WireframeShaderPtr create()
+    static ShaderPtr create()
     {
         return std::shared_ptr<WireframeShader>(new WireframeShader());
     }

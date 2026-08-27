@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/core/shaders/pointers/PointShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
  * Shader used to handle point primitives and their materials
@@ -14,7 +14,7 @@ public:
      * Creates a new PointShader instance
      * @return The PointShader instance
      */
-    static PointShaderPtr create()
+    static ShaderPtr create()
     {
         return std::shared_ptr<PointShader>(new PointShader());
     }

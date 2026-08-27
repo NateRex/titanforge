@@ -1,6 +1,6 @@
 #pragma once
-#include <graphics/core/shaders/pointers/LineShaderPtr.h>
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
  * Shader used to handle lines and their materials
@@ -14,7 +14,7 @@ public:
      * Creates a new LineShader instance
      * @return The LineShader instance
      */
-    static LineShaderPtr create()
+    static ShaderPtr create()
     {
         return std::shared_ptr<LineShader>(new LineShader());
     }

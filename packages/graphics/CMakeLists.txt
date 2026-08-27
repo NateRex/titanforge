@@ -52,7 +52,7 @@ add_library(Graphics
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/LineShader.cpp
     src/core/shaders/MeshShader.cpp
-    src/core/shaders/NormalsShader.cpp
+    src/core/shaders/NormalShader.cpp
     src/core/shaders/PointShader.cpp
 	src/core/shaders/PostProcessShader.cpp
     src/core/shaders/SkyboxShader.cpp

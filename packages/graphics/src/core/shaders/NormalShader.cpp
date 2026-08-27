@@ -1,4 +1,4 @@
-#include <graphics/core/shaders/NormalsShader.h>
+#include <graphics/core/shaders/NormalShader.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/cameras/Camera.h>
 #include <math/Matrix3.h>
@@ -6,8 +6,9 @@
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
-namespace
-{
+/**
+ * Source code for the normals vertex shader
+ */
 constexpr const char* NORMALS_VERTEX = R"(
     #version 330 core
 
@@ -28,6 +29,9 @@ constexpr const char* NORMALS_VERTEX = R"(
     }
 )";
 
+/**
+ * Source code for the normals fragment shader
+ */
 constexpr const char* NORMALS_FRAGMENT = R"(
     #version 330 core
 
@@ -39,24 +43,23 @@ constexpr const char* NORMALS_FRAGMENT = R"(
         FragColor = vec4(normalize(worldNormal) * 0.5 + 0.5, 1.0);
     }
 )";
-}
 
-NormalsShader::NormalsShader(): Shader("NormalsShader", NORMALS_VERTEX, NORMALS_FRAGMENT)
+NormalShader::NormalShader(): Shader("NormalShader", NORMALS_VERTEX, NORMALS_FRAGMENT)
 {
 }
 
-void NormalsShader::setItem(const RenderItem& item)
+void NormalShader::setItem(const RenderItem& item)
 {
 	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uModel"), 1, GL_TRUE, item.modelTransform.getValues());
 	glUniformMatrix3fv(getUniformLocation("uNormal"), 1, GL_TRUE, item.normalTransform.getValues());
 }
 
-void NormalsShader::setCamera(Camera* camera)
+void NormalShader::setCamera(Camera* camera)
 {
 	if (!camera)
 	{
-		throw IllegalArgumentException("NormalsShader requires a camera");
+		throw IllegalArgumentException("NormalShader requires a camera");
 	}
 
 	ProgramBinding binding(this);
