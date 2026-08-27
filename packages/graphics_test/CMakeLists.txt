@@ -60,6 +60,7 @@ add_executable(GraphicsTest
     src/materials/PointMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
     src/materials/SkyboxMaterialTest.cpp
+    src/materials/WireframeMaterialTest.cpp
     src/scene/SceneTest.cpp
     src/textures/Texture2DTest.cpp
     src/textures/TextureCubeTest.cpp

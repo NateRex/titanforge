@@ -48,14 +48,20 @@ constexpr const char* WIREFRAME_GEOMETRY = R"(
     uniform Transforms uTransforms;
     uniform float uLineWidth;
     uniform vec2 uViewportSize;
+    uniform bool uUseWorldLineWidth;
     
     void emitLineVertex(int endpoint, float side, vec2 pixelNormal)
     {
         gl_Position = gl_in[endpoint].gl_Position;
 
-        // Convert the world-space width to pixels, then apply the offset in clip space.
-        // Expanding viewPosition.xy directly does not stay perpendicular after perspective projection.
-        float pixelWidth = uLineWidth * uTransforms.proj[1][1] * uViewportSize.y / (2.0 * gl_Position.w);
+        float pixelWidth = uLineWidth;
+        if (uUseWorldLineWidth)
+        {
+            // Convert the world-space width to pixels at this endpoint.
+            pixelWidth = uLineWidth * uTransforms.proj[1][1] * uViewportSize.y / (2.0 * gl_Position.w);
+        }
+
+        // Expanding after projection keeps the quad perpendicular on screen.
         gl_Position.xy += pixelNormal * side * pixelWidth / uViewportSize * gl_Position.w;
         EmitVertex();
     }

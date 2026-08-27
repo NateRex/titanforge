@@ -44,5 +44,7 @@ void WireframeShader::setMaterial(const Material* material)
 
     // Size
     glUniform1f(getUniformLocation("uLineWidth"), wfMat->lineWidth);
+    glUniform1i(getUniformLocation("uUseWorldLineWidth"),
+        wfMat->lineWidthUnits == PrimitiveSizeUnits::WORLD ? 1 : 0);
 }
 

@@ -11,9 +11,14 @@ class WireframeMaterial : public Material
 public:
 
     /**
-     * Line width, in world-space units. Defaults to 0.01.
+     * Controls how the line width is interpreted. Defaults to PrimitiveSizeUnits::PIXELS.
      */
-    float lineWidth = 0.01f;
+    PrimitiveSizeUnits lineWidthUnits = PrimitiveSizeUnits::PIXELS;
+
+    /**
+     * Line width. The units are determined by WireframeMaterial::lineWidthUnits. Defaults to 1 pixels.
+     */
+    float lineWidth = 1.f;
 
     /**
      * Creates a new wireframe material
