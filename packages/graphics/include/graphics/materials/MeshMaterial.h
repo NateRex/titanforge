@@ -129,7 +129,10 @@ public:
 	 * Creates a mesh material.
 	 * @return The new mesh material.
 	 */
-	static MeshMaterialPtr create();
+	static MeshMaterialPtr create()
+	{
+		return std::shared_ptr<MeshMaterial>(new MeshMaterial());
+	}
 
     /**
 	 * @return The alpha mode of this material, which resolves to BLEND when AUTO is selected and color alpha is below 1;
@@ -137,12 +140,15 @@ public:
 	 */
 	AlphaMode getEffectiveAlphaMode() const;
 
-	bool isTransparent() const override;
+	bool isTransparent() const override
+	{
+		return getEffectiveAlphaMode() == AlphaMode::BLEND;
+	}
 
 private:
 
     /**
      * Constructor
      */
-    MeshMaterial();
+    MeshMaterial() : Material(MaterialType::MESH) {}
 };

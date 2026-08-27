@@ -29,12 +29,15 @@ public:
 	 * Creates a post-processing material.
 	 * @return The new post-processing material.
 	 */
-	static PostProcessMaterialPtr create();
+	static PostProcessMaterialPtr create()
+	{
+		return std::shared_ptr<PostProcessMaterial>(new PostProcessMaterial());
+	}
 
 private:
 	
 	/**
 	 * Constructor
 	 */
-	PostProcessMaterial();
+	PostProcessMaterial() : Material(MaterialType::POST_PROCESS) {}
 };

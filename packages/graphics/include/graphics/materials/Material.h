@@ -149,5 +149,5 @@ protected:
 	 * Constructor
 	 * @param type Material type
 	 */
-	Material(MaterialType type);
+	Material(MaterialType type) : materialType(type) {}
 };

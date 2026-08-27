@@ -24,12 +24,18 @@ public:
      * Creates a line material
      * @return The new material instance
      */
-    static LineMaterialPtr create();
+    static LineMaterialPtr create()
+    {
+        return std::shared_ptr<LineMaterial>(new LineMaterial());
+    }
 
 private:
 
     /**
      * Constructor
      */
-    LineMaterial();
+    LineMaterial(): Material(MaterialType::LINE)
+    {
+        cullingMode = CullingMode::NONE;
+    }
 };

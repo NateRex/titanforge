@@ -9,16 +9,6 @@ Entity::Entity(): _scale(1.f, 1.f, 1.f)
 
 }
 
-void Entity::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
-{
-	const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
-	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
-	for (const EntityPtr& child : _children)
-	{
-		child->traverse(state, modelTransform, normalTransform);
-	}
-}
-
 Vector3 Entity::getPosition() const
 {
 	return _position;
@@ -244,5 +234,25 @@ void Entity::remove(EntityPtr child)
 	if (child->_parent == this)
 	{
 		child->_parent = nullptr;
+	}
+}
+
+void Entity::traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+{
+	const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
+	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
+	for (const EntityPtr& child : _children)
+	{
+		child->traverse(state, modelTransform, normalTransform);
+	}
+}
+
+void Entity::traverse(const std::function<void(Entity*)>& callback)
+{
+	callback(this);
+
+	for (EntityPtr& child : _children)
+	{
+		child->traverse(callback);
 	}
 }

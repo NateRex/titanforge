@@ -30,7 +30,10 @@ public:
 	 * Creates a skybox material.
 	 * @return The new skybox material.
 	 */
-	static SkyboxMaterialPtr create();
+	static SkyboxMaterialPtr create()
+	{
+		return std::shared_ptr<SkyboxMaterial>(new SkyboxMaterial());
+	}
 
 private:
 	

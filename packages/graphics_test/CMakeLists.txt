@@ -34,6 +34,7 @@ add_executable(GraphicsTest
     src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/shaders/SkyboxShaderTest.cpp
+    src/core/shaders/WireframeShaderTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp
     src/core/EntityGroupTest.cpp
@@ -59,6 +60,7 @@ add_executable(GraphicsTest
     src/materials/PointMaterialTest.cpp
     src/materials/PostProcessMaterialTest.cpp
     src/materials/SkyboxMaterialTest.cpp
+    src/materials/WireframeMaterialTest.cpp
     src/scene/SceneTest.cpp
     src/textures/Texture2DTest.cpp
     src/textures/TextureCubeTest.cpp

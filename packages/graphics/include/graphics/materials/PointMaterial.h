@@ -24,12 +24,17 @@ public:
      * Creates a point material
      * @return The new material instance
      */
-    static PointMaterialPtr create();
+    static PointMaterialPtr create()
+    {
+        return std::shared_ptr<PointMaterial>(new PointMaterial());
+    }
 
 private:
 
     /**
      * Constructor
      */
-    PointMaterial();
+    PointMaterial() : Material(MaterialType::POINT) {
+        cullingMode = CullingMode::NONE;
+    }
 };
