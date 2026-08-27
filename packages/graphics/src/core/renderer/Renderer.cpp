@@ -12,7 +12,6 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
-#include <graphics/materials/MaterialType.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
@@ -28,65 +27,6 @@
 
 int Renderer::_RENDERER_COUNT = 0;
 std::mutex Renderer::_MUTEX;
-
-namespace
-{
-
-/**
- * Determines which shader to use to handle the given material type
- * @param type Material type
- * @return The shader ID
- * @throw IllegalArgumentException If no shader was found capable of handling the given material type
- */
-ShaderId pickMaterialShader(MaterialType type)
-{
-	switch (type)
-	{
-		case MaterialType::POINT: return ShaderId::POINT;
-		case MaterialType::LINE: return ShaderId::LINE;
-		case MaterialType::MESH: return ShaderId::MESH;
-		case MaterialType::WIREFRAME: return ShaderId::WIREFRAME;
-		case MaterialType::SKYBOX: return ShaderId::SKYBOX;
-		case MaterialType::POST_PROCESS: return ShaderId::POST_PROCESS;
-		default: throw IllegalArgumentException("No shader is registered for the given material type");
-	}
-}
-
-/**
- * Determines which shader to use to handle the given render mode and material type
- * @param mode Render mode
- * @param materialType Material type
- * @return The shader ID
- * @throw IllegalArgumentException If no shader was found capable of handling the given rendering mode and/or
- * material type
- */
-ShaderId pickShader(RenderMode mode, MaterialType materialType)
-{
-	switch (mode)
-	{
-		case RenderMode::MATERIAL: return pickMaterialShader(materialType);
-		case RenderMode::SURFACE_NORMALS: return ShaderId::NORMALS;
-		default: throw IllegalArgumentException("No shader is registered for the given rendering mode");
-	}
-}
-
-bool supportsRenderMode(const RenderItem& item, RenderMode mode)
-{
-	if (mode == RenderMode::MATERIAL)
-	{
-		return true;
-	}
-
-	if (mode == RenderMode::SURFACE_NORMALS)
-	{
-		const MaterialType type = item.material->materialType;
-		return item.geometry->getAttributes().normals &&
-			(type == MaterialType::MESH || type == MaterialType::WIREFRAME);
-	}
-
-	return false;
-}
-}
 
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
@@ -256,6 +196,11 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
 {
+	if (!pass.mode)
+	{
+		throw IllegalArgumentException("Render pass mode cannot be null");
+	}
+
 	configurePass(pass);
 	
 	try
@@ -266,7 +211,7 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 
 		RenderState state;
 		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, pass.mode, camera);
+		draw(state, *pass.mode, camera);
 	}
 	catch (...)
 	{
@@ -385,29 +330,26 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(const RenderState& state, RenderMode mode, const CameraPtr camera)
+void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
-	std::vector<const RenderItem*> opaqueItems;
-	std::vector<const RenderItem*> backgroundItems;
-	std::vector<const RenderItem*> transparentItems;
-	for (const RenderItem& item : state.items)
+	std::vector<RenderItem> opaqueItems;
+	std::vector<RenderItem> backgroundItems;
+	std::vector<RenderItem> transparentItems;
+	for (RenderItem& item : state.items)
 	{
-		if (!supportsRenderMode(item, mode))
+		mode.apply(item);
+		if (!item.visible)
 		{
 			continue;
 		}
 
-		if (mode == RenderMode::MATERIAL && item.material->isTransparent())
+		switch (item.layer)
 		{
-			transparentItems.push_back(&item);
-		}
-		else if (mode == RenderMode::MATERIAL && item.material->isBackground())
-		{
-			backgroundItems.push_back(&item);
-		}
-		else {
-			opaqueItems.push_back(&item);
+			case RenderLayer::TRANSPARENT: transparentItems.push_back(item); break;
+			case RenderLayer::BACKGROUND: backgroundItems.push_back(item); break;
+			case RenderLayer::OPAQUE: opaqueItems.push_back(item); break;
+			default: opaqueItems.push_back(item); break;
 		}
 	}
 
@@ -424,30 +366,30 @@ void Renderer::draw(const RenderState& state, RenderMode mode, const CameraPtr c
 	});
 
 	// Render opaque items
-	for (const RenderItem* item : opaqueItems)
+	for (const RenderItem& item : opaqueItems)
 	{
-		drawItem(state, *item, mode, camera);
+		drawItem(state, item, camera);
 	}
 
 	// Render background scenery
-	for (const RenderItem* item : backgroundItems)
+	for (const RenderItem& item : backgroundItems)
 	{
-		drawItem(state, *item, mode, camera);
+		drawItem(state, item, camera);
 	}
 
 	// Render transparent items
-	for (const RenderItem* item : transparentItems)
+	for (const RenderItem& item : transparentItems)
 	{
-		drawItem(state, *item, mode, camera);
+		drawItem(state, item, camera);
 	}
 }
 
-void Renderer::drawItem(const RenderState& state, const RenderItem& item, RenderMode mode, const CameraPtr camera)
+void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
 {
 	Geometry* geometry = item.geometry;
 	GeometryAttributes geometryAttrib = geometry->getAttributes();
 	Material* material = item.material;
-	const bool transparent = mode == RenderMode::MATERIAL && material->isTransparent();
+	const bool transparent = item.layer == RenderLayer::TRANSPARENT;
 
 	// Set global state
 	glDepthMask(material->depthWrite && !transparent ? GL_TRUE : GL_FALSE);
@@ -479,7 +421,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, Render
 	}
 
 	// Activate shader
-	ShaderPtr shader = ShaderManager::getShader(pickShader(mode, material->materialType));
+	ShaderPtr shader = ShaderManager::getShader(item.shader);
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);

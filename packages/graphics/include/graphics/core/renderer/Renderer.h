@@ -184,17 +184,16 @@ private:
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items
 	 * @param state The render state to draw
-	 * @param mode Visualization mode for this pass
+	 * @param mode Visualization strategy for this pass
 	 * @param camera Camera
 	 */
-	void draw(const RenderState& state, RenderMode mode, const CameraPtr camera);
+	void draw(RenderState& state, const RenderMode& mode, const CameraPtr camera);
 
 	/**
 	 * Draws a single prepared render item
 	 * @param state The render state
 	 * @param item The item to draw
-	 * @param mode Visualization mode for this pass
 	 * @param camera Camera
 	 */
-	void drawItem(const RenderState& state, const RenderItem& item, RenderMode mode, const CameraPtr camera);
+	void drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera);
 };
