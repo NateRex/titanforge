@@ -17,5 +17,6 @@ public:
 	void setCamera(Camera* camera) override;
 
 private:
+
 	NormalsShader();
 };
