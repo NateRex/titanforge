@@ -2,6 +2,9 @@
 #include <graphics/objects/Lines.h>
 #include <graphics/geometry/LineGeometry.h>
 #include <graphics/materials/LineMaterial.h>
+#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/RenderPass.h>
+#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic construction of lines
@@ -40,4 +43,43 @@ BOOST_AUTO_TEST_CASE(Lines_basics)
         Vector3::YHAT
     }, material);
     BOOST_TEST(object != nullptr);
+}
+
+/**
+ * Tests that lines are applied to the state when in material rendering mode
+ */
+BOOST_AUTO_TEST_CASE(Lines_materialModeTraversal)
+{
+	std::vector<Vector3> points = {
+        Vector3::XHAT,
+        Vector3::YHAT
+    };
+    LinesPtr lines = Lines::createSegments(points, LineMaterial::create());
+
+	RenderPass pass;
+	pass.mode = RenderMode::MATERIAL;
+
+	RenderState state;
+	lines->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	BOOST_TEST(state.items.size() == 1);
+	BOOST_TEST(state.items[0].shader == ShaderId::LINE);
+}
+
+/**
+ * Tests that lines are not applied to the state when in vertex normal rendering mode
+ */
+BOOST_AUTO_TEST_CASE(Lines_vertexNormalModeTraversal)
+{
+	std::vector<Vector3> points = {
+        Vector3::XHAT,
+        Vector3::YHAT
+    };
+    LinesPtr lines = Lines::createSegments(points, LineMaterial::create());
+
+	RenderPass pass;
+	pass.mode = RenderMode::VERTEX_NORMALS;
+
+	RenderState state;
+	lines->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	BOOST_TEST(state.items.size() == 0);
 }

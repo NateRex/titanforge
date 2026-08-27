@@ -45,9 +45,6 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
-    src/core/renderer/modes/MaterialMode.cpp
-    src/core/renderer/modes/RenderMode.cpp
-    src/core/renderer/modes/VertexNormalMode.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/LineShader.cpp

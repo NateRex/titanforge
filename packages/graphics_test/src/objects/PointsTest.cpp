@@ -2,6 +2,9 @@
 #include <graphics/objects/Points.h>
 #include <graphics/geometry/PointGeometry.h>
 #include <graphics/materials/PointMaterial.h>
+#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/RenderPass.h>
+#include <common/PrintHelpers.h>
 
 /**
  * Tests the basic construction of points
@@ -33,4 +36,39 @@ BOOST_AUTO_TEST_CASE(Points_basics)
         Vector3::YHAT
     }, material);
     BOOST_TEST(object != nullptr);
+}
+
+/**
+ * Tests that points are applied to the state when in material rendering mode
+ */
+BOOST_AUTO_TEST_CASE(Points_materialModeTraversal)
+{
+	PointGeometryPtr geometry = PointGeometry::create(Vector3::ZERO);
+	MaterialPtr material = PointMaterial::create();
+	PointsPtr points = Points::create(geometry, material);
+
+	RenderPass pass;
+	pass.mode = RenderMode::MATERIAL;
+
+	RenderState state;
+	points->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	BOOST_TEST(state.items.size() == 1);
+	BOOST_TEST(state.items[0].shader == ShaderId::POINT);
+}
+
+/**
+ * Tests that points are not applied to the state when in vertex normal rendering mode
+ */
+BOOST_AUTO_TEST_CASE(Points_vertexNormalModeTraversal)
+{
+	PointGeometryPtr geometry = PointGeometry::create(Vector3::ZERO);
+	MaterialPtr material = PointMaterial::create();
+	PointsPtr points = Points::create(geometry, material);
+
+	RenderPass pass;
+	pass.mode = RenderMode::VERTEX_NORMALS;
+
+	RenderState state;
+	points->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	BOOST_TEST(state.items.size() == 0);
 }

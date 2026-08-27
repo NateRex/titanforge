@@ -195,11 +195,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
 {
-	if (!pass.mode)
-	{
-		throw IllegalArgumentException("Render pass mode cannot be null");
-	}
-
 	configurePass(pass);
 	
 	try
@@ -209,8 +204,8 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 		glEnable(GL_DEPTH_TEST);
 
 		RenderState state;
-		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, *pass.mode, camera);
+		scene->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
+		draw(state, pass.mode, camera);
 	}
 	catch (...)
 	{
@@ -261,15 +256,22 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 void Renderer::configurePass(const RenderPass& pass)
 {
-	// Bind framebuffer
+	// Determine target framebuffer dimensions
+	int width, height;
+	if (!pass.target || pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
+	{
+		getWindowDimensions(&width, &height);
+	}
+	else
+	{
+		width = pass.target->config().width;
+		height = pass.target->config().height;
+	}
+
+	// Bind target framebuffer
 	if (pass.target)
 	{
-		if (pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
-		{
-			int width, height;
-			getWindowDimensions(&width, &height);
-			pass.target->resize(width, height);
-		}
+		pass.target->resize(width, height);
 		pass.target->frameBuffer()->bind();
 	}
 	else
@@ -277,23 +279,11 @@ void Renderer::configurePass(const RenderPass& pass)
 		FrameBuffer::bindDefault();
 	}
 
-	// Configure viewport
-	unsigned int width = pass.viewport.width;
-	unsigned int height = pass.viewport.height;
-	if (width == 0 || height == 0)
+	// Configure viewport dimensions to draw to
+	if (pass.viewport.width != 0 && pass.viewport.height != 0)
 	{
-		if (pass.target)
-		{
-			width = pass.target->config().width;
-			height = pass.target->config().height;
-		}
-		else
-		{
-			int w, h;
-			glfwGetFramebufferSize(_window->_glfwWindow, &w, &h);
-			width = static_cast<unsigned int>(w);
-			height = static_cast<unsigned int>(h);
-		}
+		width = pass.viewport.width;
+		height = pass.viewport.height;
 	}
 	glViewport(pass.viewport.x, pass.viewport.y, width, height);
 
@@ -340,7 +330,7 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr camera)
+void Renderer::draw(RenderState& state, RenderMode mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
 	std::vector<RenderItem*> opaqueItems;
@@ -348,12 +338,6 @@ void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr 
 	std::vector<RenderItem*> transparentItems;
 	for (RenderItem& item : state.items)
 	{
-		mode.apply(item);
-		if (!item.visible)
-		{
-			continue;
-		}
-
 		switch (item.layer)
 		{
 			case RenderLayer::TRANSPARENT: transparentItems.push_back(&item); break;

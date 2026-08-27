@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 
+struct RenderPass;
 struct RenderState;
 
 /**
@@ -209,12 +210,14 @@ public:
 	void remove(EntityPtr entity);
 
 	/**
-	 * Traverses over this entity and all of its children recursively, applying them to the given render state.
+	 * Traverses over this entity and all of its children recursively, applying them to a render state given the current pass
+	 * configuration.
 	 * @param state The render state to modify
+	 * @param pass Render pass settings
 	 * @param parentModel Parent transformation matrix for converting from local to world coordinates
 	 * @param parentNormal Parent transformation matrix for converting from local to world normals
 	 */
-	virtual void traverse(RenderState& state, const Matrix4& parentModel, const Matrix3& parentNormal);
+	virtual void traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal);
 
 	/**
 	 * Traverses over this entity and all of its children recursively, applying the given lambda function
