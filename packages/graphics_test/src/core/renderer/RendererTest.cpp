@@ -8,6 +8,7 @@
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/objects/Mesh.h>
+#include <graphics/objects/PostProcessing.h>
 #include <common/PrintHelpers.h>
 #include <thread>
 #include <chrono>
@@ -98,15 +99,18 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 {
 	ScenePtr scene = Scene::create();
 	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
-	PostProcessMaterialPtr material = PostProcessMaterial::create();
-	material->exposure = 1.2f;
-	material->saturation = 1.1f;
-	material->contrast = 1.15f;
+	PostProcessMaterialPtr first = PostProcessMaterial::create();
+	first->exposure = 1.2f;
+	PostProcessMaterialPtr second = PostProcessMaterial::create();
+	second->contrast = 1.15f;
+	scene->add(PostProcessing::create(first));
+	scene->add(PostProcessing::create(second));
 
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
-	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera, material));
+	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
 	BOOST_REQUIRE_NO_THROW(renderer->present());
 
-	// Ensure the renderer supplies its intermediate texture only for the duration of the draw.
-	BOOST_TEST(material->texture == nullptr);
+	// Ensure the renderer supplies intermediate textures only for the duration of each draw.
+	BOOST_TEST(first->texture == nullptr);
+	BOOST_TEST(second->texture == nullptr);
 }

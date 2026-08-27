@@ -125,7 +125,8 @@ public:
 	DepthFunction depthFunction = DepthFunction::LESS;
 
 	/**
-	 * Boolean flag that, when true, enables depth writes. Defaults to true.
+	 * Boolean flag that, when true, enables writes to the depth buffer for the object containing this material.
+	 * Defaults to true.
 	 */
 	bool depthWrite = true;
 

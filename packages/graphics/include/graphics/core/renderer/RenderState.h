@@ -11,6 +11,7 @@ class Material;
 class Light;
 class Camera;
 class TextureCube;
+class PostProcessMaterial;
 
 /**
  * Determines when an item is drawn relative to other items in a pass
@@ -155,6 +156,11 @@ struct RenderState {
 	 * Lighting for the render pass
 	 */
 	Lighting lighting;
+
+	/**
+	 * Full-screen effects to apply after all scene items have been drawn, in scene traversal order
+	 */
+	std::vector<PostProcessMaterial*> postProcessing;
 
 	/**
 	 * The items to be drawn this frame

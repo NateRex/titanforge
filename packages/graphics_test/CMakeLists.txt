@@ -47,6 +47,7 @@ add_executable(GraphicsTest
     src/objects/LinesTest.cpp
     src/objects/MeshTest.cpp
     src/objects/PointsTest.cpp
+	src/objects/PostProcessingTest.cpp
     src/objects/SkyboxTest.cpp
     src/geometry/BoxGeometryTest.cpp
     src/geometry/GeometryAttributesTest.cpp

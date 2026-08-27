@@ -1,7 +1,6 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/core/renderer/RenderTarget.h>
-#include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
@@ -19,7 +18,6 @@
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/Assertions.h>
-#include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <sstream>
@@ -131,142 +129,123 @@ void Renderer::destroy(bool destroyWindow)
 	}
 }
 
-void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostProcessMaterialPtr& postProcessMaterial)
+void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
 		throw IllegalStateException("Cannot render with a destroyed renderer or window");
 	}
 
-	// If there's no post-processing material, we only need a single pass to the default framebuffer
-	if (!postProcessMaterial)
-	{
-		RenderPass pass;
-		pass.clearColor = _backgroundColor;
-		renderPass(scene, camera, pass);
-		return;
-	}
-
-	int framebufferWidth, framebufferHeight;
-	glfwGetFramebufferSize(_window->_glfwWindow, &framebufferWidth, &framebufferHeight);
-	if (framebufferWidth <= 0 || framebufferHeight <= 0)
-	{
-		throw IllegalStateException("Cannot post-process a window with an empty framebuffer");
-	}
-
-	// Set up the offscreen render target
-	if (!_postProcessTarget)
-	{
-		RenderTargetConfig config;
-		config.width = static_cast<unsigned int>(framebufferWidth);
-		config.height = static_cast<unsigned int>(framebufferHeight);
-		config.colorFormats = { PixelFormat::RGBA16F };
-		_postProcessTarget = RenderTarget::create(config);
-	}
-	else
-	{
-		_postProcessTarget->resize(framebufferWidth, framebufferHeight);
-	}
-
-	// Render the scene to the offscreen render target
-	RenderPass scenePass;
-	scenePass.target = _postProcessTarget;
-	scenePass.clearColor = _backgroundColor;
-	renderPass(scene, camera, scenePass);
-
-	const TexturePtr originalTexture = postProcessMaterial->texture;
-	postProcessMaterial->texture = _postProcessTarget->colorTexture(0);
-
-	// Render post-processing effects to the default framebuffer
-	try
-	{
-		RenderPass postProcessPass;
-		postProcessPass.clearFlags = ClearFlags::COLOR;
-		renderPass(postProcessMaterial, postProcessPass);
-	}
-	catch (...)
-	{
-		postProcessMaterial->texture = originalTexture;
-		throw;
-	}
-
-	postProcessMaterial->texture = originalTexture;
+	RenderPass pass;
+	pass.clearColor = _backgroundColor;
+	renderPass(scene, camera, pass);
 }
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
 {
-	configurePass(pass);
-	
-	try
-	{
-		// Materials control depth writes, blending, and culling per item.
-		// Depth testing itself applies to the entire scene pass.
-		glEnable(GL_DEPTH_TEST);
+	RenderState state;
+	scene->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
 
-		RenderState state;
-		scene->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, pass.mode, camera);
-	}
-	catch (...)
+	// A scene without post-processing can be drawn directly to its final destination
+	if (state.postProcessing.empty())
 	{
-		finishPass();
-		throw;
+		configurePass(pass);
+		draw(state, pass.mode, camera);
+		return;
 	}
-	finishPass();
+
+	// Ensure target framebuffer dimensions are non-zero
+	int width, height;
+	getPassDimensions(pass, &width, &height);
+	if (width <= 0 || height <= 0)
+	{
+		throw IllegalStateException("Cannot post-process an empty framebuffer");
+	}
+
+	// Set up off-screen rendering targets
+	RenderTargetConfig targetConfig;
+	targetConfig.sizeMode = RenderTargetSizeMode::FIXED;
+	targetConfig.width = width;
+	targetConfig.height = height;
+	targetConfig.colorFormats = { PixelFormat::RGBA16F };
+	for (RenderTargetPtr& target : _postProcessTargets)
+	{
+		if (!target)
+		{
+			target = RenderTarget::create(targetConfig);
+		}
+		else
+		{
+			target->resize(width, height);
+		}
+	}
+
+	// Draw all ordinary scene content into the first offscreen target
+	RenderPass scenePass = pass;
+	scenePass.target = _postProcessTargets[0];
+	configurePass(scenePass);
+	draw(state, pass.mode, camera);
+
+	// Chain post-processing effects, starting with the second offscreen target. The final effect should write to the originally-requested target
+	RenderTargetPtr source = _postProcessTargets[0];
+	for (std::size_t i = 0; i < state.postProcessing.size(); i++)
+	{
+		PostProcessMaterial* material = state.postProcessing[i];
+		const bool isLast = i + 1 == state.postProcessing.size();
+
+		RenderPass effectPass;
+		effectPass.target = isLast ? pass.target : _postProcessTargets[(i + 1) % 2];
+		effectPass.viewport = isLast ? pass.viewport : Viewport{};
+		effectPass.clearFlags = ClearFlags::COLOR;
+		effectPass.clearColor = pass.clearColor;
+		effectPass.depthTest = false;
+
+		const TexturePtr originalTexture = material->texture;
+		material->texture = source->colorTexture(0);
+		configurePass(effectPass);
+		drawPostProcessing(material);
+		material->texture = originalTexture;
+
+		source = effectPass.target;
+	}
 }
 
-void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass)
+void Renderer::drawPostProcessing(PostProcessMaterial* material)
 {
-	if (!material)
+	if (_fullScreenVertexArray == 0)
 	{
-		throw IllegalArgumentException("Post-process material cannot be null");
+		glGenVertexArrays(1, &_fullScreenVertexArray);
 	}
 
-	configurePass(pass);
+	glDepthMask(GL_FALSE);
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 
-	try
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
+	shader->activate();
+	shader->setMaterial(material);
+	glBindVertexArray(_fullScreenVertexArray);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height) const
+{
+	if (!pass.target || pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
 	{
-		if (_fullScreenVertexArray == 0)
-		{
-			glGenVertexArrays(1, &_fullScreenVertexArray);
-		}
-
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
-		glDisable(GL_BLEND);
-		glDisable(GL_CULL_FACE);
-
-		ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
-		shader->activate();
-		shader->setMaterial(material.get());
-		
-		// Post-processing shader operates on raw vertex indices, rather than actual vertex data. Therefore, we do not actually
-		// need to pass vertex values as part of the buffer.
-		glBindVertexArray(_fullScreenVertexArray);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		getWindowDimensions(width, height);
 	}
-	catch (...)
+	else
 	{
-		finishPass();
-		throw;
+		*width = pass.target->config().width;
+		*height = pass.target->config().height;
 	}
-
-	finishPass();
 }
 
 void Renderer::configurePass(const RenderPass& pass)
 {
 	// Determine target framebuffer dimensions
 	int width, height;
-	if (!pass.target || pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
-	{
-		getWindowDimensions(&width, &height);
-	}
-	else
-	{
-		width = pass.target->config().width;
-		height = pass.target->config().height;
-	}
+	getPassDimensions(pass, &width, &height);
 
 	// Bind target framebuffer
 	if (pass.target)
@@ -286,6 +265,16 @@ void Renderer::configurePass(const RenderPass& pass)
 		height = pass.viewport.height;
 	}
 	glViewport(pass.viewport.x, pass.viewport.y, width, height);
+
+	// Toggle depth buffer reads and writes
+	glDepthMask(GL_TRUE);
+	if (pass.depthTest)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
 
 	// Clear color, depth, and stencil buffers
 	GLbitfield clearMask = 0;
@@ -310,18 +299,14 @@ void Renderer::configurePass(const RenderPass& pass)
 	}
 }
 
-void Renderer::finishPass()
-{
-	FrameBuffer::bindDefault();
-	glDepthMask(GL_TRUE);
-}
-
 void Renderer::present()
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
 		throw IllegalStateException("Cannot present with a destroyed renderer or window");
 	}
+
+	FrameBuffer::bindDefault();
 
 	const float time = getTime();
 	_window->getInputController()->pollForKeyHolds(time - _timeOfLastFrame);
