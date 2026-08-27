@@ -12,6 +12,7 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
+#include <graphics/materials/MaterialType.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <graphics/geometry/Geometry.h>
 #include <graphics/geometry/GeometryAttributes.h>
@@ -19,6 +20,7 @@
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/Assertions.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <sstream>
@@ -26,6 +28,65 @@
 
 int Renderer::_RENDERER_COUNT = 0;
 std::mutex Renderer::_MUTEX;
+
+namespace
+{
+
+/**
+ * Determines which shader to use to handle the given material type
+ * @param type Material type
+ * @return The shader ID
+ * @throw IllegalArgumentException If no shader was found capable of handling the given material type
+ */
+ShaderId pickMaterialShader(MaterialType type)
+{
+	switch (type)
+	{
+		case MaterialType::POINT: return ShaderId::POINT;
+		case MaterialType::LINE: return ShaderId::LINE;
+		case MaterialType::MESH: return ShaderId::MESH;
+		case MaterialType::WIREFRAME: return ShaderId::WIREFRAME;
+		case MaterialType::SKYBOX: return ShaderId::SKYBOX;
+		case MaterialType::POST_PROCESS: return ShaderId::POST_PROCESS;
+		default: throw IllegalArgumentException("No shader is registered for the given material type");
+	}
+}
+
+/**
+ * Determines which shader to use to handle the given render mode and material type
+ * @param mode Render mode
+ * @param materialType Material type
+ * @return The shader ID
+ * @throw IllegalArgumentException If no shader was found capable of handling the given rendering mode and/or
+ * material type
+ */
+ShaderId pickShader(RenderMode mode, MaterialType materialType)
+{
+	switch (mode)
+	{
+		case RenderMode::MATERIAL: return pickMaterialShader(materialType);
+		case RenderMode::SURFACE_NORMALS: return ShaderId::NORMALS;
+		default: throw IllegalArgumentException("No shader is registered for the given rendering mode");
+	}
+}
+
+bool supportsRenderMode(const RenderItem& item, RenderMode mode)
+{
+	if (mode == RenderMode::MATERIAL)
+	{
+		return true;
+	}
+
+	if (mode == RenderMode::SURFACE_NORMALS)
+	{
+		const MaterialType type = item.material->materialType;
+		return item.geometry->getAttributes().normals &&
+			(type == MaterialType::MESH || type == MaterialType::WIREFRAME);
+	}
+
+	return false;
+}
+}
 
 Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 {
@@ -179,10 +240,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	{
 		RenderPass postProcessPass;
 		postProcessPass.clearFlags = ClearFlags::COLOR;
-		postProcessPass.depthTest = false;
-		postProcessPass.depthWrite = false;
-		postProcessPass.blending = false;
-		postProcessPass.faceCulling = false;
 		renderPass(postProcessMaterial, postProcessPass);
 	}
 	catch (...)
@@ -203,9 +260,13 @@ void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const Re
 	
 	try
 	{
+		// Materials control depth writes, blending, and culling per item.
+		// Depth testing itself applies to the entire scene pass.
+		glEnable(GL_DEPTH_TEST);
+
 		RenderState state;
 		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, camera);
+		draw(state, pass.mode, camera);
 	}
 	catch (...)
 	{
@@ -233,9 +294,10 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 
-		ShaderPtr shader = ShaderManager::getShader(material->materialType);
+		ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
 		shader->activate();
 		shader->setMaterial(material.get());
 		
@@ -285,12 +347,6 @@ void Renderer::configurePass(const RenderPass& pass)
 	}
 	glViewport(pass.viewport.x, pass.viewport.y, width, height);
 
-	// Configure depth test, blending, and face culling
-	pass.depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-	glDepthMask(pass.depthWrite ? GL_TRUE : GL_FALSE);
-	pass.blending ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
-	pass.faceCulling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
-
 	// Clear color, depth, and stencil buffers
 	GLbitfield clearMask = 0;
 	if (hasFlag(pass.clearFlags, ClearFlags::COLOR))
@@ -329,7 +385,7 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(const RenderState& state, const CameraPtr camera)
+void Renderer::draw(const RenderState& state, RenderMode mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
 	std::vector<const RenderItem*> opaqueItems;
@@ -337,11 +393,16 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 	std::vector<const RenderItem*> transparentItems;
 	for (const RenderItem& item : state.items)
 	{
-		if (item.material->isTransparent())
+		if (!supportsRenderMode(item, mode))
+		{
+			continue;
+		}
+
+		if (mode == RenderMode::MATERIAL && item.material->isTransparent())
 		{
 			transparentItems.push_back(&item);
 		}
-		else if (item.material->isBackground())
+		else if (mode == RenderMode::MATERIAL && item.material->isBackground())
 		{
 			backgroundItems.push_back(&item);
 		}
@@ -365,30 +426,31 @@ void Renderer::draw(const RenderState& state, const CameraPtr camera)
 	// Render opaque items
 	for (const RenderItem* item : opaqueItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 
 	// Render background scenery
 	for (const RenderItem* item : backgroundItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 
 	// Render transparent items
 	for (const RenderItem* item : transparentItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 }
 
-void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
+void Renderer::drawItem(const RenderState& state, const RenderItem& item, RenderMode mode, const CameraPtr camera)
 {
 	Geometry* geometry = item.geometry;
 	GeometryAttributes geometryAttrib = geometry->getAttributes();
 	Material* material = item.material;
+	const bool transparent = mode == RenderMode::MATERIAL && material->isTransparent();
 
 	// Set global state
-	glDepthMask(material->depthWrite && !material->isTransparent() ? GL_TRUE : GL_FALSE);
+	glDepthMask(material->depthWrite && !transparent ? GL_TRUE : GL_FALSE);
 	switch (material->depthFunction)
 	{
 		case DepthFunction::ALWAYS: glDepthFunc(GL_ALWAYS); break;
@@ -408,7 +470,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 		case CullingMode::BACK: glEnable(GL_CULL_FACE); glCullFace(GL_BACK); break;
 		default: glDisable(GL_CULL_FACE); break;
 	}
-	if (material->isTransparent())
+	if (transparent)
 	{
 		glEnable(GL_BLEND);
 	}
@@ -417,7 +479,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	}
 
 	// Activate shader
-	ShaderPtr shader = ShaderManager::getShader(material->materialType);
+	ShaderPtr shader = ShaderManager::getShader(pickShader(mode, material->materialType));
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
@@ -462,12 +524,8 @@ void Renderer::applyGlobalSettings()
 	// Enable setting point size in shaders for point primitive draws
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	// Enable alpha channel for transparency
-	glEnable(GL_BLEND);
+	// Configure alpha blending used by transparent materials
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
 
 	// Disable stencil test by default
 	glDisable(GL_STENCIL_TEST);
