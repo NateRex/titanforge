@@ -1,11 +1,11 @@
 #include <graphics/core/shaders/ShaderManager.h>
-#include <graphics/materials/MaterialType.h>
 #include <graphics/core/shaders/PointShader.h>
 #include <graphics/core/shaders/LineShader.h>
 #include <graphics/core/shaders/MeshShader.h>
 #include <graphics/core/shaders/WireframeShader.h>
 #include <graphics/core/shaders/SkyboxShader.h>
 #include <graphics/core/shaders/PostProcessShader.h>
+#include <graphics/core/shaders/NormalsShader.h>
 #include <common/Assertions.h>
 #include <glad/glad.h>
 
@@ -13,12 +13,13 @@ std::unique_ptr<ShaderManager> ShaderManager::_INSTANCE = nullptr;
 
 ShaderManager::ShaderManager()
 {
-	_shaders.emplace(MaterialType::POINT, PointShader::create());
-	_shaders.emplace(MaterialType::LINE, LineShader::create());
-	_shaders.emplace(MaterialType::MESH, MeshShader::create());
-	_shaders.emplace(MaterialType::WIREFRAME, WireframeShader::create());
-	_shaders.emplace(MaterialType::SKYBOX, SkyboxShader::create());
-	_shaders.emplace(MaterialType::POST_PROCESS, PostProcessShader::create());
+	_shaders.emplace(ShaderId::POINT, PointShader::create());
+	_shaders.emplace(ShaderId::LINE, LineShader::create());
+	_shaders.emplace(ShaderId::MESH, MeshShader::create());
+	_shaders.emplace(ShaderId::WIREFRAME, WireframeShader::create());
+	_shaders.emplace(ShaderId::SKYBOX, SkyboxShader::create());
+	_shaders.emplace(ShaderId::POST_PROCESS, PostProcessShader::create());
+	_shaders.emplace(ShaderId::NORMALS, NormalsShader::create());
 }
 
 ShaderManager::~ShaderManager()
@@ -37,12 +38,12 @@ ShaderManager* ShaderManager::getInstance()
 	return _INSTANCE.get();
 }
 
-ShaderPtr ShaderManager::getShader(MaterialType matType)
+ShaderPtr ShaderManager::getShader(ShaderId id)
 {
 	ShaderManager* mgr = getInstance();
 
-	assertKeyInMap(mgr->_shaders, matType, "Could not find shader for material");
-	return mgr->_shaders[matType];
+	assertKeyInMap(mgr->_shaders, id, "Could not find shader");
+	return mgr->_shaders[id];
 }
 
 void ShaderManager::reset()
