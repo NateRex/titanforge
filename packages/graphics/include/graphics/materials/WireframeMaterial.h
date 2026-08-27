@@ -11,9 +11,9 @@ class WireframeMaterial : public Material
 public:
 
     /**
-     * Line width, in world-space units. Defaults to 0.05.
+     * Line width, in world-space units. Defaults to 0.01.
      */
-    float lineWidth = 0.05f;
+    float lineWidth = 0.01f;
 
     /**
      * Creates a new wireframe material
@@ -29,5 +29,8 @@ private:
     /**
      * Constructor
      */
-    WireframeMaterial(): Material(MaterialType::WIREFRAME) {}
+    WireframeMaterial(): Material(MaterialType::WIREFRAME)
+    {
+        cullingMode = CullingMode::NONE;
+    }
 };

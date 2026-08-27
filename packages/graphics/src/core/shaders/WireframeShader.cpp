@@ -21,6 +21,10 @@ void WireframeShader::setCamera(Camera* camera)
 
     glUniformMatrix4fv(getUniformLocation("uTransforms.view"), 1, GL_TRUE, camera->getViewMatrix().getValues());
     glUniformMatrix4fv(getUniformLocation("uTransforms.proj"), 1, GL_TRUE, camera->getProjectionMatrix().getValues());
+
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glUniform2f(getUniformLocation("uViewportSize"), viewport[2], viewport[3]);
 }
 
 void WireframeShader::setMaterial(const Material* material)
