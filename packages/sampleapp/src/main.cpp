@@ -4,7 +4,6 @@
 #include <graphics/materials/PointMaterial.h>
 #include <graphics/materials/LineMaterial.h>
 #include <graphics/materials/MeshMaterial.h>
-#include <graphics/materials/WireframeMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -137,15 +136,8 @@ int main()
     scene->add(box);
 
     // Load guitar backpack model
-    MaterialPtr wireframeMat = WireframeMaterial::create();
-    wireframeMat->color = Color::BLUE;
     EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
     entity->setPosition(0.f, 0.f, 0.f);
-    entity->traverse([&wireframeMat](Entity* e) {
-        if (Mesh* mesh = dynamic_cast<Mesh*>(e)) {
-            mesh->material = wireframeMat;
-        }
-    });
     scene->add(entity);
 
     // Create lighting
@@ -163,7 +155,7 @@ int main()
     while (renderer->getWindow()->isOpen())
     {
         // Rotate entity
-        // entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
+        entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
         renderer->render(scene, camera, postProcessing);
     }
