@@ -26,6 +26,26 @@ public:
 
 	void traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 
+protected:
+
+	/**
+	 * @copydoc Entity::updatePosition(float, float, float)
+	 * @throws UnsupportedOperationException When called, as changing position of post-processing is not supported.
+	 */
+	void updatePosition(float x, float y, float z) override;
+
+	/**
+	 * @copydoc Entity::updateRotation(float, float, float, float, float, float, float, float, float)
+	 * @throws UnsupportedOperationException When called, as changing rotation of post-processing is not supported.
+	 */
+	void updateRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) override;
+
+	/**
+	 * @copydoc Entity::updateScaling(float, float, float)
+	 * @throws UnsupportedOperationException When called, as scaling of post-processing is not supported.
+	 */
+	void updateScaling(float x, float y, float z) override;
+
 private:
 	
 	/**
