@@ -100,7 +100,7 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
-void Renderer::getWindowDimensions(int& width, int& height) const
+void Renderer::getWindowDimensions(int* width, int* height) const
 {
 	return _window->getDimensions(width, height);
 }
@@ -264,6 +264,12 @@ void Renderer::configurePass(const RenderPass& pass)
 	// Bind framebuffer
 	if (pass.target)
 	{
+		if (pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
+		{
+			int width, height;
+			getWindowDimensions(&width, &height);
+			pass.target->resize(width, height);
+		}
 		pass.target->frameBuffer()->bind();
 	}
 	else

@@ -29,20 +29,44 @@ enum class DepthStencilStorage
 };
 
 /**
+ * Render target size mode
+ * @author Nathaniel Rex
+ */
+enum class RenderTargetSizeMode
+{
+    /**
+     * Target is configured with fixed dimensions
+     */
+    FIXED,
+
+    /**
+     * Target dimensions will be obtained dynamically when rendering to always match the default frame buffer of
+     * the window
+     */
+    AUTO
+};
+
+/**
  * Describes the dimensions and attachments of a render target
  * @author Nathaniel Rex
  */
 struct RenderTargetConfig
 {
     /**
-     * Render target width in pixels
+     * Size mode for the render target, determining whether fixed sizing should be expected, or if the size should be automatically
+     * computed to match the window size while rendering. Defaults to RenderTargetSizeMode::AUTO.
      */
-    int width = 1;
+    RenderTargetSizeMode sizeMode = RenderTargetSizeMode::AUTO;
 
     /**
-     * Render target height in pixels
+     * Render target width in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
      */
-    int height = 1;
+    int width = 0;
+
+    /**
+     * Render target height in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
+     */
+    int height = 0;
 
     /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.

@@ -7,16 +7,14 @@
 
 RenderTarget::RenderTarget(const RenderTargetConfig& config): _config(config)
 {
-    if (_config.width <= 0 || _config.height <= 0)
-    {
-        throw IllegalArgumentException("Render target dimensions must be greater than zero");
-    }
     if (_config.colorFormats.size() > 4)
     {
         throw IllegalArgumentException("Render targets support at most four color attachments");
     }
-
-    build();
+    if (_config.sizeMode == RenderTargetSizeMode::FIXED)
+    {
+        build();
+    }
 }
 
 const std::vector<TexturePtr>& RenderTarget::colorTextures() const
@@ -30,6 +28,14 @@ void RenderTarget::resize(unsigned int width, unsigned int height)
     {
         throw IllegalArgumentException("Render target dimensions must be greater than zero");
     }
+
+    if (!_frameBuffer)
+    {
+        _config.width = width;
+        _config.height = height;
+        build();
+    }
+
     if (width == _config.width && height == _config.height)
     {
         return;
@@ -67,6 +73,11 @@ TexturePtr RenderTarget::colorTexture(unsigned int index) const
 
 void RenderTarget::build()
 {
+    if (_config.width <= 0 || _config.height <= 0)
+    {
+        throw IllegalArgumentException("Render target dimensions must be greater than zero");
+    }
+
     _frameBuffer = FrameBuffer::create();
 
     // Set up color attachments

@@ -153,9 +153,7 @@ int main()
     postProcessing->exposure = 1.1f;
 
     // Create target for offscreen rendering
-    int width, height;
-    renderer->getWindowDimensions(width, height);
-    RenderTargetPtr target = RenderTarget::create({ width, height });
+    RenderTargetPtr target = RenderTarget::create();
 
     float rotationRate = 0.25f;
     while (renderer->getWindow()->isOpen())
@@ -164,8 +162,6 @@ int main()
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
         // Render scene to offscreen target
-        renderer->getWindowDimensions(width, height);
-        target->resize(width, height);
         RenderPass pass;
         pass.target = target;
         pass.clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
@@ -177,7 +173,7 @@ int main()
         renderer->renderPass(scene, camera, pass);
 
         // Post-processing effects
-        postProcessing->texture = pass.target->colorTexture(0);
+        postProcessing->texture = target->colorTexture(0);
         pass.target = nullptr;
         pass.mode = RenderMode::MATERIAL;
         pass.clearFlags = ClearFlags::COLOR;

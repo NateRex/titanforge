@@ -47,7 +47,7 @@ public:
 	 * @param width Value in which to store the width, in pixels
 	 * @param height Value in which to store the height, in pixels
      */
-    void getDimensions(int& width, int& height) const;
+    void getDimensions(int* width, int* height) const;
 
     /**
      * @return True if this window is open. Returns false if the window has been closed, and

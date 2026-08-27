@@ -11,7 +11,9 @@
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_basics)
 {
-    RenderTargetPtr target = RenderTarget::create();
+    RenderTargetPtr target = RenderTarget::create({
+        RenderTargetSizeMode::FIXED, 1, 1
+    });
 
     BOOST_REQUIRE(target->frameBuffer() != nullptr);
     BOOST_TEST(target->frameBuffer()->isComplete());
@@ -30,6 +32,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_basics)
 BOOST_AUTO_TEST_CASE(RenderTarget_colorAttachments)
 {
     RenderTargetConfig config;
+    config.sizeMode = RenderTargetSizeMode::FIXED;
     config.width = 8;
     config.height = 4;
     config.colorFormats = { PixelFormat::R8, PixelFormat::RGBA16F, PixelFormat::R32UI };
@@ -57,6 +60,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_colorAttachments)
 BOOST_AUTO_TEST_CASE(RenderTarget_depthTexture)
 {
     RenderTargetConfig config;
+    config.sizeMode = RenderTargetSizeMode::FIXED;
     config.width = 5;
     config.height = 3;
     config.colorFormats.clear();
@@ -85,6 +89,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_depthTexture)
 BOOST_AUTO_TEST_CASE(RenderTarget_resize)
 {
     RenderTargetConfig config;
+    config.sizeMode = RenderTargetSizeMode::FIXED;
     config.width = 2;
     config.height = 3;
     config.colorFormats = { PixelFormat::RGB8, PixelFormat::RGBA8 };
@@ -126,6 +131,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_resize)
 BOOST_AUTO_TEST_CASE(RenderTarget_failureCases)
 {
     RenderTargetConfig config;
+    config.sizeMode = RenderTargetSizeMode::FIXED;
     config.width = 0;
     BOOST_CHECK_THROW(RenderTarget::create(config), IllegalArgumentException);
 
