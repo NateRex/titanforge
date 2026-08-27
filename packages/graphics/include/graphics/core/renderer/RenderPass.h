@@ -1,5 +1,7 @@
 #pragma once
 #include <graphics/core/Color.h>
+#include <graphics/core/renderer/pointers/RenderTargetPtr.h>
+#include <graphics/core/renderer/modes/RenderMode.h>
 
 class RenderTarget;
 
@@ -80,15 +82,20 @@ struct Viewport
 };
 
 /**
- * Describes render target selection and fixed-function render-pass state
+ * Describes a render operation's visualization, target, viewport, and clearing behavior
  * @author Nathaniel Rex
  */
 struct RenderPass
 {
     /**
+     * Visualization mode used for scene geometry. Defaults to RenderMode::MATERIAL, which is used for normal material rendering.
+     */
+    RenderModePtr mode = RenderMode::MATERIAL;
+
+    /**
      * Destination render target, or null for the default frame buffer.
      */
-    const RenderTarget* target = nullptr;
+    RenderTargetPtr target = nullptr;
 
     /**
      * Pixel region to receive rendered output. When unspecified, defaults to the dimensions of the target frame buffer.
@@ -115,23 +122,4 @@ struct RenderPass
      */
     int clearStencil = 0;
 
-    /**
-     * Boolean flag indicating whether depth testing is enabled. Defaults to true.
-     */
-    bool depthTest = true;
-
-    /**
-     * Boolean flag indicating whether fragment depth values are written. Defaults to true.
-     */
-    bool depthWrite = true;
-
-    /**
-     * Boolean flag indicating whether color blending is enabled. Defaults to true.
-     */
-    bool blending = true;
-
-    /**
-     * Boolean flag indicating whether polygon face culling is enabled. Defaults to true.
-     */
-    bool faceCulling = true;
 };

@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(LineShader_setItem)
     item.geometry = geometry.get();
     item.material = material.get();
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::LINE);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::LINE);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
 
@@ -29,6 +29,6 @@ BOOST_AUTO_TEST_CASE(LineShader_setItem)
 BOOST_AUTO_TEST_CASE(LineShader_setCamera)
 {
     CameraPtr camera = PerspectiveCamera::create(60.f, 800.f / 600.f, 0.1f, 100.f);
-    ShaderPtr shader = ShaderManager::getShader(MaterialType::LINE);
+    ShaderPtr shader = ShaderManager::getShader(ShaderId::LINE);
 	BOOST_REQUIRE_NO_THROW(shader->setCamera(camera.get()));
 }

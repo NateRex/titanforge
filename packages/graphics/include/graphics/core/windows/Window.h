@@ -43,10 +43,23 @@ public:
     InputController* getInputController();
 
     /**
+     * Get the pixel dimensions of the window's default framebuffer
+	 * @param width Value in which to store the width, in pixels
+	 * @param height Value in which to store the height, in pixels
+     */
+    void getDimensions(int* width, int* height) const;
+
+    /**
      * @return True if this window is open. Returns false if the window has been closed, and
      * therefore destroyed.
      */
     bool isOpen() const;
+
+    /**
+     * Requests that this window close. The window remains valid until it is
+     * destroyed, allowing this method to be called safely from input callbacks.
+     */
+    void close();
 
     /**
      * Destroys this window, releasing all of its resources

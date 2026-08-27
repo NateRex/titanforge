@@ -1,8 +1,7 @@
 #pragma once
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
+#include <graphics/core/shaders/ShaderId.h>
 #include <unordered_map>
-
-enum class MaterialType;
 
 /**
  * The shader manager is a singleton, responsible for tracking all shaders that have been registered for use
@@ -18,12 +17,12 @@ public:
 	~ShaderManager();
 
 	/**
-	 * Fetches a shader program for use against a given material type
-	 * @param matType Material type
-	 * @return The shader program capable of handling that material
-	 * @throws NullPointerException If a shader for that material type could not be found
+	 * Fetches a registered shader program.
+	 * @param id Shader identifier
+	 * @return The requested shader program
+	 * @throws NullPointerException If the shader could not be found
 	 */
-	static ShaderPtr getShader(MaterialType matType);
+	static ShaderPtr getShader(ShaderId id);
 
 	/**
 	 * Resets the global shader manager instance to its initial state, prior to graphics initialization
@@ -38,9 +37,9 @@ private:
 	static std::unique_ptr<ShaderManager> _INSTANCE;
 
 	/**
-	 * Mapping from material types to shaders
+	 * Mapping from shader identifiers to programs
 	 */
-	std::unordered_map<MaterialType, ShaderPtr> _shaders;
+	std::unordered_map<ShaderId, ShaderPtr> _shaders;
 
 	/**
 	 * Constructor

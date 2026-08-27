@@ -34,7 +34,7 @@ private:
     /**
      * Constructor
      */
-    LineMaterial(): Material(MaterialType::LINE)
+    LineMaterial(): Material(MaterialType::LINE, ShaderId::LINE)
     {
         cullingMode = CullingMode::NONE;
     }

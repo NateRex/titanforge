@@ -25,6 +25,8 @@ add_executable(GraphicsTest
     src/core/input/InputControllerTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
+    src/core/renderer/modes/MaterialModeTest.cpp
+    src/core/renderer/modes/VertexNormalModeTest.cpp
     src/core/renderer/RendererTest.cpp
     src/core/renderer/RenderPassTest.cpp
     src/core/renderer/RenderTargetTest.cpp
@@ -34,6 +36,7 @@ add_executable(GraphicsTest
     src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
     src/core/shaders/SkyboxShaderTest.cpp
+    src/core/shaders/VertexNormalShaderTest.cpp
     src/core/shaders/WireframeShaderTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ColorTest.cpp

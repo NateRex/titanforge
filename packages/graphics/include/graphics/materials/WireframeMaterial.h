@@ -34,7 +34,7 @@ private:
     /**
      * Constructor
      */
-    WireframeMaterial(): Material(MaterialType::WIREFRAME)
+    WireframeMaterial(): Material(MaterialType::WIREFRAME, ShaderId::WIREFRAME)
     {
         cullingMode = CullingMode::NONE;
     }

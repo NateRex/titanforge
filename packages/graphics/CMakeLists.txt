@@ -45,6 +45,9 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
+    src/core/renderer/modes/MaterialMode.cpp
+    src/core/renderer/modes/RenderMode.cpp
+    src/core/renderer/modes/VertexNormalMode.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/LineShader.cpp
@@ -54,6 +57,7 @@ add_library(Graphics
     src/core/shaders/SkyboxShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp
+    src/core/shaders/VertexNormalShader.cpp
     src/core/shaders/WireframeShader.cpp
     src/core/windows/Window.cpp
     src/core/Color.cpp

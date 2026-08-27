@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/core/renderer/pointers/RenderTargetPtr.h>
 #include <graphics/core/buffers/pointers/FrameBufferPtr.h>
 #include <graphics/core/buffers/pointers/RenderBufferPtr.h>
 #include <graphics/core/PixelFormats.h>
@@ -28,20 +29,44 @@ enum class DepthStencilStorage
 };
 
 /**
+ * Render target size mode
+ * @author Nathaniel Rex
+ */
+enum class RenderTargetSizeMode
+{
+    /**
+     * Target is configured with fixed dimensions
+     */
+    FIXED,
+
+    /**
+     * Target dimensions will be obtained dynamically when rendering to always match the default frame buffer of
+     * the window
+     */
+    AUTO
+};
+
+/**
  * Describes the dimensions and attachments of a render target
  * @author Nathaniel Rex
  */
 struct RenderTargetConfig
 {
     /**
-     * Render target width in pixels
+     * Size mode for the render target, determining whether fixed sizing should be expected, or if the size should be automatically
+     * computed to match the window size while rendering. Defaults to RenderTargetSizeMode::AUTO.
      */
-    unsigned int width = 1;
+    RenderTargetSizeMode sizeMode = RenderTargetSizeMode::AUTO;
 
     /**
-     * Render target height in pixels
+     * Render target width in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
      */
-    unsigned int height = 1;
+    int width = 0;
+
+    /**
+     * Render target height in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
+     */
+    int height = 0;
 
     /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.
@@ -72,10 +97,14 @@ class RenderTarget
 public:
 
     /**
-     * Constructor
-     * @param config Render target config
+     * Creates a new render target
+     * @param config Optional configuration settings
+     * @return The new render target
      */
-    RenderTarget(const RenderTargetConfig& config);
+    static RenderTargetPtr create(const RenderTargetConfig& config = {})
+    {
+        return std::shared_ptr<RenderTarget>(new RenderTarget(config));
+    }
 
     /**
      * @return The config currently used by this render target
@@ -147,6 +176,12 @@ private:
      * or a texture is used instead.
      */
     RenderBufferPtr _depthStencilRenderBuffer;
+
+    /**
+     * Constructor
+     * @param config Render target config
+     */
+    RenderTarget(const RenderTargetConfig& config);
 
     /**
      * Builds the frame buffer and its attachments, as described by the current config

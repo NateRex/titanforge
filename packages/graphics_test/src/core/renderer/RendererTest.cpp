@@ -22,6 +22,19 @@ BOOST_AUTO_TEST_CASE(Renderer_getTime)
 }
 
 /**
+ * Tests the ability to get the current dimensions of the window
+ */
+BOOST_AUTO_TEST_CASE(Renderer_getWindowDimensions)
+{
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
+
+	int width, height;
+	renderer->getWindowDimensions(&width, &height);
+	BOOST_TEST(width = 800);
+	BOOST_TEST(height = 600);
+}
+
+/**
  * Tests the ability to get the time since the last frame
  */
 BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
@@ -33,8 +46,9 @@ BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
 	// Without render having been called, time since last frame will be large
 	float dt1 = renderer->getDeltaTime();
 
-	// Calling render resets delta time
+	// Presenting the rendered frame resets delta time
 	renderer->render(scene, camera);
+	renderer->present();
 	float dt2 = renderer->getDeltaTime();
 
 	BOOST_TEST(dt2 <= dt1);
@@ -74,6 +88,7 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 	// Render
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
+	BOOST_REQUIRE_NO_THROW(renderer->present());
 }
 
 /**
@@ -90,6 +105,7 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera, material));
+	BOOST_REQUIRE_NO_THROW(renderer->present());
 
 	// Ensure the renderer supplies its intermediate texture only for the duration of the draw.
 	BOOST_TEST(material->texture == nullptr);

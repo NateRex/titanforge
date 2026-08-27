@@ -19,6 +19,7 @@
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <common/Assertions.h>
+#include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <sstream>
@@ -33,7 +34,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	
 	if (!window || !window->_glfwWindow)
 	{
-		throw std::runtime_error("Renderer window must be an open window");
+		throw IllegalStateException("Renderer window must be an open window");
 	}
 	_window = window;
 
@@ -43,7 +44,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	// Load GLAD function pointers
 	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
 	{
-		throw std::runtime_error("Failed to initialize GLAD for window");
+		throw IllegalStateException("Failed to initialize GLAD for window");
 	}
 
 	GLint value;
@@ -54,7 +55,7 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	{
 		std::ostringstream oss;
 		oss << "Error occurred updating renderer window: " << err;
-		throw std::runtime_error(oss.str());
+		throw IllegalStateException(oss.str());
 	}
 
 	// Set the viewport dimensions
@@ -99,6 +100,11 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
+void Renderer::getWindowDimensions(int* width, int* height) const
+{
+	return _window->getDimensions(width, height);
+}
+
 Color Renderer::getBackgroundColor() const
 {
 	return _backgroundColor;
@@ -129,7 +135,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
-		throw std::runtime_error("Cannot render with a destroyed renderer or window");
+		throw IllegalStateException("Cannot render with a destroyed renderer or window");
 	}
 
 	// If there's no post-processing material, we only need a single pass to the default framebuffer
@@ -138,7 +144,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 		RenderPass pass;
 		pass.clearColor = _backgroundColor;
 		renderPass(scene, camera, pass);
-		present();
 		return;
 	}
 
@@ -146,7 +151,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	glfwGetFramebufferSize(_window->_glfwWindow, &framebufferWidth, &framebufferHeight);
 	if (framebufferWidth <= 0 || framebufferHeight <= 0)
 	{
-		throw std::runtime_error("Cannot post-process a window with an empty framebuffer");
+		throw IllegalStateException("Cannot post-process a window with an empty framebuffer");
 	}
 
 	// Set up the offscreen render target
@@ -156,18 +161,16 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 		config.width = static_cast<unsigned int>(framebufferWidth);
 		config.height = static_cast<unsigned int>(framebufferHeight);
 		config.colorFormats = { PixelFormat::RGBA16F };
-		_postProcessTarget = std::make_unique<RenderTarget>(config);
+		_postProcessTarget = RenderTarget::create(config);
 	}
 	else
 	{
-		_postProcessTarget->resize(
-			static_cast<unsigned int>(framebufferWidth),
-			static_cast<unsigned int>(framebufferHeight));
+		_postProcessTarget->resize(framebufferWidth, framebufferHeight);
 	}
 
 	// Render the scene to the offscreen render target
 	RenderPass scenePass;
-	scenePass.target = _postProcessTarget.get();
+	scenePass.target = _postProcessTarget;
 	scenePass.clearColor = _backgroundColor;
 	renderPass(scene, camera, scenePass);
 
@@ -179,10 +182,6 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	{
 		RenderPass postProcessPass;
 		postProcessPass.clearFlags = ClearFlags::COLOR;
-		postProcessPass.depthTest = false;
-		postProcessPass.depthWrite = false;
-		postProcessPass.blending = false;
-		postProcessPass.faceCulling = false;
 		renderPass(postProcessMaterial, postProcessPass);
 	}
 	catch (...)
@@ -192,20 +191,26 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, const PostPr
 	}
 
 	postProcessMaterial->texture = originalTexture;
-
-	// Present the scene
-	present();
 }
 
 void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
 {
+	if (!pass.mode)
+	{
+		throw IllegalArgumentException("Render pass mode cannot be null");
+	}
+
 	configurePass(pass);
 	
 	try
 	{
+		// Materials control depth writes, blending, and culling per item.
+		// Depth testing itself applies to the entire scene pass.
+		glEnable(GL_DEPTH_TEST);
+
 		RenderState state;
 		scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-		draw(state, camera);
+		draw(state, *pass.mode, camera);
 	}
 	catch (...)
 	{
@@ -219,7 +224,7 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 {
 	if (!material)
 	{
-		throw std::runtime_error("Post-process material cannot be null");
+		throw IllegalArgumentException("Post-process material cannot be null");
 	}
 
 	configurePass(pass);
@@ -233,9 +238,10 @@ void Renderer::renderPass(const PostProcessMaterialPtr& material, const RenderPa
 
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 
-		ShaderPtr shader = ShaderManager::getShader(material->materialType);
+		ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
 		shader->activate();
 		shader->setMaterial(material.get());
 		
@@ -258,6 +264,12 @@ void Renderer::configurePass(const RenderPass& pass)
 	// Bind framebuffer
 	if (pass.target)
 	{
+		if (pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
+		{
+			int width, height;
+			getWindowDimensions(&width, &height);
+			pass.target->resize(width, height);
+		}
 		pass.target->frameBuffer()->bind();
 	}
 	else
@@ -284,12 +296,6 @@ void Renderer::configurePass(const RenderPass& pass)
 		}
 	}
 	glViewport(pass.viewport.x, pass.viewport.y, width, height);
-
-	// Configure depth test, blending, and face culling
-	pass.depthTest ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
-	glDepthMask(pass.depthWrite ? GL_TRUE : GL_FALSE);
-	pass.blending ? glEnable(GL_BLEND) : glDisable(GL_BLEND);
-	pass.faceCulling ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
 	// Clear color, depth, and stencil buffers
 	GLbitfield clearMask = 0;
@@ -322,6 +328,11 @@ void Renderer::finishPass()
 
 void Renderer::present()
 {
+	if (_destroyed || !_window || !_window->_glfwWindow)
+	{
+		throw IllegalStateException("Cannot present with a destroyed renderer or window");
+	}
+
 	const float time = getTime();
 	_window->getInputController()->pollForKeyHolds(time - _timeOfLastFrame);
 	_timeOfLastFrame = time;
@@ -329,24 +340,26 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(const RenderState& state, const CameraPtr camera)
+void Renderer::draw(RenderState& state, const RenderMode& mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
-	std::vector<const RenderItem*> opaqueItems;
-	std::vector<const RenderItem*> backgroundItems;
-	std::vector<const RenderItem*> transparentItems;
-	for (const RenderItem& item : state.items)
+	std::vector<RenderItem*> opaqueItems;
+	std::vector<RenderItem*> backgroundItems;
+	std::vector<RenderItem*> transparentItems;
+	for (RenderItem& item : state.items)
 	{
-		if (item.material->isTransparent())
+		mode.apply(item);
+		if (!item.visible)
 		{
-			transparentItems.push_back(&item);
+			continue;
 		}
-		else if (item.material->isBackground())
+
+		switch (item.layer)
 		{
-			backgroundItems.push_back(&item);
-		}
-		else {
-			opaqueItems.push_back(&item);
+			case RenderLayer::TRANSPARENT: transparentItems.push_back(&item); break;
+			case RenderLayer::BACKGROUND: backgroundItems.push_back(&item); break;
+			case RenderLayer::OPAQUE: opaqueItems.push_back(&item); break;
+			default: opaqueItems.push_back(&item); break;
 		}
 	}
 
@@ -386,9 +399,10 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	Geometry* geometry = item.geometry;
 	GeometryAttributes geometryAttrib = geometry->getAttributes();
 	Material* material = item.material;
+	const bool transparent = item.layer == RenderLayer::TRANSPARENT;
 
 	// Set global state
-	glDepthMask(material->depthWrite && !material->isTransparent() ? GL_TRUE : GL_FALSE);
+	glDepthMask(material->depthWrite && !transparent ? GL_TRUE : GL_FALSE);
 	switch (material->depthFunction)
 	{
 		case DepthFunction::ALWAYS: glDepthFunc(GL_ALWAYS); break;
@@ -408,7 +422,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 		case CullingMode::BACK: glEnable(GL_CULL_FACE); glCullFace(GL_BACK); break;
 		default: glDisable(GL_CULL_FACE); break;
 	}
-	if (material->isTransparent())
+	if (transparent)
 	{
 		glEnable(GL_BLEND);
 	}
@@ -417,7 +431,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	}
 
 	// Activate shader
-	ShaderPtr shader = ShaderManager::getShader(material->materialType);
+	ShaderPtr shader = ShaderManager::getShader(item.shader);
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
@@ -462,12 +476,8 @@ void Renderer::applyGlobalSettings()
 	// Enable setting point size in shaders for point primitive draws
 	glEnable(GL_PROGRAM_POINT_SIZE);
 
-	// Enable alpha channel for transparency
-	glEnable(GL_BLEND);
+	// Configure alpha blending used by transparent materials
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
 
 	// Disable stencil test by default
 	glDisable(GL_STENCIL_TEST);
