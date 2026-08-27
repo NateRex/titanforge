@@ -25,6 +25,8 @@ add_executable(GraphicsTest
     src/core/input/InputControllerTest.cpp
     src/core/input/InputTriggerTest.cpp
     src/core/input/InputValueTest.cpp
+    src/core/renderer/modes/MaterialModeTest.cpp
+    src/core/renderer/modes/SurfaceNormalModeTest.cpp
     src/core/renderer/RendererTest.cpp
     src/core/renderer/RenderPassTest.cpp
     src/core/renderer/RenderTargetTest.cpp

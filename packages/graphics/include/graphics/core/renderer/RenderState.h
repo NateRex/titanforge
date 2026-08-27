@@ -1,4 +1,5 @@
 #pragma once
+#include <graphics/core/shaders/ShaderId.h>
 #include <graphics/core/Color.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
@@ -12,7 +13,30 @@ class Camera;
 class TextureCube;
 
 /**
- * A flattened, render-ready description of an object obtained during scene traversal
+ * Determines when an item is drawn relative to other items in a pass
+ * @author Nathaniel Rex
+ */
+enum class RenderLayer
+{
+    /**
+     * Fully-opaque items where no surface blending is necessary
+     */
+	OPAQUE,
+
+    /**
+     * Items that make up the background of a scene (e.g., a skybox)
+     */
+	BACKGROUND,
+
+    /**
+     * Transparent items, where item ordering and surface blending matters
+     */
+	TRANSPARENT
+};
+
+/**
+ * A flattened, render-ready description of an object. The fields of this object are updated during scene traversal, as well
+ * as resolution of the current render pass settings.
  * @author Nathaniel Rex
  */
 struct RenderItem {
@@ -26,6 +50,21 @@ struct RenderItem {
 	 * Material to apply
 	 */
 	Material* material = nullptr;
+
+	/**
+	 * The ID of the shader used to draw the item in the current render pass
+	 */
+	ShaderId shader;
+
+	/**
+	 * Boolean flag indicating whether or not this item should participate in the current render pass
+	 */
+	bool visible;
+
+	/**
+	 * Ordering and blending behavior used to draw the item
+	 */
+	RenderLayer layer;
 
 	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.
