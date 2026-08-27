@@ -4,6 +4,24 @@
 class RenderTarget;
 
 /**
+ * Selects how scene geometry is visualized in a render pass.
+ * @author Nathaniel Rex
+ */
+enum class RenderMode
+{
+    /**
+     * Uses each object's material to select its default surface shader
+     */
+    MATERIAL,
+
+    /**
+     * Displays mesh surface normals as RGB colors in world space. Geometry
+     * without vertex normals are omitted from the pass.
+     */
+    SURFACE_NORMALS
+};
+
+/**
  * Bit flags representing buffers cleared by a render pass
  * @author Nathaniel Rex
  */
@@ -85,6 +103,11 @@ struct Viewport
  */
 struct RenderPass
 {
+    /**
+     * Visualization used for scene geometry. Defaults to normal material rendering.
+     */
+    RenderMode mode = RenderMode::MATERIAL;
+
     /**
      * Destination render target, or null for the default frame buffer.
      */
