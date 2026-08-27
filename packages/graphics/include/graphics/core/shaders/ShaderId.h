@@ -42,7 +42,7 @@ enum class ShaderId
 	POST_PROCESS,
 
 	/**
-	 * Shader for drawing surface normals
+	 * Shader for drawing vertex normals
 	 */
-	NORMALS
+	VERTEX_NORMALS
 };

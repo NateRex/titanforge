@@ -1,4 +1,4 @@
-#include <graphics/core/shaders/NormalShader.h>
+#include <graphics/core/shaders/VertexNormalShader.h>
 #include <graphics/core/renderer/RenderState.h>
 #include <graphics/cameras/Camera.h>
 #include <math/Matrix3.h>
@@ -78,22 +78,22 @@ constexpr const char* NORMALS_FRAGMENT = R"(
     }
 )";
 
-NormalShader::NormalShader(): Shader("NormalShader", NORMALS_VERTEX, NORMALS_GEOMETRY, NORMALS_FRAGMENT)
+VertexNormalShader::VertexNormalShader(): Shader("VertexNormalShader", NORMALS_VERTEX, NORMALS_GEOMETRY, NORMALS_FRAGMENT)
 {
 }
 
-void NormalShader::setItem(const RenderItem& item)
+void VertexNormalShader::setItem(const RenderItem& item)
 {
 	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uModel"), 1, GL_TRUE, item.modelTransform.getValues());
 	glUniformMatrix3fv(getUniformLocation("uNormal"), 1, GL_TRUE, item.normalTransform.getValues());
 }
 
-void NormalShader::setCamera(Camera* camera)
+void VertexNormalShader::setCamera(Camera* camera)
 {
 	if (!camera)
 	{
-		throw IllegalArgumentException("NormalShader requires a camera");
+		throw IllegalArgumentException("VertexNormalShader requires a camera");
 	}
 
 	ProgramBinding binding(this);

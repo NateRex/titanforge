@@ -18,9 +18,9 @@ public:
 	static const RenderModePtr MATERIAL;
 
 	/**
-     * World-space surface normals encoded as RGB colors
+     * renders world-space vertex normals of geometry
      */
-	static const RenderModePtr SURFACE_NORMALS;
+	static const RenderModePtr VERTEX_NORMALS;
 
     /**
      * Destructor

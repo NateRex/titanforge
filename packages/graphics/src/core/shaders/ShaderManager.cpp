@@ -5,7 +5,7 @@
 #include <graphics/core/shaders/WireframeShader.h>
 #include <graphics/core/shaders/SkyboxShader.h>
 #include <graphics/core/shaders/PostProcessShader.h>
-#include <graphics/core/shaders/NormalShader.h>
+#include <graphics/core/shaders/VertexNormalShader.h>
 #include <common/Assertions.h>
 #include <glad/glad.h>
 
@@ -19,7 +19,7 @@ ShaderManager::ShaderManager()
 	_shaders.emplace(ShaderId::WIREFRAME, WireframeShader::create());
 	_shaders.emplace(ShaderId::SKYBOX, SkyboxShader::create());
 	_shaders.emplace(ShaderId::POST_PROCESS, PostProcessShader::create());
-	_shaders.emplace(ShaderId::NORMALS, NormalShader::create());
+	_shaders.emplace(ShaderId::VERTEX_NORMALS, VertexNormalShader::create());
 }
 
 ShaderManager::~ShaderManager()

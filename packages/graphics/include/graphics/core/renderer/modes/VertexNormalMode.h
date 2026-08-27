@@ -2,10 +2,10 @@
 #include <graphics/core/renderer/modes/RenderMode.h>
 
 /**
- * Rendering mode used to visualize world-space surface normals encoded as RGB colors
+ * Rendering mode used to visualize world-space vertex normals
  * @author Nathaniel Rex
  */
-class SurfaceNormalRenderMode final : public RenderMode
+class VertexNormalRenderMode final : public RenderMode
 {
 public:
 

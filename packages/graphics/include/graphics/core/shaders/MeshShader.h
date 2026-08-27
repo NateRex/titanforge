@@ -49,7 +49,7 @@ public:
 
 	/**
      * Updates the uniforms for this shader using the given normal matrix. This matrix is typically used to
-	 * transform surface normals from local space to world space, without affecting scaling or translation.
+	 * transform vertex normals from local space to world space, without affecting scaling or translation.
      * @param matrix Matrix representing the transformation from local to world space for normal vectors
      */
     void setNormalMatrix(const Matrix3& matrix);

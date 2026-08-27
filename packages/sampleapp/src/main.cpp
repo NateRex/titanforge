@@ -168,7 +168,7 @@ int main()
         renderer->renderPass(scene, camera, pass);
 
         // Render normals
-        pass.mode = RenderMode::SURFACE_NORMALS;
+        pass.mode = RenderMode::VERTEX_NORMALS;
         pass.clearFlags = ClearFlags::NONE;
         renderer->renderPass(scene, camera, pass);
 

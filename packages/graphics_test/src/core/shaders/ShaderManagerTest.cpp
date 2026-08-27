@@ -12,5 +12,5 @@ BOOST_AUTO_TEST_CASE(ShaderManager_getShader)
 	BOOST_TEST(ShaderManager::getShader(ShaderId::WIREFRAME) != nullptr);
 	BOOST_TEST(ShaderManager::getShader(ShaderId::SKYBOX) != nullptr);
 	BOOST_TEST(ShaderManager::getShader(ShaderId::POST_PROCESS) != nullptr);
-	BOOST_TEST(ShaderManager::getShader(ShaderId::NORMALS) != nullptr);
+	BOOST_TEST(ShaderManager::getShader(ShaderId::VERTEX_NORMALS) != nullptr);
 }

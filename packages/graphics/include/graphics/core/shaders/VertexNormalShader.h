@@ -3,20 +3,20 @@
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
- * Shader used to visualize surface normals
+ * Shader used to visualize vertex normals
  * @author Nathaniel Rex
  */
-class NormalShader : public Shader
+class VertexNormalShader : public Shader
 {
 public:
 
 	/**
-	 * Constructs a new NormalShader instance
+	 * Constructs a new VertexNormalShader instance
 	 * @return The new shader instance
 	 */
 	static ShaderPtr create()
 	{
-		return std::shared_ptr<NormalShader>(new NormalShader());
+		return std::shared_ptr<VertexNormalShader>(new VertexNormalShader());
 	}
 
 	void setItem(const RenderItem& item) override;
@@ -27,5 +27,5 @@ private:
 	/**
 	 * Constructor
 	 */
-	NormalShader();
+	VertexNormalShader();
 };
