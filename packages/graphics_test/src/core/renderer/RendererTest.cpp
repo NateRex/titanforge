@@ -22,6 +22,19 @@ BOOST_AUTO_TEST_CASE(Renderer_getTime)
 }
 
 /**
+ * Tests the ability to get the current dimensions of the window
+ */
+BOOST_AUTO_TEST_CASE(Renderer_getWindowDimensions)
+{
+	RendererPtr renderer = GlobalTestFixture::RENDERER;
+
+	int width, height;
+	renderer->getWindowDimensions(width, height);
+	BOOST_TEST(width = 800);
+	BOOST_TEST(height = 600);
+}
+
+/**
  * Tests the ability to get the time since the last frame
  */
 BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
