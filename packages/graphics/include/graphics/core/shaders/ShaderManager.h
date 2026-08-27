@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
-#include <graphics/core/shaders/ShaderId.h>
 #include <unordered_map>
 
 /**

@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setState)
 	state.lighting.lights.push_back({directional.get()});
 	state.lighting.lights.push_back({spot.get()});
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setState)
 BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 {
 	RenderState state;
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
 	state.environment.intensity = 1.5f;
 	state.environment.rotation = 0.25f;
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
 
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setStateHighIntensity)
 	light->intensity = 4.f;
 	state.lighting.lights.push_back({light.get()});
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	shader->activate();
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
 
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
 
-	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
 }
 
@@ -129,6 +129,6 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
  	item.modelTransform = Matrix4::IDENTITY;
  	item.normalTransform = Matrix3::IDENTITY;
 
- 	ShaderPtr shader = ShaderManager::getShader(MaterialType::MESH);
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
  	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
  }

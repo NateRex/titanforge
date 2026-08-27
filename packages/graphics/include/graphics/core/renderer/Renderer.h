@@ -79,7 +79,7 @@ public:
 	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
 	 * @param scene Scene graph to render.
 	 * @param camera Camera used to view the scene.
-	 * @param pass Render target, viewport, clear operations, and fixed-function state for this draw.
+	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
 	 */
 	void renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass);
 
@@ -87,7 +87,7 @@ public:
 	 * Applies a post-process material once using an explicit pass configuration. Unlike Renderer::render, this method does not swap the
 	 * window buffers or poll events, making it suitable for drawing into off-screen render targets.
 	 * @param material Post-process shader material to execute.
-	 * @param pass Render target, viewport, clear operations, and fixed-function state for this draw.
+	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
 	 */
 	void renderPass(const PostProcessMaterialPtr& material, const RenderPass& pass);
 
@@ -166,7 +166,7 @@ private:
 	Renderer(WindowPtr window);
 
 	/**
-	 * Configures the target, viewport, clear operations, and fixed-function state for one render pass
+	 * Configures the target, viewport, and clear operations for one render pass
 	 * @param pass Render pass settings
 	 */
 	void configurePass(const RenderPass& pass);
@@ -184,15 +184,17 @@ private:
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items
 	 * @param state The render state to draw
+	 * @param mode Visualization mode for this pass
 	 * @param camera Camera
 	 */
-	void draw(const RenderState& state, const CameraPtr camera);
+	void draw(const RenderState& state, RenderMode mode, const CameraPtr camera);
 
 	/**
 	 * Draws a single prepared render item
 	 * @param state The render state
 	 * @param item The item to draw
+	 * @param mode Visualization mode for this pass
 	 * @param camera Camera
 	 */
-	void drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera);
+	void drawItem(const RenderState& state, const RenderItem& item, RenderMode mode, const CameraPtr camera);
 };

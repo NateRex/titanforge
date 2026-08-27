@@ -98,7 +98,7 @@ struct Viewport
 };
 
 /**
- * Describes render target selection and fixed-function render-pass state
+ * Describes a render operation's visualization, target, viewport, and clearing behavior
  * @author Nathaniel Rex
  */
 struct RenderPass
@@ -138,23 +138,4 @@ struct RenderPass
      */
     int clearStencil = 0;
 
-    /**
-     * Boolean flag indicating whether depth testing is enabled. Defaults to true.
-     */
-    bool depthTest = true;
-
-    /**
-     * Boolean flag indicating whether fragment depth values are written. Defaults to true.
-     */
-    bool depthWrite = true;
-
-    /**
-     * Boolean flag indicating whether color blending is enabled. Defaults to true.
-     */
-    bool blending = true;
-
-    /**
-     * Boolean flag indicating whether polygon face culling is enabled. Defaults to true.
-     */
-    bool faceCulling = true;
 };
