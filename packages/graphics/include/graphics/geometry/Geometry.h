@@ -6,6 +6,7 @@ class Vector3;
 class Color;
 class GeometryAttributes;
 class GeometryBuffer;
+class InstanceBuffer;
 
 /**
  * Specifies the geometric primitive used to interpret the vertex data of a geometry
@@ -147,6 +148,11 @@ public:
 	 */
 	GeometryBuffer* getBuffer();
 
+	/**
+	 * @return A newly-constructed GPU buffer for instanced rendering from this geometry. The caller owns the returned buffer.
+	 */
+	InstanceBuffer* createInstanceBuffer() const;
+
 protected:
 
 	/**
@@ -217,4 +223,11 @@ protected:
 	 * Constructs and stores the GPU buffer for this geometry using the attributes currently set on this geometry
 	 */
 	void createBuffer();
+
+	/**
+	 * Helper method used to build the interleaved floating-point vertex representation used by GPU buffers
+	 * @param attributes Geometry attributes
+	 * @param numValues Value in which to store the number of values in the result
+	 */
+	float* createVertexData(const GeometryAttributes& attributes, unsigned int* numValues) const;
 };

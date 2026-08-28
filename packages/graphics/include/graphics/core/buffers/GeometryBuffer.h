@@ -1,6 +1,5 @@
 #pragma once
-
-class GeometryAttributes;
+#include <graphics/geometry/GeometryAttributes.h>
 
 /**
  * A buffer responsible for holding the vertex array data of a geometry
@@ -40,19 +39,24 @@ public:
 private:
 
 	/**
-	 * OpenGL vertex buffer object (VBO) name.
+	 * ID of the OpenGL vertex buffer object (VBO) used to store geometry vertex data
 	 */
-	unsigned int _vboId = 0;
+	unsigned int _geometryVBO = 0;
 
 	/**
-	 * OpenGL element buffer object (EBO) name. May remain undefined if the geometry does not define indices.
+	 * ID of the OpenGL element buffer object (EBO) used to store geometry index data. May be 0 if the geometry does not define indices.
 	 */
-	unsigned int _eboId = 0;
+	unsigned int _geometryEBO = 0;
 
 	/**
-	 * OpenGL vertex array object (VAO) name used to bind this buffer for rendering.
+	 * ID of the OpenGL vertex array object (VAO)
 	 */
-	unsigned int _vaoId = 0;
+	unsigned int _vao = 0;
+
+	/**
+	 * Layout of each vertex in the VBO.
+	 */
+	GeometryAttributes _attributes;
 
 	/**
 	 * The total number of points in this buffer. If indices are set, this will be the number of indices. Otherwise, it defaults

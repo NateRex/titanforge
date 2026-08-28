@@ -35,6 +35,7 @@ add_library(Graphics
     src/cameras/PerspectiveCamera.cpp
     src/core/buffers/FrameBuffer.cpp
     src/core/buffers/GeometryBuffer.cpp
+    src/core/buffers/InstanceBuffer.cpp
     src/core/buffers/RenderBuffer.cpp
     src/core/input/modifiers/InputModifiers.cpp
     src/core/input/modifiers/NegateModifier.cpp
@@ -49,6 +50,7 @@ add_library(Graphics
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/LineShader.cpp
+	src/core/shaders/InstancedMeshShader.cpp
     src/core/shaders/MeshShader.cpp
     src/core/shaders/PointShader.cpp
 	src/core/shaders/PostProcessShader.cpp
@@ -67,6 +69,7 @@ add_library(Graphics
     src/loaders/ModelLoader.cpp
     src/loaders/TextureLoader.cpp
     src/objects/Lines.cpp
+    src/objects/InstancedMesh.cpp
     src/objects/Points.cpp
 	src/objects/PostProcessing.cpp
     src/objects/Renderable.cpp
