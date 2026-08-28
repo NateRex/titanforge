@@ -108,7 +108,7 @@ void Renderer::setBackgroundColor(const Color& color)
 	_backgroundColor = color;
 }
 
-void Renderer::destroy(bool destroyWindow)
+void Renderer::destroy()
 {
 	if (_destroyed)
 	{
@@ -117,11 +117,6 @@ void Renderer::destroy(bool destroyWindow)
 
 	_destroyed = true;
 	decrementRendererCount();
-
-	if (destroyWindow && _window)
-	{
-		_window->destroy();
-	}
 }
 
 void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes modes)

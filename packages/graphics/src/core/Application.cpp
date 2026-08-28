@@ -42,11 +42,22 @@ void Application::run(const RunCallback& callback)
         frame.elapsedTime = currentTime - startTime;
         frame.frameNumber = frameNumber++;
 
-        _renderer->getWindow()->getInputController()->pollForKeyHolds(frame.deltaTime);
+        getInputController()->pollForKeyHolds(frame.deltaTime);
+
+        if (!_running)
+        {
+            break;
+        }
+
         callback(frame);
     }
 
     _running = false;
+}
+
+InputController* Application::getInputController()
+{
+    return _renderer->getWindow()->getInputController();
 }
 
 void Application::setMaxDeltaTime(float seconds)

@@ -28,10 +28,10 @@
 
 /**
  * Creates a camera capable of being controlled via key and mouse actions
- * @param renderer The renderer
+ * @param application Application
  * @return The camera that was created
  */
-CameraPtr setupInputs(RendererPtr renderer)
+CameraPtr setupInputs(Application* app)
 {
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
@@ -50,14 +50,13 @@ CameraPtr setupInputs(RendererPtr renderer)
     context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
     context->add(AxisInput::MOUSE_SCROLL, zoom, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
 
-    WindowPtr window = renderer->getWindow();
-    InputController* inputController = window->getInputController();
+    InputController* inputController = app->getInputController();
     inputController->addContext(context);
 
     // Bind quit action
-    inputController->bind(quit, [window = window.get()](InputValue value, float deltaTime)
+    inputController->bind(quit, [app](InputValue value, float deltaTime)
     {
-        window->close();
+        app->stop();
     });
 
     // Bind move action
@@ -98,11 +97,14 @@ CameraPtr setupInputs(RendererPtr renderer)
  */
 int main()
 {
+    // Create app
     RendererPtr renderer = Renderer::create();
-    CameraPtr camera = setupInputs(renderer);
-    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
+    Application app(renderer);
 
+    // Setup scene and camera
     ScenePtr scene = Scene::create();
+    CameraPtr camera = setupInputs(&app);
+    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
     scene->add(Skybox::create());
@@ -156,15 +158,8 @@ int main()
     scene->add(PostProcessing::create(postProcessing));
 
     // Run application
-    Application app(renderer);
     app.run([&](const Frame& frame) {
-        
-        // Rotate entity
         entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
-
-        // Render
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });
-
-    renderer->destroy();
 }

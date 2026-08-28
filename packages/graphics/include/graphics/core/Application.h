@@ -2,6 +2,8 @@
 #include <graphics/core/pointers/RendererPtr.h>
 #include <functional>
 
+class InputController;
+
 /**
  * Timing and indexing information for a single application frame
  * @author Nathaniel Rex
@@ -61,6 +63,11 @@ public:
      * Returns the application's renderer
      */
     RendererPtr getRenderer() const { return _renderer; }
+
+    /**
+     * @return The input controller, owned by the window context of the current renderer
+     */
+    InputController* getInputController();
 
     /**
      * Sets the maximum delta time allowed to be passed to callbacks in between frames. This prevents large

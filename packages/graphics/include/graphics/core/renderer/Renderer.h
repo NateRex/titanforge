@@ -74,10 +74,8 @@ public:
 
 	/**
 	 * Destroys this renderer, releasing all of its resources
-	 * @param destroyWindow Boolean flag that, when true, causes the destruction of the window this renderer is
-	 * currently attached to. Defaults to false.
 	 */
-	void destroy(bool destroyWindow = false);
+	void destroy();
 
 private:
 
