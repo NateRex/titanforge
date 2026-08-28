@@ -2,7 +2,7 @@
 #include <graphics/core/shaders/MeshShader.h>
 
 /**
- * Shader used to handle instanced meshes, where each instance shares the same geometry, material, and model matrix.
+ * Shader used to handle instanced meshes, where each instance shares the same geometry and material.
  * @author Nathaniel Rex
  */
 class InstancedMeshShader : public MeshShader
