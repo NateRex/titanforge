@@ -1,28 +1,31 @@
 #include <graphics/core/Application.h>
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderTarget.h>
-#include <graphics/scene/Scene.h>
-#include <graphics/lights/AmbientLight.h>
-#include <graphics/materials/PointMaterial.h>
-#include <graphics/materials/LineMaterial.h>
-#include <graphics/materials/WireframeMaterial.h>
-#include <graphics/materials/PostProcessMaterial.h>
-#include <graphics/cameras/PerspectiveCamera.h>
-#include <graphics/geometry/BoxGeometry.h>
-#include <graphics/objects/Points.h>
-#include <graphics/objects/Lines.h>
-#include <graphics/objects/Skybox.h>
-#include <graphics/objects/PostProcessing.h>
-#include <graphics/core/pointers/EntityPtr.h>
-#include <graphics/loaders/ModelLoader.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/modifiers/InputModifiers.h>
+#include <graphics/loaders/TextureLoader.h>
+#include <graphics/loaders/ModelLoader.h>
+
+#include <graphics/scene/Scene.h>
+#include <graphics/lights/AmbientLight.h>
+#include <graphics/cameras/PerspectiveCamera.h>
+
+#include <graphics/geometry/BoxGeometry.h>
+#include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/PostProcessMaterial.h>
+
+#include <graphics/objects/Mesh.h>
+#include <graphics/objects/InstancedMesh.h>
+#include <graphics/objects/Skybox.h>
+#include <graphics/objects/PostProcessing.h>
+
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
+#include <random>
 
 /**
  * Creates a camera capable of being controlled via key and mouse actions
@@ -91,6 +94,41 @@ CameraPtr setupInputs(Application* app)
 }
 
 /**
+ * Creates grass instances distributed around the given plane
+ * @param scene The scene
+ * @param quantity The number of instances to generate
+ * @param fixedY Fixed height along the y-axis
+ * @param minX Lower-bounds on the x-axis
+ * @param maxX Upper-bounds on the x-axis
+ * @param minZ Lower-bounds on the z-axis
+ * @param maxZ Upper-bounds on the z-axis
+ */
+void createGrass(ScenePtr scene, unsigned int quantity, float fixedY, float minX, float maxX, float minZ, float maxZ)
+{
+    std::random_device rd;
+    std::mt19937 g(rd());
+
+    std::uniform_real_distribution<float> xDist(minX, maxX);
+    std::uniform_real_distribution<float> zDist(minZ, maxZ);
+    std::uniform_real_distribution<float> rDist(0.f, PI * 2);
+
+    BoxGeometryPtr geom = BoxGeometry::create(1.f, 1.f, 0.05f);
+    MeshMaterialPtr mat = MeshMaterial::create();
+    mat->texture = TextureLoader::load("assets/grass.png", true);
+    mat->alphaMode = AlphaMode::MASK;
+    InstancedMeshPtr mesh = InstancedMesh::create(geom, mat);
+    scene->add(mesh);
+
+    for (unsigned int i = 0; i < quantity; i++)
+    {
+        mesh->addInstance({
+            Vector3(xDist(g), fixedY, zDist(g)),
+            Matrix3::fromYRotation(rDist(g))
+        });
+    }
+}
+
+/**
  * Main entrypoint for the application
  */
 int main()
@@ -102,46 +140,10 @@ int main()
     // Setup scene and camera
     ScenePtr scene = Scene::create();
     CameraPtr camera = setupInputs(&app);
-    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
+    camera->lookAt(Vector3(0.f, 5.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
     scene->add(Skybox::create());
-
-    // Create point primitives
-    PointMaterialPtr pointMat = PointMaterial::create();
-    pointMat->color = Color::BLUE;
-    pointMat->size = 0.09f;
-    pointMat->sizeUnits = PrimitiveSizeUnits::WORLD;
-    PointsPtr points = Points::create({
-        Vector3(0.f, 5.f, 0.f),
-        Vector3(2.f, 6.f, 0.f)
-    }, pointMat);
-    scene->add(points);
-
-    // Create line primitives
-    LineMaterialPtr lineMat = LineMaterial::create();
-    lineMat->color = Color::RED;
-    lineMat->width = 0.05f;
-    lineMat->widthUnits = PrimitiveSizeUnits::WORLD;
-    LinesPtr lines = Lines::createPolyline({
-        Vector3(-7.f, 0.f, 0.f),
-        Vector3(-4.f, 0.f, 0.f),
-        Vector3(-4.f, 2.f, 0.f),
-        Vector3(-7.f, 2.f, 0.f)
-    }, lineMat, true);
-    scene->add(lines);
-
-    // Create wireframe cube
-    WireframeMaterialPtr wireframeMat = WireframeMaterial::create();
-    wireframeMat->color = Color::GREEN;
-    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), wireframeMat);
-    box->setPosition(2.f, 2.f, 2.f);
-    scene->add(box);
-
-    // Load guitar backpack model
-    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
-    entity->setPosition(0.f, 0.f, 0.f);
-    scene->add(entity);
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
@@ -155,9 +157,22 @@ int main()
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 
+    // Create the ground
+    MeshMaterialPtr groundMat = MeshMaterial::create();
+    groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
+    scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
+
+    // Create grass
+    createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
+
+    // Load guitar backpack model
+    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
+    entity->setPosition(0.f, 2.1f, 0.f);
+    entity->addRotation(Matrix3::fromYRotation(0.25f));
+    scene->add(entity);
+
     // Run application
     app.run([&](const Frame& frame) {
-        entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });
 }

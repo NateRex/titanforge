@@ -24,6 +24,17 @@ public:
 	 */
 	MaterialPtr material;
 
+    void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+
+protected:
+
+    /**
+     * Constructor
+     * @param geometry Geometry
+     * @param material Material
+     */
+    Renderable(GeometryPtr geometry, MaterialPtr material): geometry(geometry), material(material) {}
+
     /**
      * Configures the buffer and variants of an item representing this entity in a render state
      * @param item Draw item to modify
@@ -43,15 +54,4 @@ public:
      * @param item Draw item to modify
      */
     void addVertexNormalVariant(DrawItem& item);
-
-    void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
-
-protected:
-
-    /**
-     * Constructor
-     * @param geometry Geometry
-     * @param material Material
-     */
-    Renderable(GeometryPtr geometry, MaterialPtr material): geometry(geometry), material(material) {}
 };

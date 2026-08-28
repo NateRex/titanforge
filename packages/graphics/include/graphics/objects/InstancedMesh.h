@@ -103,8 +103,6 @@ public:
 	 */
 	void clearInstances();
 
-	void configureDrawItem(DrawItem& item) override;
-
 	void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 
 protected:
@@ -134,4 +132,6 @@ private:
 	 * Boolean flag indicating whether the instance buffer needs to be updated before being accessed
 	 */
 	bool _bufferNeedsUpdate = true;
+
+	void configureDrawItem(DrawItem& item) override;
 };
