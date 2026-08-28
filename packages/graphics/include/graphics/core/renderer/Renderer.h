@@ -42,11 +42,6 @@ public:
 	float getTime() const;
 
 	/**
-	 * @return The time (in decimal seconds) since the previous frame was rendered
-	 */
-	float getDeltaTime() const;
-
-	/**
 	 * @return The current window context that is the target of draw commands
 	 */
 	WindowPtr getWindow() const;
@@ -111,11 +106,6 @@ private:
 	 * The current background (clear) color
 	 */
 	Color _backgroundColor;
-
-	/**
-	 * Time (in decimal seconds) at which the last frame was rendered (relative to the start of rendering)
-	 */
-	float _timeOfLastFrame = 0.f;
 	
 	/**
 	 * OpenGL ID for the lazily created render-managed vertex array object used for full-screen post-processing draws

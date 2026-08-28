@@ -58,6 +58,7 @@ add_library(Graphics
     src/core/shaders/VertexNormalShader.cpp
     src/core/shaders/WireframeShader.cpp
     src/core/windows/Window.cpp
+    src/core/Application.cpp
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp

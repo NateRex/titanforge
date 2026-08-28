@@ -88,11 +88,6 @@ float Renderer::getTime() const
 	return glfwGetTime();
 }
 
-float Renderer::getDeltaTime() const
-{
-	return getTime() - _timeOfLastFrame;
-}
-
 WindowPtr Renderer::getWindow() const
 {
 	return _window;
@@ -297,10 +292,6 @@ void Renderer::present()
 	}
 
 	FrameBuffer::bindDefault();
-
-	const float time = getTime();
-	_window->getInputController()->pollForKeyHolds(time - _timeOfLastFrame);
-	_timeOfLastFrame = time;
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
 }

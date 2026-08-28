@@ -1,3 +1,4 @@
+#include <graphics/core/Application.h>
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/scene/Scene.h>
@@ -154,15 +155,16 @@ int main()
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 
-    float rotationRate = 0.25f;
-    while (renderer->getWindow()->isOpen())
-    {
+    // Run application
+    Application app(renderer);
+    app.run([&](const Frame& frame) {
+        
         // Rotate entity
-        entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
+        entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
 
-		// Post-processing is discovered from the scene and applied after its other objects.
-		renderer->render(scene, camera, RenderModes::MATERIAL);
-    }
+        // Render
+        renderer->render(scene, camera, RenderModes::MATERIAL);
+    });
 
     renderer->destroy();
 }
