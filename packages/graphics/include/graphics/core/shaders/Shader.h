@@ -1,13 +1,14 @@
 #pragma once
+#include <vector>
 
 class Matrix3;
 class Matrix4;
 class Camera;
 class Material;
-struct RenderState;
-struct RenderItem;
-struct Lighting;
+struct DrawState;
+struct DrawItem;
 struct Environment;
+struct LightInstance;
 
 /**
  * Parent class to all shader programs, which are typically managed by the shader manager
@@ -30,14 +31,14 @@ public:
      * Updates this shader's uniforms given a render state
      * @param state Render state generated via scene traversal
      */
-    virtual void setState(const RenderState& state);
+    virtual void setState(const DrawState& state);
 
     /**
      * Updates this shader's uniforms given a specific item being rendered. This automatically applies the item's
      * material as well.
      * @param item Item being rendered
      */
-    virtual void setItem(const RenderItem& item);
+    virtual void setItem(const DrawItem& item);
 
     /**
      * Updates uniforms for this shader using the given camera.
@@ -53,9 +54,9 @@ public:
 
     /**
      * Updates the uniforms for this shader using the given lighting information.
-     * @param lighting Lights affecting the render pass
+     * @param lights Lights affecting the render pass
      */
-    virtual void setLighting(const Lighting& lighting) {}
+    virtual void setLighting(const std::vector<LightInstance>& lights) {}
 
     /**
      * Updates uniforms for this shader using the given environment map

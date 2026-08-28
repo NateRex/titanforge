@@ -45,6 +45,7 @@ add_library(Graphics
     src/core/input/InputController.cpp
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
+    src/core/renderer/DrawState.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/LineShader.cpp
@@ -57,6 +58,7 @@ add_library(Graphics
     src/core/shaders/VertexNormalShader.cpp
     src/core/shaders/WireframeShader.cpp
     src/core/windows/Window.cpp
+    src/core/Application.cpp
     src/core/Color.cpp
     src/core/Entity.cpp
     src/core/EntityGroup.cpp

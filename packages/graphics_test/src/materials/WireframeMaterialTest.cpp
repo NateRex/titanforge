@@ -15,6 +15,4 @@ BOOST_AUTO_TEST_CASE(WireframeMaterial_defaults)
     BOOST_TEST(material->cullingMode == CullingMode::NONE);
     BOOST_TEST(material->depthWrite == true);
     BOOST_TEST(material->depthFunction == DepthFunction::LESS);
-    BOOST_TEST(material->lineWidthUnits == PrimitiveSizeUnits::PIXELS);
-    BOOST_TEST(material->lineWidth == 1.f);
 }

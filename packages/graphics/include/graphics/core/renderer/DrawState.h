@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/core/shaders/ShaderId.h>
+#include <graphics/core/renderer/RenderModes.h>
 #include <graphics/core/Color.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
@@ -17,7 +18,7 @@ class PostProcessMaterial;
  * Determines when an item is drawn relative to other items in a pass
  * @author Nathaniel Rex
  */
-enum class RenderLayer
+enum class DrawLayer
 {
     /**
      * Fully-opaque items where no surface blending is necessary
@@ -40,7 +41,28 @@ enum class RenderLayer
  * as resolution of the current render pass settings.
  * @author Nathaniel Rex
  */
-struct RenderItem {
+struct DrawItem {
+
+	/**
+	 * Item drawing variant for a specific to a rendering mode
+	 */
+	struct Variant {
+
+		/**
+		 * Rendering mode
+		 */
+		RenderModes mode;
+
+		/**
+		 * ID of the shader to use
+		 */
+		ShaderId shader;
+
+		/**
+		 * The layer the item belongs to
+		 */
+		DrawLayer layer;
+	};
 
 	/**
 	 * Geometry being rendered
@@ -53,16 +75,6 @@ struct RenderItem {
 	Material* material = nullptr;
 
 	/**
-	 * The ID of the shader used to draw the item in the current render pass
-	 */
-	ShaderId shader;
-
-	/**
-	 * Ordering and blending behavior used to draw the item
-	 */
-	RenderLayer layer = RenderLayer::OPAQUE;
-
-	/**
 	 * Local-to-world transformation for vertices, accounting for all parent entities of the mesh.
 	 */
 	Matrix4 modelTransform = Matrix4::IDENTITY;
@@ -71,12 +83,24 @@ struct RenderItem {
 	 * Local-to-world transformation for vertex normals, accounting for all parent entities of the mesh.
 	 */
 	Matrix3 normalTransform = Matrix3::IDENTITY;
+
+	/**
+	 * Variants for each type of rendering mode supported by this item
+	 */
+	std::vector<Variant> variants;
+
+	/**
+	 * Fetches the drawing variant for a given rendering mode
+	 * @param mode Rendering mode
+	 * @return The variant, or null if no variant exists for that rendering mode
+	 */
+	const Variant* variant(RenderModes mode) const;
 };
 
 /**
  * A flattened, render-ready description of a light instance.
  */
-struct RenderLight {
+struct LightInstance {
 
 	/**
 	 * Light providing this instance's color and attenuation properties.
@@ -92,21 +116,6 @@ struct RenderLight {
 	 * Direction in which the light's rays travel, in world space.
 	 */
 	Vector3 direction = Vector3::ZERO;
-};
-
-
-/**
- * Aggregation of all the lights in the scene for a single render pass
- * @author Nathaniel Rex
- */
-struct Lighting {
-
-	/**
-	 * Lights affecting this render pass. The shader consumes up to its supported
-	 * maximum; keeping the full list here allows selection policies to be added
-	 * without constraining the scene itself.
-	 */
-	std::vector<RenderLight> lights;
 };
 
 /**
@@ -142,10 +151,10 @@ struct Environment {
 };
 
 /**
- * Aggregation of all rendering data required for a single render pass
+ * Aggregation of all draw data required for a single render pass
  * @author Nathaniel rex
  */
-struct RenderState {
+struct DrawState {
 
 	/**
 	 * Environment used for image-based reflection and refraction
@@ -153,9 +162,11 @@ struct RenderState {
 	Environment environment;
 
 	/**
-	 * Lighting for the render pass
+	 * Lights affecting this render pass. The shader consumes up to its supported
+	 * maximum; keeping the full list here allows selection policies to be added
+	 * without constraining the scene itself.
 	 */
-	Lighting lighting;
+	std::vector<LightInstance> lights;
 
 	/**
 	 * Full-screen effects to apply after all scene items have been drawn, in scene traversal order
@@ -165,5 +176,5 @@ struct RenderState {
 	/**
 	 * The items to be drawn this frame
 	 */
-	std::vector<RenderItem> items;
+	std::vector<DrawItem> items;
 };

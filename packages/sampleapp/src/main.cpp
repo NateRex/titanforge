@@ -1,10 +1,11 @@
+#include <graphics/core/Application.h>
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/PointMaterial.h>
 #include <graphics/materials/LineMaterial.h>
-#include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/WireframeMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -14,23 +15,21 @@
 #include <graphics/objects/PostProcessing.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
-#include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/modifiers/InputModifiers.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
-#include <math/Matrix3.h>
 #include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
 
 /**
  * Creates a camera capable of being controlled via key and mouse actions
- * @param renderer The renderer
+ * @param application Application
  * @return The camera that was created
  */
-CameraPtr setupInputs(RendererPtr renderer)
+CameraPtr setupInputs(Application* app)
 {
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
 
@@ -49,14 +48,13 @@ CameraPtr setupInputs(RendererPtr renderer)
     context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
     context->add(AxisInput::MOUSE_SCROLL, zoom, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
 
-    WindowPtr window = renderer->getWindow();
-    InputController* inputController = window->getInputController();
+    InputController* inputController = app->getInputController();
     inputController->addContext(context);
 
     // Bind quit action
-    inputController->bind(quit, [window = window.get()](InputValue value, float deltaTime)
+    inputController->bind(quit, [app](InputValue value, float deltaTime)
     {
-        window->close();
+        app->stop();
     });
 
     // Bind move action
@@ -97,18 +95,21 @@ CameraPtr setupInputs(RendererPtr renderer)
  */
 int main()
 {
+    // Create app
     RendererPtr renderer = Renderer::create();
-    CameraPtr camera = setupInputs(renderer);
-    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
+    Application app(renderer);
 
+    // Setup scene and camera
     ScenePtr scene = Scene::create();
+    CameraPtr camera = setupInputs(&app);
+    camera->lookAt(Vector3(0.f, 0.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
     scene->add(Skybox::create());
 
     // Create point primitives
     PointMaterialPtr pointMat = PointMaterial::create();
-    pointMat->color = Color::GREEN;
+    pointMat->color = Color::BLUE;
     pointMat->size = 0.09f;
     pointMat->sizeUnits = PrimitiveSizeUnits::WORLD;
     PointsPtr points = Points::create({
@@ -130,10 +131,10 @@ int main()
     }, lineMat, true);
     scene->add(lines);
 
-    // Create glass cube
-    MeshMaterialPtr boxMat = MeshMaterial::create();
-    boxMat->refraction = 1.f;
-    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), boxMat);
+    // Create wireframe cube
+    WireframeMaterialPtr wireframeMat = WireframeMaterial::create();
+    wireframeMat->color = Color::GREEN;
+    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), wireframeMat);
     box->setPosition(2.f, 2.f, 2.f);
     scene->add(box);
 
@@ -154,18 +155,9 @@ int main()
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 
-    float rotationRate = 0.25f;
-    while (renderer->getWindow()->isOpen())
-    {
-        // Rotate entity
-        entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
-
-		// Post-processing is discovered from the scene and applied after its other objects.
-		renderer->render(scene, camera);
-
-		// Present the frame after all passes are complete
-		renderer->present();
-    }
-
-    renderer->destroy();
+    // Run application
+    app.run([&](const Frame& frame) {
+        entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
+        renderer->render(scene, camera, RenderModes::MATERIAL);
+    });
 }

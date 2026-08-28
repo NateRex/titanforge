@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/ShaderManager.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/WireframeMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(WireframeShader_setItem)
     GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
     MaterialPtr material = WireframeMaterial::create();
 
-	RenderItem item;
+	DrawItem item;
     item.geometry = geometry.get();
     item.material = material.get();
 

@@ -6,8 +6,7 @@
 #include <vector>
 #include <functional>
 
-struct RenderPass;
-struct RenderState;
+struct DrawState;
 
 /**
  * Base class for everything that can be added to the scene. Contains a set of properties and methods for manipulating
@@ -210,20 +209,18 @@ public:
 	void remove(EntityPtr entity);
 
 	/**
-	 * Traverses over this entity and all of its children recursively, applying them to a render state given the current pass
-	 * configuration.
-	 * @param state The render state to modify
-	 * @param pass Render pass settings
+	 * Traverses over this entity and all of its children recursively, applying them to a render state
+	 * @param state The render state to modify in-place
 	 * @param parentModel Parent transformation matrix for converting from local to world coordinates
 	 * @param parentNormal Parent transformation matrix for converting from local to world normals
 	 */
-	virtual void traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal);
+	virtual void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal);
 
 	/**
 	 * Traverses over this entity and all of its children recursively, applying the given lambda function
 	 * @param callback Function to call with each entity
 	 */
-	void traverse(const std::function<void(Entity*)>& callback);
+	void apply(const std::function<void(Entity*)>& callback);
 
 protected:
 

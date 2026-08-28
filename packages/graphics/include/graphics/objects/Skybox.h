@@ -72,7 +72,7 @@ public:
 	 */
 	void updateRotation(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) override;
 
-	void traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+	void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 
 private:
 

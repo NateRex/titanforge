@@ -2,7 +2,7 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/objects/Mesh.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/InstantiationException.h>
@@ -122,13 +122,13 @@ int Shader::getUniformLocation(const char* variableName) const
 	return loc;
 }
 
-void Shader::setState(const RenderState& state)
+void Shader::setState(const DrawState& state)
 {
-	setLighting(state.lighting);
+	setLighting(state.lights);
 	setEnvironment(state.environment);
 }
 
-void Shader::setItem(const RenderItem& item)
+void Shader::setItem(const DrawItem& item)
 {
 	setMaterial(item.material);
 }

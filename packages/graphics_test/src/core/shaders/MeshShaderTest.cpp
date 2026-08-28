@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/MeshShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/materials/MaterialType.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
@@ -19,15 +19,15 @@
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setState)
 {
-	RenderState state;
+	DrawState state;
 	LightPtr ambient = AmbientLight::create();
 	LightPtr point = PointLight::create();
 	LightPtr directional = DirectionalLight::create();
 	LightPtr spot = SpotLight::create();
-	state.lighting.lights.push_back({ambient.get()});
-	state.lighting.lights.push_back({point.get()});
-	state.lighting.lights.push_back({directional.get()});
-	state.lighting.lights.push_back({spot.get()});
+	state.lights.push_back({ambient.get()});
+	state.lights.push_back({point.get()});
+	state.lights.push_back({directional.get()});
+	state.lights.push_back({spot.get()});
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setState)
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
 {
-	RenderState state;
+	DrawState state;
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	BOOST_REQUIRE_NO_THROW(shader->setState(state));
 }
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setStateNoLighting)
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
 {
-	RenderState state;
+	DrawState state;
 	TextureCubePtr environment = Skybox::createDefaultTexture();
 	state.environment.texture = environment.get();
 	state.environment.intensity = 1.5f;
@@ -64,11 +64,11 @@ BOOST_AUTO_TEST_CASE(MeshShader_setEnvironment)
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setStateHighIntensity)
 {
-	RenderState state;
+	DrawState state;
 
 	LightPtr light = PointLight::create();
 	light->intensity = 4.f;
-	state.lighting.lights.push_back({light.get()});
+	state.lights.push_back({light.get()});
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
 	shader->activate();
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
 	MeshMaterialPtr mat = MeshMaterial::create();
 
-	RenderItem item;
+	DrawItem item;
 	item.geometry = geom.get();
 	item.material = mat.get();
 	item.modelTransform = Matrix4::IDENTITY;
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 	MeshMaterialPtr mat = MeshMaterial::create();
 	mat->texture = TextureLoader::load("assets/container.jpg");
 
-	RenderItem item;
+	DrawItem item;
 	item.geometry = geom.get();
 	item.material = mat.get();
 	item.modelTransform = Matrix4::IDENTITY;
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
  	mat->diffuseMap = img;
 	mat->specularMap = img;
 
- 	RenderItem item;
+ 	DrawItem item;
 	item.geometry = geom.get();
 	item.material = mat.get();
  	item.modelTransform = Matrix4::IDENTITY;

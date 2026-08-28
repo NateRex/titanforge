@@ -24,7 +24,7 @@ public:
 	 */
 	static PostProcessingPtr create(PostProcessMaterialPtr material);
 
-	void traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal) override;
+	void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 
 protected:
 

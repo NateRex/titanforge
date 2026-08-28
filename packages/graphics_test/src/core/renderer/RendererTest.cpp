@@ -36,26 +36,6 @@ BOOST_AUTO_TEST_CASE(Renderer_getWindowDimensions)
 }
 
 /**
- * Tests the ability to get the time since the last frame
- */
-BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
-{
-	RendererPtr renderer = GlobalTestFixture::RENDERER;
-	ScenePtr scene = Scene::create();
-	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
-
-	// Without render having been called, time since last frame will be large
-	float dt1 = renderer->getDeltaTime();
-
-	// Presenting the rendered frame resets delta time
-	renderer->render(scene, camera);
-	renderer->present();
-	float dt2 = renderer->getDeltaTime();
-
-	BOOST_TEST(dt2 <= dt1);
-}
-
-/**
  * Tests the ability to set and get the background color
  */
 BOOST_AUTO_TEST_CASE(Renderer_setBackgroundColor)
@@ -88,8 +68,9 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 
 	// Render
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
-	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
-	BOOST_REQUIRE_NO_THROW(renderer->present());
+	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera,
+		RenderModes::MATERIAL |
+		RenderModes::VERTEX_NORMALS)));
 }
 
 /**
@@ -108,7 +89,6 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
-	BOOST_REQUIRE_NO_THROW(renderer->present());
 
 	// Ensure the renderer supplies intermediate textures only for the duration of each draw.
 	BOOST_TEST(first->texture == nullptr);

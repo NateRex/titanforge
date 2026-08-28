@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/LineShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/geometry/LineGeometry.h>
 #include <graphics/materials/LineMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(LineShader_setItem)
     GeometryPtr geometry = LineGeometry::createSegments(segments.data(), segments.size());
     MaterialPtr material = LineMaterial::create();
 
-	RenderItem item;
+	DrawItem item;
     item.geometry = geometry.get();
     item.material = material.get();
 

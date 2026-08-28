@@ -1,8 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/objects/PostProcessing.h>
 #include <graphics/materials/PostProcessMaterial.h>
-#include <graphics/core/renderer/RenderPass.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 
@@ -25,19 +24,16 @@ BOOST_AUTO_TEST_CASE(PostProcessing_rejectsNullMaterial)
 }
 
 /**
- * Tests that post-processing is added during scene traversal when in material rendering mode
+ * Tests that post-processing is added to the state during scene traversal
  */
-BOOST_AUTO_TEST_CASE(PostProcessing_materialModeTraversal)
+BOOST_AUTO_TEST_CASE(PostProcessing_traversal)
 {
 	PostProcessMaterialPtr material = PostProcessMaterial::create();
 	PostProcessingPtr postProcessing = PostProcessing::create(material);
 	
-	RenderPass pass;
-	pass.mode = RenderMode::MATERIAL;
-	RenderState state;
-	postProcessing->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
-
-	BOOST_REQUIRE_EQUAL(state.postProcessing.size(), 1);
+	DrawState state;
+	postProcessing->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	BOOST_TEST(state.postProcessing.size() == 1);
 	BOOST_TEST(state.postProcessing[0] == material.get());
 }
 

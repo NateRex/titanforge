@@ -11,7 +11,7 @@ RenderTarget::RenderTarget(const RenderTargetConfig& config): _config(config)
     {
         throw IllegalArgumentException("Render targets support at most four color attachments");
     }
-    if (_config.sizeMode == RenderTargetSizeMode::FIXED)
+    if (_config.sizeMode == TargetSizeMode::FIXED)
     {
         build();
     }
