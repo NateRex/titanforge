@@ -1,8 +1,7 @@
 #include <graphics/objects/Skybox.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/SkyboxMaterial.h>
-#include <graphics/core/renderer/RenderState.h>
-#include <graphics/core/renderer/RenderPass.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/textures/TextureCube.h>
 #include <graphics/loaders/ImageLoader.h>
 #include <common/Utils.h>
@@ -36,9 +35,8 @@ SkyboxPtr Skybox::create()
     return create(material);
 }
 
-void Skybox::traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal)
+void Skybox::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
-
     const SkyboxMaterialPtr sbMat = std::static_pointer_cast<SkyboxMaterial>(material);
     if (sbMat->texture)
     {
@@ -49,7 +47,7 @@ void Skybox::traverse(RenderState& state, const RenderPass& pass, const Matrix4&
         state.environment.lod = sbMat->lod;
     }
 	
-	Renderable::traverse(state, pass, parentModel, parentNormal);
+	Renderable::traverse(state, parentModel, parentNormal);
 }
 
 void Skybox::updateScaling(float x, float y, float z)

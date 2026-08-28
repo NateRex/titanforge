@@ -19,13 +19,13 @@ public:
 		return std::shared_ptr<MeshShader>(new MeshShader());
 	}
 
-	void setItem(const RenderItem& item) override;
+	void setItem(const DrawItem& item) override;
 
 	void setCamera(Camera* camera) override;
 
 	void setMaterial(const Material* material) override;
 
-	void setLighting(const Lighting& lighting) override;
+	void setLighting(const std::vector<LightInstance>& lights) override;
 
 	void setEnvironment(const Environment& environment) override;
 

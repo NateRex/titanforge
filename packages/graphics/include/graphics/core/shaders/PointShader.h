@@ -19,7 +19,7 @@ public:
         return std::shared_ptr<PointShader>(new PointShader());
     }
 
-    void setItem(const RenderItem& item) override;
+    void setItem(const DrawItem& item) override;
 
     void setCamera(Camera* camera) override;
 

@@ -12,8 +12,8 @@ class Matrix3;
 class Matrix4;
 class RenderTarget;
 class PostProcessMaterial;
-struct RenderState;
-struct RenderItem;
+struct DrawState;
+struct DrawItem;
 
 /**
  * The renderer is responsible for managing the current render context target and drawing the scene
@@ -70,27 +70,12 @@ public:
 	void setBackgroundColor(const Color& color);
 
 	/**
-	 * Renders a scene. This method does not present the completed frame.
-	 * Call Renderer::present after all render and renderPass calls belonging to the frame are complete.
+	 * Renders and presents a scene.
 	 * @param scene Scene
 	 * @param camera Camera
+	 * @param modes Bit mask containing all of the visualization modes to render. Defaults to RenderModes::MATERIAL.
 	 */
-	void render(const ScenePtr scene, const CameraPtr camera);
-
-	/**
-	 * Renders a scene once using an explicit pass configuration. This method does not present the completed frame.
-	 * Call Renderer::present after all render and renderPass calls belonging to the frame are complete.
-	 * @param scene Scene graph to render.
-	 * @param camera Camera used to view the scene.
-	 * @param pass Visualization, render target, viewport, and clear operations for this draw.
-	 */
-	void renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass);
-
-	/**
-	 * Presents the completed default frame buffer and processes input and window events. Call this once after composing all
-	 * passes for a frame.
-	 */
-	void present();
+	void render(const ScenePtr scene, const CameraPtr camera, RenderModes modes = RenderModes::MATERIAL);
 
 	/**
 	 * Destroys this renderer, releasing all of its resources
@@ -174,6 +159,12 @@ private:
 	void getPassDimensions(const RenderPass& pass, int* width, int* height) const;
 
 	/**
+	 * Presents the completed default frame buffer and processes input and window events. This method should be called once
+	 * after composing all passes for a frame.
+	 */
+	void present();
+
+	/**
 	 * Configures the target, viewport, and clear operations for one render pass
 	 * @param pass Render pass settings
 	 */
@@ -182,18 +173,19 @@ private:
 	/**
 	 * Consumes a prepared render state and submits draw calls for all items
 	 * @param state The render state to draw
-	 * @param mode Visualization strategy for this pass
+	 * @param mode Rendering mode
 	 * @param camera Camera
 	 */
-	void draw(RenderState& state, RenderMode mode, const CameraPtr camera);
+	void draw(DrawState& state, RenderModes mode, const CameraPtr camera);
 
 	/**
 	 * Draws a single prepared render item
 	 * @param state The render state
 	 * @param item The item to draw
+	 * @param mode Rendering mode
 	 * @param camera Camera
 	 */
-	void drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera);
+	void drawItem(const DrawState& state, const DrawItem& item, RenderModes mode, const CameraPtr camera);
 
 	/**
 	 * Draws a single full-screen post-processing effect.

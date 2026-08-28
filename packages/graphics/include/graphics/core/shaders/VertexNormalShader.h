@@ -19,7 +19,8 @@ public:
 		return std::shared_ptr<VertexNormalShader>(new VertexNormalShader());
 	}
 
-	void setItem(const RenderItem& item) override;
+	void setItem(const DrawItem& item) override;
+	
 	void setCamera(Camera* camera) override;
 
 private:

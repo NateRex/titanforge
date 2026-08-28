@@ -1,5 +1,5 @@
 #include <graphics/core/renderer/Renderer.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
@@ -129,7 +129,7 @@ void Renderer::destroy(bool destroyWindow)
 	}
 }
 
-void Renderer::render(const ScenePtr scene, const CameraPtr camera)
+void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes modes)
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
@@ -138,99 +138,89 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera)
 
 	RenderPass pass;
 	pass.clearColor = _backgroundColor;
-	renderPass(scene, camera, pass);
-}
+	pass.clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
+	const RenderPass finalPass = pass;
 
-void Renderer::renderPass(const ScenePtr scene, const CameraPtr camera, const RenderPass& pass)
-{
-	RenderState state;
-	scene->traverse(state, pass, Matrix4::IDENTITY, Matrix3::IDENTITY);
-
-	// A scene without post-processing can be drawn directly to its final destination
-	if (state.postProcessing.empty())
+	// Traverse scene to form drawing state
+	DrawState state;
+	scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	
+	// If there is post-processing, set up off-screen targets
+	if (!state.postProcessing.empty())
 	{
+		int width, height;
+		getPassDimensions(pass, &width, &height);
+		if (width <= 0 || height <= 0)
+		{
+			throw IllegalStateException("Cannot post-process an empty framebuffer");
+		}
+
+		RenderTargetConfig targetConfig;
+		targetConfig.sizeMode = TargetSizeMode::FIXED;
+		targetConfig.width = width;
+		targetConfig.height = height;
+		targetConfig.colorFormats = { PixelFormat::RGBA16F };
+		for (RenderTargetPtr& target : _postProcessTargets)
+		{
+			if (!target)
+			{
+				target = RenderTarget::create(targetConfig);
+			}
+			else
+			{
+				target->resize(width, height);
+			}
+		}
+
+		pass.target = _postProcessTargets[0];
+	}
+
+	// Perform draw for each rendering mode
+	for (RenderModes mode : ALL_RENDER_MODES)
+	{
+		if (!hasFlag(modes, mode))
+		{
+			continue;
+		}
+
 		configurePass(pass);
-		draw(state, pass.mode, camera);
-		return;
+		draw(state, mode, camera);
+		
+		pass.clearFlags = ClearFlags::NONE;
 	}
 
-	// Ensure target framebuffer dimensions are non-zero
-	int width, height;
-	getPassDimensions(pass, &width, &height);
-	if (width <= 0 || height <= 0)
+	// If there are post-processing effects, chain them, starting with the second offscreen target.
+	// The final draw should be to the original pass target.
+	if (!state.postProcessing.empty())
 	{
-		throw IllegalStateException("Cannot post-process an empty framebuffer");
-	}
-
-	// Set up off-screen rendering targets
-	RenderTargetConfig targetConfig;
-	targetConfig.sizeMode = RenderTargetSizeMode::FIXED;
-	targetConfig.width = width;
-	targetConfig.height = height;
-	targetConfig.colorFormats = { PixelFormat::RGBA16F };
-	for (RenderTargetPtr& target : _postProcessTargets)
-	{
-		if (!target)
+		RenderTargetPtr source = _postProcessTargets[0];
+		for (std::size_t i = 0; i < state.postProcessing.size(); i++)
 		{
-			target = RenderTarget::create(targetConfig);
+			PostProcessMaterial* material = state.postProcessing[i];
+			const bool isLast = i + 1 == state.postProcessing.size();
+
+			pass.target = isLast ? finalPass.target : _postProcessTargets[(i + 1) % 2];
+			pass.viewport = isLast ? finalPass.viewport : Viewport{};
+			pass.clearFlags = ClearFlags::COLOR;
+			pass.clearColor = pass.clearColor;
+			pass.depthTest = false;
+
+			const TexturePtr originalTexture = material->texture;
+			material->texture = source->colorTexture(0);
+			configurePass(pass);
+			drawPostProcessing(material);
+			material->texture = originalTexture;
+
+			source = pass.target;
 		}
-		else
-		{
-			target->resize(width, height);
-		}
 	}
 
-	// Draw all ordinary scene content into the first offscreen target
-	RenderPass scenePass = pass;
-	scenePass.target = _postProcessTargets[0];
-	configurePass(scenePass);
-	draw(state, pass.mode, camera);
-
-	// Chain post-processing effects, starting with the second offscreen target. The final effect should write to the originally-requested target
-	RenderTargetPtr source = _postProcessTargets[0];
-	for (std::size_t i = 0; i < state.postProcessing.size(); i++)
-	{
-		PostProcessMaterial* material = state.postProcessing[i];
-		const bool isLast = i + 1 == state.postProcessing.size();
-
-		RenderPass effectPass;
-		effectPass.target = isLast ? pass.target : _postProcessTargets[(i + 1) % 2];
-		effectPass.viewport = isLast ? pass.viewport : Viewport{};
-		effectPass.clearFlags = ClearFlags::COLOR;
-		effectPass.clearColor = pass.clearColor;
-		effectPass.depthTest = false;
-
-		const TexturePtr originalTexture = material->texture;
-		material->texture = source->colorTexture(0);
-		configurePass(effectPass);
-		drawPostProcessing(material);
-		material->texture = originalTexture;
-
-		source = effectPass.target;
-	}
-}
-
-void Renderer::drawPostProcessing(PostProcessMaterial* material)
-{
-	if (_fullScreenVertexArray == 0)
-	{
-		glGenVertexArrays(1, &_fullScreenVertexArray);
-	}
-
-	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-
-	ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
-	shader->activate();
-	shader->setMaterial(material);
-	glBindVertexArray(_fullScreenVertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	present();
 }
 
 void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height) const
 {
-	if (!pass.target || pass.target->config().sizeMode == RenderTargetSizeMode::AUTO)
+	if (!pass.target || pass.target->config().sizeMode == TargetSizeMode::AUTO)
 	{
 		getWindowDimensions(width, height);
 	}
@@ -315,27 +305,31 @@ void Renderer::present()
 	glfwPollEvents();
 }
 
-void Renderer::draw(RenderState& state, RenderMode mode, const CameraPtr camera)
+void Renderer::draw(DrawState& state, RenderModes mode, const CameraPtr camera)
 {
 	// Group opaque, background, and transparent items
-	std::vector<RenderItem*> opaqueItems;
-	std::vector<RenderItem*> backgroundItems;
-	std::vector<RenderItem*> transparentItems;
-	for (RenderItem& item : state.items)
+	std::vector<DrawItem*> opaqueItems;
+	std::vector<DrawItem*> backgroundItems;
+	std::vector<DrawItem*> transparentItems;
+	for (DrawItem& item : state.items)
 	{
-		switch (item.layer)
+		const DrawItem::Variant* variant = item.variant(mode);
+		if (variant)
 		{
-			case RenderLayer::TRANSPARENT: transparentItems.push_back(&item); break;
-			case RenderLayer::BACKGROUND: backgroundItems.push_back(&item); break;
-			case RenderLayer::OPAQUE: opaqueItems.push_back(&item); break;
-			default: opaqueItems.push_back(&item); break;
+			switch (variant->layer)
+			{
+				case DrawLayer::TRANSPARENT: transparentItems.push_back(&item); break;
+				case DrawLayer::BACKGROUND: backgroundItems.push_back(&item); break;
+				case DrawLayer::OPAQUE: opaqueItems.push_back(&item); break;
+				default: opaqueItems.push_back(&item); break;
+			}
 		}
 	}
 
 	// Sort transparent items from farthest to closest, relative to the camera
 	const Vector3 cameraPosition = camera->getPosition();
 	const Vector3 cameraForward = camera->getForwardVector();
-	std::stable_sort(transparentItems.begin(), transparentItems.end(), [&cameraPosition, &cameraForward](const RenderItem* a, const RenderItem* b)
+	std::stable_sort(transparentItems.begin(), transparentItems.end(), [&cameraPosition, &cameraForward](const DrawItem* a, const DrawItem* b)
 	{
 		const Vector3 aPosition = a->modelTransform.transformPosition(Vector3::ZERO);
 		const Vector3 bPosition = b->modelTransform.transformPosition(Vector3::ZERO);
@@ -345,30 +339,31 @@ void Renderer::draw(RenderState& state, RenderMode mode, const CameraPtr camera)
 	});
 
 	// Render opaque items
-	for (const RenderItem* item : opaqueItems)
+	for (const DrawItem* item : opaqueItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 
 	// Render background scenery
-	for (const RenderItem* item : backgroundItems)
+	for (const DrawItem* item : backgroundItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 
 	// Render transparent items
-	for (const RenderItem* item : transparentItems)
+	for (const DrawItem* item : transparentItems)
 	{
-		drawItem(state, *item, camera);
+		drawItem(state, *item, mode, camera);
 	}
 }
 
-void Renderer::drawItem(const RenderState& state, const RenderItem& item, const CameraPtr camera)
+void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderModes mode, const CameraPtr camera)
 {
 	Geometry* geometry = item.geometry;
-	GeometryAttributes geometryAttrib = geometry->getAttributes();
-	Material* material = item.material;
-	const bool transparent = item.layer == RenderLayer::TRANSPARENT;
+	const GeometryAttributes geometryAttrib = geometry->getAttributes();
+	const Material* material = item.material;
+	const DrawItem::Variant* variant = item.variant(mode);
+	const bool transparent = variant->layer == DrawLayer::TRANSPARENT;
 
 	// Set global state
 	glDepthMask(material->depthWrite && !transparent ? GL_TRUE : GL_FALSE);
@@ -400,7 +395,7 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	}
 
 	// Activate shader
-	ShaderPtr shader = ShaderManager::getShader(item.shader);
+	ShaderPtr shader = ShaderManager::getShader(variant->shader);
 	shader->activate();
 	shader->setState(state);
 	shader->setItem(item);
@@ -417,7 +412,24 @@ void Renderer::drawItem(const RenderState& state, const RenderItem& item, const 
 	else {
 		glDrawArrays(primitiveType, 0, buffer->size());
 	}
-	
+}
+
+void Renderer::drawPostProcessing(PostProcessMaterial* material)
+{
+	if (_fullScreenVertexArray == 0)
+	{
+		glGenVertexArrays(1, &_fullScreenVertexArray);
+	}
+
+	glDepthMask(GL_FALSE);
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
+	shader->activate();
+	shader->setMaterial(material);
+	glBindVertexArray(_fullScreenVertexArray);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void Renderer::incrementRendererCount()

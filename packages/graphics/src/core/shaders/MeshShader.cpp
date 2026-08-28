@@ -5,7 +5,7 @@
 #include <graphics/cameras/Camera.h>
 #include <graphics/lights/SpotLight.h>
 #include <graphics/objects/Mesh.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/Utils.h>
 #include <glad/glad.h>
@@ -218,7 +218,7 @@ MeshShader::MeshShader(): Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT)
 
 }
 
-void MeshShader::setItem(const RenderItem& item)
+void MeshShader::setItem(const DrawItem& item)
 {
 	Shader::setItem(item);
 	setModelMatrix(item.modelTransform);
@@ -326,10 +326,10 @@ void MeshShader::setEnvironment(const Environment& environment)
 	glUniform1f(getUniformLocation("uEnvironmentLod"), std::max(environment.lod, 0.f));
 }
 
-void MeshShader::setLighting(const Lighting& lighting)
+void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 {
 	ProgramBinding binding(this);
-	Shader::setLighting(lighting);
+	Shader::setLighting(lights);
 
 	constexpr size_t MAX_LIGHTS = 16;
 	float ambientRed = 0.f;
@@ -337,7 +337,7 @@ void MeshShader::setLighting(const Lighting& lighting)
 	float ambientBlue = 0.f;
 	size_t lightCount = 0;
 
-	for (const RenderLight& renderLight : lighting.lights)
+	for (const LightInstance& renderLight : lights)
 	{
 		const Light* light = renderLight.light;
 		if (!light)

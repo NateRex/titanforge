@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/WireframeShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/WireframeMaterial.h>
 #include <common/Utils.h>
@@ -116,7 +116,7 @@ WireframeShader::WireframeShader() : Shader("WireframeShader", WIREFRAME_VERTEX,
     
 }
 
-void WireframeShader::setItem(const RenderItem& item)
+void WireframeShader::setItem(const DrawItem& item)
 {
     Shader::setItem(item);
     ProgramBinding binding(this);

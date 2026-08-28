@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/LineShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/LineMaterial.h>
 #include <common/Utils.h>
@@ -115,7 +115,7 @@ LineShader::LineShader() : Shader("LineShader", LINE_VERTEX, LINE_GEOMETRY, LINE
     
 }
 
-void LineShader::setItem(const RenderItem& item)
+void LineShader::setItem(const DrawItem& item)
 {
     Shader::setItem(item);
     ProgramBinding binding(this);

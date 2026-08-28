@@ -49,7 +49,6 @@ BOOST_AUTO_TEST_CASE(Renderer_getDeltaTime)
 
 	// Presenting the rendered frame resets delta time
 	renderer->render(scene, camera);
-	renderer->present();
 	float dt2 = renderer->getDeltaTime();
 
 	BOOST_TEST(dt2 <= dt1);
@@ -88,8 +87,9 @@ BOOST_AUTO_TEST_CASE(Renderer_render)
 
 	// Render
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
-	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera)));
-	BOOST_REQUIRE_NO_THROW(renderer->present());
+	BOOST_REQUIRE_NO_THROW((renderer->render(scene, camera,
+		RenderModes::MATERIAL |
+		RenderModes::VERTEX_NORMALS)));
 }
 
 /**
@@ -108,7 +108,6 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 	BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
-	BOOST_REQUIRE_NO_THROW(renderer->present());
 
 	// Ensure the renderer supplies intermediate textures only for the duration of each draw.
 	BOOST_TEST(first->texture == nullptr);

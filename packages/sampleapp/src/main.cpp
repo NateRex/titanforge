@@ -4,7 +4,7 @@
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/materials/PointMaterial.h>
 #include <graphics/materials/LineMaterial.h>
-#include <graphics/materials/MeshMaterial.h>
+#include <graphics/materials/WireframeMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
@@ -108,7 +108,7 @@ int main()
 
     // Create point primitives
     PointMaterialPtr pointMat = PointMaterial::create();
-    pointMat->color = Color::GREEN;
+    pointMat->color = Color::BLUE;
     pointMat->size = 0.09f;
     pointMat->sizeUnits = PrimitiveSizeUnits::WORLD;
     PointsPtr points = Points::create({
@@ -130,10 +130,10 @@ int main()
     }, lineMat, true);
     scene->add(lines);
 
-    // Create glass cube
-    MeshMaterialPtr boxMat = MeshMaterial::create();
-    boxMat->refraction = 1.f;
-    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), boxMat);
+    // Create wireframe cube
+    WireframeMaterialPtr wireframeMat = WireframeMaterial::create();
+    wireframeMat->color = Color::GREEN;
+    MeshPtr box = Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), wireframeMat);
     box->setPosition(2.f, 2.f, 2.f);
     scene->add(box);
 
@@ -161,10 +161,7 @@ int main()
         entity->addRotation(Matrix3::fromYRotation(rotationRate * renderer->getDeltaTime()));
 
 		// Post-processing is discovered from the scene and applied after its other objects.
-		renderer->render(scene, camera);
-
-		// Present the frame after all passes are complete
-		renderer->present();
+		renderer->render(scene, camera, RenderModes::MATERIAL);
     }
 
     renderer->destroy();

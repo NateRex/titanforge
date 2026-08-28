@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/PointShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/geometry/PointGeometry.h>
 #include <graphics/materials/PointMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(PointShader_setItem)
     GeometryPtr geometry = PointGeometry::create(Vector3::ZERO);
     MaterialPtr material = PointMaterial::create();
 
-	RenderItem item;
+	DrawItem item;
     item.geometry = geometry.get();
     item.material = material.get();
 

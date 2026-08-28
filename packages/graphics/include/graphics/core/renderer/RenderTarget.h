@@ -32,7 +32,7 @@ enum class DepthStencilStorage
  * Render target size mode
  * @author Nathaniel Rex
  */
-enum class RenderTargetSizeMode
+enum class TargetSizeMode
 {
     /**
      * Target is configured with fixed dimensions
@@ -54,17 +54,17 @@ struct RenderTargetConfig
 {
     /**
      * Size mode for the render target, determining whether fixed sizing should be expected, or if the size should be automatically
-     * computed to match the window size while rendering. Defaults to RenderTargetSizeMode::AUTO.
+     * computed to match the window size while rendering. Defaults to TargetSizeMode::AUTO.
      */
-    RenderTargetSizeMode sizeMode = RenderTargetSizeMode::AUTO;
+    TargetSizeMode sizeMode = TargetSizeMode::AUTO;
 
     /**
-     * Render target width in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
+     * Render target width in pixels. Only used if sizeMode is set to TargetSizeMode::FIXED.
      */
     int width = 0;
 
     /**
-     * Render target height in pixels. Only used if sizeMode is set to RenderTargetSizeMode::FIXED.
+     * Render target height in pixels. Only used if sizeMode is set to TargetSizeMode::FIXED.
      */
     int height = 0;
 

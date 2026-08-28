@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/VertexNormalShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/cameras/Camera.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
@@ -82,7 +82,7 @@ VertexNormalShader::VertexNormalShader(): Shader("VertexNormalShader", NORMALS_V
 {
 }
 
-void VertexNormalShader::setItem(const RenderItem& item)
+void VertexNormalShader::setItem(const DrawItem& item)
 {
 	ProgramBinding binding(this);
 	glUniformMatrix4fv(getUniformLocation("uModel"), 1, GL_TRUE, item.modelTransform.getValues());

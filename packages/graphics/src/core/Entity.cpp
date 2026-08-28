@@ -1,5 +1,5 @@
 #include <graphics/core/Entity.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
 #include <algorithm>
@@ -237,22 +237,22 @@ void Entity::remove(EntityPtr child)
 	}
 }
 
-void Entity::traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal)
+void Entity::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
 	const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
 	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
 	for (const EntityPtr& child : _children)
 	{
-		child->traverse(state, pass, modelTransform, normalTransform);
+		child->traverse(state, modelTransform, normalTransform);
 	}
 }
 
-void Entity::traverse(const std::function<void(Entity*)>& callback)
+void Entity::apply(const std::function<void(Entity*)>& callback)
 {
 	callback(this);
 
 	for (EntityPtr& child : _children)
 	{
-		child->traverse(callback);
+		child->apply(callback);
 	}
 }

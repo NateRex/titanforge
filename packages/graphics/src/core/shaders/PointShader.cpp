@@ -1,5 +1,5 @@
 #include <graphics/core/shaders/PointShader.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/PointMaterial.h>
 #include <common/Utils.h>
@@ -59,7 +59,7 @@ PointShader::PointShader(): Shader("PointShader", POINT_VERTEX, POINT_FRAGMENT)
 
 }
 
-void PointShader::setItem(const RenderItem& item)
+void PointShader::setItem(const DrawItem& item)
 {
     Shader::setItem(item);
     ProgramBinding binding(this);

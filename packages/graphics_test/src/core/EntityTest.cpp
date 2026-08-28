@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(Entity_traversal)
 	root->add(child2);
 	child1->add(subChild);
 
-	root->traverse([](Entity* e) {
+	root->apply([](Entity* e) {
 		e->setPosition(Vector3::XHAT);
 	});
 

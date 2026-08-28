@@ -1,5 +1,5 @@
 #include <graphics/objects/PostProcessing.h>
-#include <graphics/core/renderer/RenderState.h>
+#include <graphics/core/renderer/DrawState.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 
@@ -16,10 +16,10 @@ PostProcessingPtr PostProcessing::create(PostProcessMaterialPtr material)
 	return std::shared_ptr<PostProcessing>(new PostProcessing(material));
 }
 
-void PostProcessing::traverse(RenderState& state, const RenderPass& pass, const Matrix4& parentModel, const Matrix3& parentNormal)
+void PostProcessing::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
 	state.postProcessing.push_back(material.get());
-	Entity::traverse(state, pass, parentModel, parentNormal);
+	Entity::traverse(state, parentModel, parentNormal);
 }
 
 void PostProcessing::updatePosition(float x, float y, float z)
