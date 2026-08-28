@@ -6,14 +6,13 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
+#include <graphics/core/buffers/InstanceBuffer.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/cameras/Camera.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
-#include <graphics/geometry/Geometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
@@ -345,8 +344,9 @@ void Renderer::draw(DrawState& state, RenderModes mode, const CameraPtr camera)
 
 void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderModes mode, const CameraPtr camera)
 {
-	Geometry* geometry = item.geometry;
-	const GeometryAttributes geometryAttrib = geometry->getAttributes();
+	assertTrue(item.geometryBuffer != nullptr || item.instanceBuffer != nullptr,
+		"Draw items must contain either a geometry or an instance buffer");
+
 	const Material* material = item.material;
 	const DrawItem::Variant* variant = item.variant(mode);
 	const bool transparent = variant->layer == DrawLayer::TRANSPARENT;
@@ -388,15 +388,25 @@ void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderMode
 	shader->setCamera(camera.get());
 
 	// Draw buffer
-	GeometryBuffer* buffer = geometry->getBuffer();
-	unsigned int primitiveType = toGLPrimitive(geometry->type);
+	const bool instanced = item.instanceBuffer != nullptr;
+	const GeometryBuffer* buffer = instanced ? static_cast<const GeometryBuffer*>(item.instanceBuffer) : item.geometryBuffer;
+	const GeometryAttributes& attributes = buffer->getGeometryAttributes();
+	const unsigned int primitiveType = toGLPrimitive(attributes.primitiveType);
+	const unsigned int instanceCount = instanced ? item.instanceBuffer->getNumberOfInstances() : 1;
 	buffer->bind();
-	if (geometryAttrib.indices)
+	if (attributes.indices)
 	{
-		glDrawElements(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0);
+		if (instanced)
+			glDrawElementsInstanced(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0, instanceCount);
+		else
+			glDrawElements(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0);
 	}
-	else {
-		glDrawArrays(primitiveType, 0, buffer->size());
+	else
+	{
+		if (instanced)
+			glDrawArraysInstanced(primitiveType, 0, buffer->size(), instanceCount);
+		else
+			glDrawArrays(primitiveType, 0, buffer->size());
 	}
 }
 

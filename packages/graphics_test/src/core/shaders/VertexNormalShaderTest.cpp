@@ -2,7 +2,6 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/VertexNormalShader.h>
 #include <graphics/core/renderer/DrawState.h>
-#include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
@@ -11,11 +10,9 @@
  */
 BOOST_AUTO_TEST_CASE(VertexNormalShader_setItem)
 {
-    GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
     MaterialPtr material = MeshMaterial::create();
 
     DrawItem item;
-    item.geometry = geometry.get();
     item.material = material.get();
 
     ShaderPtr shader = ShaderManager::getShader(ShaderId::VERTEX_NORMALS);

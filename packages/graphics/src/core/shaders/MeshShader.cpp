@@ -218,6 +218,16 @@ MeshShader::MeshShader(): Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT)
 
 }
 
+MeshShader::MeshShader(const char* name, const char* vertex, const char* geometry, const char* fragment)
+	: Shader(
+		name,
+		vertex ? vertex : MESH_VERTEX,
+		geometry ? geometry : nullptr,
+		fragment ? fragment : MESH_FRAGMENT)
+{
+
+}
+
 void MeshShader::setItem(const DrawItem& item)
 {
 	Shader::setItem(item);

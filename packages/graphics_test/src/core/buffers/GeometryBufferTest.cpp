@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/core/buffers/GeometryBuffer.h>
-#include <graphics/geometry/GeometryAttributes.h>
 
 /**
  * Tests the ability to create and bind a buffer using only vertex positions (no indices)

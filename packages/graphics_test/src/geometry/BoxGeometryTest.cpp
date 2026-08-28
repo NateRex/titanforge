@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/BoxGeometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <common/PrintHelpers.h>
 
 /**
@@ -13,6 +12,7 @@ BOOST_AUTO_TEST_CASE(BoxGeometry_basics)
 	BOOST_TEST(geom->type == PrimitiveType::TRIANGLES);
 
 	GeometryAttributes attributes = geom->getAttributes();
+	BOOST_TEST(attributes.primitiveType == PrimitiveType::TRIANGLES);
 	BOOST_TEST(attributes.normals);
 	BOOST_TEST(attributes.uvs);
 	BOOST_TEST(!attributes.colors);

@@ -24,7 +24,8 @@ int GeometryAttributes::getStride() const
 
 bool GeometryAttributes::operator==(const GeometryAttributes& other) const
 {
-	return indices == other.indices
+	return primitiveType == other.primitiveType
+		&& indices == other.indices
 		&& normals == other.normals
 		&& colors == other.colors
 		&& uvs == other.uvs;

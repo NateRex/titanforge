@@ -2,6 +2,7 @@
 #include <graphics/core/shaders/PointShader.h>
 #include <graphics/core/shaders/LineShader.h>
 #include <graphics/core/shaders/MeshShader.h>
+#include <graphics/core/shaders/InstancedMeshShader.h>
 #include <graphics/core/shaders/WireframeShader.h>
 #include <graphics/core/shaders/SkyboxShader.h>
 #include <graphics/core/shaders/PostProcessShader.h>
@@ -16,6 +17,7 @@ ShaderManager::ShaderManager()
 	_shaders.emplace(ShaderId::POINT, PointShader::create());
 	_shaders.emplace(ShaderId::LINE, LineShader::create());
 	_shaders.emplace(ShaderId::MESH, MeshShader::create());
+	_shaders.emplace(ShaderId::INSTANCED_MESH, InstancedMeshShader::create());
 	_shaders.emplace(ShaderId::WIREFRAME, WireframeShader::create());
 	_shaders.emplace(ShaderId::SKYBOX, SkyboxShader::create());
 	_shaders.emplace(ShaderId::POST_PROCESS, PostProcessShader::create());

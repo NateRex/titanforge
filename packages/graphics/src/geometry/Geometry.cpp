@@ -1,7 +1,7 @@
 #include <graphics/geometry/Geometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/core/Color.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
+#include <graphics/core/buffers/InstanceBuffer.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Assertions.h>
@@ -164,6 +164,7 @@ void Geometry::removeTextureCoords()
 const GeometryAttributes Geometry::getAttributes() const
 {
 	return {
+		type,
 		_indices != nullptr,
 		_normals != nullptr,
 		_colors != nullptr,
@@ -183,15 +184,35 @@ GeometryBuffer* Geometry::getBuffer()
 
 void Geometry::createBuffer()
 {
-	GeometryAttributes attribs = getAttributes();
-	assertNotNull(_vertices, "Geometry must contain vertex positions");
-	assertTrue(!attribs.normals || _numNormals == _numVertices, "Number of vertex normals must match the number of vertices");
-	assertTrue(!attribs.colors || _numColors == _numVertices, "Number of colors must match the number of vertices");
-	assertTrue(!attribs.uvs || _numUVs == _numVertices, "Number of texture coordinates must match the number of vertices");
+	GeometryAttributes attributes = getAttributes();
+	unsigned int vSize = 0;
+	float* vData = createVertexData(attributes, &vSize);
 
-	// Interleave vertex data
-	unsigned int vSize = _numVertices * attribs.getStride();
-	float* vData = new float[vSize];
+	delete _buffer;
+	_buffer = new GeometryBuffer(attributes, vData, vSize, _indices, _numIndices);
+	delete[] vData;
+}
+
+InstanceBuffer* Geometry::createInstanceBuffer() const
+{
+	GeometryAttributes attributes = getAttributes();
+	unsigned int numValues = 0;
+	float* vertexData = createVertexData(attributes, &numValues);
+
+	InstanceBuffer* buffer = new InstanceBuffer(getAttributes(), vertexData, numValues, _indices, _numIndices);
+	delete[] vertexData;
+	return buffer;
+}
+
+float* Geometry::createVertexData(const GeometryAttributes& attributes, unsigned int* numValues) const
+{
+	assertNotNull(_vertices, "Geometry must contain vertex positions");
+	assertTrue(!attributes.normals || _numNormals == _numVertices, "Number of vertex normals must match the number of vertices");
+	assertTrue(!attributes.colors || _numColors == _numVertices, "Number of colors must match the number of vertices");
+	assertTrue(!attributes.uvs || _numUVs == _numVertices, "Number of texture coordinates must match the number of vertices");
+
+	*numValues = _numVertices * attributes.getStride();
+	float* vData = new float[*numValues];
 	unsigned int idx = 0;
 	for (int i = 0; i < _numVertices; i++)
 	{
@@ -200,7 +221,7 @@ void Geometry::createBuffer()
 		vData[idx++] = p.y;
 		vData[idx++] = p.z;
 
-		if (attribs.normals)
+		if (attributes.normals)
 		{
 			Vector3 n = _normals[i];
 			vData[idx++] = n.x;
@@ -208,7 +229,7 @@ void Geometry::createBuffer()
 			vData[idx++] = n.z;
 		}
 
-		if (attribs.colors)
+		if (attributes.colors)
 		{
 			Color c = _colors[i];
 			vData[idx++] = c.red();
@@ -217,7 +238,7 @@ void Geometry::createBuffer()
 			vData[idx++] = c.alpha();
 		}
 
-		if (attribs.uvs)
+		if (attributes.uvs)
 		{
 			Vector2 uv = _uvs[i];
 			vData[idx++] = uv.x;
@@ -225,8 +246,5 @@ void Geometry::createBuffer()
 		}
 	}
 
-	delete _buffer;
-	_buffer = new GeometryBuffer(attribs, vData, vSize, _indices, _numIndices);
-
-	delete[] vData;
+	return vData;
 }

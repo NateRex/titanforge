@@ -54,10 +54,25 @@ public:
      */
     void setNormalMatrix(const Matrix3& matrix);
 
+protected:
+
+	/**
+	 * Constructor for the standard mesh shader.
+	 */
+	MeshShader();
+
+	/**
+	 * Constructs a mesh-compatible shader with any number of custom stages
+	 * @param name Shader name
+	 * @param vertex Custom vertex shader stage. Can be null, in which case the default vertex shader will be used.
+	 * @param geometry Custom geometry shader stage. Can be null, in which case the default geometry shader will be used.
+	 * @param fragment Custom fragment shader stage. Can be null, in which case the default fragment shader will be used.
+	 */
+	MeshShader(const char* name, const char* vertex, const char* geometry, const char* fragment);
+
 private:
 
 	/**
 	 * Constructor
 	 */
-	MeshShader();
 };

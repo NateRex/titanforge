@@ -15,6 +15,7 @@ add_executable(GraphicsTest
     src/cameras/PerspectiveCameraTest.cpp
     src/core/buffers/FrameBufferTest.cpp
     src/core/buffers/GeometryBufferTest.cpp
+    src/core/buffers/InstanceBufferTest.cpp
     src/core/buffers/RenderBufferTest.cpp
     src/core/input/modifiers/InputModifiersTest.cpp
     src/core/input/modifiers/NegateModifierTest.cpp
@@ -47,6 +48,7 @@ add_executable(GraphicsTest
     src/loaders/ImageLoaderTest.cpp
     src/loaders/ModelLoaderTest.cpp
     src/loaders/TextureLoaderTest.cpp
+    src/objects/InstancedMeshTest.cpp
     src/objects/LinesTest.cpp
     src/objects/MeshTest.cpp
     src/objects/PointsTest.cpp

@@ -1,17 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/Geometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
-#include <glad/glad.h>
-
-/**
- * Tests conversion from engine primitive types to OpenGL primitive types
- */
-BOOST_AUTO_TEST_CASE(Geometry_toGLPrimitive)
-{
-	BOOST_TEST(toGLPrimitive(PrimitiveType::POINTS) == GL_POINTS);
-	BOOST_TEST(toGLPrimitive(PrimitiveType::TRIANGLES) == GL_TRIANGLES);
-}
 
 /**
  * Tests that a geometry is initially empty on construction

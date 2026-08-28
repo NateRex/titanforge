@@ -10,7 +10,6 @@
 #include <graphics/lights/DirectionalLight.h>
 #include <graphics/lights/SpotLight.h>
 #include <graphics/objects/Skybox.h>
-#include <graphics/geometry/BoxGeometry.h>
 #include <math/Matrix4.h>
 #include <common/exceptions/IllegalArgumentException.h>
 
@@ -80,11 +79,9 @@ BOOST_AUTO_TEST_CASE(MeshShader_setStateHighIntensity)
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
 {
-	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
 	MeshMaterialPtr mat = MeshMaterial::create();
 
 	DrawItem item;
-	item.geometry = geom.get();
 	item.material = mat.get();
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
@@ -98,12 +95,10 @@ BOOST_AUTO_TEST_CASE(MeshShader_setColorMaterial)
  */
 BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 {
-	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
 	MeshMaterialPtr mat = MeshMaterial::create();
 	mat->texture = TextureLoader::load("assets/container.jpg");
 
 	DrawItem item;
-	item.geometry = geom.get();
 	item.material = mat.get();
 	item.modelTransform = Matrix4::IDENTITY;
 	item.normalTransform = Matrix3::IDENTITY;
@@ -117,14 +112,12 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
  */
  BOOST_AUTO_TEST_CASE(MeshShader_setDiffuseMapMaterial)
  {
- 	GeometryPtr geom = BoxGeometry::create(1.f, 1.f, 1.f);
  	MeshMaterialPtr mat = MeshMaterial::create();
 	TexturePtr img = TextureLoader::load("assets/container.jpg");
  	mat->diffuseMap = img;
 	mat->specularMap = img;
 
  	DrawItem item;
-	item.geometry = geom.get();
 	item.material = mat.get();
  	item.modelTransform = Matrix4::IDENTITY;
  	item.normalTransform = Matrix3::IDENTITY;

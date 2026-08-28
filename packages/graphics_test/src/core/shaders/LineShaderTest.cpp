@@ -2,7 +2,6 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/LineShader.h>
 #include <graphics/core/renderer/DrawState.h>
-#include <graphics/geometry/LineGeometry.h>
 #include <graphics/materials/LineMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
@@ -12,11 +11,9 @@
 BOOST_AUTO_TEST_CASE(LineShader_setItem)
 {
     std::vector<Vector3> segments = { Vector3::MINUS_XHAT, Vector3::XHAT };
-    GeometryPtr geometry = LineGeometry::createSegments(segments.data(), segments.size());
     MaterialPtr material = LineMaterial::create();
 
 	DrawItem item;
-    item.geometry = geometry.get();
     item.material = material.get();
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::LINE);
