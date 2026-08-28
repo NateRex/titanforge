@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/PointGeometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <math/Vector3.h>
 #include <common/PrintHelpers.h>
 
@@ -24,6 +23,7 @@ BOOST_AUTO_TEST_CASE(PointGeometry_basics)
     BOOST_TEST(geom->size() == 2);
 
 	GeometryAttributes attributes = geom->getAttributes();
+    BOOST_TEST(attributes.primitiveType == PrimitiveType::POINTS);
     BOOST_TEST(!attributes.indices);
 	BOOST_TEST(!attributes.normals);
 	BOOST_TEST(!attributes.uvs);

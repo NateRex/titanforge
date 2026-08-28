@@ -164,6 +164,7 @@ void Geometry::removeTextureCoords()
 const GeometryAttributes Geometry::getAttributes() const
 {
 	return {
+		type,
 		_indices != nullptr,
 		_normals != nullptr,
 		_colors != nullptr,

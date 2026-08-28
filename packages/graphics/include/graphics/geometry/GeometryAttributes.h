@@ -1,12 +1,56 @@
 #pragma once
 
 /**
+ * Specifies the geometric primitive used to interpret the vertex data of a geometry
+ * @author Nathaniel Rex
+ */
+enum class PrimitiveType
+{
+	/**
+	 * Individual points
+	 */
+	POINTS,
+
+	/**
+	 * Independent disjoint line segments
+	 */
+	LINE_SEGMENTS,
+
+	/**
+	 * Polyline
+	 */
+	POLYLINE,
+
+	/**
+	 * Polyline, where an implicit line connects the last point to the first point to form a loop
+	 */
+	CLOSED_POLYLINE,
+
+	/**
+	 * Triangular facets consisting of three points each
+	 */
+	TRIANGLES
+};
+
+/**
+ * Converts an engine geometry primitive type to its OpenGL representation.
+ * @param type Geometry primitive type to convert
+ * @return The corresponding OpenGL primitive type information.
+ */
+unsigned int toGLPrimitive(PrimitiveType type);
+
+/**
  * A class describing all of the attributes that are present on a geometry
  * @author Nathaniel Rex
  */
 class GeometryAttributes
 {
 public:
+
+	/**
+	 * Primitive type describing how vertices should be interpreted
+	 */
+	PrimitiveType primitiveType = PrimitiveType::POINTS;
 
 	/**
 	 * Flag that, when true, indicates that the geometry contains indices. Defaults to false.

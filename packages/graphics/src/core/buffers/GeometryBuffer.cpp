@@ -1,5 +1,4 @@
 #include <graphics/core/buffers/GeometryBuffer.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <glad/glad.h>
 
 GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float* vertices, unsigned int numValues,

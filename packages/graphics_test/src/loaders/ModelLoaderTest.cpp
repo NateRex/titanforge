@@ -1,7 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/loaders/ModelLoader.h>
 #include <graphics/geometry/Geometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <graphics/objects/Mesh.h>
 #include <common/Utils.h>
 #include <common/exceptions/InstantiationException.h>

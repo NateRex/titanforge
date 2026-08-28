@@ -33,8 +33,10 @@ InstanceBuffer::~InstanceBuffer()
 
 void InstanceBuffer::setTransforms(const std::vector<Matrix4>& transforms)
 {
+	_numInstances = transforms.size();
+
 	std::vector<float> values;
-	values.reserve(transforms.size() * 16);
+	values.reserve(_numInstances * 16);
 
 	for (const Matrix4& transform : transforms)
 	{

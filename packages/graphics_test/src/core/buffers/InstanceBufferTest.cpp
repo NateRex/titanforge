@@ -16,12 +16,14 @@ BOOST_AUTO_TEST_CASE(InstanceBuffer_setTransforms)
 	};
 
 	InstanceBuffer buffer(GeometryAttributes(), vertices, 9, nullptr, 0);
+	BOOST_TEST(buffer.getNumberOfInstances() == 0);
+
 	std::vector<Matrix4> transforms = {
 		Matrix4::IDENTITY,
 		Matrix4::fromTranslation(Vector3(1.f, 2.f, 3.f))
 	};
-
 	BOOST_REQUIRE_NO_THROW(buffer.setTransforms(transforms));
+	BOOST_TEST(buffer.getNumberOfInstances() == 2);
 
 	GLint bufferSize = 0;
 	glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufferSize);

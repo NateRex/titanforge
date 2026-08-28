@@ -26,6 +26,11 @@ public:
 	~GeometryBuffer();
 
 	/**
+	 * @return The a description of the geometry stored in this buffer
+	 */
+	const GeometryAttributes& getGeometryAttributes() const { return _attributes; }
+
+	/**
 	 * @return The total number of points in this buffer. If indices are set, this will be the number of indices. Otherwise, it defaults
 	 * to the number of vertices.
 	 */

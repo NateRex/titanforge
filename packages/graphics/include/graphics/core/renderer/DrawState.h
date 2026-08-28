@@ -7,12 +7,13 @@
 #include <math/Vector3.h>
 #include <vector>
 
-class Geometry;
 class Material;
 class Light;
 class Camera;
 class TextureCube;
 class PostProcessMaterial;
+class GeometryBuffer;
+class InstanceBuffer;
 
 /**
  * Determines when an item is drawn relative to other items in a pass
@@ -65,9 +66,14 @@ struct DrawItem {
 	};
 
 	/**
-	 * Geometry being rendered
+	 * Geometry buffer, used for regular item draws. A null value implies that this is an instanced draw.
 	 */
-	Geometry* geometry = nullptr;
+	GeometryBuffer* geometryBuffer = nullptr;
+
+	/**
+	 * Instance buffer, used for instanced items. A null value implies that this is a regular draw.
+	 */
+	InstanceBuffer* instanceBuffer = nullptr;
 
 	/**
 	 * Material to apply

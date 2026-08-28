@@ -30,6 +30,11 @@ public:
 	~InstanceBuffer();
 
 	/**
+	 * @return The number of instances this buffer is currently holding transform data for
+	 */
+	unsigned int getNumberOfInstances() const { return _numInstances; }
+
+	/**
 	 * Replaces the instance transforms
 	 * @param transforms The transforms for each instance
 	 */
@@ -42,4 +47,8 @@ private:
 	 */
 	unsigned int _instanceVBO = 0;
 
+	/**
+	 * The number of instances this buffer is currently holding transform data for
+	 */
+	unsigned int _numInstances = 0;
 };

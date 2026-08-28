@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics/geometry/LineGeometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 #include <math/Vector3.h>
 #include <common/PrintHelpers.h>
 
@@ -20,6 +19,7 @@ BOOST_AUTO_TEST_CASE(LineGeometry_segments)
     BOOST_TEST(geom->size() == 4);
 
 	GeometryAttributes attributes = geom->getAttributes();
+    BOOST_TEST(attributes.primitiveType == PrimitiveType::LINE_SEGMENTS);
     BOOST_TEST(!attributes.indices);
 	BOOST_TEST(!attributes.normals);
 	BOOST_TEST(!attributes.uvs);
