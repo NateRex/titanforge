@@ -4,7 +4,7 @@
 #include <graphics/core/Entity.h>
 #include <graphics/core/shaders/ShaderId.h>
 
-class DrawItem;
+struct DrawItem;
 
 /**
  * A renderable represents anything consisting of geometry and material, capable of being visualized as part of a scene

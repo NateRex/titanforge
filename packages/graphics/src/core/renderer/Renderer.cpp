@@ -344,6 +344,9 @@ void Renderer::draw(DrawState& state, RenderModes mode, const CameraPtr camera)
 
 void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderModes mode, const CameraPtr camera)
 {
+	assertTrue(item.geometryBuffer != nullptr || item.instanceBuffer != nullptr,
+		"Draw items must contain either a geometry or an instance buffer");
+
 	const Material* material = item.material;
 	const DrawItem::Variant* variant = item.variant(mode);
 	const bool transparent = variant->layer == DrawLayer::TRANSPARENT;
@@ -385,8 +388,6 @@ void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderMode
 	shader->setCamera(camera.get());
 
 	// Draw buffer
-	assertTrue(item.geometryBuffer != nullptr || item.instanceBuffer != nullptr,
-		"Draw items must contain either a geometry or an instance buffer");
 	const bool instanced = item.instanceBuffer != nullptr;
 	const GeometryBuffer* buffer = instanced ? static_cast<const GeometryBuffer*>(item.instanceBuffer) : item.geometryBuffer;
 	const GeometryAttributes& attributes = buffer->getGeometryAttributes();

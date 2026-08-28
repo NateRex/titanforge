@@ -61,7 +61,7 @@ CameraPtr setupInputs(Application* app)
     inputController->bind(move, [camera](InputValue value, float deltaTime)
     {
         Vector2 v = value.get2D();
-        float cameraSpeed = 2.5f * deltaTime;
+        float cameraSpeed = 5.f * deltaTime;
         
         Vector3 sideToSideMovement = camera->getRightVector().scale(cameraSpeed * v.x);
         camera->addPosition(sideToSideMovement);

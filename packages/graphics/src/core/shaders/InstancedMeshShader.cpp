@@ -34,7 +34,7 @@ constexpr const char* INSTANCED_MESH_VERTEX = R"(
 		frag_Pos = worldPos.xyz;
 
 		// Transform surface directions to world space
-		frag_Normal = uTransforms.normal * transpose(inverse(mat3(instance_Model))) * vert_Normal;
+		frag_Normal = uTransforms.normal * transpose(inverse(mat3(vert_InstanceModel))) * vert_Normal;
 
 		// Passthrough vertex RGBA color and texture coordinates
 		frag_VertexColor = vert_VertexColor;
