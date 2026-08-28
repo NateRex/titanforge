@@ -27,6 +27,11 @@ enum class ShaderId
 	MESH,
 
 	/**
+	 * Shader for handling instanced mesh surfaces
+	 */
+	INSTANCED_MESH,
+
+	/**
 	 * Shader for render mesh edges as a wireframe
 	 */
 	WIREFRAME,
