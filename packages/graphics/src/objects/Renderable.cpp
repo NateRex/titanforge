@@ -2,40 +2,36 @@
 #include <graphics/core/renderer/DrawState.h>
 #include <graphics/materials/Material.h>
 #include <graphics/geometry/Geometry.h>
-#include <graphics/geometry/GeometryAttributes.h>
 
-void Renderable::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+void Renderable::configureDrawItem(DrawItem& item)
 {
-    // Compute local-to-world matrices
-    const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
-	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
+	item.geometryBuffer = geometry->getBuffer();
+	addMaterialVariant(item, material->shaderId());
+	addVertexNormalVariant(item);
+}
 
-	// Create item
-	DrawItem item;
-	item.geometry = geometry.get();
-	item.material = material.get();
-	item.modelTransform = modelTransform;
-	item.normalTransform = normalTransform;
-
-	// Add material variant
-	DrawItem::Variant materialVariant;
-	materialVariant.mode = RenderModes::MATERIAL;
-	materialVariant.shader = material->shaderId();
+void Renderable::addMaterialVariant(DrawItem& item, ShaderId shader)
+{
+	DrawItem::Variant variant;
+	variant.mode = RenderModes::MATERIAL;
+	variant.shader = shader;
 	if (material->isTransparent())
 	{
-		materialVariant.layer = DrawLayer::TRANSPARENT;
+		variant.layer = DrawLayer::TRANSPARENT;
 	}
 	else if (material->isBackground())
 	{
-		materialVariant.layer = DrawLayer::BACKGROUND;
+		variant.layer = DrawLayer::BACKGROUND;
 	}
 	else
 	{
-		materialVariant.layer = DrawLayer::OPAQUE;
+		variant.layer = DrawLayer::OPAQUE;
 	}
-	item.variants.push_back(materialVariant);
+	item.variants.push_back(variant);
+}
 
-	// Add vertex normal variant
+void Renderable::addVertexNormalVariant(DrawItem& item)
+{
 	if (geometry->getAttributes().normals)
 	{
 		DrawItem::Variant vertexNormalVariant;
@@ -44,9 +40,22 @@ void Renderable::traverse(DrawState& state, const Matrix4& parentModel, const Ma
 		vertexNormalVariant.layer = DrawLayer::OPAQUE;
 		item.variants.push_back(vertexNormalVariant);
 	}
+}
 
+void Renderable::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
+{
+    // Compute local-to-world matrices
+    const Matrix4 modelTransform = parentModel.multiply(getLocalMatrix());
+	const Matrix3 normalTransform = parentNormal.multiply(getLocalNormalMatrix());
+
+	DrawItem item;
+	item.material = material.get();
+	item.modelTransform = modelTransform;
+	item.normalTransform = normalTransform;
+
+	configureDrawItem(item);
 	state.items.push_back(item);
-    
+	
     // Traverse all children
 	for (const EntityPtr& child : _children)
 	{

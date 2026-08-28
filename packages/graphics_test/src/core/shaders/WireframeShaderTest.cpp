@@ -2,7 +2,6 @@
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/renderer/DrawState.h>
-#include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/WireframeMaterial.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
@@ -12,11 +11,9 @@
 BOOST_AUTO_TEST_CASE(WireframeShader_setItem)
 {
     std::vector<Vector3> segments = { Vector3::MINUS_XHAT, Vector3::XHAT };
-    GeometryPtr geometry = BoxGeometry::create(1.f, 1.f, 1.f);
     MaterialPtr material = WireframeMaterial::create();
 
 	DrawItem item;
-    item.geometry = geometry.get();
     item.material = material.get();
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::WIREFRAME);
