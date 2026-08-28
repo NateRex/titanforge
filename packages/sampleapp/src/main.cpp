@@ -15,13 +15,11 @@
 #include <graphics/objects/PostProcessing.h>
 #include <graphics/core/pointers/EntityPtr.h>
 #include <graphics/loaders/ModelLoader.h>
-#include <graphics/core/windows/Window.h>
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/input/InputContext.h>
 #include <graphics/core/input/modifiers/InputModifiers.h>
 #include <math/Vector2.h>
 #include <math/Vector3.h>
-#include <math/Matrix3.h>
 #include <common/Constants.h>
 #include <common/Utils.h>
 #include <cmath>
@@ -162,4 +160,6 @@ int main()
         entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });
+
+    new Vector3();
 }
