@@ -95,7 +95,7 @@ void Geometry::setNormals(const float* normals, unsigned int numNormals)
 {
 	assertNotNull(normals, "Normals cannot be null when applied to a geometry");
 
-	delete _normals;
+	delete[] _normals;
 	_normals = new Vector3[numNormals];
 	_numNormals = numNormals;
 

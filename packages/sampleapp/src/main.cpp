@@ -160,6 +160,4 @@ int main()
         entity->addRotation(Matrix3::fromYRotation(0.35f * frame.deltaTime));
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });
-
-    new Vector3();
 }
