@@ -134,7 +134,10 @@ void createGrass(ScenePtr scene, unsigned int quantity, float fixedY, float minX
 int main()
 {
     // Create app
-    RendererPtr renderer = Renderer::create(nullptr, WindowFlags::ANTI_ALIASING | WindowFlags::VSYNC);
+    RendererPtr renderer = Renderer::create(nullptr,
+        WindowFlags::ANTI_ALIASING |
+        WindowFlags::RESIZABLE |
+        WindowFlags::VSYNC);
     Application app(renderer);
 
     // Setup scene and camera
@@ -143,7 +146,7 @@ int main()
     camera->lookAt(Vector3(0.f, 5.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
-    // scene->add(Skybox::create());
+    scene->add(Skybox::create());
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
@@ -153,28 +156,23 @@ int main()
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
     postProcessing->contrast = 1.1f;
-    postProcessing->saturation = 0.3f;
+    postProcessing->saturation = 0.6f;
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 
     // Create the ground
-    // MeshMaterialPtr groundMat = MeshMaterial::create();
-    // groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
-    // scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
+    MeshMaterialPtr groundMat = MeshMaterial::create();
+    groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
+    scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
 
     // Create grass
-    // createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
-
-    // Create cube
-    MeshMaterialPtr boxMat = MeshMaterial::create();
-    boxMat->color = Color::GREEN;
-    scene->add(Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), boxMat));
+    createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
 
     // Load guitar backpack model
-    // EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
-    // entity->setPosition(0.f, 2.1f, 0.f);
-    // entity->addRotation(Matrix3::fromYRotation(0.25f));
-    // scene->add(entity);
+    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
+    entity->setPosition(0.f, 2.1f, 0.f);
+    entity->addRotation(Matrix3::fromYRotation(0.25f));
+    scene->add(entity);
 
     // Run application
     app.run([&](const Frame& frame) {
