@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/core/windows/pointers/WindowPtr.h>
+#include <graphics/core/windows/WindowFlags.h>
 #include <mutex>
 
 struct GLFWwindow;
@@ -31,11 +32,13 @@ public:
     /**
      * Constructs a new window
      * @param title Window title
-     * @param width Starting width (in pixels).
-     * @param height Starting height (in pixels).
+     * @param width Starting width in pixels.
+     * @param height Starting height in pixels.
+     * @param windowFlags Global settings to apply to the window. Defaults to WindowFlags::RESIZABLE.
      * @return The new window instance
      */
-    static WindowPtr create(const char* title, unsigned int width, unsigned int height);
+    static WindowPtr create(const char* title, unsigned int width, unsigned int height,
+        WindowFlags windowFlags = WindowFlags::RESIZABLE);
 
     /**
      * @return The input controller
@@ -86,14 +89,19 @@ private:
     static std::mutex _MUTEX;
 
     /**
+     * Global settings applied to this window
+     */
+    WindowFlags _windowFlags;
+
+    /**
      * A pointer to the GLFW window object
      */
-    GLFWwindow* _glfwWindow;
+    GLFWwindow* _glfwWindow = nullptr;
 
     /**
      * Input controller
      */
-    InputController* _inputController;
+    InputController* _inputController = nullptr;
 
     /**
      * Constructor.
@@ -102,13 +110,13 @@ private:
      * @param height Starting height in pixels
      * @param windowFlags Window flags. Defaults to WindowFlags::Resizable.
      */
-    Window(const char* title, unsigned int width, unsigned int height);
+    Window(const char* title, unsigned int width, unsigned int height, WindowFlags windowFlags = WindowFlags::RESIZABLE);
 
     /**
-     * Increments the global window count. If this is the first window being created, this will result
-     * in the initialization of GLFW.
+     * Applies this window's GLFW settings and increments the global window count. If this is the first
+     * window being created, this will also initialize GLFW.
      */
-    static void incrementWindowCount();
+    void incrementWindowCount();
 
     /**
      * Decrements the global window count. If this is the last window to be destroyed, this will result
@@ -117,10 +125,10 @@ private:
     static void decrementWindowCount();
 
     /**
-     * Initializes GLFW. This should only be done on creation of the first window.
+     * Initializes GLFW when creating the first window and applies this window's creation hints.
      * @return True if initialization was successful. Returns false otherwise.
      */
-    static bool initGLFW();
+    bool initGLFW();
 
     /**
      * Terminates GLFW. This should only be done once the last window has been destroyed.
