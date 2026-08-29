@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/core/pointers/RendererPtr.h>
 #include <graphics/core/windows/pointers/WindowPtr.h>
+#include <graphics/core/windows/WindowFlags.h>
 #include <graphics/scene/pointers/ScenePtr.h>
 #include <graphics/cameras/pointers/CameraPtr.h>
 #include <graphics/objects/Mesh.h>
@@ -32,9 +33,11 @@ public:
 	 * Constructs a new renderer instance
 	 * @param window Existing window to attach the renderer to. Can be null, in which case a new window will automatically
 	 * be created.
-	 * @return A pointer to the new renderer instance.
+	 * @param windowFlags Settings to apply when creating a new window. These settings are only used if a previously-existing
+	 * window was not provided. Defaults to WindowFlags::RESIZABLE.
+	 * @return A pointer to the new renderer instance
 	 */
-	static RendererPtr create(WindowPtr window = nullptr);
+	static RendererPtr create(WindowPtr window = nullptr, WindowFlags windowFlags = WindowFlags::RESIZABLE);
 
 	/**
 	 * @return The total amount of time (in decimal seconds) that this renderer has been active for

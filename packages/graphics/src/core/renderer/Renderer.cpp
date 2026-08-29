@@ -76,9 +76,9 @@ Renderer::~Renderer()
 	destroy();
 }
 
-RendererPtr Renderer::create(WindowPtr window)
+RendererPtr Renderer::create(WindowPtr window, WindowFlags windowFlags)
 {
-	WindowPtr target = window ? window : Window::create("TitanForge", 800, 600);
+	WindowPtr target = window ? window : Window::create("TitanForge", 800, 600, windowFlags);
 	return std::shared_ptr<Renderer>(new Renderer(target));
 }
 
