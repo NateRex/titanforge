@@ -16,9 +16,26 @@ Window::Window(const char* title, unsigned int width, unsigned int height, Windo
 {
     incrementWindowCount();
 
-    // Create window
-    GLFWmonitor* monitor = hasFlag(_windowFlags, WindowFlags::FULLSCREEN) ? glfwGetPrimaryMonitor() : nullptr;
-    _glfwWindow = glfwCreateWindow(width, height, title, monitor, nullptr);
+    // If fullscreen mode is specified, ignore custom width and height and instead obtain those values from the monitor
+    GLFWmonitor* monitor = nullptr;
+    unsigned int resolvedWidth = width;
+    unsigned int resolvedHeight = height;
+    if (hasFlag(_windowFlags, WindowFlags::FULLSCREEN))
+    {
+        monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        resolvedWidth = mode->width;
+        resolvedHeight = mode->height;
+
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    }
+
+    // Create the window
+    _glfwWindow = glfwCreateWindow(resolvedWidth, resolvedHeight, title, monitor, nullptr);
     if (!_glfwWindow)
     {
         decrementWindowCount();
@@ -55,16 +72,19 @@ WindowPtr Window::create(const char* title, unsigned int width, unsigned int hei
     return std::shared_ptr<Window>(new Window(title, width, height, windowFlags));
 }
 
-void Window::getDimensions(int* width, int* height) const
+void Window::getDimensions(float* width, float* height) const
 {
 	if (_glfwWindow)
 	{
-		glfwGetFramebufferSize(_glfwWindow, width, height);
+        int iWidth, iHeight;
+		glfwGetFramebufferSize(_glfwWindow, &iWidth, &iHeight);
+        *width = iWidth;
+        *height = iHeight;
 	}
 	else
     {
-        *width = 0;
-        *height = 0;
+        *width = 0.f;
+        *height = 0.f;
     }
 }
 

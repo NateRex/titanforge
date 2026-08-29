@@ -101,7 +101,7 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
-void Renderer::getWindowDimensions(int* width, int* height) const
+void Renderer::getWindowDimensions(float* width, float* height) const
 {
 	return _window->getDimensions(width, height);
 }
@@ -146,7 +146,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	// Set up off-screen targets used for post-processing effects
 	if (!state.postProcessing.empty())
 	{
-		int width, height;
+		float width, height;
 		getPassDimensions(pass, &width, &height);
 		if (width <= 0 || height <= 0)
 		{
@@ -240,7 +240,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	present();
 }
 
-void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height) const
+void Renderer::getPassDimensions(const RenderPass& pass, float* width, float* height) const
 {
 	if (!pass.target || pass.target->config().sizeMode == TargetSizeMode::AUTO)
 	{
@@ -256,7 +256,7 @@ void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height
 void Renderer::configurePass(const RenderPass& pass)
 {
 	// Determine target framebuffer dimensions
-	int width, height;
+	float width, height;
 	getPassDimensions(pass, &width, &height);
 
 	// Bind target framebuffer

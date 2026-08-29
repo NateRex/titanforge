@@ -32,9 +32,11 @@
  * @param application Application
  * @return The camera that was created
  */
-CameraPtr setupInputs(Application* app)
+PerspectiveCameraPtr setupInputs(Application* app)
 {
-    PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, 800.f / 600.f, 0.1f, 100.f);
+    float width, height;
+    app->getRenderer()->getWindowDimensions(&width, &height);
+    PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, width / height, 0.1f, 100.f);
 
     InputAction quit("Quit", InputValueType::BOOLEAN);
     InputAction move("Move", InputValueType::VECTOR_2D);
@@ -135,14 +137,14 @@ int main()
 {
     // Create app
     RendererPtr renderer = Renderer::create(nullptr,
-        WindowFlags::ANTI_ALIASING |
         WindowFlags::RESIZABLE |
+        WindowFlags::ANTI_ALIASING |
         WindowFlags::VSYNC);
     Application app(renderer);
 
     // Setup scene and camera
     ScenePtr scene = Scene::create();
-    CameraPtr camera = setupInputs(&app);
+    PerspectiveCameraPtr camera = setupInputs(&app);
     camera->lookAt(Vector3(0.f, 5.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
@@ -156,7 +158,7 @@ int main()
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
     postProcessing->contrast = 1.1f;
-    postProcessing->saturation = 0.6f;
+    postProcessing->saturation = 0.65f;
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 
@@ -176,6 +178,10 @@ int main()
 
     // Run application
     app.run([&](const Frame& frame) {
+        float width, height;
+        app.getRenderer()->getWindowDimensions(&width, &height);
+        camera->setAspect(width / height);
+
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });
 }

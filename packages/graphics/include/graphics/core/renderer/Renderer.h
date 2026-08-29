@@ -54,7 +54,7 @@ public:
 	 * @param width Value in which to store the width, in pixels
 	 * @param height Value in which to store the height, in pixels
 	 */
-	void getWindowDimensions(int* width, int* height) const;
+	void getWindowDimensions(float* width, float* height) const;
 
 	/**
 	 * @return The current background clear color for draw commands
@@ -160,7 +160,7 @@ private:
 	 * @param width Value in which to store the destination width
 	 * @param height Value in which to store the destination height
 	 */
-	void getPassDimensions(const RenderPass& pass, int* width, int* height) const;
+	void getPassDimensions(const RenderPass& pass, float* width, float* height) const;
 
 	/**
 	 * Presents the completed default frame buffer and processes input and window events. This method should be called once
