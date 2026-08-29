@@ -31,9 +31,19 @@ Texture2D::Texture2D(const std::string& path, bool flip): Texture(GL_TEXTURE_2D,
 	stbi_image_free(data);
 }
 
-Texture2D::Texture2D(const Texture2DConfig& config, const void* data): Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D), _config(config)
+Texture2D::Texture2D(const Texture2DConfig& config, const void* data):
+	Texture(
+		config.samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D,
+		config.samples > 1 ? GL_TEXTURE_BINDING_2D_MULTISAMPLE : GL_TEXTURE_BINDING_2D
+	),
+	_config(config)
 {
-	if (_config.width <= 0 || _config.height <= 0) throw IllegalArgumentException("Texture dimensions must be greater than zero");
+	if (_config.width <= 0 || _config.height <= 0 || _config.samples <= 0)
+		throw IllegalArgumentException("Texture dimensions and sample count must be greater than zero");
+	if (_config.samples > 1 && data)
+		throw IllegalArgumentException("Multisampled textures do not support initial pixel data");
+	if (_config.samples > 1 && _config.generateMipmaps)
+		throw IllegalArgumentException("Multisampled textures do not support mipmaps");
 	allocate(data);
 }
 
@@ -50,9 +60,19 @@ Texture2DPtr Texture2D::create(const Texture2DConfig& config, const void* data)
 void Texture2D::allocate(const void* data)
 {
 	const OpenGLPixelFormat glFormat = toGLFormat(_config.format);
-	Texture::allocate(false, [this, &glFormat, &data]() {
-		glTexImage2D(GL_TEXTURE_2D, 0, glFormat.internalFormat, _config.width, _config.height, 0, glFormat.format, glFormat.type, data);
-	});
+	const bool multisampled = _config.samples > 1;
+	Texture::allocate(false, [this, &glFormat, &data, multisampled]() {
+		if (multisampled)
+		{
+			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, _config.samples,
+				glFormat.internalFormat, _config.width, _config.height, GL_TRUE);
+		}
+		else
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, glFormat.internalFormat, _config.width,
+				_config.height, 0, glFormat.format, glFormat.type, data);
+		}
+	}, !multisampled);
 }
 
 void Texture2D::resize(unsigned int width, unsigned int height)

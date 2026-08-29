@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(Window_basics)
 	BOOST_TEST(window->getInputController() != nullptr);
 	BOOST_TEST(window->isOpen());
 
-	int width, height;
+	float width, height;
 	window->getDimensions(&width, &height);
 	BOOST_TEST(width == 800);
 	BOOST_TEST(height == 600);

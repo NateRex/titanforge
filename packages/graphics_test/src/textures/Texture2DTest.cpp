@@ -14,13 +14,15 @@
 int texture2DParameter(const Texture& texture, unsigned int parameter)
 {
 	int previous = 0;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous);
+	const unsigned int binding = texture.type() == GL_TEXTURE_2D_MULTISAMPLE
+		? GL_TEXTURE_BINDING_2D_MULTISAMPLE : GL_TEXTURE_BINDING_2D;
+	glGetIntegerv(binding, &previous);
 
-	glBindTexture(GL_TEXTURE_2D, texture.id());
+	glBindTexture(texture.type(), texture.id());
 	int value = 0;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, parameter, &value);
+	glGetTexLevelParameteriv(texture.type(), 0, parameter, &value);
 
-	glBindTexture(GL_TEXTURE_2D, previous);
+	glBindTexture(texture.type(), previous);
 	return value;
 }
 
@@ -98,6 +100,27 @@ BOOST_AUTO_TEST_CASE(Texture2D_resize)
 }
 
 /**
+ * Tests allocation and resizing of multisampled texture storage.
+ */
+BOOST_AUTO_TEST_CASE(Texture2D_multisampledStorage)
+{
+	Texture2DConfig config;
+	config.width = 4;
+	config.height = 3;
+	config.samples = 2;
+
+	TexturePtr texture = Texture2D::create(config);
+	BOOST_TEST(texture->type() == GL_TEXTURE_2D_MULTISAMPLE);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_SAMPLES) >= static_cast<int>(config.samples));
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_WIDTH) == 4);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_HEIGHT) == 3);
+
+	texture->resize(7, 5);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_WIDTH) == 7);
+	BOOST_TEST(texture2DParameter(*texture, GL_TEXTURE_HEIGHT) == 5);
+}
+
+/**
  * Tests validation of texture dimensions during creation and resize
  */
 BOOST_AUTO_TEST_CASE(Texture2D_invalidDimensions)
@@ -116,4 +139,11 @@ BOOST_AUTO_TEST_CASE(Texture2D_invalidDimensions)
 	BOOST_CHECK_THROW(texture->resize(1, 0), IllegalArgumentException);
 	BOOST_TEST(texture->width() == 1);
 	BOOST_TEST(texture->height() == 1);
+
+	config.samples = 0;
+	BOOST_CHECK_THROW(Texture2D::create(config), IllegalArgumentException);
+
+	config.samples = 2;
+	config.generateMipmaps = true;
+	BOOST_CHECK_THROW(Texture2D::create(config), IllegalArgumentException);
 }

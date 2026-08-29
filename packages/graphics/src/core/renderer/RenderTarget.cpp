@@ -7,6 +7,10 @@
 
 RenderTarget::RenderTarget(const RenderTargetConfig& config): _config(config)
 {
+    if (_config.samples == 0)
+    {
+        throw IllegalArgumentException("Render target sample count must be greater than zero");
+    }
     if (_config.colorFormats.size() > 4)
     {
         throw IllegalArgumentException("Render targets support at most four color attachments");
@@ -93,6 +97,7 @@ void RenderTarget::build()
         texConfig.width = _config.width;
         texConfig.height = _config.height;
         texConfig.format = _config.colorFormats[i];
+        texConfig.samples = _config.samples;
         texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
         texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
 
@@ -133,6 +138,7 @@ void RenderTarget::build()
             texConfig.width = _config.width;
             texConfig.height = _config.height;
             texConfig.format = _config.depthStencilFormat;
+            texConfig.samples = _config.samples;
             texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
             texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
             texConfig.sampling.minFilter = TextureFilter::NEAREST;
@@ -149,6 +155,7 @@ void RenderTarget::build()
             rbConfig.width = _config.width;
             rbConfig.height = _config.height;
             rbConfig.format = _config.depthStencilFormat;
+            rbConfig.samples = _config.samples;
 
             _depthStencilRenderBuffer = RenderBuffer::create(rbConfig);
             _frameBuffer->attach(attachment, _depthStencilRenderBuffer);

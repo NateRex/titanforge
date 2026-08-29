@@ -45,6 +45,11 @@ public:
 	unsigned int id() const { return _id; }
 
 	/**
+	 * @return The OpenGL texture target used by this texture
+	 */
+	unsigned int type() const { return _type; }
+
+	/**
 	 * @return The pixel format used by this texture's storage
 	 */
 	PixelFormat format() const { return config().format; }
@@ -101,6 +106,7 @@ protected:
 	 * @param includeRWrap Boolean flag that, when true, applies the wrap mode for the third texture coordinate. This should
 	 * only be applied for three-dimensional textures.
 	 * @param upload Callback function to upload texture data, assuming the texture is bound
+	 * @param applySampling Whether sampler parameters and mipmaps should be applied. Multisampled textures must set this to false.
 	 */
-	void allocate(bool includeRWrap, const std::function<void()>& upload);
+	void allocate(bool includeRWrap, const std::function<void()>& upload, bool applySampling = true);
 };

@@ -14,26 +14,38 @@ PerspectiveCameraPtr PerspectiveCamera::create(float fov, float aspect, float ne
 
 void PerspectiveCamera::setFOV(float value)
 {
-	fov = value;
-	Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	if (fov != value)
+	{
+		fov = value;
+		Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	}
 }
 
 void PerspectiveCamera::setAspect(float value)
 {
-	aspect = value;
-	Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	if (aspect != value)
+	{
+		aspect = value;
+		Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	}
 }
 
 void PerspectiveCamera::setNearDistance(float value)
 {
-	near = value;
-	Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	if (near != value)
+	{
+		near = value;
+		Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	}
 }
 
 void PerspectiveCamera::setFarDistance(float value)
 {
-	far = value;
-	Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	if (far != value)
+	{
+		far = value;
+		Matrix4::fromPerspective(deg2Rad(fov), aspect, near, far, &_projectionMatrix);
+	}
 }
 
 Matrix4 PerspectiveCamera::getProjectionMatrix() const

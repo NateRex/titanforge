@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(Renderer_getWindowDimensions)
 {
 	RendererPtr renderer = GlobalTestFixture::RENDERER;
 
-	int width, height;
+	float width, height;
 	renderer->getWindowDimensions(&width, &height);
 	BOOST_TEST(width = 800);
 	BOOST_TEST(height = 600);

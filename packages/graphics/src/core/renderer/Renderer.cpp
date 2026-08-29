@@ -63,6 +63,15 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 	// Hide and capture the cursor inside the window
 	glfwSetInputMode(_window->_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+	// Determine sampling for the default framebuffer
+	FrameBuffer::bindDefault();
+	int sampleBuffers, samples = 0;
+	glGetIntegerv(GL_SAMPLE_BUFFERS, &sampleBuffers);
+	glGetIntegerv(GL_SAMPLES, &samples);
+	_samples = sampleBuffers > 0 && samples > 1
+		? samples
+		: 1;
+
 	applyGlobalSettings();
 }
 
@@ -76,9 +85,9 @@ Renderer::~Renderer()
 	destroy();
 }
 
-RendererPtr Renderer::create(WindowPtr window)
+RendererPtr Renderer::create(WindowPtr window, WindowFlags windowFlags)
 {
-	WindowPtr target = window ? window : Window::create("TitanForge", 800, 600);
+	WindowPtr target = window ? window : Window::create("TitanForge", 800, 600, windowFlags);
 	return std::shared_ptr<Renderer>(new Renderer(target));
 }
 
@@ -92,7 +101,7 @@ WindowPtr Renderer::getWindow() const
 	return _window;
 }
 
-void Renderer::getWindowDimensions(int* width, int* height) const
+void Renderer::getWindowDimensions(float* width, float* height) const
 {
 	return _window->getDimensions(width, height);
 }
@@ -134,16 +143,17 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	DrawState state;
 	scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
 	
-	// If there is post-processing, set up off-screen targets
+	// Set up off-screen targets used for post-processing effects
 	if (!state.postProcessing.empty())
 	{
-		int width, height;
+		float width, height;
 		getPassDimensions(pass, &width, &height);
 		if (width <= 0 || height <= 0)
 		{
 			throw IllegalStateException("Cannot post-process an empty framebuffer");
 		}
 
+		// Single-sample offscreen targets
 		RenderTargetConfig targetConfig;
 		targetConfig.sizeMode = TargetSizeMode::FIXED;
 		targetConfig.width = width;
@@ -161,7 +171,21 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 			}
 		}
 
-		pass.target = _postProcessTargets[0];
+		// When anti-aliasing is enabled, additionally set up a multi-sample offscreen target
+		if (_samples > 1)
+		{
+			targetConfig.samples = _samples;
+			if (!_postProcessMultiSampleTarget)
+			{
+				_postProcessMultiSampleTarget = RenderTarget::create(targetConfig);
+			}
+			else
+			{
+				_postProcessMultiSampleTarget->resize(width, height);
+			}
+		}
+
+		pass.target = _postProcessMultiSampleTarget ? _postProcessMultiSampleTarget : _postProcessTargets[0];
 	}
 
 	// Perform draw for each rendering mode
@@ -182,6 +206,15 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	// The final draw should be to the original pass target.
 	if (!state.postProcessing.empty())
 	{
+		if (_postProcessMultiSampleTarget)
+		{
+			const int width = _postProcessMultiSampleTarget->config().width;
+			const int height = _postProcessMultiSampleTarget->config().height;
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, _postProcessMultiSampleTarget->frameBuffer()->id());
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _postProcessTargets[0]->frameBuffer()->id());
+			glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		}
+
 		RenderTargetPtr source = _postProcessTargets[0];
 		for (std::size_t i = 0; i < state.postProcessing.size(); i++)
 		{
@@ -207,7 +240,7 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	present();
 }
 
-void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height) const
+void Renderer::getPassDimensions(const RenderPass& pass, float* width, float* height) const
 {
 	if (!pass.target || pass.target->config().sizeMode == TargetSizeMode::AUTO)
 	{
@@ -223,7 +256,7 @@ void Renderer::getPassDimensions(const RenderPass& pass, int* width, int* height
 void Renderer::configurePass(const RenderPass& pass)
 {
 	// Determine target framebuffer dimensions
-	int width, height;
+	float width, height;
 	getPassDimensions(pass, &width, &height);
 
 	// Bind target framebuffer

@@ -5,6 +5,7 @@
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/textures/Texture2D.h>
+#include <glad/glad.h>
 
 /**
  * Tests using the default config to construct a render target
@@ -126,6 +127,25 @@ BOOST_AUTO_TEST_CASE(RenderTarget_resize)
 }
 
 /**
+ * Tests that multisampling is applied consistently to every framebuffer attachment.
+ */
+BOOST_AUTO_TEST_CASE(RenderTarget_multisampledAttachments)
+{
+    RenderTargetConfig config;
+    config.sizeMode = TargetSizeMode::FIXED;
+    config.width = 4;
+    config.height = 3;
+    config.samples = 2;
+
+    RenderTargetPtr renderTarget = RenderTarget::create(config);
+    BOOST_REQUIRE(renderTarget->colorTexture(0) != nullptr);
+    BOOST_TEST(renderTarget->colorTexture(0)->type() == GL_TEXTURE_2D_MULTISAMPLE);
+    BOOST_REQUIRE(renderTarget->depthStencilRenderBuffer() != nullptr);
+    BOOST_TEST(renderTarget->depthStencilRenderBuffer()->config().samples == config.samples);
+    BOOST_TEST(renderTarget->frameBuffer()->isComplete());
+}
+
+/**
  * Tests invalid dimensions, formats, attachment counts, and color indices.
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_failureCases)
@@ -157,4 +177,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_failureCases)
     BOOST_CHECK_THROW(renderTarget->resize(1, 0), IllegalArgumentException);
     BOOST_TEST(renderTarget->config().width == 1);
     BOOST_TEST(renderTarget->config().height == 1);
+
+    config.samples = 0;
+    BOOST_CHECK_THROW(RenderTarget::create(config), IllegalArgumentException);
 }

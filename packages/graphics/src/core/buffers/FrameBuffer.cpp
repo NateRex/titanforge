@@ -50,7 +50,8 @@ void FrameBuffer::attach(FrameBufferAttachment attachment, const TexturePtr text
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
 
     bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, toGLAttachment(attachment), GL_TEXTURE_2D, texture ? texture->id() : 0, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, toGLAttachment(attachment),
+        texture ? texture->type() : GL_TEXTURE_2D, texture ? texture->id() : 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, previous);
 }
 

@@ -18,6 +18,12 @@ struct Texture2DConfig : TextureConfig
 	 * Texture height in texels
 	 */
 	unsigned int height = 1;
+
+	/**
+	 * Number of samples per texel. A value of 1 creates a regular two-dimensional texture;
+	 * values greater than 1 create multisampled storage. Defaults to 1.
+	 */
+	unsigned int samples = 1;
 };
 
 /**

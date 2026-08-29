@@ -9,18 +9,46 @@ bool Window::_HEADLESS = false;
 int Window::_WINDOW_COUNT = 0;
 std::mutex Window::_MUTEX;
 
-Window::Window(const char* title, unsigned int width, unsigned int height)
+Window::Window(const char* title, unsigned int width, unsigned int height, WindowFlags windowFlags) :
+    _glfwWindow(nullptr),
+    _windowFlags(windowFlags),
+    _inputController(nullptr)
 {
     incrementWindowCount();
 
-    // Create window
-    _glfwWindow = glfwCreateWindow(width, height, title, NULL, NULL);
+    // If fullscreen mode is specified, ignore custom width and height and instead obtain those values from the monitor
+    GLFWmonitor* monitor = nullptr;
+    unsigned int resolvedWidth = width;
+    unsigned int resolvedHeight = height;
+    if (hasFlag(_windowFlags, WindowFlags::FULLSCREEN))
+    {
+        monitor = glfwGetPrimaryMonitor();
+        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+        resolvedWidth = mode->width;
+        resolvedHeight = mode->height;
+
+        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    }
+
+    // Create the window
+    _glfwWindow = glfwCreateWindow(resolvedWidth, resolvedHeight, title, monitor, nullptr);
     if (!_glfwWindow)
     {
+        decrementWindowCount();
         std::ostringstream oss;
         oss << "Could not create window: " << title;
         throw InstantiationException(oss.str());
     }
+
+    // Vsync is context-specific and must be configured while this window's context is current.
+    GLFWwindow* previousContext = glfwGetCurrentContext();
+    glfwMakeContextCurrent(_glfwWindow);
+    glfwSwapInterval(hasFlag(_windowFlags, WindowFlags::VSYNC) ? 1 : 0);
+    glfwMakeContextCurrent(previousContext);
 
     // Create the input controller
     _inputController = new InputController(_glfwWindow);
@@ -39,21 +67,24 @@ void Window::setHeadlessMode(bool headlessMode)
     _HEADLESS = headlessMode;
 }
 
-WindowPtr Window::create(const char* title, unsigned int width, unsigned int height)
+WindowPtr Window::create(const char* title, unsigned int width, unsigned int height, WindowFlags windowFlags)
 {
-    return std::shared_ptr<Window>(new Window(title, width, height));
+    return std::shared_ptr<Window>(new Window(title, width, height, windowFlags));
 }
 
-void Window::getDimensions(int* width, int* height) const
+void Window::getDimensions(float* width, float* height) const
 {
 	if (_glfwWindow)
 	{
-		glfwGetFramebufferSize(_glfwWindow, width, height);
+        int iWidth, iHeight;
+		glfwGetFramebufferSize(_glfwWindow, &iWidth, &iHeight);
+        *width = iWidth;
+        *height = iHeight;
 	}
 	else
     {
-        *width = 0;
-        *height = 0;
+        *width = 0.f;
+        *height = 0.f;
     }
 }
 
@@ -100,12 +131,9 @@ void Window::destroy()
 void Window::incrementWindowCount()
 {
     std::lock_guard<std::mutex> lock(_MUTEX);
-    if (_WINDOW_COUNT == 0)
+    if (!initGLFW())
     {
-        if (!initGLFW())
-        {
-            throw InstantiationException("Failed to initialize GLFW");
-        }
+        throw InstantiationException("Failed to initialize GLFW");
     }
 
     _WINDOW_COUNT++;
@@ -122,15 +150,20 @@ void Window::decrementWindowCount()
 
 bool Window::initGLFW()
 {
-    if (!glfwInit())
+    if (_WINDOW_COUNT == 0 && !glfwInit())
     {
         return false;
     }
 
+    // Window hints persist globally in GLFW. Reset them so each window is configured only
+    // from its own flags, including when multiple windows use different settings.
+    glfwDefaultWindowHints();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_STENCIL_BITS, 8);
+    glfwWindowHint(GLFW_RESIZABLE, hasFlag(_windowFlags, WindowFlags::RESIZABLE) ? GLFW_TRUE : GLFW_FALSE);
+    glfwWindowHint(GLFW_SAMPLES, hasFlag(_windowFlags, WindowFlags::ANTI_ALIASING) ? 4 : 0);
 
     // Additional settings for Apple devices
     #ifdef __APPLE__
