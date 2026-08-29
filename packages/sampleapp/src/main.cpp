@@ -143,7 +143,7 @@ int main()
     camera->lookAt(Vector3(0.f, 5.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
-    scene->add(Skybox::create());
+    // scene->add(Skybox::create());
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
@@ -158,18 +158,23 @@ int main()
     scene->add(PostProcessing::create(postProcessing));
 
     // Create the ground
-    MeshMaterialPtr groundMat = MeshMaterial::create();
-    groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
-    scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
+    // MeshMaterialPtr groundMat = MeshMaterial::create();
+    // groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
+    // scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
 
     // Create grass
-    createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
+    // createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
+
+    // Create cube
+    MeshMaterialPtr boxMat = MeshMaterial::create();
+    boxMat->color = Color::GREEN;
+    scene->add(Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), boxMat));
 
     // Load guitar backpack model
-    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
-    entity->setPosition(0.f, 2.1f, 0.f);
-    entity->addRotation(Matrix3::fromYRotation(0.25f));
-    scene->add(entity);
+    // EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
+    // entity->setPosition(0.f, 2.1f, 0.f);
+    // entity->addRotation(Matrix3::fromYRotation(0.25f));
+    // scene->add(entity);
 
     // Run application
     app.run([&](const Frame& frame) {

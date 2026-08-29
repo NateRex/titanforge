@@ -39,6 +39,7 @@ add_executable(GraphicsTest
     src/core/shaders/SkyboxShaderTest.cpp
     src/core/shaders/VertexNormalShaderTest.cpp
     src/core/shaders/WireframeShaderTest.cpp
+    src/core/windows/WindowFlagsTest.cpp
     src/core/windows/WindowTest.cpp
     src/core/ApplicationTest.cpp
     src/core/ColorTest.cpp

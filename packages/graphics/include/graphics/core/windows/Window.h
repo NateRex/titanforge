@@ -98,8 +98,9 @@ private:
     /**
      * Constructor.
      * @param title Window title
-     * @param width Starting width (in pixels).
-     * @param height Starting height (in pixels).
+     * @param width Starting width in pixels
+     * @param height Starting height in pixels
+     * @param windowFlags Window flags. Defaults to WindowFlags::Resizable.
      */
     Window(const char* title, unsigned int width, unsigned int height);
 
