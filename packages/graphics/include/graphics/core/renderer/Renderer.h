@@ -99,6 +99,13 @@ private:
 	WindowPtr _window;
 
 	/**
+	 * Number of samples per pixel used for multisample anti-aliasing. Regardless of whether or not the window was created
+	 * with anti-aliasing enabled, we determine and cache this value in the renderer since the system may not be able to
+	 * handle the number of samples requested at window creation time.
+	 */
+	unsigned int _samples = 1;
+
+	/**
 	 * Boolean flag that, when true, means that this renderer has released its resources and global renderer count.
 	 */
 	bool _destroyed = false;
@@ -117,6 +124,12 @@ private:
 	 * Renderer-managed intermediate targets used to chain scene post-processing effects
 	 */
 	RenderTargetPtr _postProcessTargets[2];
+
+	/**
+	 * Multisampled scene target resolved before post-processing. Will only be non-null if sampling is greater than 1,
+	 * which occurs when anti-aliasing is enabled.
+	 */
+	RenderTargetPtr _postProcessMultiSampleTarget;
 
 	/**
 	 * Increments the global renderer count
