@@ -134,7 +134,7 @@ void createGrass(ScenePtr scene, unsigned int quantity, float fixedY, float minX
 int main()
 {
     // Create app
-    RendererPtr renderer = Renderer::create();
+    RendererPtr renderer = Renderer::create(nullptr, WindowFlags::ANTI_ALIASING | WindowFlags::VSYNC);
     Application app(renderer);
 
     // Setup scene and camera
@@ -153,7 +153,7 @@ int main()
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
     postProcessing->contrast = 1.1f;
-    postProcessing->saturation = 0.8f;
+    postProcessing->saturation = 0.3f;
     postProcessing->exposure = 1.1f;
     scene->add(PostProcessing::create(postProcessing));
 

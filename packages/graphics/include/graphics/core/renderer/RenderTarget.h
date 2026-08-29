@@ -69,6 +69,12 @@ struct RenderTargetConfig
     int height = 0;
 
     /**
+     * Number of samples per pixel used for multisample anti-aliasing. A value of 1 disables multisampling. All framebuffer
+     * attachments will use this sample count. Defaults to 1.
+     */
+    unsigned int samples = 1;
+
+    /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.
      * Defaults to one color attachment, with format PixelFormat::RGBA8.
      */
