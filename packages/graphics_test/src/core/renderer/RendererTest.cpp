@@ -8,6 +8,9 @@
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
+#include <graphics/lights/PointLight.h>
+#include <graphics/lights/SpotLight.h>
+#include <graphics/lights/DirectionalLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
@@ -58,6 +61,169 @@ std::array<unsigned char, 4> presentedPixel(int x = 0, int y = 0)
     glReadBuffer(GL_BACK);
     BOOST_REQUIRE(glGetError() == GL_NO_ERROR);
     return pixel;
+}
+
+/**
+ * Tests rendered point and spot light falloff, minimum-distance clamps, intensity
+ * scaling, range-based model selection, and disabled attenuation after sRGB presentation.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_localLightFalloff)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setDisplayGamma(1.f);
+    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+    for (const LightPtr& light : {LightPtr(PointLight::create()), LightPtr(SpotLight::create())})
+    {
+        if (light->lightType == LightType::SPOTLIGHT)
+        {
+            auto spot = std::static_pointer_cast<SpotLight>(light);
+            spot->innerAngle = 45.f; // Keep the near-clamp pixel inside the full-intensity cone.
+            spot->outerAngle = 60.f;
+        }
+        auto scene = Scene::create();
+        auto material = MeshMaterial::create();
+        material->reflectivity = 0.f;
+        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+        mesh->setPosition(0.f, 0.f, -3.5f); // Front face at z=-3, normal +Z.
+        scene->add(mesh);
+        scene->add(light);
+        auto check = [&](float distance, int expected)
+        {
+            light->setPosition(0.f, 0.f, -3.f + distance);
+            renderer->render(scene, camera);
+            auto pixel = presentedPixel(400, 300);
+            for (unsigned int c = 0; c < 3; ++c)
+                BOOST_TEST_CONTEXT("type=" << int(light->lightType) << ", distance=" << distance
+                    << ", expected=" << expected << ", actual=" << int(pixel[c]))
+                BOOST_TEST(std::abs(int(pixel[c]) - expected) <= 3);
+        };
+        light->intensity = 0.25f;
+        // Linear 1/4, 1/16, 1/64 encode to these known sRGB byte values.
+        check(1.f, 137);
+        check(2.f, 71);
+        check(4.f, 34);
+        light->minimumDistance = std::numeric_limits<float>::denorm_min();
+        check(2.f, 71); // Tiny positive clamps must not disable inverse-square selection.
+        light->minimumDistance = std::numeric_limits<float>::max();
+        check(2.f, 0);
+        light->minimumDistance = 0.01f;
+        light->range = 0.f; // Range must not affect inverse-square falloff.
+        check(1.f, 137);
+        light->intensity = 0.5f;
+        check(1.f, 188);
+        light->intensity = -1.f;
+        check(1.f, 0);
+        light->intensity = 0.25f;
+        light->minimumDistance = 2.f;
+        check(1.f, 71); // Clamp beyond one world unit changes reference brightness.
+        check(0.05f, 71); // Near-light contribution stays finite and bounded.
+        light->minimumDistance = 0.01f;
+        light->intensity = 0.000025f;
+        check(0.005f, 131); // Near default clamp; small angular loss at sampled pixel.
+        light->intensity = 0.25f;
+        light->attenuationModel = AttenuationModel::RANGE_BASED;
+        light->range = 2.f;
+        check(2.f, 10); // 0.25 / 85.5, with nonzero contribution at range.
+        check(4.f, 2); // Range is not a hard cutoff.
+        for (float range : {0.f, -1.f})
+        {
+            light->range = range;
+            check(2.f, 137);
+        }
+        for (auto model : {AttenuationModel::INVERSE_SQUARE, AttenuationModel::RANGE_BASED})
+        {
+            light->attenuationModel = model;
+            light->attenuation = false;
+            light->range = 2.f;
+            check(1.f, 137);
+            check(4.f, 137);
+        }
+    }
+}
+
+/**
+ * Tests that ambient and directional lighting remain independent of surface distance
+ * and ignore attenuation model, range, and minimum-distance settings.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_distanceIndependentLights)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setDisplayGamma(1.f);
+    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+    for (const LightPtr& light : {LightPtr(AmbientLight::create()), LightPtr(DirectionalLight::create(Vector3::MINUS_ZHAT))})
+    {
+        auto scene = Scene::create();
+        auto material = MeshMaterial::create();
+        material->reflectivity = 0.f;
+        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+        mesh->setPosition(0.f, 0.f, -3.5f);
+        scene->add(mesh);
+        scene->add(light);
+        light->intensity = 0.25f;
+        light->attenuation = true; // Even explicitly enabled attenuation cannot affect these types.
+        light->range = 1.f;
+        light->minimumDistance = 10.f;
+        for (auto model : {AttenuationModel::INVERSE_SQUARE, AttenuationModel::RANGE_BASED})
+        {
+            light->attenuationModel = model;
+            for (float z : {-3.5f, -5.5f})
+            {
+                mesh->setPosition(0.f, 0.f, z);
+                renderer->render(scene, camera);
+                auto pixel = presentedPixel(400, 300);
+                for (unsigned int c = 0; c < 3; ++c)
+                    BOOST_TEST(std::abs(int(pixel[c]) - 137) <= 3);
+            }
+        }
+    }
+}
+
+/**
+ * Tests that point and spot lights coincident with a surface produce finite, bounded
+ * output through linear postprocessing and final display presentation.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_lightAtSurface)
+{
+    struct ContextRestore
+    {
+        GLFWwindow* previous = glfwGetCurrentContext();
+        ~ContextRestore() { glfwMakeContextCurrent(previous); }
+    } restore;
+    ShaderManager::reset();
+    // Odd dimensions put the center fragment exactly on the light's world position.
+    auto window = Window::create("Light at surface test", 33, 33, WindowFlags::NONE);
+    auto renderer = Renderer::create(window);
+    struct ShaderCacheReset
+    {
+        ~ShaderCacheReset() { ShaderManager::reset(); }
+    } reset;
+    auto camera = PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f);
+    for (const LightPtr& light : {LightPtr(PointLight::create()), LightPtr(SpotLight::create())})
+    {
+        auto scene = Scene::create();
+        auto material = MeshMaterial::create();
+        material->reflectivity = 0.f;
+        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+        mesh->setPosition(0.f, 0.f, -3.5f);
+        scene->add(mesh);
+        scene->add(light);
+        light->setPosition(0.f, 0.f, -3.f);
+        light->intensity = 0.000025f; // Clamped attenuation 10000 => linear 0.25.
+        auto effect = PostProcessMaterial::create();
+        effect->contrast = 0.5f; // Finite [0, 0.25] becomes [0.25, 0.375]; NaN stays NaN.
+        scene->add(PostProcessing::create(effect));
+        renderer->render(scene, camera);
+        auto pixel = presentedPixel(16, 16);
+        for (unsigned int c = 0; c < 3; ++c)
+        {
+            // The direction at coincidence is undefined and raster interpolation can
+            // leave a tiny residual, but the result must stay finite and bounded.
+            BOOST_TEST(int(pixel[c]) >= 134);
+            BOOST_TEST(int(pixel[c]) <= 168);
+        }
+    }
 }
 
 /**

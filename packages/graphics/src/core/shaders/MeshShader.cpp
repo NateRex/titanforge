@@ -71,6 +71,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 		float intensity;
 		// constant, linear, and quadratic distance attenuation coefficients
 		vec3 attenuation;
+		// Positive only for inverse-square local lights; zero selects the coefficient curve.
+		float minimumDistance;
 		// Direction rays travel, followed by cosine of outer/inner cone angles.
 		// Non-spot lights receive neutral cone values.
 		vec3 direction;
@@ -153,7 +155,9 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 			// For a point/spot light, w=1 so this is light position minus pixel position
 			// For a directional light, w=0 so we end up with just the direction of the light
-			vec3 lightDir = normalize(light.vector.xyz - frag_Pos * light.vector.w);
+			vec3 toLight = light.vector.xyz - frag_Pos * light.vector.w;
+			float directionLength = length(toLight);
+			vec3 lightDir = directionLength > 0.0 ? toLight / directionLength : normal;
 			float distance = length(light.vector.xyz - frag_Pos);
 
 			// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
@@ -161,6 +165,13 @@ constexpr const char* MESH_FRAGMENT = R"(
 				light.attenuation.x
 				+ light.attenuation.y * distance
 				+ light.attenuation.z * distance * distance);
+			if (light.minimumDistance > 0.0)
+			{
+				// Bound the reciprocal before squaring so even subnormal positive clamps
+				// cannot create infinite attenuation in single-precision shader arithmetic.
+				float inverseDistance = min(1.0 / max(distance, light.minimumDistance), 1.0e19);
+				attenuation = inverseDistance * inverseDistance;
+			}
 
 			// In the case of a cone light, intensity will be 0 outside the outer cone, 1 inside the inner cone
 			// and soft blend between the two
@@ -393,7 +404,15 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 		float linearAttenuation = 0.f;
 		float quadraticAttenuation = 0.f;
 		float range = light->range;
-		if (light->attenuation && range > 0.f)
+		float minimumDistance = 0.f;
+		if (w == 1.f && light->attenuation && light->attenuationModel == AttenuationModel::INVERSE_SQUARE)
+		{
+			// Match the shader's reciprocal cap and keep subnormal uniforms from flushing
+			// to zero, which is reserved for selecting the coefficient curve.
+			minimumDistance = std::max(light->minimumDistance, 1.0e-19f);
+		}
+		else if (w == 1.f && light->attenuation && range > 0.f
+			&& light->attenuationModel == AttenuationModel::RANGE_BASED)
 		{
 			// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
 			// `range` remains the only distance users need to reason about.
@@ -426,6 +445,7 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 		glUniform4f(getUniformLocation((prefix + "vector").c_str()), vector.x, vector.y, vector.z, w);
 		glUniform3f(getUniformLocation((prefix + "color").c_str()), color.red(), color.green(), color.blue());
 		glUniform1f(getUniformLocation((prefix + "intensity").c_str()), intensity);
+		glUniform1f(getUniformLocation((prefix + "minimumDistance").c_str()), minimumDistance);
 		glUniform3f(
 			getUniformLocation((prefix + "attenuation").c_str()),
 			constantAttenuation,
