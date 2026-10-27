@@ -89,6 +89,8 @@ struct RenderPass
 {
     /**
      * Destination render target, or null for the default frame buffer.
+     * Offscreen passes write linear shader output with per-attachment storage encoding and no displayGamma.
+     * The renderer reserves display adjustment and final sRGB encoding for presentation.
      */
     RenderTargetPtr target = nullptr;
 

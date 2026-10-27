@@ -271,8 +271,6 @@ void Renderer::configurePass(const RenderPass& pass)
 		FrameBuffer::bindDefault();
 	}
 
-	glDisable(GL_FRAMEBUFFER_SRGB);
-
 	// Configure viewport dimensions to draw to
 	if (pass.viewport.width != 0 && pass.viewport.height != 0)
 	{

@@ -1,6 +1,9 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics_test/GlobalTestFixture.h>
 #include <graphics/core/renderer/Renderer.h>
+#include <graphics/core/renderer/RenderTarget.h>
+#include <graphics/core/buffers/FrameBuffer.h>
+#include <graphics/core/shaders/FullScreenShader.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
@@ -31,6 +34,21 @@ struct PresentationSettings
         renderer->setDisplayGamma(gamma);
     }
 };
+
+class OffscreenColorShader : public FullScreenShader
+    {
+    public:
+        OffscreenColorShader() : FullScreenShader("Offscreen color test", R"(
+            #version 330 core
+            layout(location = 0) out vec4 first;
+            layout(location = 1) out vec4 second;
+            void main()
+            {
+                first = vec4(0.5, 0.125, 1.0, 0.5);
+                second = first;
+            }
+        )") {}
+    };
 
 std::array<unsigned char, 4> presentedPixel(int x = 0, int y = 0)
 {
@@ -362,6 +380,92 @@ BOOST_AUTO_TEST_CASE(Renderer_equivalentLinearAndSRGBInputs)
             BOOST_TEST(std::abs(int(pixel[1]) - 64) <= 2);
             BOOST_TEST(std::abs(int(pixel[2]) - 255) <= 2);
             BOOST_TEST(std::abs(int(pixel[3]) - 255) <= 2);
+        }
+    }
+}
+
+/**
+ * Tests mixed linear/sRGB offscreen writes, linear blending, resolve, sampling,
+ * and final display adjustment with and without postprocessing.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_offscreenColorRoundTrip)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setDisplayGamma(2.f);
+    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+    OffscreenColorShader shader;
+    for (unsigned int samples : {1u, 2u})
+    {
+        RenderTargetConfig config;
+        config.sizeMode = TargetSizeMode::FIXED;
+        config.width = config.height = 4;
+        config.colorFormats = {PixelFormat::RGBA8, PixelFormat::SRGBA8};
+        config.depthStencilStorage = DepthStencilStorage::NONE;
+        config.samples = samples;
+        auto target = RenderTarget::create(config);
+        target->frameBuffer()->bind();
+        glViewport(0, 0, 4, 4);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_BLEND);
+        // A nonblack destination catches missing sRGB decode before blending.
+        glClearColor(0.5f, 0.125f, 1.f, 0.3f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        shader.draw();
+        glDisable(GL_BLEND);
+
+        auto resolved = target;
+        if (samples > 1)
+        {
+            config.samples = 1;
+            resolved = RenderTarget::create(config);
+            resolved->frameBuffer()->bind();
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, target->frameBuffer()->id());
+            for (unsigned int i = 0; i < 2; ++i)
+            {
+                glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+                glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
+                glBlitFramebuffer(0, 0, 4, 4, 0, 0, 4, 4, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            }
+        }
+        for (unsigned int i = 0; i < 2; ++i)
+        {
+            resolved->frameBuffer()->bind();
+            glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+            std::array<unsigned char, 4> stored;
+            glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, stored.data());
+            BOOST_TEST(std::abs(int(stored[0]) - (i == 0 ? 128 : 188)) <= 2);
+            BOOST_TEST(std::abs(int(stored[3]) - 102) <= 2);
+            auto scene = Scene::create();
+            auto light = AmbientLight::create();
+            light->intensity = 1.f;
+            scene->add(light);
+            auto material = MeshMaterial::create();
+            material->texture = resolved->colorTexture(i);
+            material->alphaMode = AlphaMode::OPAQUE;
+            auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+            mesh->setPosition(0.f, 0.f, -3.f);
+            scene->add(mesh);
+            for (bool effects : {false, true})
+            {
+                if (effects)
+                {
+                    auto effect = PostProcessMaterial::create();
+                    effect->exposure = 0.5f;
+                    scene->add(PostProcessing::create(effect));
+                }
+                renderer->render(scene, camera);
+                auto pixel = presentedPixel(400, 300);
+                BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+                const std::array<int, 3> expected = effects
+                    ? std::array<int, 3>{188, 137, 219}
+                    : std::array<int, 3>{219, 160, 255};
+                for (unsigned int channel = 0; channel < 3; ++channel)
+                    BOOST_TEST(std::abs(int(pixel[channel]) - expected[channel]) <= 3);
+            }
         }
     }
 }

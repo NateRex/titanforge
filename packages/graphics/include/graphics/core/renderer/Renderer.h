@@ -84,8 +84,6 @@ public:
 
 	/**
 	 * Renders lighting, blending, and effects in linear RGB, then encodes sRGB exactly once and presents.
-	 * Custom shaders must consume and produce linear RGB; alpha is never gamma encoded.
-	 * Existing scenes tuned for unencoded output need color and lighting retuning.
 	 * @param scene Scene
 	 * @param camera Camera
 	 * @param modes Bit mask containing all of the visualization modes to render. Defaults to RenderModes::MATERIAL.

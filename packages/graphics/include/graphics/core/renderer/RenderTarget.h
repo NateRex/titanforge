@@ -76,7 +76,7 @@ struct RenderTargetConfig
 
     /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.
-     * Defaults to one color attachment, with format PixelFormat::RGBA8.
+     * Defaults to one linear color attachment, with format PixelFormat::RGBA8.
      */
     std::vector<PixelFormat> colorFormats = { PixelFormat::RGBA8 };
 
@@ -95,7 +95,8 @@ struct RenderTargetConfig
 /**
  * A render target describes an off-screen destination for rendering by grouping one or more color outputs with an optional
  * depth-stencil output. It can be bound as the destination of a render pass, allowing rendered results to be sampled by later
- * passes or used for post-processing.
+ * passes or used for post-processing. Offscreen storage never receives displayGamma adjustment. Display adjustment and sRGB encoding
+ * is performed once by the renderer, after all composition and postprocessing.
  * @author Nathaniel Rex
  */
 class RenderTarget
@@ -128,7 +129,8 @@ public:
     const std::vector<TexturePtr>& colorTextures() const;
 
     /**
-     * Retrieves the color attachment texture for a given index
+     * Retrieves the color attachment texture for a given index. Regular texture sampling returns linear RGB
+     * even when storage is explicitly sRGB; alpha is never transfer encoded.
      * @param index Zero-based color attachment index
      * @return The color attachment texture for the given index
      * @throws IllegalArgumentException If the given index is out of bounds

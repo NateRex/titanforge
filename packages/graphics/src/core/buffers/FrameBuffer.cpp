@@ -37,11 +37,18 @@ FrameBufferPtr FrameBuffer::create()
 void FrameBuffer::bindDefault()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Final presentation performs its own sRGB encoding in the shader.
+    glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
 void FrameBuffer::bind() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _id);
+    
+    // OpenGL converts only sRGB attachments; linear attachments are unaffected.
+    // This also decodes destination RGB before blending. Alpha stays linear.
+    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 void FrameBuffer::attach(FrameBufferAttachment attachment, const TexturePtr texture)
@@ -49,7 +56,7 @@ void FrameBuffer::attach(FrameBufferAttachment attachment, const TexturePtr text
     int previous = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
 
-    bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, _id);
     glFramebufferTexture2D(GL_FRAMEBUFFER, toGLAttachment(attachment),
         texture ? texture->type() : GL_TEXTURE_2D, texture ? texture->id() : 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, previous);
@@ -60,7 +67,7 @@ void FrameBuffer::attach(FrameBufferAttachment attachment, const RenderBufferPtr
     int previous = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
 
-    bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, _id);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, toGLAttachment(attachment), GL_RENDERBUFFER, renderBuffer ? renderBuffer->id() : 0);
     glBindFramebuffer(GL_FRAMEBUFFER, previous);
 }
@@ -84,7 +91,7 @@ std::string FrameBuffer::status() const
     int previous = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
 
-    bind();
+    glBindFramebuffer(GL_FRAMEBUFFER, _id);
     unsigned int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     glBindFramebuffer(GL_FRAMEBUFFER, previous);
 
