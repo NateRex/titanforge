@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/core/shaders/FullScreenShader.h>
+#include <graphics/core/shaders/pointers/ShaderPtr.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <memory>
 
@@ -11,8 +12,12 @@
 class PresentationShader : public FullScreenShader
 {
 public:
-    /** Creates a presentation shader in the current OpenGL context. */
-    static std::shared_ptr<PresentationShader> create()
+
+    /**
+     * Constructs a new PresentationShader instance
+     * @return The new PresentationShader instance
+     */
+    static ShaderPtr create()
     {
         return std::shared_ptr<PresentationShader>(new PresentationShader());
     }
@@ -25,5 +30,9 @@ public:
     void draw(const TexturePtr& source, float displayGamma);
 
 private:
+
+    /**
+     * Constructor
+     */
     PresentationShader();
 };

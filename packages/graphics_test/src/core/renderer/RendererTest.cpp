@@ -3,6 +3,7 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
+#include <graphics/lights/AmbientLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 #include <graphics/geometry/BoxGeometry.h>
 #include <graphics/materials/MeshMaterial.h>
@@ -10,8 +11,35 @@
 #include <graphics/objects/Mesh.h>
 #include <graphics/objects/PostProcessing.h>
 #include <common/PrintHelpers.h>
+#include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <array>
+#include <limits>
 #include <thread>
 #include <chrono>
+
+struct PresentationSettings
+{
+    RendererPtr renderer = GlobalTestFixture::RENDERER;
+    Color background = renderer->getBackgroundColor();
+    float gamma = renderer->getDisplayGamma();
+    ~PresentationSettings()
+    {
+        renderer->setBackgroundColor(background);
+        renderer->setDisplayGamma(gamma);
+    }
+};
+
+std::array<unsigned char, 4> presentedPixel(int x = 0, int y = 0)
+{
+    std::array<unsigned char, 4> pixel;
+    glReadBuffer(GL_FRONT);
+    glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel.data());
+    glReadBuffer(GL_BACK);
+    BOOST_REQUIRE(glGetError() == GL_NO_ERROR);
+    return pixel;
+}
 
 /**
  * Tests the ability to get the current renderer time
@@ -93,4 +121,153 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 	// Ensure the renderer supplies intermediate textures only for the duration of each draw.
 	BOOST_TEST(first->texture == nullptr);
 	BOOST_TEST(second->texture == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(Renderer_linearPresentation)
+{
+    auto renderer = GlobalTestFixture::RENDERER;
+    PresentationSettings restore;
+    renderer->setBackgroundColor(Color(0.0031308f, 0.18f, 0.5f, 0.4f));
+    renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+    const auto pixel = presentedPixel();
+    BOOST_TEST(std::abs(int(pixel[0]) - 10) <= 2);
+    BOOST_TEST(std::abs(int(pixel[1]) - 118) <= 2);
+    BOOST_TEST(std::abs(int(pixel[2]) - 188) <= 2);
+    BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+}
+
+
+BOOST_AUTO_TEST_CASE(Renderer_displayGammaValidation)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    BOOST_TEST(renderer->getDisplayGamma() == 1.f);
+    renderer->setDisplayGamma(2.f);
+    for (float invalid : {0.f, -1.f, std::numeric_limits<float>::infinity(),
+                          -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::quiet_NaN()})
+    {
+        BOOST_CHECK_THROW(renderer->setDisplayGamma(invalid), IllegalArgumentException);
+        BOOST_TEST(renderer->getDisplayGamma() == 2.f);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(Renderer_displayGammaAfterLinearEffects)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setBackgroundColor(Color(0.25f, 0.25f, 0.25f, 0.4f));
+    auto camera = PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f);
+    auto scene = Scene::create();
+    renderer->setDisplayGamma(2.f);
+    renderer->render(scene, camera);
+    BOOST_TEST(std::abs(int(presentedPixel()[0]) - 188) <= 2); // sRGB(sqrt(0.25))
+
+    auto exposure = PostProcessMaterial::create();
+    exposure->exposure = 2.f;
+    auto contrast = PostProcessMaterial::create();
+    contrast->contrast = 0.5f;
+    scene->add(PostProcessing::create(exposure));
+    scene->add(PostProcessing::create(contrast));
+    for (bool srgbEnabled : {false, true})
+    {
+        if (srgbEnabled) glEnable(GL_FRAMEBUFFER_SRGB);
+        else glDisable(GL_FRAMEBUFFER_SRGB);
+        renderer->setDisplayGamma(1.f);
+        renderer->render(scene, camera);
+        auto pixel = presentedPixel();
+        BOOST_TEST(std::abs(int(pixel[0]) - 188) <= 2); // 0.25 * 2, then contrast => 0.5
+        BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+        renderer->setDisplayGamma(2.f);
+        renderer->render(scene, camera);
+        pixel = presentedPixel();
+        BOOST_TEST(std::abs(int(pixel[0]) - 219) <= 2); // sRGB(sqrt(0.5))
+        BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+    }
+    BOOST_TEST(exposure->texture == nullptr);
+    BOOST_TEST(contrast->texture == nullptr);
+}
+
+BOOST_AUTO_TEST_CASE(Renderer_clampsOnlyAtPresentation)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setBackgroundColor(Color(0.f, 0.5f, 1.f));
+    auto scene = Scene::create();
+    auto contrast = PostProcessMaterial::create();
+    contrast->contrast = 3.f; // [-1, 0.5, 2] must survive intermediate storage.
+    auto undoContrast = PostProcessMaterial::create();
+    undoContrast->contrast = 0.5f; // [-0.25, 0.5, 1.25], clamped at presentation.
+    scene->add(PostProcessing::create(contrast));
+    scene->add(PostProcessing::create(undoContrast));
+    renderer->render(scene, PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+    const auto pixel = presentedPixel();
+    BOOST_TEST(int(pixel[0]) <= 2);
+    BOOST_TEST(std::abs(int(pixel[1]) - 188) <= 2);
+    BOOST_TEST(int(pixel[2]) >= 253);
+}
+
+BOOST_AUTO_TEST_CASE(Renderer_blendsInLinearSpace)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setBackgroundColor(Color::BLACK);
+    auto scene = Scene::create();
+    auto light = AmbientLight::create();
+    light->intensity = 1.f;
+    scene->add(light);
+    auto material = MeshMaterial::create();
+    material->color = Color(1.f, 1.f, 1.f, 0.5f);
+    auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+    mesh->setPosition(0.f, 0.f, -3.f);
+    scene->add(mesh);
+    renderer->render(scene, PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f));
+    const auto pixel = presentedPixel(400, 300);
+    BOOST_TEST(std::abs(int(pixel[0]) - 188) <= 2); // half white over black is linear 0.5
+    BOOST_TEST(std::abs(int(pixel[1]) - 188) <= 2);
+    BOOST_TEST(std::abs(int(pixel[2]) - 188) <= 2);
+}
+
+BOOST_AUTO_TEST_CASE(Renderer_multisamplePresentation)
+{
+    struct ContextRestore
+    {
+        GLFWwindow* previous = glfwGetCurrentContext();
+        ~ContextRestore() { glfwMakeContextCurrent(previous); }
+    } restore;
+    
+    // WindowFlags sampling is a hint; verify the obtained context actually supports MSAA.
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    auto window = Window::create("Linear presentation test", 32, 32, WindowFlags::ANTI_ALIASING);
+    glfwWindowHint(GLFW_SAMPLES, 0);
+    auto renderer = Renderer::create(window);
+    GLint samples = 0;
+    glGetIntegerv(GL_SAMPLES, &samples);
+    BOOST_REQUIRE(samples > 1);
+    BOOST_TEST_CONTEXT("Actual default framebuffer samples: " << samples)
+    {
+        renderer->setBackgroundColor(Color(0.18f, 0.18f, 0.18f, 0.4f));
+        renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+        const auto pixel = presentedPixel();
+        BOOST_TEST(std::abs(int(pixel[0]) - 118) <= 2);
+        BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+    }
+}
+
+
+BOOST_AUTO_TEST_CASE(Renderer_extremeDisplayGamma)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setBackgroundColor(Color(0.f, 0.5f, 1.f, 0.4f));
+    for (float gamma : {std::numeric_limits<float>::denorm_min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::max()})
+    {
+        renderer->setDisplayGamma(gamma);
+        renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+        const auto pixel = presentedPixel();
+        BOOST_TEST(int(pixel[0]) <= 2);
+        BOOST_TEST(int(pixel[2]) >= 253);
+        BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+        if (gamma < 1.f) BOOST_TEST(int(pixel[1]) <= 2);
+        else BOOST_TEST(int(pixel[1]) >= 253);
+    }
 }

@@ -8,6 +8,7 @@
 #include <graphics/core/Color.h>
 #include <graphics/core/renderer/RenderPass.h>
 #include <mutex>
+#include <graphics/textures/pointers/TexturePtr.h>
 
 class Matrix3;
 class Matrix4;
@@ -57,18 +58,34 @@ public:
 	void getWindowDimensions(float* width, float* height) const;
 
 	/**
-	 * @return The current background clear color for draw commands
+	 * @return The current linear RGB background clear color for draw commands
 	 */
 	Color getBackgroundColor() const;
 
 	/**
-	 * Sets the current background clear color for draw commands
-	 * @param color Background color
+	 * Sets the current linear RGB background clear color for draw commands
+	 * @param color Linear RGB background color with unencoded alpha
 	 */
 	void setBackgroundColor(const Color& color);
 
+    /**
+	 * @return Display adjustment exponent; neutral default is 1.
+	 */
+    float getDisplayGamma() const;
+
+    /**
+     * Sets display adjustment, applied after all linear postprocessing and before fixed sRGB encoding.
+     * RGB is clamped to [0,1] before pow(rgb, 1 / displayGamma); no tone mapping is performed.
+     * Alpha is unchanged by display adjustment and encoding.
+     * @param displayGamma Finite positive exponent; defaults to 1.
+     * @throws IllegalArgumentException If the value is nonpositive or nonfinite; retains the previous value.
+     */
+    void setDisplayGamma(float displayGamma);
+
 	/**
-	 * Renders and presents a scene.
+	 * Renders lighting, blending, and effects in linear RGB, then encodes sRGB exactly once and presents.
+	 * Custom shaders must consume and produce linear RGB; alpha is never gamma encoded.
+	 * Existing scenes tuned for unencoded output need color and lighting retuning.
 	 * @param scene Scene
 	 * @param camera Camera
 	 * @param modes Bit mask containing all of the visualization modes to render. Defaults to RenderModes::MATERIAL.
@@ -114,11 +131,11 @@ private:
 	 * The current background (clear) color
 	 */
 	Color _backgroundColor;
-	
+
 	/**
-	 * OpenGL ID for the lazily created render-managed vertex array object used for full-screen post-processing draws
+	 * Display adjustment exponent
 	 */
-	unsigned int _fullScreenVertexArray = 0;
+	float _displayGamma = 1.f;
 
 	/**
 	 * Renderer-managed intermediate targets used to chain scene post-processing effects
@@ -163,10 +180,10 @@ private:
 	void getPassDimensions(const RenderPass& pass, float* width, float* height) const;
 
 	/**
-	 * Presents the completed default frame buffer and processes input and window events. This method should be called once
-	 * after composing all passes for a frame.
+	 * Configures and draws final display conversion, swaps buffers, and processes window events.
+	 * @param source Linear scene texture after all effects.
 	 */
-	void present();
+	void present(const TexturePtr& source);
 
 	/**
 	 * Configures the target, viewport, and clear operations for one render pass

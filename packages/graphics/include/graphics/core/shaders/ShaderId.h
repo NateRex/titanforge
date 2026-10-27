@@ -47,6 +47,11 @@ enum class ShaderId
 	POST_PROCESS,
 
 	/**
+	 * Shader used for final presentation of a scene. Applies final effects, such as gamma correction.
+	 */
+	PRESENTATION,
+
+	/**
 	 * Shader for drawing vertex normals
 	 */
 	VERTEX_NORMALS
