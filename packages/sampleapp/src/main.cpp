@@ -156,11 +156,11 @@ int main()
     scene->add(ambientLighting);
 
     // Create post-processing effects
-    // PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
-    // postProcessing->contrast = 1.1f;
-    // postProcessing->saturation = 0.65f;
-    // postProcessing->exposure = 1.1f;
-    // scene->add(PostProcessing::create(postProcessing));
+    PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
+    postProcessing->contrast = 1.04f;
+    postProcessing->saturation = 0.9f;
+    postProcessing->exposure = 1.1f;
+    scene->add(PostProcessing::create(postProcessing));
 
     // Create the ground
     MeshMaterialPtr groundMat = MeshMaterial::create();
