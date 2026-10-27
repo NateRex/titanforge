@@ -11,7 +11,10 @@ struct Environment;
 struct LightInstance;
 
 /**
- * Parent class to all shader programs, which are typically managed by the shader manager
+ * Parent class to all shader programs, which are typically managed by the shader manager.
+ * Shader inputs and outputs use linear RGB, including sampled colors, lighting, and vertex colors.
+ * Custom shaders must not apply display gamma or sRGB output encoding: Renderer owns final conversion.
+ * Alpha represents opacity and is never gamma encoded.
  * @author Nathaniel Rex
  */
 class Shader {

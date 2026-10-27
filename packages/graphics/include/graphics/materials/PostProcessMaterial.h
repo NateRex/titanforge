@@ -3,7 +3,10 @@
 #include <graphics/materials/pointers/PostProcessMaterialPtr.h>
 
 /**
- * A material containing the uniform values used in post-processing shaders
+ * A material containing the uniform values used in post-processing shaders.
+ * Input textures, tint RGB, and all effect calculations use linear RGB. Output stays linear
+ * for subsequent effects; Renderer applies displayGamma and sRGB encoding only at presentation.
+ * Alpha is unencoded and preserved except for multiplication by the material tint alpha.
  * @author Nathaniel Rex
  */
 class PostProcessMaterial : public Material

@@ -103,7 +103,7 @@ struct RenderPass
     ClearFlags clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
 
     /**
-     * Color value used when clearing color buffers. Defaults to black.
+     * Linear RGB clear color with unencoded alpha. Defaults to black.
      */
     Color clearColor = Color::BLACK;
 
