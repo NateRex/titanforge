@@ -26,6 +26,9 @@ MeshPtr findMesh(const EntityPtr& entity)
 	return nullptr;
 }
 
+/**
+ * Tests loading a model hierarchy with mesh geometry, material, normals, and texture coordinates
+ */
 BOOST_AUTO_TEST_CASE(ModelLoader_loadsHierarchy)
 {
 	EntityPtr model = ModelLoader::load("assets/triangle.obj");
@@ -43,6 +46,9 @@ BOOST_AUTO_TEST_CASE(ModelLoader_loadsHierarchy)
 	BOOST_CHECK(attributes.uvs);
 }
 
+/**
+ * Tests that loading a missing model throws an instantiation exception
+ */
 BOOST_AUTO_TEST_CASE(ModelLoader_failureCase)
 {
 	BOOST_CHECK_THROW(ModelLoader::load("assets/missing.obj"), InstantiationException);

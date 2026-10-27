@@ -124,6 +124,9 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 	BOOST_TEST(second->texture == nullptr);
 }
 
+/**
+ * Tests standard sRGB presentation of linear background colors without changing alpha
+ */
 BOOST_AUTO_TEST_CASE(Renderer_linearPresentation)
 {
     auto renderer = GlobalTestFixture::RENDERER;
@@ -138,6 +141,9 @@ BOOST_AUTO_TEST_CASE(Renderer_linearPresentation)
 }
 
 
+/**
+ * Tests the neutral display gamma default and rejection of non-positive or non-finite settings
+ */
 BOOST_AUTO_TEST_CASE(Renderer_displayGammaValidation)
 {
     PresentationSettings restore;
@@ -152,6 +158,10 @@ BOOST_AUTO_TEST_CASE(Renderer_displayGammaValidation)
     }
 }
 
+/**
+ * Tests display gamma after linear postprocessing and before sRGB encoding, preserving alpha
+ * regardless of the framebuffer sRGB state
+ */
 BOOST_AUTO_TEST_CASE(Renderer_displayGammaAfterLinearEffects)
 {
     PresentationSettings restore;
@@ -188,6 +198,9 @@ BOOST_AUTO_TEST_CASE(Renderer_displayGammaAfterLinearEffects)
     BOOST_TEST(contrast->texture == nullptr);
 }
 
+/**
+ * Tests that intermediate effects retain out-of-range RGB values until final presentation clamps them
+ */
 BOOST_AUTO_TEST_CASE(Renderer_clampsOnlyAtPresentation)
 {
     PresentationSettings restore;
@@ -207,6 +220,9 @@ BOOST_AUTO_TEST_CASE(Renderer_clampsOnlyAtPresentation)
     BOOST_TEST(int(pixel[2]) >= 253);
 }
 
+/**
+ * Tests transparent blending in linear RGB before final sRGB encoding
+ */
 BOOST_AUTO_TEST_CASE(Renderer_blendsInLinearSpace)
 {
     PresentationSettings restore;
@@ -228,6 +244,9 @@ BOOST_AUTO_TEST_CASE(Renderer_blendsInLinearSpace)
     BOOST_TEST(std::abs(int(pixel[2]) - 188) <= 2);
 }
 
+/**
+ * Tests linear color presentation with multisampling and shader cache isolation between contexts
+ */
 BOOST_AUTO_TEST_CASE(Renderer_multisamplePresentation)
 {
     // Prime the global shader cache in the fixture context so this test also
@@ -271,6 +290,9 @@ BOOST_AUTO_TEST_CASE(Renderer_multisamplePresentation)
 }
 
 
+/**
+ * Tests extreme finite positive display gamma values while preserving endpoints and alpha
+ */
 BOOST_AUTO_TEST_CASE(Renderer_extremeDisplayGamma)
 {
     PresentationSettings restore;
@@ -286,5 +308,60 @@ BOOST_AUTO_TEST_CASE(Renderer_extremeDisplayGamma)
         BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
         if (gamma < 1.f) BOOST_TEST(int(pixel[1]) <= 2);
         else BOOST_TEST(int(pixel[1]) >= 253);
+    }
+}
+
+/**
+ * Tests equivalent displayed output from linear and explicit sRGB background, material, and vertex colors
+ */
+BOOST_AUTO_TEST_CASE(Renderer_equivalentLinearAndSRGBInputs)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setDisplayGamma(1.f);
+    const Color linear(0.2158605f, 0.05126946f, 1.f, 128.f / 255.f);
+    const Color srgb = Color::fromSRGBHex("#8040ff80");
+    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
+    auto scene = Scene::create();
+
+    // Background exercises alpha without blending or material opacity rules.
+    for (const auto& color : {linear, srgb})
+    {
+        renderer->setBackgroundColor(color);
+        renderer->render(scene, camera);
+        auto pixel = presentedPixel();
+        for (unsigned int i = 0; i < 4; ++i)
+            BOOST_TEST(std::abs(int(pixel[i]) - std::array<int, 4>{128, 64, 255, 128}[i]) <= 2);
+    }
+
+    renderer->setBackgroundColor(Color::BLACK);
+    auto light = AmbientLight::create();
+    light->intensity = 1.f;
+    scene->add(light);
+    auto geometry = Geometry::create(PrimitiveType::TRIANGLES);
+    const float positions[] = {-1.f, -1.f, -3.f, 1.f, -1.f, -3.f, 0.f, 1.f, -3.f};
+    const float normals[] = {0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f};
+    geometry->setVertices(positions, 3);
+    geometry->setNormals(normals, 3);
+    auto material = MeshMaterial::create();
+    scene->add(Mesh::create(geometry, material));
+    for (bool vertices : {false, true})
+    {
+        material->useVertexColors = vertices;
+        for (const auto& color : {linear, srgb})
+        {
+            material->color = vertices ? Color::WHITE : color.withAlpha(1.f);
+            const float colors[] = {
+                color.red(), color.green(), color.blue(), 1.f,
+                color.red(), color.green(), color.blue(), 1.f,
+                color.red(), color.green(), color.blue(), 1.f};
+            geometry->setColors(colors, 3);
+            renderer->render(scene, camera);
+            const auto pixel = presentedPixel(400, 300);
+            BOOST_TEST(std::abs(int(pixel[0]) - 128) <= 2);
+            BOOST_TEST(std::abs(int(pixel[1]) - 64) <= 2);
+            BOOST_TEST(std::abs(int(pixel[2]) - 255) <= 2);
+            BOOST_TEST(std::abs(int(pixel[3]) - 255) <= 2);
+        }
     }
 }

@@ -1,7 +1,9 @@
 #pragma once
+#include <array>
+#include <string>
 
 /**
- * An RGBA color value
+ * A linear RGB color value with unencoded alpha. All components lie in [0, 1].
  * @author Nathaniel Rex
  */
 class Color
@@ -20,13 +22,43 @@ public:
 	Color(const Color& color);
 
 	/**
-	 * Constructs a color from four floating point values in the range 0 to 1
+	 * Constructs a linear RGB color from four floating point values in the range 0 to 1.
+	 * No sRGB decoding is performed; use fromSRGB for design-tool colors.
+	 * @throws IllegalArgumentException if any component is outside [0, 1]
 	 * @param r Red channel value
 	 * @param g Green channel value
 	 * @param b Blue channel value
 	 * @param a Alpha channel value. Defaults to 1 (fully opaque).
 	 */
 	Color(float r, float g, float b, float a = 1.0f);
+
+	/**
+	 * Decodes standard sRGB components to linear RGB, leaving alpha unchanged.
+	 * @param r Finite sRGB red in [0, 1]
+	 * @param g Finite sRGB green in [0, 1]
+	 * @param b Finite sRGB blue in [0, 1]
+	 * @param a Finite unencoded alpha in [0, 1], default 1 (opaque)
+	 * @return Linear RGB color with the supplied alpha
+	 * @throws IllegalArgumentException if any component is non-finite or outside [0, 1]
+	 */
+	static Color fromSRGB(float r, float g, float b, float a = 1.f);
+
+	/**
+	 * Encodes linear RGB to standard sRGB for export or UI, leaving alpha unchanged.
+	 * Do not pass the returned RGB to rendering APIs that expect linear inputs.
+	 * @return Array in RGBA order, each component in [0, 1]
+	 */
+	std::array<float, 4> toSRGB() const;
+
+	/**
+	 * Decodes an sRGB hex swatch to linear RGB, leaving alpha unencoded.
+	 * @param hex Exactly six RRGGBB or eight RRGGBBAA ASCII hex digits, optionally
+	 * prefixed by #, case insensitive. Six digits imply alpha 1. No whitespace,
+	 * shorthand, or 0x prefix is accepted. Each byte represents a channel in [0, 255].
+	 * @return Linear RGB color with alpha equal to the alpha byte divided by 255
+	 * @throws IllegalArgumentException for any invalid representation
+	 */
+	static Color fromSRGBHex(const std::string& hex);
 
 	/**
 	 * @return The red channel value (a value between 0 and 1)

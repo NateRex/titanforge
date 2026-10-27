@@ -19,7 +19,7 @@ public:
 	const LightType lightType;
 
 	/**
-	 * Color
+	 * Linear RGB light color with unencoded alpha. Defaults to white.
 	 */
 	Color color;
 
