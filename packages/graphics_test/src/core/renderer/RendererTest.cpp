@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <graphics_test/GlobalTestFixture.h>
 #include <graphics/core/renderer/Renderer.h>
+#include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
@@ -229,28 +230,44 @@ BOOST_AUTO_TEST_CASE(Renderer_blendsInLinearSpace)
 
 BOOST_AUTO_TEST_CASE(Renderer_multisamplePresentation)
 {
-    struct ContextRestore
+    // Prime the global shader cache in the fixture context so this test also
+    // catches context isolation failures when run on its own.
+    GlobalTestFixture::RENDERER->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+
     {
-        GLFWwindow* previous = glfwGetCurrentContext();
-        ~ContextRestore() { glfwMakeContextCurrent(previous); }
-    } restore;
-    
-    // WindowFlags sampling is a hint; verify the obtained context actually supports MSAA.
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    auto window = Window::create("Linear presentation test", 32, 32, WindowFlags::ANTI_ALIASING);
-    glfwWindowHint(GLFW_SAMPLES, 0);
-    auto renderer = Renderer::create(window);
-    GLint samples = 0;
-    glGetIntegerv(GL_SAMPLES, &samples);
-    BOOST_REQUIRE(samples > 1);
-    BOOST_TEST_CONTEXT("Actual default framebuffer samples: " << samples)
-    {
-        renderer->setBackgroundColor(Color(0.18f, 0.18f, 0.18f, 0.4f));
-        renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
-        const auto pixel = presentedPixel();
-        BOOST_TEST(std::abs(int(pixel[0]) - 118) <= 2);
-        BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+        struct ContextRestore
+        {
+            GLFWwindow* previous = glfwGetCurrentContext();
+            ~ContextRestore() { glfwMakeContextCurrent(previous); }
+        } restore;
+
+        // ShaderManager is global, but program and VAO names belong to a context.
+        // Release fixture shaders while their context is still current.
+        ShaderManager::reset();
+        auto window = Window::create("Linear presentation test", 32, 32, WindowFlags::ANTI_ALIASING);
+        auto renderer = Renderer::create(window);
+        struct ShaderCacheReset
+        {
+            // Runs before renderer/window destruction, while the test context is current.
+            ~ShaderCacheReset() { ShaderManager::reset(); }
+        } resetTestShaders;
+
+        GLint samples = 0;
+        glGetIntegerv(GL_SAMPLES, &samples);
+        BOOST_REQUIRE(samples > 1);
+        BOOST_TEST_CONTEXT("Actual default framebuffer samples: " << samples)
+        {
+            renderer->setBackgroundColor(Color(0.18f, 0.18f, 0.18f, 0.4f));
+            renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+            const auto pixel = presentedPixel();
+            BOOST_TEST(std::abs(int(pixel[0]) - 118) <= 2);
+            BOOST_TEST(std::abs(int(pixel[3]) - 102) <= 2);
+        }
     }
+
+    // Verify the fixture can recreate and use its own shaders after restoration.
+    GlobalTestFixture::RENDERER->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+    BOOST_CHECK_NO_THROW(presentedPixel());
 }
 
 

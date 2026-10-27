@@ -4,17 +4,21 @@
 
 constexpr const char* PRESENTATION_FRAGMENT = R"(
     #version 330 core
+    
     in vec2 frag_TexCoord;
     uniform sampler2D source;
     uniform float displayGamma;
     out vec4 FragColor;
+
     float adjust(float value) {
         if (value <= 0.0) return 0.0;
         if (value >= 1.0) return 1.0;
+        
         // Equivalent to pow(value, 1 / displayGamma), without reciprocal overflow
         // or undefined pow(0, 0) for extreme but valid finite gamma values.
         return exp(log(value) / displayGamma);
     }
+
     void main() {
         vec4 value = texture(source, frag_TexCoord);
         vec3 adjusted = vec3(adjust(value.r), adjust(value.g), adjust(value.b));
