@@ -24,10 +24,11 @@ TextureLoader* TextureLoader::getInstance()
 	return _INSTANCE.get();
 }
 
-TexturePtr TextureLoader::load(const std::string& path, bool flip)
+TexturePtr TextureLoader::load(const std::string& path, bool flip, TextureEncoding encoding)
 {
 	TextureLoader* loader = getInstance();
-	const std::string cacheKey = resolvePath(path) + (flip ? "|flip" : "|no-flip");
+	const std::string cacheKey = resolvePath(path) + (flip ? "|flip" : "|no-flip")
+		+ (encoding == TextureEncoding::SRGB ? "|srgb" : "|linear");
 
 	auto existing = loader->_textures.find(cacheKey);
 	if (existing != loader->_textures.end())
@@ -35,7 +36,7 @@ TexturePtr TextureLoader::load(const std::string& path, bool flip)
 		return existing->second;
 	}
 
-	TexturePtr texture = Texture2D::create(path, flip);
+	TexturePtr texture = Texture2D::create(path, flip, encoding);
 	loader->_textures[cacheKey] = texture;
 	return texture;
 }

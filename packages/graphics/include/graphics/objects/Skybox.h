@@ -36,7 +36,8 @@ class Skybox : public Renderable
 public:
 
 	/**
-	 * Constructs a cube texture consisting of the default skybox imagery
+	 * Constructs a cube texture consisting of the default sRGB skybox imagery.
+	 * RGB decodes to linear during sampling; alpha is unchanged.
 	 * @return The cube texture consisting of the default skybox imagery
 	 */
 	static TextureCubePtr createDefaultTexture();

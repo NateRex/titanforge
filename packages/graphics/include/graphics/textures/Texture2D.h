@@ -40,13 +40,17 @@ public:
 	 * @param path Path to the image file. This path should be relative to the current executable.
 	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped when loading.
 	 * Defaults to false
+	 * @param encoding (Optional) Image encoding. sRGB inputs expand to RGBA with linear alpha;
+	 * grayscale replicates to RGB and missing alpha becomes opaque. LINEAR preserves source channels
+	 * and must be used for numeric data maps. RGB decodes before filtering and lighting. Defaults to SRGB.
 	 * @return The new texture
 	 */
-	static Texture2DPtr create(const std::string& path, bool flip = false);
+	static Texture2DPtr create(const std::string& path, bool flip = false, TextureEncoding encoding = TextureEncoding::SRGB);
 
 	/**
 	 * Creates a two-dimensional texture from a storage config.
-	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * @param config Texture dimensions, explicit storage format, mipmap behavior, and sampler configuration.
+	 * No file-encoding default is applied: choose SRGB8/SRGBA8 for encoded RGB, linear formats for data.
 	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */
@@ -73,12 +77,14 @@ private:
 	 * This path is relative to the directory containing the currently running executable.
 	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped when loading.
 	 * Defaults to false
+	 * @param encoding Image encoding; alpha is unchanged.
 	 */
-	Texture2D(const std::string& path, bool flip);
+	Texture2D(const std::string& path, bool flip, TextureEncoding encoding);
 
 	/**
 	 * Constructor
-	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * @param config Texture dimensions, explicit storage format, mipmap behavior, and sampler configuration.
+	 * No file-encoding default is applied: choose SRGB8/SRGBA8 for encoded RGB, linear formats for data.
 	 * @param data Optional tightly packed pixel data. When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
 	 */

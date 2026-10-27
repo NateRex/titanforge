@@ -5,12 +5,12 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-Texture2D::Texture2D(const std::string& path, bool flip): Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
+Texture2D::Texture2D(const std::string& path, bool flip, TextureEncoding encoding): Texture(GL_TEXTURE_2D, GL_TEXTURE_BINDING_2D)
 {
 	// Load image
 	int width, height, channels;
 	stbi_set_flip_vertically_on_load(flip);
-	unsigned char* data = stbi_load(resolvePath(path).c_str(), &width, &height, &channels, 0);
+	unsigned char* data = stbi_load(resolvePath(path).c_str(), &width, &height, &channels, encoding == TextureEncoding::SRGB ? STBI_rgb_alpha : 0);
 	if (!data) throw InstantiationException("Failed to load texture image: " + path);
 
 	// Update config
@@ -18,7 +18,11 @@ Texture2D::Texture2D(const std::string& path, bool flip): Texture(GL_TEXTURE_2D,
 	_config.height = height;
 	_config.generateMipmaps = true;
 	_config.sampling.minFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
-	switch (channels)
+	if (encoding == TextureEncoding::SRGB)
+	{
+		_config.format = PixelFormat::SRGBA8;
+	}
+	else switch (channels)
 	{
 		case 1: _config.format = PixelFormat::R8; break;
 		case 2: _config.format = PixelFormat::RG8; break;
@@ -47,9 +51,9 @@ Texture2D::Texture2D(const Texture2DConfig& config, const void* data):
 	allocate(data);
 }
 
-Texture2DPtr Texture2D::create(const std::string& path, bool flip)
+Texture2DPtr Texture2D::create(const std::string& path, bool flip, TextureEncoding encoding)
 {
-	return Texture2DPtr(new Texture2D(path, flip));
+	return Texture2DPtr(new Texture2D(path, flip, encoding));
 }
 
 Texture2DPtr Texture2D::create(const Texture2DConfig& config, const void* data)

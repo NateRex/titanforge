@@ -49,7 +49,9 @@ TexturePtr loadTexture(const aiMaterial* aiMat, aiTextureType type, const std::f
 	if (resolvedPath.is_relative()) {
 		resolvedPath = modelDirectory / resolvedPath;
 	}
-	return TextureLoader::load(resolvedPath.lexically_normal().generic_string());
+	return TextureLoader::load(resolvedPath.lexically_normal().generic_string(), false,
+		(type == aiTextureType_BASE_COLOR || type == aiTextureType_DIFFUSE)
+			? TextureEncoding::SRGB : TextureEncoding::LINEAR);
 }
 
 MeshMaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::path& modelDirectory)

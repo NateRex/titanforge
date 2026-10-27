@@ -33,13 +33,17 @@ public:
 	 * @param paths Relative paths to the image files that will be used to generate the texture. Each path should be releative to the
 	 * current executable. The expected image order is right, left, top, bottom, front, and back.
 	 * @param flip (Optional) Boolean flag that, when true, will cause each image to be flipped when loading. Defaults to false.
+	 * @param encoding (Optional) Image encoding. sRGB inputs expand to RGBA with linear alpha;
+	 * grayscale replicates to RGB and missing alpha becomes opaque. LINEAR preserves source channels
+	 * and must be used for numeric data maps. RGB decodes before filtering and lighting. Defaults to SRGB.
 	 * @return The new texture
 	 */
-	static TextureCubePtr create(const std::array<std::string, 6>& paths, bool flip = false);
+	static TextureCubePtr create(const std::array<std::string, 6>& paths, bool flip = false, TextureEncoding encoding = TextureEncoding::SRGB);
 
 	/**
 	 * Creates a cube texture from a storage config.
-	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * @param config Texture dimensions, explicit storage format, mipmap behavior, and sampler configuration.
+	 * No file-encoding default is applied: choose SRGB8/SRGBA8 for encoded RGB, linear formats for data.
 	 * @param data Optional tightly packed pixel data for each face. The expected data order is right, left, top, bottom, front, and back.
 	 * When null, storage is allocated without initial pixel values.
 	 * @return The new texture.
@@ -74,12 +78,14 @@ private:
 	 * @param paths Relative paths to the image files that will be used to generate the texture. Each path should be releative to the
 	 * current executable. The expected order is right, left, top, bottom, back, and front.
 	 * @param flip (Optional) Boolean flag that, when true, will cause each image to be flipped when loading. Defaults to false.
+	 * @param encoding Image encoding; alpha is unchanged.
 	 */
-	TextureCube(const std::array<std::string, 6>& paths, bool flip);
+	TextureCube(const std::array<std::string, 6>& paths, bool flip, TextureEncoding encoding);
 
 	/**
 	 * Constructor
-	 * @param config Texture dimensions, format, mipmap behavior, and sampler configuration.
+	 * @param config Texture dimensions, explicit storage format, mipmap behavior, and sampler configuration.
+	 * No file-encoding default is applied: choose SRGB8/SRGBA8 for encoded RGB, linear formats for data.
 	 * @param data Optional tightly packed pixel data for each face. The expected order is right, left, top, bottom, back, front.
 	 * When null, storage is allocated without initial pixel values.
 	 */
