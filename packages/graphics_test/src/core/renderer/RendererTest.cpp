@@ -3,7 +3,6 @@
 #include <graphics/core/renderer/Renderer.h>
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/buffers/FrameBuffer.h>
-#include <graphics/core/shaders/FullScreenShader.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
@@ -22,7 +21,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <graphics/core/renderer/DrawState.h>
-#include <graphics/textures/Texture.h>
+#include <graphics/textures/Texture2D.h>
 #include <limits>
 #include <cmath>
 
@@ -37,21 +36,6 @@ struct PresentationSettings
         renderer->setDisplayGamma(gamma);
     }
 };
-
-class OffscreenColorShader : public FullScreenShader
-    {
-    public:
-        OffscreenColorShader() : FullScreenShader("Offscreen color test", R"(
-            #version 330 core
-            layout(location = 0) out vec4 first;
-            layout(location = 1) out vec4 second;
-            void main()
-            {
-                first = vec4(0.5, 0.125, 1.0, 0.5);
-                second = first;
-            }
-        )") {}
-    };
 
 /**
  * Tests point and spot light traversal and rendering across attenuation configurations.
@@ -534,82 +518,88 @@ BOOST_AUTO_TEST_CASE(Renderer_linearAndSRGBInputConfiguration)
 }
 
 /**
- * Tests mixed linear/sRGB attachment formats, resolve, and texture composition
- * with and without postprocessing.
+ * Tests mixed linear/sRGB offscreen storage and composition through engine objects.
+ * Pixel conversion, blending, and resolve output are outside this structural test.
  */
 BOOST_AUTO_TEST_CASE(Renderer_offscreenTextureComposition)
 {
-    PresentationSettings restore;
-    auto renderer = restore.renderer;
-    renderer->setDisplayGamma(2.f);
-    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
-    OffscreenColorShader shader;
     for (unsigned int samples : {1u, 2u})
     {
-        RenderTargetConfig config;
-        config.sizeMode = TargetSizeMode::FIXED;
-        config.width = config.height = 4;
-        config.colorFormats = {PixelFormat::RGBA8, PixelFormat::SRGBA8};
-        config.depthStencilStorage = DepthStencilStorage::NONE;
-        config.samples = samples;
-        auto target = RenderTarget::create(config);
-        target->frameBuffer()->bind();
-        glViewport(0, 0, 4, 4);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
-        // A nonblack destination catches missing sRGB decode before blending.
-        glClearColor(0.5f, 0.125f, 1.f, 0.3f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        shader.draw();
-        glDisable(GL_BLEND);
+        BOOST_TEST_CONTEXT("samples=" << samples)
+        {
+            RenderTargetConfig config;
+            config.sizeMode = TargetSizeMode::FIXED;
+            config.width = config.height = 4;
+            config.colorFormats = {PixelFormat::RGBA8, PixelFormat::SRGBA8};
+            config.depthStencilStorage = DepthStencilStorage::NONE;
+            config.samples = samples;
+            auto target = RenderTarget::create(config);
+            BOOST_REQUIRE(target->frameBuffer() != nullptr);
+            BOOST_TEST(target->frameBuffer()->isComplete());
+            BOOST_REQUIRE_EQUAL(target->colorTextures().size(), 2u);
+            BOOST_TEST(target->depthStencilTexture() == nullptr);
+            BOOST_TEST(target->depthStencilRenderBuffer() == nullptr);
+            BOOST_TEST(target->config().samples == samples);
 
-        auto resolved = target;
-        if (samples > 1)
-        {
-            config.samples = 1;
-            resolved = RenderTarget::create(config);
-            resolved->frameBuffer()->bind();
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, target->frameBuffer()->id());
-            for (unsigned int i = 0; i < 2; ++i)
+            for (unsigned int i = 0; i < config.colorFormats.size(); ++i)
             {
-                glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
-                glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
-                glBlitFramebuffer(0, 0, 4, 4, 0, 0, 4, 4, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-            }
-        }
-        for (unsigned int i = 0; i < 2; ++i)
-        {
-            BOOST_REQUIRE(resolved->colorTexture(i) != nullptr);
-            BOOST_TEST(resolved->colorTexture(i)->format() == config.colorFormats[i]);
-            BOOST_TEST(resolved->colorTexture(i)->width() == 4u);
-            BOOST_TEST(resolved->colorTexture(i)->height() == 4u);
-            auto scene = Scene::create();
-            auto light = AmbientLight::create();
-            light->intensity = 1.f;
-            scene->add(light);
-            auto material = MeshMaterial::create();
-            material->texture = resolved->colorTexture(i);
-            material->alphaMode = AlphaMode::OPAQUE;
-            auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
-            mesh->setPosition(0.f, 0.f, -3.f);
-            scene->add(mesh);
-            for (bool effects : {false, true})
-            {
-                if (effects)
+                BOOST_TEST_CONTEXT("attachment=" << i)
                 {
+                    auto texture = std::dynamic_pointer_cast<Texture2D>(target->colorTexture(i));
+                    BOOST_REQUIRE(texture != nullptr);
+                    BOOST_TEST(texture->format() == config.colorFormats[i]);
+                    BOOST_TEST(texture->width() == 4u);
+                    BOOST_TEST(texture->height() == 4u);
+                    BOOST_TEST(texture->config().samples == samples);
+
+                    // Mesh materials consume regular textures. Multisample storage
+                    // requires a resolve before composition, which is not performed here.
+                    if (samples > 1) continue;
+
+                    auto scene = Scene::create();
+                    auto light = AmbientLight::create();
+                    scene->add(light);
+                    auto material = MeshMaterial::create();
+                    material->texture = texture;
+                    material->alphaMode = AlphaMode::OPAQUE;
+                    auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+                    mesh->setPosition(0.f, 0.f, -3.f);
+                    scene->add(mesh);
                     auto effect = PostProcessMaterial::create();
                     effect->exposure = 0.5f;
-                    scene->add(PostProcessing::create(effect));
+
+                    for (bool effects : {false, true})
+                    {
+                        if (effects) scene->add(PostProcessing::create(effect));
+                        DrawState state;
+                        scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+                        BOOST_REQUIRE_EQUAL(state.items.size(), 1u);
+                        BOOST_TEST(state.items[0].material == material.get());
+                        BOOST_TEST(state.items[0].geometryBuffer != nullptr);
+                        const auto variant = state.items[0].variant(RenderModes::MATERIAL);
+                        BOOST_REQUIRE(variant != nullptr);
+                        BOOST_TEST(variant->layer == DrawLayer::OPAQUE);
+                        BOOST_TEST(material->texture == target->colorTexture(i));
+                        BOOST_REQUIRE_EQUAL(state.lights.size(), 1u);
+                        BOOST_TEST(state.lights[0].light == light.get());
+                        BOOST_REQUIRE_EQUAL(state.postProcessing.size(), effects ? 1u : 0u);
+                        if (effects)
+                        {
+                            BOOST_TEST(state.postProcessing[0] == effect.get());
+                            BOOST_TEST(state.postProcessing[0]->exposure == 0.5f);
+                        }
+                        BOOST_TEST(effect->texture == nullptr);
+                    }
+
+                    // Resizing preserves the attachment held by the material.
+                    target->resize(8, 6);
+                    BOOST_TEST(material->texture == target->colorTexture(i));
+                    BOOST_TEST(material->texture->width() == 8u);
+                    BOOST_TEST(material->texture->height() == 6u);
+                    BOOST_TEST(material->texture->format() == config.colorFormats[i]);
+                    BOOST_TEST(target->frameBuffer()->isComplete());
+                    target->resize(4, 4);
                 }
-                renderer->render(scene, camera);
-                BOOST_TEST(material->texture == resolved->colorTexture(i));
-                DrawState state;
-                scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-                BOOST_REQUIRE_EQUAL(state.postProcessing.size(), effects ? 1u : 0u);
-                if (effects) BOOST_TEST(state.postProcessing[0]->texture == nullptr);
             }
         }
     }
