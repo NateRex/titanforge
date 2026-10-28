@@ -117,11 +117,13 @@ public:
 
     /**
 	 * Diffuse map used to control diffuse-light contribution across a surface. Can be null.
+	 * Numeric multiplier: load file imagery with TextureEncoding::LINEAR.
 	 */
 	TexturePtr diffuseMap = nullptr;
 
 	/**
 	 * Specular map used to control specular-highlight intensity across a surface. Can be null.
+	 * Numeric multiplier: load file imagery with TextureEncoding::LINEAR.
 	 */
 	TexturePtr specularMap = nullptr;
 

@@ -13,6 +13,11 @@ public:
 
 	/**
 	 * Loads a model and converts its node hierarchy into TitanForge entities that can be rendered
+	 * Base-color/diffuse images are sRGB color (alpha unchanged). LIGHTMAP and specular
+	 * maps are linear numeric lighting multipliers. Embedded model textures remain unsupported.
+	 * Imported numeric material base/diffuse colors and vertex colors are interpreted as linear RGB,
+	 * with unencoded alpha, and are passed through without sRGB decoding. Author/export these
+	 * values in linear space; image encoding is handled separately.
 	 * @param path Path to the model, relative to the running executable
 	 * @return An entity group corresponding to the imported scene's root node
 	 * @throws InstantiationException on failure to import the entity

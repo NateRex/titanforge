@@ -89,6 +89,8 @@ struct RenderPass
 {
     /**
      * Destination render target, or null for the default frame buffer.
+     * Offscreen passes write linear shader output with per-attachment storage encoding and no displayGamma.
+     * The renderer reserves display adjustment and final sRGB encoding for presentation.
      */
     RenderTargetPtr target = nullptr;
 
@@ -103,7 +105,7 @@ struct RenderPass
     ClearFlags clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
 
     /**
-     * Color value used when clearing color buffers. Defaults to black.
+     * Linear RGB clear color with unencoded alpha. Defaults to black.
      */
     Color clearColor = Color::BLACK;
 

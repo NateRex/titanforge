@@ -7,3 +7,7 @@ CMakeSettings.json
 .vscode
 .vs
 out
+
+docs
+AGENTS.md
+.scratch

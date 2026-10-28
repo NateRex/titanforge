@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(Skybox_basics)
 	BOOST_REQUIRE(texture);
 
 	BOOST_TEST(texture->size() > 0u);
-	BOOST_TEST(texture->format() == PixelFormat::RGB8);
+	BOOST_TEST(texture->format() == PixelFormat::SRGB8);
 
 	BOOST_REQUIRE_THROW(skybox->setPosition(0.f, 0.f, 0.f), UnsupportedOperationException);
 	BOOST_REQUIRE_THROW(skybox->setScaling(1.f), UnsupportedOperationException);

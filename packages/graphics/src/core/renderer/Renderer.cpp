@@ -5,6 +5,8 @@
 #include <graphics/core/input/InputController.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/PresentationShader.h>
+#include <graphics/core/shaders/PostProcessShader.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/core/buffers/InstanceBuffer.h>
 #include <graphics/core/buffers/FrameBuffer.h>
@@ -13,6 +15,7 @@
 #include <graphics/materials/MeshMaterial.h>
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
+#include <graphics/textures/Texture.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <common/Utils.h>
@@ -20,6 +23,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <sstream>
+#include <cmath>
 #include <algorithm>
 
 int Renderer::_RENDERER_COUNT = 0;
@@ -77,11 +81,6 @@ Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
 
 Renderer::~Renderer()
 {
-	if (_fullScreenVertexArray != 0)
-	{
-		glDeleteVertexArrays(1, &_fullScreenVertexArray);
-		_fullScreenVertexArray = 0;
-	}
 	destroy();
 }
 
@@ -116,6 +115,20 @@ void Renderer::setBackgroundColor(const Color& color)
 	_backgroundColor = color;
 }
 
+float Renderer::getDisplayGamma() const
+{
+    return _displayGamma;
+}
+
+void Renderer::setDisplayGamma(float displayGamma)
+{
+    if (!std::isfinite(displayGamma) || displayGamma <= 0.f)
+    {
+        throw IllegalArgumentException("Display gamma must be finite and positive");
+    }
+    _displayGamma = displayGamma;
+}
+
 void Renderer::destroy()
 {
 	if (_destroyed)
@@ -137,56 +150,53 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	RenderPass pass;
 	pass.clearColor = _backgroundColor;
 	pass.clearFlags = ClearFlags::COLOR | ClearFlags::DEPTH;
-	const RenderPass finalPass = pass;
 
 	// Traverse scene to form drawing state
 	DrawState state;
 	scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
 	
-	// Set up off-screen targets used for post-processing effects
-	if (!state.postProcessing.empty())
+	// Always render and blend in linear floating-point storage before presentation.
+	float width, height;
+	getPassDimensions(pass, &width, &height);
+	if (width <= 0 || height <= 0)
 	{
-		float width, height;
-		getPassDimensions(pass, &width, &height);
-		if (width <= 0 || height <= 0)
-		{
-			throw IllegalStateException("Cannot post-process an empty framebuffer");
-		}
-
-		// Single-sample offscreen targets
-		RenderTargetConfig targetConfig;
-		targetConfig.sizeMode = TargetSizeMode::FIXED;
-		targetConfig.width = width;
-		targetConfig.height = height;
-		targetConfig.colorFormats = { PixelFormat::RGBA16F };
-		for (RenderTargetPtr& target : _postProcessTargets)
-		{
-			if (!target)
-			{
-				target = RenderTarget::create(targetConfig);
-			}
-			else
-			{
-				target->resize(width, height);
-			}
-		}
-
-		// When anti-aliasing is enabled, additionally set up a multi-sample offscreen target
-		if (_samples > 1)
-		{
-			targetConfig.samples = _samples;
-			if (!_postProcessMultiSampleTarget)
-			{
-				_postProcessMultiSampleTarget = RenderTarget::create(targetConfig);
-			}
-			else
-			{
-				_postProcessMultiSampleTarget->resize(width, height);
-			}
-		}
-
-		pass.target = _postProcessMultiSampleTarget ? _postProcessMultiSampleTarget : _postProcessTargets[0];
+		throw IllegalStateException("Cannot render an empty framebuffer");
 	}
+
+	// Configure single-sample offscreen targets
+	RenderTargetConfig targetConfig;
+	targetConfig.sizeMode = TargetSizeMode::FIXED;
+	targetConfig.width = width;
+	targetConfig.height = height;
+	targetConfig.colorFormats = { PixelFormat::RGBA16F };
+	for (RenderTargetPtr& target : _postProcessTargets)
+	{
+		if (!target)
+		{
+			target = RenderTarget::create(targetConfig);
+		}
+		else
+		{
+			target->resize(width, height);
+		}
+	}
+
+	// When anti-aliasing is enabled, additionally set up a multi-sample offscreen target
+	if (_samples > 1)
+	{
+		targetConfig.samples = _samples;
+		if (!_postProcessMultiSampleTarget)
+		{
+			_postProcessMultiSampleTarget = RenderTarget::create(targetConfig);
+		}
+		else
+		{
+			_postProcessMultiSampleTarget->resize(width, height);
+		}
+	}
+
+	pass.target = _postProcessMultiSampleTarget ? _postProcessMultiSampleTarget : _postProcessTargets[0];
+	configurePass(pass);
 
 	// Perform draw for each rendering mode
 	for (RenderModes mode : ALL_RENDER_MODES)
@@ -196,48 +206,39 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 			continue;
 		}
 
-		configurePass(pass);
 		draw(state, mode, camera);
-		
-		pass.clearFlags = ClearFlags::NONE;
 	}
 
-	// If there are post-processing effects, chain them, starting with the second offscreen target.
-	// The final draw should be to the original pass target.
-	if (!state.postProcessing.empty())
+	// Resolve and chain effects entirely in linear space.
+	if (_postProcessMultiSampleTarget)
 	{
-		if (_postProcessMultiSampleTarget)
-		{
-			const int width = _postProcessMultiSampleTarget->config().width;
-			const int height = _postProcessMultiSampleTarget->config().height;
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, _postProcessMultiSampleTarget->frameBuffer()->id());
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _postProcessTargets[0]->frameBuffer()->id());
-			glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		}
-
-		RenderTargetPtr source = _postProcessTargets[0];
-		for (std::size_t i = 0; i < state.postProcessing.size(); i++)
-		{
-			PostProcessMaterial* material = state.postProcessing[i];
-			const bool isLast = i + 1 == state.postProcessing.size();
-
-			pass.target = isLast ? finalPass.target : _postProcessTargets[(i + 1) % 2];
-			pass.viewport = isLast ? finalPass.viewport : Viewport{};
-			pass.clearFlags = ClearFlags::COLOR;
-			pass.clearColor = pass.clearColor;
-			pass.depthTest = false;
-
-			const TexturePtr originalTexture = material->texture;
-			material->texture = source->colorTexture(0);
-			configurePass(pass);
-			drawPostProcessing(material);
-			material->texture = originalTexture;
-
-			source = pass.target;
-		}
+		const int width = _postProcessMultiSampleTarget->config().width;
+		const int height = _postProcessMultiSampleTarget->config().height;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, _postProcessMultiSampleTarget->frameBuffer()->id());
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _postProcessTargets[0]->frameBuffer()->id());
+		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	}
 
-	present();
+	RenderTargetPtr source = _postProcessTargets[0];
+	for (std::size_t i = 0; i < state.postProcessing.size(); i++)
+	{
+		PostProcessMaterial* material = state.postProcessing[i];
+
+		pass.target = _postProcessTargets[(i + 1) % 2];
+		pass.viewport = Viewport{};
+		pass.clearFlags = ClearFlags::COLOR;
+		pass.depthTest = false;
+
+		const TexturePtr originalTexture = material->texture;
+		material->texture = source->colorTexture(0);
+		configurePass(pass);
+		drawPostProcessing(material);
+		material->texture = originalTexture;
+
+		source = pass.target;
+	}
+
+	present(source->colorTexture(0));
 }
 
 void Renderer::getPassDimensions(const RenderPass& pass, float* width, float* height) const
@@ -311,14 +312,26 @@ void Renderer::configurePass(const RenderPass& pass)
 	}
 }
 
-void Renderer::present()
+void Renderer::present(const TexturePtr& source)
 {
 	if (_destroyed || !_window || !_window->_glfwWindow)
 	{
 		throw IllegalStateException("Cannot present with a destroyed renderer or window");
 	}
 
-	FrameBuffer::bindDefault();
+    RenderPass presentation;
+    presentation.clearFlags = ClearFlags::NONE;
+    presentation.depthTest = false;
+    configurePass(presentation);
+
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDepthMask(GL_FALSE);
+
+	ShaderPtr shader = ShaderManager::getShader(ShaderId::PRESENTATION);
+	shader->activate();
+    std::static_pointer_cast<PresentationShader>(shader)->draw(source, _displayGamma);
+
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();
 }
@@ -445,11 +458,6 @@ void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderMode
 
 void Renderer::drawPostProcessing(PostProcessMaterial* material)
 {
-	if (_fullScreenVertexArray == 0)
-	{
-		glGenVertexArrays(1, &_fullScreenVertexArray);
-	}
-
 	glDepthMask(GL_FALSE);
 	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
@@ -457,8 +465,7 @@ void Renderer::drawPostProcessing(PostProcessMaterial* material)
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::POST_PROCESS);
 	shader->activate();
 	shader->setMaterial(material);
-	glBindVertexArray(_fullScreenVertexArray);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+    std::static_pointer_cast<PostProcessShader>(shader)->draw();
 }
 
 void Renderer::incrementRendererCount()

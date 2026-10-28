@@ -49,11 +49,13 @@ add_library(Graphics
     src/core/renderer/DrawState.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
+    src/core/shaders/FullScreenShader.cpp
     src/core/shaders/InstancedMeshShader.cpp
     src/core/shaders/LineShader.cpp
     src/core/shaders/MeshShader.cpp
     src/core/shaders/PointShader.cpp
 	src/core/shaders/PostProcessShader.cpp
+    src/core/shaders/PresentationShader.cpp
     src/core/shaders/SkyboxShader.cpp
     src/core/shaders/Shader.cpp
     src/core/shaders/ShaderManager.cpp

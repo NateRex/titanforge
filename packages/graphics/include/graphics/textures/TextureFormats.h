@@ -1,6 +1,25 @@
 #pragma once
 
 /**
+ * Encoding of file-loaded texture samples. Alpha is always linear.
+ * sRGB images (1-4 channels) expand to RGBA: grayscale replicates to RGB,
+ * grayscale-alpha preserves alpha, and missing alpha becomes opaque.
+ * Linear images preserve their R/RG/RGB/RGBA channel layout.
+ */
+enum class TextureEncoding
+{
+    /**
+	 * Standard sRGB color; decoded to linear RGB before filtering and lighting.
+	 */
+    SRGB,
+
+    /**
+	 * Numeric or already-linear data; sampled without color conversion.
+	 */
+    LINEAR
+};
+
+/**
  * Identifies the filtering mode used when sampling textures
  * @author Nathaniel Rex
  */

@@ -6,27 +6,6 @@
 #include <glad/glad.h>
 
 /**
- * Source code for the post-processing vertex shader
- */
-constexpr const char* POST_PROCESS_VERTEX = R"(
-	#version 330 core
-
-	out vec2 frag_TexCoord;
-
-	void main()
-	{
-		// This shader only ever receives one triangle with three vertices. Using the vertex ID, we can
-		// generate positions (0, 0), (2, 0), (2, 2), which form the coordinates of an oversized triangle
-		// bigger than the screen
-		vec2 position = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
-		frag_TexCoord = position;
-
-		// Transform position to clip-space screen coordinates. We end up with positions (-1, -1), (3, -1), (3, 3)
-		gl_Position = vec4(position * 2.0 - 1.0, 0.0, 1.0);
-	}
-)";
-
-/**
  * Source code for the post-processing fragment shader
  */
 constexpr const char* POST_PROCESS_FRAGMENT = R"(
@@ -74,7 +53,7 @@ constexpr const char* POST_PROCESS_FRAGMENT = R"(
 	}
 )";
 
-PostProcessShader::PostProcessShader() : Shader("PostProcessShader", POST_PROCESS_VERTEX, POST_PROCESS_FRAGMENT)
+PostProcessShader::PostProcessShader() : FullScreenShader("PostProcessShader", POST_PROCESS_FRAGMENT)
 {
 	
 }

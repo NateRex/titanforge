@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics/textures/pointers/TexturePtr.h>
+#include <graphics/textures/TextureFormats.h>
 #include <string>
 #include <unordered_map>
 
@@ -21,9 +22,13 @@ public:
 	 * @param path Relative path to the image file that will be used to generate the texture. This path is relative
 	 * to the directory containing the currently running executable.
 	 * @param flip (Optional) Boolean flag that, when true, will cause the imagery to be flipped. Defaults to false.
+	 * @param encoding (Optional) Image encoding. Defaults to SRGB color. RGB decodes before filtering and lighting; alpha is unchanged.
+	 * sRGB images expand to RGBA (grayscale replicates RGB, missing alpha is opaque).
+	 * LINEAR preserves source channels and must be used for numeric data maps.
+	 * Path, flip, and encoding all participate in cache identity.
 	 * @return The texture
 	 */
-	static TexturePtr load(const std::string& path, bool flip = false);
+	static TexturePtr load(const std::string& path, bool flip = false, TextureEncoding encoding = TextureEncoding::SRGB);
 
 	/**
 	 * Resets the global texture loader instance to its initial state, prior to graphics initialization

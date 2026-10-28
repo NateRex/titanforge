@@ -136,7 +136,7 @@ struct Environment {
 	TextureCube* texture = nullptr;
 
 	/**
-	 * Base color to blend with the sampled texture color
+	 * Linear RGB base color with unencoded alpha to blend with the sampled texture color
 	 */
 	Color color = Color::WHITE;
 

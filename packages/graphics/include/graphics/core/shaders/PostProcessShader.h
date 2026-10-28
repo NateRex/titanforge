@@ -1,12 +1,12 @@
 #pragma once
-#include <graphics/core/shaders/Shader.h>
+#include <graphics/core/shaders/FullScreenShader.h>
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
 
 /**
  * Shader used to handle post-processing materials
  * @author Nathaniel Rex
  */
-class PostProcessShader : public Shader
+class PostProcessShader : public FullScreenShader
 {
 public:
 

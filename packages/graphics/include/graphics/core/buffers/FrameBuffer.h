@@ -72,7 +72,7 @@ public:
     static FrameBufferPtr create();
 
     /**
-     * Binds the default frame buffer
+     * Binds the default frame buffer and disables hardware sRGB writes for shader-encoded presentation
      */
     static void bindDefault();
 
@@ -82,7 +82,10 @@ public:
     unsigned int id() const { return _id; }
 
     /**
-     * Binds this frame buffer as the current framebuffer
+     * Binds this frame buffer and enables format-aware sRGB writes and linear blending.
+     * Linear RGB shader output is encoded only for sRGB attachments, independently for mixed formats.
+     * Linear attachments and alpha are unaffected. No displayGamma adjustment occurs.
+     * Raw OpenGL framebuffer binds must manage GL_FRAMEBUFFER_SRGB themselves.
      */
     void bind() const;
 

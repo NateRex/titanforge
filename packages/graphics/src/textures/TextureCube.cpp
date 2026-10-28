@@ -5,7 +5,7 @@
 #include <common/Utils.h>
 #include <glad/glad.h>
 
-TextureCube::TextureCube(const std::array<std::string, 6>& paths, bool flip): Texture(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BINDING_CUBE_MAP)
+TextureCube::TextureCube(const std::array<std::string, 6>& paths, bool flip, TextureEncoding encoding): Texture(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BINDING_CUBE_MAP)
 {
 	int size = 0, channels = 0;
 	std::array<void*, 6> images{};
@@ -18,7 +18,7 @@ TextureCube::TextureCube(const std::array<std::string, 6>& paths, bool flip): Te
 	{
 		// Load image
 		int width, height, faceChannels;
-		unsigned char* data = stbi_load(resolvePath(paths[i]).c_str(), &width, &height, &faceChannels, 0);
+		unsigned char* data = stbi_load(resolvePath(paths[i]).c_str(), &width, &height, &faceChannels, encoding == TextureEncoding::SRGB ? STBI_rgb_alpha : 0);
 		if (!data)
 		{
 			release();
@@ -49,7 +49,11 @@ TextureCube::TextureCube(const std::array<std::string, 6>& paths, bool flip): Te
 	
 	// Update config
 	_config.size = size;
-	switch (channels)
+	if (encoding == TextureEncoding::SRGB)
+	{
+		_config.format = PixelFormat::SRGBA8;
+	}
+	else switch (channels)
 	{
 		case 1: _config.format = PixelFormat::R8; break;
 		case 2: _config.format = PixelFormat::RG8; break;
@@ -68,9 +72,9 @@ TextureCube::TextureCube(const TextureCubeConfig& config, const std::array<void*
 	allocate(data);
 }
 
-TextureCubePtr TextureCube::create(const std::array<std::string, 6>& paths, bool flip)
+TextureCubePtr TextureCube::create(const std::array<std::string, 6>& paths, bool flip, TextureEncoding encoding)
 {
-	return TextureCubePtr(new TextureCube(paths, flip));
+	return TextureCubePtr(new TextureCube(paths, flip, encoding));
 }
 
 TextureCubePtr TextureCube::create(const TextureCubeConfig& config, const std::array<void*, 6>& data)

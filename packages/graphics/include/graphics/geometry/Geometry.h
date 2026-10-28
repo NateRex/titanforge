@@ -71,7 +71,8 @@ public:
 	void removeNormals();
 
 	/**
-	 * Sets the color for each vertex in this geometry.
+	 * Sets the linear RGB color for each vertex in this geometry. Alpha is unencoded.
+	 * Convert design-tool sRGB values with Color::fromSRGB before filling this array.
 	 * @param colors An array where every 4 values represent the r, g, b, and a components of a color. Each value
 	 * should be in the range 0 to 1.
 	 * @param numColors The number of colors in the array. This is expected to match the number of

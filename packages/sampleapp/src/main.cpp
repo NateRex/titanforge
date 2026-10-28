@@ -9,6 +9,7 @@
 
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
+#include <graphics/lights/PointLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
 #include <graphics/geometry/BoxGeometry.h>
@@ -152,14 +153,22 @@ int main()
 
     // Create lighting
     LightPtr ambientLighting = AmbientLight::create();
-    ambientLighting->intensity = 1.f;
+    ambientLighting->intensity = 0.15f;
     scene->add(ambientLighting);
+
+    // Retune in linear space: at five world units, intensity 20 contributes 20/25 = 0.8
+    // before surface angle and material terms. Range does not affect inverse-square lights.
+    auto keyLight = PointLight::create();
+    keyLight->setPosition(0.f, 6.f, 3.f);
+    keyLight->intensity = 20.f;
+    keyLight->minimumDistance = 0.1f;
+    scene->add(keyLight);
 
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
-    postProcessing->contrast = 1.1f;
-    postProcessing->saturation = 0.65f;
-    postProcessing->exposure = 1.1f;
+    postProcessing->contrast = 1.f;
+    postProcessing->saturation = 0.9f;
+    postProcessing->exposure = 1.f;
     scene->add(PostProcessing::create(postProcessing));
 
     // Create the ground

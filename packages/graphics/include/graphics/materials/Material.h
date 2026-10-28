@@ -105,7 +105,8 @@ public:
 	const MaterialType materialType;
 
 	/**
-	 * Base color. Defaults to solid white.
+	 * Base color in linear RGB with unencoded alpha. Defaults to solid white.
+	 * Use Color::fromSRGB or Color::fromSRGBHex for colors copied from design tools.
 	 */
 	Color color = Color::WHITE;
 
