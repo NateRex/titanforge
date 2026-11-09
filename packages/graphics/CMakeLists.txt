@@ -47,12 +47,14 @@ add_library(Graphics
     src/core/input/InputTrigger.cpp
     src/core/input/InputValue.cpp
     src/core/renderer/DrawState.cpp
+    src/core/renderer/ShadowPass.cpp
     src/core/renderer/Renderer.cpp
     src/core/renderer/RenderTarget.cpp
     src/core/shaders/FullScreenShader.cpp
     src/core/shaders/InstancedMeshShader.cpp
     src/core/shaders/LineShader.cpp
     src/core/shaders/MeshShader.cpp
+    src/core/shaders/ShadowDepthShader.cpp
     src/core/shaders/PointShader.cpp
 	src/core/shaders/PostProcessShader.cpp
     src/core/shaders/PresentationShader.cpp
