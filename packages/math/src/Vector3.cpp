@@ -36,6 +36,11 @@ bool Vector3::isZero(float tol) const
 	return equals(x, 0., tol) && equals(y, 0., tol) && equals(z, 0., tol);
 }
 
+bool Vector3::isFinite() const
+{
+    return std::isfinite(x) && std::isfinite(y) && std::isfinite(z);
+}
+
 bool Vector3::equalTo(const Vector3& other, float tol) const
 {
 	return equals(x, other.x, tol) && equals(y, other.y, tol) && equals(z, other.z, tol);

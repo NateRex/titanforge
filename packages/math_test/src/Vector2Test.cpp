@@ -42,6 +42,21 @@ BOOST_AUTO_TEST_CASE(Vector2_isZero)
 }
 
 /**
+ * Tests the isFinite() method
+ */
+BOOST_AUTO_TEST_CASE(Vector2_isFinite)
+{
+    Vector2 v(1.f, 2.f);
+    BOOST_TEST(v.isFinite());
+
+    v = Vector2(NAN, 0.f);
+    BOOST_TEST(!v.isFinite());
+
+    v = Vector2(0.f, INFINITY);
+    BOOST_TEST(!v.isFinite());
+}
+
+/**
  * Tests the ability to compare vectors for equality
  */
 BOOST_AUTO_TEST_CASE(Vector2_equalTo)

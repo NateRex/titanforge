@@ -50,6 +50,24 @@ BOOST_AUTO_TEST_CASE(Vector3_isZero)
 }
 
 /**
+ * Tests the isFinite() method
+ */
+BOOST_AUTO_TEST_CASE(Vector3_isFinite)
+{
+    Vector3 v(1.f, 2.f, 3.f);
+    BOOST_TEST(v.isFinite());
+
+    v = Vector3(NAN, 0.f, 0.f);
+    BOOST_TEST(!v.isFinite());
+
+    v = Vector3(0.f, INFINITY, 0.f);
+    BOOST_TEST(!v.isFinite());
+
+    v = Vector3(0.f, 0.f, NAN);
+    BOOST_TEST(!v.isFinite());
+}
+
+/**
  * Tests the ability to compare vectors for equality
  */
 BOOST_AUTO_TEST_CASE(Vector3_equalTo)

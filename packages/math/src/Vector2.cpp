@@ -30,6 +30,11 @@ bool Vector2::isZero(float tol) const
     return equals(x, 0.0, tol) && equals(y, 0.0, tol);
 }
 
+bool Vector2::isFinite() const
+{
+    return std::isfinite(x) && std::isfinite(y);
+}
+
 bool Vector2::equalTo(const Vector2& other, float tol) const
 {
     return equals(x, other.x, tol) && equals(y, other.y, tol);
