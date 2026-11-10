@@ -2,14 +2,14 @@
 #include <math/Vector3.h>
 
 /**
- * Shadow settings shared by all lights capable of casting shadows
+ * Shadow settings shared by all lights capable of producing shadows
  * @author Nathaniel Rex
  */
 struct ShadowConfig
 {
 
     /**
-     * Boolean flag that, when true, indicates that the light is capable of casting shadows
+     * Boolean flag that, when true, indicates that the light is capable of producing shadows
      */
     bool enabled = true;
 
