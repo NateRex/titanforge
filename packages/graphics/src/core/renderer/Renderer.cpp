@@ -6,6 +6,7 @@
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/PresentationShader.h>
+#include <graphics/lights/Light.h>
 #include <graphics/core/shaders/PostProcessShader.h>
 #include <graphics/core/buffers/GeometryBuffer.h>
 #include <graphics/core/buffers/InstanceBuffer.h>
@@ -137,6 +138,7 @@ void Renderer::destroy()
 	}
 
 	_destroyed = true;
+    _shadowPass.clear();
 	decrementRendererCount();
 }
 
@@ -154,6 +156,14 @@ void Renderer::render(const ScenePtr scene, const CameraPtr camera, RenderModes 
 	// Traverse scene to form drawing state
 	DrawState state;
 	scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+    if (_shadowsEnabled && hasFlag(modes, RenderModes::MATERIAL))
+	{
+        _shadowPass.render(state, _shadowBudget);
+	}
+	else
+	{
+        _shadowPass.clear();
+	}
 	
 	// Always render and blend in linear floating-point storage before presentation.
 	float width, height;
@@ -433,27 +443,7 @@ void Renderer::drawItem(const DrawState& state, const DrawItem& item, RenderMode
 	shader->setItem(item);
 	shader->setCamera(camera.get());
 
-	// Draw buffer
-	const bool instanced = item.instanceBuffer != nullptr;
-	const GeometryBuffer* buffer = instanced ? static_cast<const GeometryBuffer*>(item.instanceBuffer) : item.geometryBuffer;
-	const GeometryAttributes& attributes = buffer->getGeometryAttributes();
-	const unsigned int primitiveType = toGLPrimitive(attributes.primitiveType);
-	const unsigned int instanceCount = instanced ? item.instanceBuffer->getNumberOfInstances() : 1;
-	buffer->bind();
-	if (attributes.indices)
-	{
-		if (instanced)
-			glDrawElementsInstanced(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0, instanceCount);
-		else
-			glDrawElements(primitiveType, buffer->size(), GL_UNSIGNED_INT, 0);
-	}
-	else
-	{
-		if (instanced)
-			glDrawArraysInstanced(primitiveType, 0, buffer->size(), instanceCount);
-		else
-			glDrawArrays(primitiveType, 0, buffer->size());
-	}
+	item.drawGeometry();
 }
 
 void Renderer::drawPostProcessing(PostProcessMaterial* material)

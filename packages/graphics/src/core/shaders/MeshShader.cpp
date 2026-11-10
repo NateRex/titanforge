@@ -77,6 +77,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 		// Non-spot lights receive neutral cone values.
 		vec3 direction;
 		vec2 cone;
+        int shadowIndex;
+        mat4 shadowTransform;
 	};
 
 	struct Material {
@@ -103,6 +105,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 	in vec2 frag_TexCoord;
 
 	uniform vec3 uCameraPos;
+    uniform bool uReceiveShadow;
+    uniform sampler2D uShadowMaps[12];
 	uniform vec3 uAmbient;
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
@@ -115,6 +119,33 @@ constexpr const char* MESH_FRAGMENT = R"(
 	uniform float uEnvironmentLod;
 
 	out vec4 FragColor;
+
+    // GLSL 3.30 requires constant sampler-array indices.
+    float shadowDepth(int index, vec2 uv) {
+        if (index == 0) return texture(uShadowMaps[0], uv).r;
+        if (index == 1) return texture(uShadowMaps[1], uv).r;
+        if (index == 2) return texture(uShadowMaps[2], uv).r;
+        if (index == 3) return texture(uShadowMaps[3], uv).r;
+        if (index == 4) return texture(uShadowMaps[4], uv).r;
+        if (index == 5) return texture(uShadowMaps[5], uv).r;
+        if (index == 6) return texture(uShadowMaps[6], uv).r;
+        if (index == 7) return texture(uShadowMaps[7], uv).r;
+        if (index == 8) return texture(uShadowMaps[8], uv).r;
+        if (index == 9) return texture(uShadowMaps[9], uv).r;
+        if (index == 10) return texture(uShadowMaps[10], uv).r;
+        if (index == 11) return texture(uShadowMaps[11], uv).r;
+        return 1.0;
+    }
+
+    float visibility(Light light)
+	{
+        if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
+        vec4 clip = light.shadowTransform * vec4(frag_Pos, 1.0);
+        vec3 projected = (clip.xyz / clip.w) * 0.5 + 0.5;
+
+        // Bias, boundary handling, and PCF are intentionally deferred
+        return projected.z > shadowDepth(light.shadowIndex, projected.xy) ? 0.0 : 1.0;
+    }
 
 	void main()
 	{
@@ -184,7 +215,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 			vec3 radiance = light.color
 				* light.intensity
 				* attenuation
-				* coneIntensity;
+				* coneIntensity
+                * visibility(light);
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -287,6 +319,11 @@ void MeshShader::setMaterial(const Material* material)
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
+    glUniform1i(getUniformLocation("uReceiveShadow"), material->receiveShadow);
+    glUniform1i(getUniformLocation("uMaterial.texture"), 0);
+    glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
+    glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
+
 	// Alpha settings
 	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(meshMat->getEffectiveAlphaMode()));
 	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), meshMat->alphaCutoff);
@@ -331,6 +368,8 @@ void MeshShader::setMaterial(const Material* material)
 void MeshShader::setEnvironment(const Environment& environment)
 {
 	ProgramBinding binding(this);
+    glUniform1i(getUniformLocation("uEnvironment"), 3);
+
 	if (!environment.texture)
 	{
 		glUniform1i(getUniformLocation("uHasEnvironment"), 0);
@@ -339,7 +378,6 @@ void MeshShader::setEnvironment(const Environment& environment)
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, environment.texture->id());
-	glUniform1i(getUniformLocation("uEnvironment"), 3);
 	glUniform1i(getUniformLocation("uHasEnvironment"), 1);
 	glUniform3f(getUniformLocation("uEnvironmentColor"), environment.color.red(), environment.color.green(), environment.color.blue());
 	glUniform1f(getUniformLocation("uEnvironmentIntensity"), std::max(environment.intensity, 0.f));
@@ -352,7 +390,11 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 	ProgramBinding binding(this);
 	Shader::setLighting(lights);
 
-	constexpr size_t MAX_LIGHTS = 16;
+    for (unsigned int i = 0; i < MAX_SHADOW_LIGHTS; i++)
+	{
+		glUniform1i(getUniformLocation(("uShadowMaps[" + std::to_string(i) + "]").c_str()), FIRST_SHADOW_TEXTURE_UNIT + i);
+	}
+
 	float ambientRed = 0.f;
 	float ambientGreen = 0.f;
 	float ambientBlue = 0.f;
@@ -453,6 +495,13 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 			quadraticAttenuation);
 		glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
 		glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
+        glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
+        glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
+        if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
+		{
+            glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + renderLight.shadowIndex);
+            glBindTexture(GL_TEXTURE_2D, renderLight.shadowMap->id());
+        }
 		++lightCount;
 	}
 

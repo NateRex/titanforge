@@ -7,8 +7,9 @@
 #include <graphics/objects/Mesh.h>
 #include <graphics/core/Color.h>
 #include <graphics/core/renderer/RenderPass.h>
-#include <mutex>
 #include <graphics/textures/pointers/TexturePtr.h>
+#include <graphics/core/renderer/ShadowPass.h>
+#include <mutex>
 
 class Matrix3;
 class Matrix4;
@@ -83,6 +84,32 @@ public:
     void setDisplayGamma(float displayGamma);
 
 	/**
+	 * @return True if shadows are globally enabled. Returns false otherwise.
+	 */
+    bool getShadowsEnabled() const { return _shadowsEnabled; }
+
+	/**
+	 * Sets whether shadows are globally enabled.
+	 * @param enabled True if shadows can be cast based on per-light settings. False otherwise.
+	 */
+    void setShadowsEnabled(bool enabled) { _shadowsEnabled = enabled; }
+
+    /** Maximum shadow lights, additionally capped by available texture resources. */
+
+	/**
+	 * @return The global limit to the number of lights that can be casting shadows at one time. Lights are selected in the order
+	 * they are found during scene traversal.
+	 */
+    unsigned int getShadowBudget() const { return _shadowBudget; }
+
+	/**
+	 * Sets the global limit on the number of lights that can be casting shadows at one time. This value will still be bound to
+	 * hardware constraints when rendering.
+	 * @param budget Budget
+	 */
+	void setShadowBudget(unsigned int budget) { _shadowBudget = budget; }
+
+	/**
 	 * Renders lighting, blending, and effects in linear RGB, then encodes sRGB exactly once and presents.
 	 * @param scene Scene
 	 * @param camera Camera
@@ -134,6 +161,21 @@ private:
 	 * Display adjustment exponent
 	 */
 	float _displayGamma = 1.f;
+
+	/**
+	 * Boolean flag that, when true, enables shadows globally
+	 */
+	bool _shadowsEnabled = true;
+
+	/**
+	 * The budget for the number of lights that can casting shadows at one time
+	 */
+    unsigned int _shadowBudget = 4;
+
+	/**
+	 * Cached resources for generating shadow maps
+	 */
+    ShadowPass _shadowPass;
 
 	/**
 	 * Renderer-managed intermediate targets used to chain scene post-processing effects
