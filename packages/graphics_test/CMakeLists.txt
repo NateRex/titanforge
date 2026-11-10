@@ -38,6 +38,7 @@ add_executable(GraphicsTest
     src/core/shaders/PointShaderTest.cpp
     src/core/shaders/PostProcessShaderTest.cpp
     src/core/shaders/ShaderManagerTest.cpp
+    src/core/shaders/ShadowDepthShaderTest.cpp
     src/core/shaders/SkyboxShaderTest.cpp
     src/core/shaders/VertexNormalShaderTest.cpp
     src/core/shaders/WireframeShaderTest.cpp
