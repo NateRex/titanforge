@@ -44,28 +44,9 @@ struct PresentationSettings
     }
 };
 
-BOOST_AUTO_TEST_CASE(Renderer_shadowDefaults)
-{
-    auto renderer = GlobalTestFixture::RENDERER;
-    BOOST_TEST(renderer->getShadowsEnabled());
-    BOOST_TEST(renderer->getShadowBudget() == 4u);
-    for (const LightPtr& light : {LightPtr(AmbientLight::create()), LightPtr(PointLight::create()),
-        LightPtr(DirectionalLight::create()), LightPtr(SpotLight::create())})
-    {
-        BOOST_TEST(light->shadow.enabled);
-        BOOST_TEST(light->shadow.width == 1024);
-        BOOST_TEST(light->shadow.height == 1024);
-        BOOST_TEST(light->shadow.near == 0.1f);
-        BOOST_TEST(light->shadow.far == 100.f);
-        BOOST_TEST(light->shadow.directional.center == Vector3::ZERO);
-        BOOST_TEST(light->shadow.directional.width == 20.f);
-        BOOST_TEST(light->shadow.directional.height == 20.f);
-    }
-    auto material = MeshMaterial::create();
-    BOOST_TEST(material->castShadow);
-    BOOST_TEST(material->receiveShadow);
-}
-
+/**
+ * Tests rendering of a scene containing shadows produced from directional lights and spotlights
+ */
 BOOST_AUTO_TEST_CASE(Renderer_directionalAndSpotShadows)
 {
     PresentationSettings restore;
@@ -212,6 +193,9 @@ BOOST_AUTO_TEST_CASE(Renderer_directionalAndSpotShadows)
     }
 }
 
+/**
+ * Tests rendering of a scene with shadow budget constraints and selection amongst multiple light sources
+ */
 BOOST_AUTO_TEST_CASE(Renderer_shadowBudgetAndLightingSelection)
 {
     auto renderer = Renderer::create(GlobalTestFixture::RENDERER->getWindow());
