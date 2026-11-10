@@ -29,6 +29,7 @@ add_executable(GraphicsTest
     src/core/renderer/DrawStateTest.cpp
     src/core/renderer/RendererTest.cpp
     src/core/renderer/ShadowPassTest.cpp
+    src/core/renderer/ScopedRenderStateTest.cpp
     src/core/renderer/RenderModesTest.cpp
     src/core/renderer/RenderPassTest.cpp
     src/core/renderer/RenderTargetTest.cpp
