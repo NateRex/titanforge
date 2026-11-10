@@ -1,7 +1,7 @@
 #include <math/Vector3.h>
 #include <math/Vector2.h>
 #include <common/Utils.h>
-#include <math.h>
+#include <cmath>
 
 const Vector3 Vector3::ZERO(0.f, 0.f, 0.f);
 const Vector3 Vector3::XHAT(1.f, 0.f, 0.f);
@@ -73,7 +73,7 @@ float Vector3::angleBetween(const Vector3& other) const
     // Clamp to avoid NaNs due to floating point errors
     cosTheta = clamp(cosTheta, -1.0f, 1.0f);
 
-    return acos(cosTheta);
+    return std::acos(cosTheta);
 }
 
 Vector3 Vector3::normalize(Vector3* result) const

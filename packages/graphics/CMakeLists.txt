@@ -89,7 +89,6 @@ add_library(Graphics
     src/lights/PointLight.cpp
     src/lights/SpotLight.cpp
     src/materials/MeshMaterial.cpp
-    src/materials/SkyboxMaterial.cpp
     src/scene/Scene.cpp
     src/textures/Texture.cpp
     src/textures/Texture2D.cpp

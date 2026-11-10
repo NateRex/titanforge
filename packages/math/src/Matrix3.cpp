@@ -4,7 +4,7 @@
 #include <common/Utils.h>
 #include <common/Assertions.h>
 #include <common/exceptions/IllegalArgumentException.h>
-#include <math.h>
+#include <cmath>
 #include <string>
 
 const Matrix3 Matrix3::IDENTITY;
@@ -60,8 +60,8 @@ Matrix3 Matrix3::fromRotation(const Vector3& axis, float radians, Matrix3* resul
 {
 	Vector3 normalized = axis.normalize();
 
-	float c = cos(radians);
-	float s = sin(radians);
+	float c = std::cos(radians);
+	float s = std::sin(radians);
 	float omc = 1 - c;
 	float x = normalized.x;
 	float y = normalized.y;
@@ -86,8 +86,8 @@ Matrix3 Matrix3::fromRotation(const Vector3& axis, float radians, Matrix3* resul
 
 Matrix3 Matrix3::fromXRotation(float radians, Matrix3* result)
 {
-	float c = cos(radians);
-	float s = sin(radians);
+	float c = std::cos(radians);
+	float s = std::sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(1., 0., 0., 0., c, -s, 0., s, c);
@@ -96,8 +96,8 @@ Matrix3 Matrix3::fromXRotation(float radians, Matrix3* result)
 
 Matrix3 Matrix3::fromYRotation(float radians, Matrix3* result)
 {
-	float c = cos(radians);
-	float s = sin(radians);
+	float c = std::cos(radians);
+	float s = std::sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(c, 0., s, 0., 1., 0., -s, 0., c);
@@ -106,8 +106,8 @@ Matrix3 Matrix3::fromYRotation(float radians, Matrix3* result)
 
 Matrix3 Matrix3::fromZRotation(float radians, Matrix3* result)
 {
-	float c = cos(radians);
-	float s = sin(radians);
+	float c = std::cos(radians);
+	float s = std::sin(radians);
 
 	Matrix3& r = getOrDefault(result, Matrix3());
 	r.setValues(c, -s, 0., s, c, 0., 0., 0., 1.);
