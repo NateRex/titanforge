@@ -36,5 +36,7 @@ private:
      */
     PointMaterial() : Material(MaterialType::POINT, ShaderId::POINT) {
         cullingMode = CullingMode::NONE;
+        castShadow = false;
+        receiveShadow = false;
     }
 };
