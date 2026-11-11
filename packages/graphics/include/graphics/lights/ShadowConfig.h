@@ -14,12 +14,12 @@ struct ShadowConfig
     bool enabled = true;
 
     /**
-     * Pixel width of the texture used to store the shadow map
+     * Pixel width of the texture used to store the shadow map. Increasing this value improves the resolution of shadows.
      */
     int width = 1024;
 
     /**
-     * Pixel height of the texture used to store the shadow map
+     * Pixel height of the texture used to store the shadow map. Increasing this value improves the resolution of shadows.
      */
     int height = 1024;
 
