@@ -70,6 +70,12 @@ class MeshMaterial : public Material
 public:
 
     /**
+     * Cull front faces when rendering shadow maps, independently of cullingMode.
+     * Defaults to false. Opt in only for closed geometry; thin surfaces and masked
+     * foliage should retain their normal culling mode. Shared materials share this setting.
+     */
+
+    /**
 	 * Controls how alpha is interpreted. AUTO, the default, makes a color with
 	 * alpha below 1 blend automatically. Choose MASK for textures containing
 	 * hard-edged holes, or an explicit mode when overriding automatic behavior.
@@ -114,6 +120,13 @@ public:
 	 * For common refractive index values, see RefractiveIndex.
 	 */
 	float refractiveIndex = RefractiveIndex::GLASS;
+
+	/**
+	 * Boolean flag that, when true, enables front face culling when computing shadows cast by an object. Only
+	 * has an effect when castShadow is set to true. This value only impacts shadows, and has no bearing on face
+	 * culling when doing a material render. Defaults to false.
+	 */
+    bool shadowCullFrontFaces = false;
 
     /**
 	 * Diffuse map used to control diffuse-light contribution across a surface. Can be null.

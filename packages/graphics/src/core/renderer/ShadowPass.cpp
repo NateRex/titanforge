@@ -106,14 +106,15 @@ void ShadowPass::render(DrawState& state, unsigned int budget)
                     continue;
                 }
 
-                if (material.cullingMode == CullingMode::NONE)
+                if (!material.shadowCullFrontFaces && material.cullingMode == CullingMode::NONE)
                 {
                     glDisable(GL_CULL_FACE);
                 }
                 else
                 {
                     glEnable(GL_CULL_FACE);
-                    glCullFace(material.cullingMode == CullingMode::FRONT ? GL_FRONT : GL_BACK);
+                    glCullFace(material.shadowCullFrontFaces || material.cullingMode == CullingMode::FRONT
+                        ? GL_FRONT : GL_BACK);
                 }
                 shader->setItem(item);
                 item.drawGeometry();
