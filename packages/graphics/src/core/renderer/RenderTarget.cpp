@@ -139,10 +139,7 @@ void RenderTarget::build()
             texConfig.height = _config.height;
             texConfig.format = _config.depthStencilFormat;
             texConfig.samples = _config.samples;
-            texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
-            texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
-            texConfig.sampling.minFilter = TextureFilter::NEAREST;
-            texConfig.sampling.magFilter = TextureFilter::NEAREST;
+            texConfig.sampling = _config.depthSampling;
 
             _depthStencilTexture = Texture2D::create(texConfig);
             _frameBuffer->attach(attachment, _depthStencilTexture);

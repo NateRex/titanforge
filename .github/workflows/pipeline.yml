@@ -79,7 +79,7 @@ jobs:
   graphics-tests:
     name: 🧪 Graphics Tests
     runs-on: ubuntu-latest
-    container: natejrex/cmake-vcpkg
+    container: natejrex/graphics-runtime
     needs:
       - build
     steps:
@@ -94,9 +94,8 @@ jobs:
 
       - name: Execute Commands
         run: |
-          Xvfb :99 -screen 0 1024x768x16 &
-          export DISPLAY=:99
-          ./.github/scripts/runTest.sh ./.build/packages/graphics_test/bin/GraphicsTest
+          xvfb-run -a -s "-screen 0 1024x768x16" \
+            bash ./.github/scripts/runTest.sh ./.build/packages/graphics_test/bin/GraphicsTest
 
   # Math Tests
   math-tests:

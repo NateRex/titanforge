@@ -1,6 +1,7 @@
 #pragma once
 #include <graphics/lights/pointers/LightPtr.h>
 #include <graphics/lights/LightType.h>
+#include <graphics/lights/ShadowConfig.h>
 #include <graphics/core/Entity.h>
 #include <graphics/core/Color.h>
 
@@ -70,6 +71,11 @@ public:
 	 * This setting has no effect on range-based attenuation.
 	 */
 	float minimumDistance;
+
+	/**
+	 * Settings that control if/how this light casts shadows
+	 */
+    ShadowConfig shadow;
 
 	void traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal) override;
 

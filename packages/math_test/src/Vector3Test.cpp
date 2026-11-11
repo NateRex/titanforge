@@ -3,6 +3,7 @@
 #include <math/Vector2.h>
 #include <common/Utils.h>
 #include <common/PrintHelpers.h>
+#include <cmath>
 
 /**
  * Tests the basic constructors and accessors of the class
@@ -47,6 +48,24 @@ BOOST_AUTO_TEST_CASE(Vector3_isZero)
     vec = Vector3(0, 0, 0.1);
     BOOST_TEST(!vec.isZero());
     BOOST_TEST(vec.isZero(0.1));
+}
+
+/**
+ * Tests the isFinite() method
+ */
+BOOST_AUTO_TEST_CASE(Vector3_isFinite)
+{
+    Vector3 v(1.f, 2.f, 3.f);
+    BOOST_TEST(v.isFinite());
+
+    v = Vector3(NAN, 0.f, 0.f);
+    BOOST_TEST(!v.isFinite());
+
+    v = Vector3(0.f, INFINITY, 0.f);
+    BOOST_TEST(!v.isFinite());
+
+    v = Vector3(0.f, 0.f, NAN);
+    BOOST_TEST(!v.isFinite());
 }
 
 /**

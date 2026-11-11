@@ -24,16 +24,21 @@
 #include <graphics/textures/Texture2D.h>
 #include <limits>
 #include <cmath>
+#include <sstream>
 
 struct PresentationSettings
 {
     RendererPtr renderer = GlobalTestFixture::RENDERER;
     Color background = renderer->getBackgroundColor();
     float gamma = renderer->getDisplayGamma();
+    bool shadows = renderer->getShadowsEnabled();
+    unsigned int budget = renderer->getShadowBudget();
     ~PresentationSettings()
     {
         renderer->setBackgroundColor(background);
         renderer->setDisplayGamma(gamma);
+        renderer->setShadowsEnabled(shadows);
+        renderer->setShadowBudget(budget);
     }
 };
 

@@ -1,7 +1,7 @@
 #include <math/Vector2.h>
 #include <math/Vector3.h>
 #include <common/Utils.h>
-#include <math.h>
+#include <cmath>
 
 const Vector2 Vector2::ZERO;
 
@@ -28,6 +28,11 @@ Vector2::Vector2(const Vector3& other) : x(other.x), y(other.y)
 bool Vector2::isZero(float tol) const
 {
     return equals(x, 0.0, tol) && equals(y, 0.0, tol);
+}
+
+bool Vector2::isFinite() const
+{
+    return std::isfinite(x) && std::isfinite(y);
 }
 
 bool Vector2::equalTo(const Vector2& other, float tol) const
@@ -61,7 +66,7 @@ float Vector2::angleBetween(const Vector2& other) const
     // Clamp to avoid NaNs due to floating point errors
     cosTheta = clamp(cosTheta, -1.0f, 1.0f);
 
-    return acos(cosTheta);
+    return std::acos(cosTheta);
 }
 
 Vector2 Vector2::normalize(Vector2* result) const

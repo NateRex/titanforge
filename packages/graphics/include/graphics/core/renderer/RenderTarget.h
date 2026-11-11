@@ -4,6 +4,7 @@
 #include <graphics/core/buffers/pointers/RenderBufferPtr.h>
 #include <graphics/core/PixelFormats.h>
 #include <graphics/textures/pointers/TexturePtr.h>
+#include <graphics/textures/TextureFormats.h>
 #include <vector>
 
 /**
@@ -89,6 +90,12 @@ struct RenderTargetConfig
      * Format of the optional depth-stencil attachment. Defaults to PixelFormat::DEPTH24_STENCIL8.
      */
     PixelFormat depthStencilFormat = PixelFormat::DEPTH24_STENCIL8;
+
+    /**
+     * Sampling for depth textures; ignored for renderbuffer storage.
+     */
+    TextureSampling depthSampling = { TextureFilter::NEAREST, TextureFilter::NEAREST,
+        TextureWrap::CLAMP_TO_EDGE, TextureWrap::CLAMP_TO_EDGE };
 
 };
 

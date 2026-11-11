@@ -4,7 +4,7 @@
 #include <common/Utils.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <string>
-#include <math.h>
+#include <cmath>
 
 const Matrix4 Matrix4::IDENTITY;
 
@@ -112,7 +112,7 @@ Matrix4 Matrix4::fromOrthographic(float width, float height, float near, float f
 
 Matrix4 Matrix4::fromPerspective(float fov, float aspect, float near, float far, Matrix4* result)
 {
-	float f = 1.0f / tan(fov / 2.0f);
+	float f = 1.0f / std::tan(fov / 2.0f);
 
 	Matrix4& r = getOrDefault(result, Matrix4());
 	r.setValues(

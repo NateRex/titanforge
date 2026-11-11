@@ -57,6 +57,11 @@ public:
     bool isZero(float tol = 0.0) const;
 
     /**
+     * @return True if this vector only contains finite values. Returns false if any value of this vector is infinite.
+     */
+    bool isFinite() const;
+
+    /**
      * Determines if this vector is equal to another vector (within tolerance).
      * @param other The vector to compare to
      * @param tol Tolerance value to use when comparing. Defaults to 0.

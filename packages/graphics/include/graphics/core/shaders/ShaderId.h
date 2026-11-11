@@ -54,5 +54,10 @@ enum class ShaderId
 	/**
 	 * Shader for drawing vertex normals
 	 */
-	VERTEX_NORMALS
+	VERTEX_NORMALS,
+
+	/**
+	 * Shader used to generate a shadow map via depth writes 
+	 */
+    SHADOW_DEPTH
 };

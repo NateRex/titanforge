@@ -2,6 +2,7 @@
 #include <graphics/core/shaders/ShaderId.h>
 #include <graphics/core/renderer/RenderModes.h>
 #include <graphics/core/Color.h>
+#include <graphics/textures/pointers/TexturePtr.h>
 #include <math/Matrix3.h>
 #include <math/Matrix4.h>
 #include <math/Vector3.h>
@@ -14,6 +15,21 @@ class TextureCube;
 class PostProcessMaterial;
 class GeometryBuffer;
 class InstanceBuffer;
+
+/**
+ * Maximum number of lights that can be applied to a scene (not including ambient lighting)
+ */
+constexpr unsigned int MAX_LIGHTS = 16;
+
+/**
+ * Maximum number of lights capable of producing shadows
+ */
+constexpr unsigned int MAX_SHADOW_LIGHTS = 12;
+
+/**
+ * First texture unit slot reserved for shadow maps
+ */
+constexpr unsigned int FIRST_SHADOW_TEXTURE_UNIT = 4;
 
 /**
  * Determines when an item is drawn relative to other items in a pass
@@ -101,12 +117,24 @@ struct DrawItem {
 	 * @return The variant, or null if no variant exists for that rendering mode
 	 */
 	const Variant* variant(RenderModes mode) const;
+
+	/**
+	 * @return The buffer containing either the ordinary or instanced geometry of this item
+	 */
+	const GeometryBuffer* getBuffer() const;
+
+    /**
+	 * Submits the prepared ordinary or instanced geometry to the shader. It is assumed that the shader is currently active, and
+	 * that all uniforms have already been set.
+	 */
+    void drawGeometry() const;
 };
 
 /**
  * A flattened, render-ready description of a light instance.
  */
 struct LightInstance {
+
 
 	/**
 	 * Light providing this instance's color and attenuation properties.
@@ -122,6 +150,21 @@ struct LightInstance {
 	 * Direction in which the light's rays travel, in world space.
 	 */
 	Vector3 direction = Vector3::ZERO;
+
+	/**
+	 * Shadow map texture, prepared by a shadow pass. Absent for lights that do not produce shadows.
+	 */
+    TexturePtr shadowMap;
+
+	/**
+	 * Index identifying which sampler slot the shadow map texture is stored in. Will be -1 for lights that do not cast shadows.
+	 */
+    int shadowIndex = -1;
+
+	/**
+	 * Transformation matrix used to determine shadows. Absent for lights that do not produce shadows.
+	 */
+    Matrix4 shadowTransform = Matrix4::IDENTITY;
 };
 
 /**

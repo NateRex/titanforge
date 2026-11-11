@@ -132,6 +132,17 @@ public:
 	bool depthWrite = true;
 
 	/**
+	 * Boolean flag that, when true, causes objects with this material to cast shadows (unless semi-transparent).
+	 */
+    bool castShadow = true;
+
+	/**
+	 * Boolean flag that, when true, causes objects with this material to receive shadows cast by other objects, darkening
+	 * their appearance.
+	 */
+    bool receiveShadow = true;
+
+	/**
 	 * Destructor
 	 */
 	virtual ~Material() = default;

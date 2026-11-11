@@ -37,5 +37,7 @@ private:
     LineMaterial(): Material(MaterialType::LINE, ShaderId::LINE)
     {
         cullingMode = CullingMode::NONE;
+        castShadow = false;
+        receiveShadow = false;
     }
 };

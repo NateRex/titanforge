@@ -9,7 +9,7 @@
 
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
-#include <graphics/lights/PointLight.h>
+#include <graphics/lights/DirectionalLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
 #include <graphics/geometry/BoxGeometry.h>
@@ -36,13 +36,15 @@
 PerspectiveCameraPtr setupInputs(Application* app)
 {
     float width, height;
-    app->getRenderer()->getWindowDimensions(&width, &height);
+    RendererPtr renderer = app->getRenderer();
+    renderer->getWindowDimensions(&width, &height);
     PerspectiveCameraPtr camera = PerspectiveCamera::create(45.f, width / height, 0.1f, 100.f);
 
     InputAction quit("Quit", InputValueType::BOOLEAN);
     InputAction move("Move", InputValueType::VECTOR_2D);
     InputAction look("Look", InputValueType::VECTOR_2D);
     InputAction zoom("Zoom", InputValueType::SCALAR);
+    InputAction toggleShadows("ToggleShadows", InputValueType::BOOLEAN);
 
     // Create key bindings
     InputContextPtr context = InputContext::create();
@@ -51,6 +53,7 @@ PerspectiveCameraPtr setupInputs(Application* app)
     context->add(DigitalInput::KEY_A, InputTrigger::HELD, move, InputModifiers().negateX());
     context->add(DigitalInput::KEY_W, InputTrigger::HELD, move, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
     context->add(DigitalInput::KEY_S, InputTrigger::HELD, move, InputModifiers().negateX().swizzle(Axis::Y, Axis::X, Axis::Z));
+    context->add(DigitalInput::KEY_1, InputTrigger::PRESSED, toggleShadows);
     context->add(AxisInput::MOUSE_MOVE, look, InputModifiers().negateY());
     context->add(AxisInput::MOUSE_SCROLL, zoom, InputModifiers().swizzle(Axis::Y, Axis::X, Axis::Z));
 
@@ -91,6 +94,12 @@ PerspectiveCameraPtr setupInputs(Application* app)
         fov -= value.getScalar();
         fov = clamp(fov, 1.f, 45.f);
         camera->setFOV(fov);
+    });
+
+    // Bind shadow toggle
+    inputController->bind(toggleShadows, [renderer](InputValue value, float deltaTime)
+    {
+        renderer->setShadowsEnabled(!renderer->getShadowsEnabled());
     });
 
     return camera;
@@ -151,18 +160,17 @@ int main()
     // Create skybox
     scene->add(Skybox::create());
 
-    // Create lighting
+    // Create ambient lighting
     LightPtr ambientLighting = AmbientLight::create();
     ambientLighting->intensity = 0.15f;
     scene->add(ambientLighting);
 
-    // Retune in linear space: at five world units, intensity 20 contributes 20/25 = 0.8
-    // before surface angle and material terms. Range does not affect inverse-square lights.
-    auto keyLight = PointLight::create();
-    keyLight->setPosition(0.f, 6.f, 3.f);
-    keyLight->intensity = 20.f;
-    keyLight->minimumDistance = 0.1f;
-    scene->add(keyLight);
+    // Create directional light simulating sunlight
+    DirectionalLightPtr sun = DirectionalLight::create(Vector3(-0.5f, -1.f, -0.3f));
+    sun->intensity = 0.40f;
+    sun->shadow.width = 2048;
+    sun->shadow.height = 2048;
+    scene->add(sun);
 
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
@@ -174,22 +182,39 @@ int main()
     // Create the ground
     MeshMaterialPtr groundMat = MeshMaterial::create();
     groundMat->color = Color(0.3f, 0.3f, 0.3f, 1.f);
-    scene->add(Mesh::create(BoxGeometry::create(50.f, 1.f, 50.f), groundMat));
+    scene->add(Mesh::create(BoxGeometry::create(12.f, 1.f, 12.f), groundMat));
 
     // Create grass
-    createGrass(scene, 10000, 1.f, -25.f, 25.f, -25.f, 25.f);
+    createGrass(scene, 200, 1.f, -5.f, 5.f, -5.f, 5.f);
 
     // Load guitar backpack model
-    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
-    entity->setPosition(0.f, 2.1f, 0.f);
-    entity->addRotation(Matrix3::fromYRotation(0.25f));
-    scene->add(entity);
+    EntityPtr backpack = ModelLoader::load("assets/backpack/backpack.obj");
+    backpack->setPosition(0.f, 2.1f, 0.f);
+    backpack->addRotation(Matrix3::fromYRotation(0.25f));
+    scene->add(backpack);
+
+    // Create opaque cube
+    MeshPtr cube = Mesh::create(BoxGeometry::create(1.2f, 2.f, 1.2f), MeshMaterial::create());
+    cube->setPosition(-2.f, 1.5f, 5.f);
+    scene->add(cube);
+
+    // Create glass panel
+    MeshMaterialPtr glass = MeshMaterial::create();
+    glass->color = Color(0.3f, 0.6f, 0.8f, 0.5f);
+    glass->alphaMode = AlphaMode::BLEND;
+    glass->cullingMode = CullingMode::NONE;
+    MeshPtr glassPanel = Mesh::create(BoxGeometry::create(4.f, 0.05f, 4.f), glass);
+    glassPanel->setPosition(-2.f, 1.2f, 5.f);
+    scene->add(glassPanel);
 
     // Run application
     app.run([&](const Frame& frame) {
         float width, height;
         app.getRenderer()->getWindowDimensions(&width, &height);
         camera->setAspect(width / height);
+
+        float time = frame.elapsedTime;
+        cube->setPosition(-2.f + std::sin(time), 1.5f, 5.f);
 
         renderer->render(scene, camera, RenderModes::MATERIAL);
     });

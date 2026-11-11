@@ -1,4 +1,5 @@
 #include <graphics/core/shaders/ShaderManager.h>
+#include <graphics/core/shaders/ShadowDepthShader.h>
 #include <graphics/core/shaders/PointShader.h>
 #include <graphics/core/shaders/LineShader.h>
 #include <graphics/core/shaders/MeshShader.h>
@@ -24,6 +25,7 @@ ShaderManager::ShaderManager()
 	_shaders.emplace(ShaderId::POST_PROCESS, PostProcessShader::create());
 	_shaders.emplace(ShaderId::PRESENTATION, PresentationShader::create());
 	_shaders.emplace(ShaderId::VERTEX_NORMALS, VertexNormalShader::create());
+	_shaders.emplace(ShaderId::SHADOW_DEPTH, ShadowDepthShader::create());
 }
 
 ShaderManager::~ShaderManager()

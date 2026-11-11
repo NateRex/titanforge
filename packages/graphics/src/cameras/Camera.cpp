@@ -1,7 +1,7 @@
 #include <graphics/cameras/Camera.h>
 #include <common/exceptions/UnsupportedOperationException.h>
 #include <common/Utils.h>
-#include <math.h>
+#include <cmath>
 
 Camera::Camera(): _minPitch(-89.f), _maxPitch(89.f)
 {
@@ -36,10 +36,10 @@ void Camera::rebuildRotation()
 {
 	const float yaw = deg2Rad(_yaw);
 	const float pitch = deg2Rad(_pitch);
-	const float cosYaw = cos(yaw);
-	const float sinYaw = sin(yaw);
-	const float cosPitch = cos(pitch);
-	const float sinPitch = sin(pitch);
+	const float cosYaw = std::cos(yaw);
+	const float sinYaw = std::sin(yaw);
+	const float cosPitch = std::cos(pitch);
+	const float sinPitch = std::sin(pitch);
 
 	// Rows store the camera's right, up, and forward axes. Yaw is measured around world Y and pitch around the
 	// resulting right axis, so rebuilding these axes guarantees that no roll can accumulate.
@@ -55,8 +55,8 @@ void Camera::updateRotation(float m00, float m01, float m02, float m10, float m1
 	Entity::updateRotation(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 
 	const Vector3 forward = getForwardVector();
-	_pitch = rad2Deg(asin(clamp(forward.y, -1.f, 1.f)));
-	_yaw = rad2Deg(atan2(-forward.x, -forward.z));
+	_pitch = rad2Deg(std::asin(clamp(forward.y, -1.f, 1.f)));
+	_yaw = rad2Deg(std::atan2(-forward.x, -forward.z));
 }
 
 Matrix4 Camera::getViewMatrix()

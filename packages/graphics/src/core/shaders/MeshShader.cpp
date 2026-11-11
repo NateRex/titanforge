@@ -77,6 +77,9 @@ constexpr const char* MESH_FRAGMENT = R"(
 		// Non-spot lights receive neutral cone values.
 		vec3 direction;
 		vec2 cone;
+        int shadowIndex;
+        mat4 shadowTransform;
+        vec2 shadowBias;
 	};
 
 	struct Material {
@@ -103,6 +106,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 	in vec2 frag_TexCoord;
 
 	uniform vec3 uCameraPos;
+    uniform bool uReceiveShadow;
+    uniform sampler2D uShadowMaps[12];
 	uniform vec3 uAmbient;
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
@@ -115,6 +120,74 @@ constexpr const char* MESH_FRAGMENT = R"(
 	uniform float uEnvironmentLod;
 
 	out vec4 FragColor;
+
+    float filteredVisibility(sampler2D shadowMap, vec2 uv, float depth, vec2 depthGradient) {
+        vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
+        float visible = 0.0;
+        for (int x = -1; x <= 1; ++x) {
+            for (int y = -1; y <= 1; ++y) {
+                vec2 sampleUV = uv + vec2(x, y) * texelSize;
+                if (any(lessThan(sampleUV, vec2(0.0))) ||
+                    any(greaterThanEqual(sampleUV, vec2(1.0)))) {
+                    visible += 1.0;
+                    continue;
+                }
+                // Compare against the receiver plane at the sampled texel center.
+                // A single depth for every tap makes slopes shadow themselves.
+                vec2 texelCenter = (floor(sampleUV / texelSize) + 0.5) * texelSize;
+                float receiverDepth = depth + dot(depthGradient, texelCenter - uv);
+                float closestDepth = texture(shadowMap, texelCenter).r;
+                visible += receiverDepth > closestDepth ? 0.0 : 1.0;
+            }
+        }
+        return visible / 9.0;
+    }
+
+    // GLSL 3.30 requires constant sampler-array indices.
+    float shadowVisibility(int index, vec2 uv, float depth, vec2 depthGradient) {
+        if (index == 0) return filteredVisibility(uShadowMaps[0], uv, depth, depthGradient);
+        if (index == 1) return filteredVisibility(uShadowMaps[1], uv, depth, depthGradient);
+        if (index == 2) return filteredVisibility(uShadowMaps[2], uv, depth, depthGradient);
+        if (index == 3) return filteredVisibility(uShadowMaps[3], uv, depth, depthGradient);
+        if (index == 4) return filteredVisibility(uShadowMaps[4], uv, depth, depthGradient);
+        if (index == 5) return filteredVisibility(uShadowMaps[5], uv, depth, depthGradient);
+        if (index == 6) return filteredVisibility(uShadowMaps[6], uv, depth, depthGradient);
+        if (index == 7) return filteredVisibility(uShadowMaps[7], uv, depth, depthGradient);
+        if (index == 8) return filteredVisibility(uShadowMaps[8], uv, depth, depthGradient);
+        if (index == 9) return filteredVisibility(uShadowMaps[9], uv, depth, depthGradient);
+        if (index == 10) return filteredVisibility(uShadowMaps[10], uv, depth, depthGradient);
+        if (index == 11) return filteredVisibility(uShadowMaps[11], uv, depth, depthGradient);
+        return 1.0;
+    }
+
+    vec2 receiverDepthGradient(vec3 projected) {
+        vec3 dx = dFdx(projected);
+        vec3 dy = dFdy(projected);
+        float determinant = dx.x * dy.y - dx.y * dy.x;
+        // Edge-on or invalid projections cannot provide a stable receiver plane.
+        float scale = length(dx.xy) * length(dy.xy);
+        if (isnan(scale) || isinf(scale) || scale == 0.0 ||
+            abs(determinant) <= 1.0e-5 * scale) return vec2(0.0);
+        vec2 gradient = vec2(dy.y * dx.z - dx.y * dy.z,
+                             dx.x * dy.z - dy.x * dx.z) / determinant;
+        return any(isnan(gradient)) || any(isinf(gradient)) ? vec2(0.0) : gradient;
+    }
+
+    float visibility(Light light, vec3 normal, vec3 lightDir)
+	{
+        if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
+        vec4 clip = light.shadowTransform * vec4(frag_Pos, 1.0);
+        vec3 projected = (clip.xyz / (clip.w != 0.0 ? clip.w : 1.0)) * 0.5 + 0.5;
+        // Evaluate derivatives before fragment-dependent projection rejection.
+        vec2 depthGradient = receiverDepthGradient(projected);
+        if (any(isnan(clip)) || any(isinf(clip)) || clip.w <= 0.0) return 1.0;
+        if (any(isnan(projected)) || any(isinf(projected)) ||
+            any(lessThan(projected, vec3(0.0))) ||
+            any(greaterThan(projected, vec3(1.0)))) return 1.0;
+
+        float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
+        return shadowVisibility(light.shadowIndex, projected.xy, projected.z - bias, depthGradient);
+    }
 
 	void main()
 	{
@@ -184,7 +257,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 			vec3 radiance = light.color
 				* light.intensity
 				* attenuation
-				* coneIntensity;
+				* coneIntensity
+                * visibility(light, normal, lightDir);
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -287,6 +361,11 @@ void MeshShader::setMaterial(const Material* material)
 		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
+    glUniform1i(getUniformLocation("uReceiveShadow"), material->receiveShadow);
+    glUniform1i(getUniformLocation("uMaterial.texture"), 0);
+    glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
+    glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
+
 	// Alpha settings
 	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(meshMat->getEffectiveAlphaMode()));
 	glUniform1f(getUniformLocation("uMaterial.alphaCutoff"), meshMat->alphaCutoff);
@@ -331,6 +410,8 @@ void MeshShader::setMaterial(const Material* material)
 void MeshShader::setEnvironment(const Environment& environment)
 {
 	ProgramBinding binding(this);
+    glUniform1i(getUniformLocation("uEnvironment"), 3);
+
 	if (!environment.texture)
 	{
 		glUniform1i(getUniformLocation("uHasEnvironment"), 0);
@@ -339,7 +420,6 @@ void MeshShader::setEnvironment(const Environment& environment)
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, environment.texture->id());
-	glUniform1i(getUniformLocation("uEnvironment"), 3);
 	glUniform1i(getUniformLocation("uHasEnvironment"), 1);
 	glUniform3f(getUniformLocation("uEnvironmentColor"), environment.color.red(), environment.color.green(), environment.color.blue());
 	glUniform1f(getUniformLocation("uEnvironmentIntensity"), std::max(environment.intensity, 0.f));
@@ -352,7 +432,11 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 	ProgramBinding binding(this);
 	Shader::setLighting(lights);
 
-	constexpr size_t MAX_LIGHTS = 16;
+    for (unsigned int i = 0; i < MAX_SHADOW_LIGHTS; i++)
+	{
+		glUniform1i(getUniformLocation(("uShadowMaps[" + std::to_string(i) + "]").c_str()), FIRST_SHADOW_TEXTURE_UNIT + i);
+	}
+
 	float ambientRed = 0.f;
 	float ambientGreen = 0.f;
 	float ambientBlue = 0.f;
@@ -453,6 +537,15 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 			quadraticAttenuation);
 		glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
 		glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
+        glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
+        glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
+            light->shadow.minimumBias, light->shadow.maximumBias);
+        glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
+        if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
+		{
+            glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + renderLight.shadowIndex);
+            glBindTexture(GL_TEXTURE_2D, renderLight.shadowMap->id());
+        }
 		++lightCount;
 	}
 

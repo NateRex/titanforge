@@ -46,5 +46,7 @@ private:
 		cullingMode = CullingMode::NONE;
 		depthWrite = false;
 		depthFunction = DepthFunction::ALWAYS;
+		castShadow = false;
+		receiveShadow = false;
 	}
 };
