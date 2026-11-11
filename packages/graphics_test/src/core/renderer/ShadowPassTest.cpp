@@ -53,6 +53,10 @@ BOOST_AUTO_TEST_CASE(ShadowPass_directionalAndSpotShadows)
         BOOST_TEST(light.shadowMap->width() == 32u);
         BOOST_TEST(light.shadowMap->height() == 64u);
         BOOST_TEST(light.shadowMap->format() == PixelFormat::DEPTH32F);
+        const auto& sampling = light.shadowMap->config().sampling;
+        BOOST_CHECK(sampling.sWrap == TextureWrap::CLAMP_TO_BORDER);
+        BOOST_CHECK(sampling.tWrap == TextureWrap::CLAMP_TO_BORDER);
+        for (float channel : sampling.borderColor) BOOST_TEST(channel == 1.f);
     }
     BOOST_TEST(state.lights[0].shadowMap != state.lights[1].shadowMap);
     const auto& config = directional->shadow;

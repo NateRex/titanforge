@@ -160,14 +160,14 @@ int main()
     // Create skybox
     scene->add(Skybox::create());
 
-    // Create lighting
+    // Create ambient lighting
     LightPtr ambientLighting = AmbientLight::create();
     ambientLighting->intensity = 0.15f;
     scene->add(ambientLighting);
 
     // Create directional light simulating sunlight
     DirectionalLightPtr sun = DirectionalLight::create(Vector3(-0.5f, -1.f, -0.3f));
-    sun->intensity = 0.65f;
+    sun->intensity = 0.40f;
     scene->add(sun);
 
     // Create post-processing effects
@@ -186,10 +186,10 @@ int main()
     createGrass(scene, 200, 1.f, -5.f, 5.f, -5.f, 5.f);
 
     // Load guitar backpack model
-    EntityPtr entity = ModelLoader::load("assets/backpack/backpack.obj");
-    entity->setPosition(0.f, 2.1f, 0.f);
-    entity->addRotation(Matrix3::fromYRotation(0.25f));
-    scene->add(entity);
+    EntityPtr backpack = ModelLoader::load("assets/backpack/backpack.obj");
+    backpack->setPosition(0.f, 2.1f, 0.f);
+    backpack->addRotation(Matrix3::fromYRotation(0.25f));
+    scene->add(backpack);
 
     // Create opaque cube
     MeshPtr cube = Mesh::create(BoxGeometry::create(1.2f, 2.f, 1.2f), MeshMaterial::create());

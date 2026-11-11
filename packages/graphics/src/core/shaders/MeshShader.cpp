@@ -142,7 +142,12 @@ constexpr const char* MESH_FRAGMENT = R"(
 	{
         if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
         vec4 clip = light.shadowTransform * vec4(frag_Pos, 1.0);
+        // Reject invalid projections and points behind a spotlight before dividing.
+        if (any(isnan(clip)) || any(isinf(clip)) || clip.w <= 0.0) return 1.0;
         vec3 projected = (clip.xyz / clip.w) * 0.5 + 0.5;
+        if (any(isnan(projected)) || any(isinf(projected)) ||
+            any(lessThan(projected, vec3(0.0))) ||
+            any(greaterThan(projected, vec3(1.0)))) return 1.0;
 
         float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
         return projected.z - bias > shadowDepth(light.shadowIndex, projected.xy) ? 0.0 : 1.0;

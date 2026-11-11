@@ -75,6 +75,9 @@ void ShadowPass::render(DrawState& state, unsigned int budget)
                 config.colorFormats.clear();
                 config.depthStencilStorage = DepthStencilStorage::TEXTURE;
                 config.depthStencilFormat = PixelFormat::DEPTH32F;
+                config.depthSampling.sWrap = TextureWrap::CLAMP_TO_BORDER;
+                config.depthSampling.tWrap = TextureWrap::CLAMP_TO_BORDER;
+                std::fill_n(config.depthSampling.borderColor, 4, 1.f);
                 target = RenderTarget::create(config);
             }
 
