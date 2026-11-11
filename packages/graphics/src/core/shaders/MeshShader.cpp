@@ -79,6 +79,7 @@ constexpr const char* MESH_FRAGMENT = R"(
 		vec2 cone;
         int shadowIndex;
         mat4 shadowTransform;
+        vec2 shadowBias;
 	};
 
 	struct Material {
@@ -137,14 +138,14 @@ constexpr const char* MESH_FRAGMENT = R"(
         return 1.0;
     }
 
-    float visibility(Light light)
+    float visibility(Light light, vec3 normal, vec3 lightDir)
 	{
         if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
         vec4 clip = light.shadowTransform * vec4(frag_Pos, 1.0);
         vec3 projected = (clip.xyz / clip.w) * 0.5 + 0.5;
 
-        // Bias, boundary handling, and PCF are intentionally deferred
-        return projected.z > shadowDepth(light.shadowIndex, projected.xy) ? 0.0 : 1.0;
+        float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
+        return projected.z - bias > shadowDepth(light.shadowIndex, projected.xy) ? 0.0 : 1.0;
     }
 
 	void main()
@@ -216,7 +217,7 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* light.intensity
 				* attenuation
 				* coneIntensity
-                * visibility(light);
+                * visibility(light, normal, lightDir);
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -496,6 +497,8 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 		glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
 		glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
         glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
+        glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
+            light->shadow.minimumBias, light->shadow.maximumBias);
         glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
         if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
 		{

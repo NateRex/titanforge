@@ -34,6 +34,20 @@ struct ShadowConfig
     float far = 100.f;
 
     /**
+     * Smallest adjustment used to prevent surfaces from incorrectly casting shadows on themselves, (known as "shadow acne").
+     * This lower bound on bias is used in cases where light hits nearly perpendicular to a surface. Set minimum and maximum bias
+     * values to zero to disable bias.
+     */
+    float minimumBias = 0.0001f;
+
+    /**
+     * Largest adjustment used to prevent surfaces from incorrectly casting shadows on themselves (known as "shadow acne").
+     * This upper bound on bias is used in cases where light hits nearly parallel to a surface. Set minimum and maximum bias
+     * values to zero to disable bias.
+     */
+    float maximumBias = 0.001f;
+
+    /**
      * Shadow settings specific to directional lights. Controls world-space coverage perpendicular to a directional light's rays.
      */
     struct DirectionalVolume
