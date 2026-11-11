@@ -168,6 +168,8 @@ int main()
     // Create directional light simulating sunlight
     DirectionalLightPtr sun = DirectionalLight::create(Vector3(-0.5f, -1.f, -0.3f));
     sun->intensity = 0.40f;
+    sun->shadow.width = 2048;
+    sun->shadow.height = 2048;
     scene->add(sun);
 
     // Create post-processing effects
