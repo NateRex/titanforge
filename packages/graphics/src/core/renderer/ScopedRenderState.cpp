@@ -11,6 +11,7 @@ ScopedRenderState::ScopedRenderState()
     glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTexture);
     glActiveTexture(GL_TEXTURE0);
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
+    glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &cubeTexture);
     glGetIntegerv(GL_DEPTH_FUNC, &depthFunction);
     glGetIntegerv(GL_CULL_FACE_MODE, &cullFace);
     glGetBooleanv(GL_DEPTH_WRITEMASK, &depthWrite);
@@ -30,6 +31,7 @@ ScopedRenderState::~ScopedRenderState()
     glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTexture);
     glActiveTexture(activeTexture);
     glDepthFunc(depthFunction);
     glDepthMask(depthWrite);

@@ -42,6 +42,11 @@ struct ScopedRenderState
     int texture;
 
     /**
+     * Cubemap texture previously bound to texture unit zero
+     */
+    int cubeTexture;
+
+    /**
      * Depth comparison function that was previously configured
      */
     int depthFunction;
@@ -89,7 +94,7 @@ struct ScopedRenderState
 
     /**
      * Restores all captured global OpenGL settings, including bindings, settings, and flags. Restores
-     * texture unit zero's two-dimensional texture binding before reactivating the previously active texture unit.
+     * texture unit zero's two-dimensional and cubemap bindings before reactivating the previously active texture unit.
      */
     ~ScopedRenderState();
 };
