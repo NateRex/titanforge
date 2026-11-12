@@ -192,7 +192,8 @@ constexpr const char* MESH_FRAGMENT = R"(
         return sampleShadowVisibility2D(light.shadowIndex, projected.xy, projected.z - bias, depthGradient);
     }
 
-	void main()
+	// Resolve vertex/material color, texture modulation and masked-fragment rejection.
+	vec4 surfaceAlbedo()
 	{
 		// Choose surface's starting RGBA color
 		vec4 albedo = uMaterial.hasVertexColor == 1
@@ -211,8 +212,30 @@ constexpr const char* MESH_FRAGMENT = R"(
 			discard;
 		}
 
-		vec3 normal = normalize(frag_Normal);
-		vec3 viewDir = normalize(uCameraPos - frag_Pos);
+		return albedo;
+	}
+
+	// Evaluate the coefficient curve or bounded inverse-square distance falloff.
+	float distanceAttenuation(Light light, float distance)
+	{
+		// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
+		float attenuation = 1.0 / (
+			light.attenuation.x
+			+ light.attenuation.y * distance
+			+ light.attenuation.z * distance * distance);
+		if (light.minimumDistance > 0.0)
+		{
+			// Bound the reciprocal before squaring so even subnormal positive clamps
+			// cannot create infinite attenuation in single-precision shader arithmetic.
+			float inverseDistance = min(1.0 / max(distance, light.minimumDistance), 1.0e19);
+			attenuation = inverseDistance * inverseDistance;
+		}
+		return attenuation;
+	}
+
+	// Accumulate diffuse and Blinn-Phong specular lighting, including shadow visibility.
+	vec3 surfaceLighting(vec3 albedo, vec3 normal, vec3 viewDir)
+	{
 		vec3 diffuse = vec3(0.0);
 		vec3 specular = vec3(0.0);
 		vec3 diffuseReflectance = uMaterial.hasDiffuseMap != 0
@@ -236,18 +259,7 @@ constexpr const char* MESH_FRAGMENT = R"(
 			vec3 lightDir = directionLength > 0.0 ? toLight / directionLength : normal;
 			float distance = length(light.vector.xyz - frag_Pos);
 
-			// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
-			float attenuation = 1.0 / (
-				light.attenuation.x
-				+ light.attenuation.y * distance
-				+ light.attenuation.z * distance * distance);
-			if (light.minimumDistance > 0.0)
-			{
-				// Bound the reciprocal before squaring so even subnormal positive clamps
-				// cannot create infinite attenuation in single-precision shader arithmetic.
-				float inverseDistance = min(1.0 / max(distance, light.minimumDistance), 1.0e19);
-				attenuation = inverseDistance * inverseDistance;
-			}
+			float attenuation = distanceAttenuation(light, distance);
 
 			// In the case of a cone light, intensity will be 0 outside the outer cone, 1 inside the inner cone
 			// and soft blend between the two
@@ -278,8 +290,13 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* specularFactor;
 		}
 
-		vec3 litColor = albedo.rgb * diffuseReflectance * (uAmbient + diffuse) + specular;
+		return albedo * diffuseReflectance * (uAmbient + diffuse) + specular;
 
+	}
+
+	// Blend environment reflection followed by refraction into the lit surface.
+	vec3 applyEnvironment(vec3 litColor, vec3 normal)
+	{
 		// Apply environment reflection / refraction
 		if (uHasEnvironment != 0)
 		{
@@ -297,6 +314,16 @@ constexpr const char* MESH_FRAGMENT = R"(
 			litColor = mix(litColor, reflected, uMaterial.reflection);
 			litColor = mix(litColor, refracted, uMaterial.refraction);
 		}
+		return litColor;
+	}
+
+	void main()
+	{
+		vec4 albedo = surfaceAlbedo();
+		vec3 normal = normalize(frag_Normal);
+		vec3 viewDir = normalize(uCameraPos - frag_Pos);
+		vec3 litColor = surfaceLighting(albedo.rgb, normal, viewDir);
+		litColor = applyEnvironment(litColor, normal);
 		FragColor = vec4(litColor, albedo.a);
 	}
 )";
