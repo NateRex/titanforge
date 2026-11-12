@@ -5,6 +5,7 @@
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/core/renderer/RenderTarget.h>
+#include <graphics/core/renderer/ScopedRenderState.h>
 #include <graphics/textures/Texture2D.h>
 #include <glad/glad.h>
 
@@ -225,6 +226,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_cubeColorStorage)
  */
 BOOST_AUTO_TEST_CASE(RenderTarget_cubeDepthStorage)
 {
+    ScopedRenderState restore;
     RenderTargetConfig config;
     config.sizeMode = TargetSizeMode::FIXED;
     config.width = config.height = 8;
@@ -240,6 +242,17 @@ BOOST_AUTO_TEST_CASE(RenderTarget_cubeDepthStorage)
         BOOST_TEST(texture->format() == format);
         BOOST_TEST(target->depthStencilRenderBuffer() == nullptr);
         BOOST_TEST(target->frameBuffer()->isComplete());
+        target->frameBuffer()->bind();
+
+        GLint layered, drawBuffer, readBuffer;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+            GL_FRAMEBUFFER_ATTACHMENT_LAYERED, &layered);
+        glGetIntegerv(GL_DRAW_BUFFER, &drawBuffer);
+        glGetIntegerv(GL_READ_BUFFER, &readBuffer);
+        BOOST_TEST(layered == GL_TRUE);
+        BOOST_TEST(drawBuffer == GL_NONE);
+        BOOST_TEST(readBuffer == GL_NONE);
+
         target->resize(16, 16);
         BOOST_TEST(target->depthStencilTexture() == texture);
         BOOST_TEST(texture->width() == 16u);
@@ -251,6 +264,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_cubeDepthStorage)
         BOOST_TEST(texture->width() == 16u);
         BOOST_TEST(target->frameBuffer()->isComplete());
     }
+    
     BOOST_TEST(glGetError() == GL_NO_ERROR);
 }
 

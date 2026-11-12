@@ -19,12 +19,14 @@ namespace
         GLuint frameBuffers[2] = {};
         GLuint vertexArrays[2] = {};
         GLuint textures[2] = {};
+        GLuint cubes[2] = {};
 
         Bindings()
         {
             glGenFramebuffers(2, frameBuffers);
             glGenVertexArrays(2, vertexArrays);
             glGenTextures(2, textures);
+            glGenTextures(2, cubes);
         }
 
         ~Bindings()
@@ -32,6 +34,7 @@ namespace
             glDeleteFramebuffers(2, frameBuffers);
             glDeleteVertexArrays(2, vertexArrays);
             glDeleteTextures(2, textures);
+            glDeleteTextures(2, cubes);
         }
     };
 }
@@ -51,12 +54,14 @@ BOOST_AUTO_TEST_CASE(ScopedRenderState_restoresBindings)
     glViewport(3, 5, 17, 19);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bindings.textures[0]);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, bindings.cubes[0]);
     glActiveTexture(GL_TEXTURE3);
     {
         ScopedRenderState state;
         // Capturing unit zero's binding deliberately leaves that unit active.
         BOOST_TEST(integerState(GL_ACTIVE_TEXTURE) == GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, bindings.textures[1]);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, bindings.cubes[1]);
         glActiveTexture(GL_TEXTURE2);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, bindings.frameBuffers[1]);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, bindings.frameBuffers[0]);
@@ -71,6 +76,7 @@ BOOST_AUTO_TEST_CASE(ScopedRenderState_restoresBindings)
     BOOST_TEST(integerState(GL_ACTIVE_TEXTURE) == GL_TEXTURE3);
     glActiveTexture(GL_TEXTURE0);
     BOOST_TEST(integerState(GL_TEXTURE_BINDING_2D) == bindings.textures[0]);
+    BOOST_TEST(integerState(GL_TEXTURE_BINDING_CUBE_MAP) == bindings.cubes[0]);
     GLint viewport[4] = {};
     glGetIntegerv(GL_VIEWPORT, viewport);
     const GLint expected[] = {3, 5, 17, 19};
@@ -142,11 +148,15 @@ BOOST_AUTO_TEST_CASE(ScopedRenderState_nestedScopes)
  */
 BOOST_AUTO_TEST_CASE(ScopedRenderState_exceptionUnwinding)
 {
+    Bindings bindings;
     ScopedRenderState restore;
     glDepthFunc(GL_GEQUAL);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, bindings.cubes[0]);
     glActiveTexture(GL_TEXTURE3);
-    auto fail = []() {
+    auto fail = [&]() {
         ScopedRenderState state;
+        glBindTexture(GL_TEXTURE_CUBE_MAP, bindings.cubes[1]);
         glDepthFunc(GL_NEVER);
         glActiveTexture(GL_TEXTURE2);
         throw std::runtime_error("Leave render scope");
@@ -154,4 +164,6 @@ BOOST_AUTO_TEST_CASE(ScopedRenderState_exceptionUnwinding)
     BOOST_CHECK_THROW(fail(), std::runtime_error);
     BOOST_TEST(integerState(GL_DEPTH_FUNC) == GL_GEQUAL);
     BOOST_TEST(integerState(GL_ACTIVE_TEXTURE) == GL_TEXTURE3);
+    glActiveTexture(GL_TEXTURE0);
+    BOOST_TEST(integerState(GL_TEXTURE_BINDING_CUBE_MAP) == bindings.cubes[0]);
 }

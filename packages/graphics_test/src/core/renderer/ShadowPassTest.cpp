@@ -13,6 +13,7 @@
 #include <graphics/textures/Texture2D.h>
 #include <graphics/textures/TextureCube.h>
 #include <graphics/core/renderer/RenderTarget.h>
+#include <graphics/core/renderer/ScopedRenderState.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/shaders/ShaderManager.h>
 #include <graphics/core/shaders/ShadowDepthShader.h>
@@ -21,6 +22,33 @@
 #include <cmath>
 #include <limits>
 #include <set>
+#include <sstream>
+
+struct ShadowDiagnostics
+{
+    std::ostringstream output;
+    std::streambuf* previous = std::cerr.rdbuf(output.rdbuf());
+    ~ShadowDiagnostics() { std::cerr.rdbuf(previous); }
+};
+
+struct IncompleteFramebuffer
+{
+    inline static PFNGLCHECKFRAMEBUFFERSTATUSPROC previous;
+
+    IncompleteFramebuffer()
+    {
+        previous = glad_glCheckFramebufferStatus;
+        glad_glCheckFramebufferStatus = failOnce;
+    }
+
+    ~IncompleteFramebuffer() { glad_glCheckFramebufferStatus = previous; }
+    
+    static GLenum APIENTRY failOnce(GLenum)
+    {
+        glad_glCheckFramebufferStatus = previous;
+        return GL_FRAMEBUFFER_UNSUPPORTED;
+    }
+};
 
 /**
  * Tests directional and spotlight shadow resources and projection state without pixel readback.
@@ -328,7 +356,7 @@ BOOST_AUTO_TEST_CASE(ShadowPass_pointInvalidSettings)
     auto valid = PointLight::create();
     valid->shadow.width = valid->shadow.height = 32;
     ShadowPass pass;
-    for (int invalid = 0; invalid < 7; ++invalid)
+    for (int invalid = 0; invalid < 12; ++invalid)
     {
         point->shadow = valid->shadow;
         Vector3 position;
@@ -340,15 +368,33 @@ BOOST_AUTO_TEST_CASE(ShadowPass_pointInvalidSettings)
             case 4: point->shadow.far = point->shadow.near; break;
             case 5: point->shadow.far = std::numeric_limits<float>::infinity(); break;
             case 6: position.x = std::numeric_limits<float>::quiet_NaN(); break;
+            case 7: point->shadow.height = -1; break;
+            case 8: point->shadow.near = std::numeric_limits<float>::quiet_NaN(); break;
+            case 9: point->shadow.far = -1.f; break;
+            case 10: position.z = std::numeric_limits<float>::infinity(); break;
+            case 11:
+                point->shadow.near = std::numeric_limits<float>::max() / 4.f;
+                point->shadow.far = std::numeric_limits<float>::max() / 2.f;
+                break;
         }
         DrawState state;
         state.lights.push_back({point.get(), position});
         state.lights.push_back({valid.get()});
+        ShadowDiagnostics diagnostics;
         pass.render(state, 1);
+        BOOST_TEST_CONTEXT("invalid setting=" << invalid)
+        {
+            BOOST_TEST(diagnostics.output.str().find("Point shadow") != std::string::npos);
+            BOOST_TEST(diagnostics.output.str().find("without shadows") != std::string::npos);
+            if (invalid == 0) BOOST_TEST(diagnostics.output.str().find("square") != std::string::npos);
+        }
+        BOOST_TEST(state.lights[0].light == point.get());
         BOOST_TEST(state.lights[0].shadowMap == nullptr);
         BOOST_TEST(state.lights[0].shadowIndex == -1);
+        BOOST_TEST(state.lights[0].shadowTransform == Matrix4::IDENTITY);
         BOOST_REQUIRE(state.lights[1].shadowMap != nullptr);
         BOOST_TEST(state.lights[1].shadowIndex == 0);
+        BOOST_TEST(glGetError() == GL_NO_ERROR);
     }
 }
 
@@ -381,4 +427,175 @@ BOOST_AUTO_TEST_CASE(ShadowPass_mixedPointAnd2DResources)
         BOOST_TEST(state.lights[i].shadowMap->type() == (i == 0 ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D));
     }
     BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Compatible targets survive repeated frames; resolution/type changes replace and release storage.
+ */
+BOOST_AUTO_TEST_CASE(ShadowPass_targetLifecycle)
+{
+    auto point = PointLight::create();
+    auto directional = DirectionalLight::create(Vector3::MINUS_ZHAT);
+    auto spot = SpotLight::create(Vector3::ZERO, Vector3::MINUS_ZHAT);
+    for (auto light : {LightPtr(point), LightPtr(directional), LightPtr(spot)})
+        light->shadow.width = light->shadow.height = 32;
+    DrawState state;
+    state.lights.push_back({point.get()});
+    ShadowPass pass;
+    pass.render(state, 1);
+    BOOST_REQUIRE(state.lights[0].shadowMap != nullptr);
+    auto original = state.lights[0].shadowMap;
+    pass.render(state, 1);
+    BOOST_TEST(state.lights[0].shadowMap == original);
+
+    const auto originalId = original->id();
+    std::weak_ptr<Texture> released = original;
+    original.reset();
+    point->shadow.width = point->shadow.height = 64;
+    pass.render(state, 1);
+    BOOST_REQUIRE(state.lights[0].shadowMap != nullptr);
+    BOOST_TEST(state.lights[0].shadowMap->width() == 64u);
+    BOOST_TEST(released.expired());
+    BOOST_TEST(glIsTexture(originalId) == GL_FALSE);
+
+    released = state.lights[0].shadowMap;
+    state.lights[0].light = directional.get();
+    state.lights[0].direction = Vector3::MINUS_ZHAT;
+    pass.render(state, 1);
+    BOOST_TEST(released.expired());
+    BOOST_REQUIRE(state.lights[0].shadowMap != nullptr);
+    BOOST_TEST(state.lights[0].shadowMap->type() == GL_TEXTURE_2D);
+    BOOST_TEST(state.lights[0].shadowTransform != Matrix4::IDENTITY);
+    auto map2D = state.lights[0].shadowMap;
+    state.lights[0].light = spot.get();
+    pass.render(state, 1);
+    BOOST_TEST(state.lights[0].shadowMap == map2D);
+    map2D.reset();
+
+    state.lights[0].light = point.get();
+    pass.render(state, 1);
+    BOOST_REQUIRE(state.lights[0].shadowMap != nullptr);
+    BOOST_TEST(state.lights[0].shadowMap->type() == GL_TEXTURE_CUBE_MAP);
+    BOOST_TEST(state.lights[0].shadowTransform == Matrix4::IDENTITY);
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Losing eligibility clears per-frame state and releases cached targets, including surplus slots.
+ */
+BOOST_AUTO_TEST_CASE(ShadowPass_releasesUnusedTargets)
+{
+    auto point = PointLight::create();
+    point->shadow.width = point->shadow.height = 32;
+    ShadowPass pass;
+    DrawState state;
+    state.lights.push_back({point.get()});
+    state.lights.push_back({point.get()});
+    pass.render(state, 2);
+    BOOST_REQUIRE(state.lights[1].shadowMap != nullptr);
+    std::weak_ptr<Texture> surplus = state.lights[1].shadowMap;
+    pass.render(state, 1);
+    BOOST_TEST(surplus.expired());
+    BOOST_TEST(state.lights[1].shadowIndex == -1);
+    state.lights.resize(1);
+
+    for (int change = 0; change < 5; ++change)
+    {
+        point->shadow.enabled = true;
+        point->shadow.height = 32;
+        state.lights[0].light = point.get();
+        pass.render(state, 1);
+        BOOST_REQUIRE(state.lights[0].shadowMap != nullptr);
+        std::weak_ptr<Texture> released = state.lights[0].shadowMap;
+        if (change == 0) point->shadow.enabled = false;
+        if (change == 1) point->shadow.height = 16;
+        if (change == 2) state.lights[0].light = nullptr;
+        ShadowDiagnostics diagnostics;
+        pass.render(state, change == 3 ? 0 : 1);
+        if (change == 4)
+        {
+            state.lights.clear();
+            pass.clear();
+        }
+        else
+        {
+            BOOST_TEST(state.lights[0].shadowMap == nullptr);
+            BOOST_TEST(state.lights[0].shadowIndex == -1);
+            BOOST_TEST(state.lights[0].shadowTransform == Matrix4::IDENTITY);
+        }
+        BOOST_TEST(released.expired());
+    }
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Success and allocation failure both restore caller state; a failed light leaves the slot for the next light.
+ */
+BOOST_AUTO_TEST_CASE(ShadowPass_restoresStateAndFallsBackAfterFailure)
+{
+    ScopedRenderState restore;
+    auto draw = FrameBuffer::create();
+    auto read = FrameBuffer::create();
+    auto texture = Texture2D::create(Texture2DConfig{});
+    auto cube = TextureCube::create(TextureCubeConfig{});
+    auto scene = Scene::create();
+    auto material = MeshMaterial::create();
+    material->alphaMode = AlphaMode::MASK;
+    material->texture = Texture2D::create(Texture2DConfig{});
+    scene->add(Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), material));
+    auto point = PointLight::create();
+    point->shadow.width = point->shadow.height = 32;
+    auto directional = DirectionalLight::create(Vector3::MINUS_ZHAT);
+    directional->shadow.width = directional->shadow.height = 32;
+    scene->add(point);
+    scene->add(directional);
+    auto program = ShaderManager::getShader(ShaderId::MESH);
+    for (bool fail : {false, true})
+    {
+        DrawState state;
+        scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+        program->activate();
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw->id());
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, read->id());
+        glViewport(3, 5, 17, 19);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture->id());
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cube->id());
+        glActiveTexture(GL_TEXTURE2);
+        ShadowPass pass;
+        ShadowDiagnostics diagnostics;
+        if (fail)
+        {
+            IncompleteFramebuffer failure;
+            pass.render(state, 1);
+            BOOST_TEST(diagnostics.output.str().find("unsupported") != std::string::npos);
+        }
+        else pass.render(state, 1);
+        const auto selected = fail ? 1u : 0u;
+        BOOST_TEST(state.lights[1 - selected].shadowMap == nullptr);
+        BOOST_TEST(state.lights[1 - selected].shadowIndex == -1);
+        BOOST_TEST(state.lights[1 - selected].shadowTransform == Matrix4::IDENTITY);
+        BOOST_TEST(state.lights[1 - selected].light == (fail ? point.get() : static_cast<Light*>(directional.get())));
+        BOOST_REQUIRE(state.lights[selected].shadowMap != nullptr);
+        BOOST_TEST(state.lights[selected].shadowIndex == 0);
+        GLint value;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &value);
+        BOOST_TEST(value == draw->id());
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &value);
+        BOOST_TEST(value == read->id());
+        glGetIntegerv(GL_CURRENT_PROGRAM, &value);
+        BOOST_TEST(value == program->id());
+        glGetIntegerv(GL_ACTIVE_TEXTURE, &value);
+        BOOST_TEST(value == GL_TEXTURE2);
+        glActiveTexture(GL_TEXTURE0);
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &value);
+        BOOST_TEST(value == texture->id());
+        glGetIntegerv(GL_TEXTURE_BINDING_CUBE_MAP, &value);
+        BOOST_TEST(value == cube->id());
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        const GLint expected[] = {3, 5, 17, 19};
+        BOOST_CHECK_EQUAL_COLLECTIONS(viewport, viewport + 4, expected, expected + 4);
+        BOOST_TEST(glGetError() == GL_NO_ERROR);
+    }
 }

@@ -4,6 +4,7 @@
 #include <graphics/core/renderer/RenderTarget.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/shaders/ShaderManager.h>
+#include <graphics/core/shaders/Shader.h>
 #include <graphics/core/windows/Window.h>
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
@@ -651,4 +652,60 @@ BOOST_AUTO_TEST_CASE(Renderer_mixedPointShadows)
     }
     BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
     BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Invalid, overflow, and disabled shadows preserve direct lighting and refresh uploaded shadow indices.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_shadowFallbackLifecycle)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setShadowsEnabled(true);
+    renderer->setShadowBudget(12);
+    auto scene = Scene::create();
+    auto camera = PerspectiveCamera::create(45.f, 1.f, 0.1f, 100.f);
+    auto material = MeshMaterial::create();
+    scene->add(Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), material));
+    std::vector<PointLightPtr> points;
+    for (int i = 0; i < 5; ++i)
+    {
+        auto point = PointLight::create();
+        point->shadow.width = point->shadow.height = 32;
+        point->intensity = 2.f;
+        scene->add(point);
+        points.push_back(point);
+    }
+    auto directional = DirectionalLight::create(Vector3::MINUS_ZHAT);
+    directional->shadow.width = directional->shadow.height = 32;
+    directional->intensity = 2.f;
+    scene->add(directional);
+
+    for (int frame = 0; frame < 4; ++frame)
+    {
+        points[0]->shadow.near = frame == 1 ? 0.f : 0.1f;
+        renderer->setShadowsEnabled(frame != 2);
+        BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+        auto shader = ShaderManager::getShader(ShaderId::MESH);
+        auto integerUniform = [&](const std::string& name) {
+            const auto location = glGetUniformLocation(shader->id(), name.c_str());
+            BOOST_REQUIRE(location >= 0);
+            GLint value;
+            glGetUniformiv(shader->id(), location, &value);
+            return value;
+        };
+        BOOST_TEST(integerUniform("uLightCount") == 6);
+        for (int i = 0; i < 6; ++i)
+        {
+            const std::string prefix = "uLights[" + std::to_string(i) + "].";
+            const int expected[] = {0, 1, 2, 3, -1, 0};
+            const int invalidExpected[] = {-1, 0, 1, 2, 3, 0};
+            BOOST_TEST(integerUniform(prefix + "shadowIndex") ==
+                (frame == 2 ? -1 : (frame == 1 ? invalidExpected[i] : expected[i])));
+            float intensity;
+            glGetUniformfv(shader->id(), glGetUniformLocation(shader->id(), (prefix + "intensity").c_str()), &intensity);
+            BOOST_TEST(intensity == 2.f);
+        }
+        BOOST_TEST(glGetError() == GL_NO_ERROR);
+    }
 }

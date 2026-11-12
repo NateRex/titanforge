@@ -174,21 +174,39 @@ bool ShadowPass::buildTransforms(const LightInstance& instance, int maxSize, Mat
 {
     const Light& light = *instance.light;
     const ShadowConfig& config = light.shadow;
-    if (config.width <= 0 || config.height <= 0 || config.width > maxSize || config.height > maxSize
-        || !std::isfinite(config.near) || !std::isfinite(config.far) || config.near <= 0.f
+    const auto invalid = [&light](const char* reason) {
+        if (light.lightType == LightType::POINT)
+            std::cerr << "Point shadow " << reason << "; illuminating without shadows" << std::endl;
+        return false;
+    };
+
+    if (config.width <= 0 || config.height <= 0)
+    {
+        return invalid("dimensions must be positive");
+    }
+
+    if (config.width > maxSize || config.height > maxSize)
+    {
+        return invalid("dimensions exceed the supported texture or viewport size");
+    }
+
+    if (!std::isfinite(config.near) || !std::isfinite(config.far) || config.near <= 0.f
         || config.far <= config.near)
     {
-        return false;
+        return invalid("clipping interval requires finite 0 < near < far");
     }
 
     if (light.lightType == LightType::POINT)
     {
         if (config.width != config.height)
         {
-            std::cerr << "Point shadow cubemap dimensions must be square; illuminating without shadows" << std::endl;
-            return false;
+            return invalid("cubemap dimensions must be square (width must equal height)");
         }
-        if (!instance.position.isFinite()) return false;
+
+        if (!instance.position.isFinite())
+        {
+            return invalid("position must be finite");
+        }
 
         // OpenGL cube face order: +X, -X, +Y, -Y, +Z, -Z.
         const Vector3 directions[] = {Vector3::XHAT, Vector3::MINUS_XHAT,
@@ -201,12 +219,18 @@ bool ShadowPass::buildTransforms(const LightInstance& instance, int maxSize, Mat
         {
             const auto forward = directions[face];
             transforms[face] = projection.multiply(buildTransform(instance.position, forward, ups[face]));
+            for (int i = 0; i < 16; ++i)
+                if (!std::isfinite(transforms[face][i]))
+                    return invalid("settings produce a non-finite face transform");
         }
 
         return true;
     }
 
-    if (!instance.direction.isFinite() || instance.direction.dot(instance.direction) < 0.00001f) return false;
+    if (!instance.direction.isFinite() || instance.direction.dot(instance.direction) < 0.00001f)
+    {
+        return false;
+    }
     
     const Vector3 forward = instance.direction.normalize();
     Vector3 position = instance.position;
