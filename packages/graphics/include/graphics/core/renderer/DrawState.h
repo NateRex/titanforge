@@ -22,9 +22,20 @@ class InstanceBuffer;
 constexpr unsigned int MAX_LIGHTS = 16;
 
 /**
- * Maximum number of lights capable of producing shadows
+ * Maximum number of lights capable of producing shadows modeled using 2D textures. This covers directional
+ * lights and spotlights.
  */
-constexpr unsigned int MAX_SHADOW_LIGHTS = 12;
+constexpr unsigned int MAX_SHADOW_MAPS_2D = 8;
+
+/**
+ * Maximum number of lights capable of producing shadows modeled using cube textures. This covers point lights.
+ */
+constexpr unsigned int MAX_SHADOW_MAPS_CUBE = 4;
+
+/**
+ * Maximum number of lights capable of producing shadows, in total
+ */
+constexpr unsigned int MAX_SHADOW_LIGHTS = MAX_SHADOW_MAPS_2D + MAX_SHADOW_MAPS_CUBE;
 
 /**
  * First texture unit slot reserved for shadow maps
@@ -157,7 +168,7 @@ struct LightInstance {
     TexturePtr shadowMap;
 
 	/**
-	 * Index identifying which sampler slot the shadow map texture is stored in. Will be -1 for lights that do not cast shadows.
+	 * Index within the shadow texture type's sampler partition. Will be -1 for lights that do not cast shadows.
 	 */
     int shadowIndex = -1;
 
