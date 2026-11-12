@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 #include <common/PrintHelpers.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <common/exceptions/IllegalStateException.h>
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/core/renderer/RenderTarget.h>
@@ -65,7 +66,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_depthTexture)
     config.width = 5;
     config.height = 3;
     config.colorFormats.clear();
-    config.depthStencilStorage = DepthStencilStorage::TEXTURE;
+    config.depthStencilStorage = DepthStencilStorage::TEXTURE_2D;
 
     // Create a render target with each type of depth-stencil format
     PixelFormat formats[] = { PixelFormat::DEPTH32F, PixelFormat::DEPTH24_STENCIL8 };
@@ -94,7 +95,7 @@ BOOST_AUTO_TEST_CASE(RenderTarget_resize)
     config.width = 2;
     config.height = 3;
     config.colorFormats = { PixelFormat::RGB8, PixelFormat::RGBA8 };
-    config.depthStencilStorage = DepthStencilStorage::TEXTURE;
+    config.depthStencilStorage = DepthStencilStorage::TEXTURE_2D;
     config.depthStencilFormat = PixelFormat::DEPTH32F;
 
     RenderTargetPtr renderTarget = RenderTarget::create(config);
@@ -180,4 +181,106 @@ BOOST_AUTO_TEST_CASE(RenderTarget_failureCases)
 
     config.samples = 0;
     BOOST_CHECK_THROW(RenderTarget::create(config), IllegalArgumentException);
+}
+
+
+/**
+ * Tests the ability to use cube textures as storage for the color attachments
+ */
+BOOST_AUTO_TEST_CASE(RenderTarget_cubeColorStorage)
+{
+    RenderTargetConfig config;
+    config.sizeMode = TargetSizeMode::FIXED;
+    config.width = config.height = 8;
+    config.colorFormats = {PixelFormat::RGBA8, PixelFormat::RGBA16F};
+    config.colorStorage = ColorStorage::TEXTURE_CUBE;
+    for (auto depth : {DepthStencilStorage::NONE, DepthStencilStorage::TEXTURE_CUBE})
+    {
+        config.depthStencilStorage = depth;
+        auto target = RenderTarget::create(config);
+        BOOST_TEST(target->frameBuffer()->isComplete());
+        for (unsigned int i = 0; i < 2; ++i) {
+            auto texture = target->colorTexture(i);
+            BOOST_TEST(texture->type() == GL_TEXTURE_CUBE_MAP);
+            BOOST_TEST(texture->format() == config.colorFormats[i]);
+            BOOST_TEST(texture->width() == 8u);
+        }
+        target->frameBuffer()->bind();
+        GLint layered;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+            GL_FRAMEBUFFER_ATTACHMENT_LAYERED, &layered);
+        BOOST_TEST(layered == GL_TRUE);
+        auto texture = target->colorTexture(0);
+        target->resize(16, 16);
+        BOOST_TEST(target->colorTexture(0) == texture);
+        BOOST_TEST(texture->width() == 16u);
+        BOOST_TEST(target->frameBuffer()->isComplete());
+    }
+    FrameBuffer::bindDefault();
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Tests the ability to use cube textures as storage for the depth attachment
+ */
+BOOST_AUTO_TEST_CASE(RenderTarget_cubeDepthStorage)
+{
+    RenderTargetConfig config;
+    config.sizeMode = TargetSizeMode::FIXED;
+    config.width = config.height = 8;
+    config.colorFormats.clear();
+    config.depthStencilStorage = DepthStencilStorage::TEXTURE_CUBE;
+    for (auto format : {PixelFormat::DEPTH32F, PixelFormat::DEPTH24_STENCIL8})
+    {
+        config.depthStencilFormat = format;
+        auto target = RenderTarget::create(config);
+        auto texture = target->depthStencilTexture();
+        BOOST_REQUIRE(texture != nullptr);
+        BOOST_TEST(texture->type() == GL_TEXTURE_CUBE_MAP);
+        BOOST_TEST(texture->format() == format);
+        BOOST_TEST(target->depthStencilRenderBuffer() == nullptr);
+        BOOST_TEST(target->frameBuffer()->isComplete());
+        target->resize(16, 16);
+        BOOST_TEST(target->depthStencilTexture() == texture);
+        BOOST_TEST(texture->width() == 16u);
+        BOOST_TEST(texture->height() == 16u);
+        BOOST_TEST(target->frameBuffer()->isComplete());
+        BOOST_CHECK_THROW(target->resize(8, 4), IllegalArgumentException);
+        BOOST_TEST(target->config().width == 16);
+        BOOST_TEST(target->config().height == 16);
+        BOOST_TEST(texture->width() == 16u);
+        BOOST_TEST(target->frameBuffer()->isComplete());
+    }
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
+}
+
+/**
+ * Tests exception cases when specifying an invalid cube storage configuration
+ */
+BOOST_AUTO_TEST_CASE(RenderTarget_invalidCubeStorage)
+{
+    for (bool cubeDepth : {false, true})
+    {
+        RenderTargetConfig config;
+        config.sizeMode = TargetSizeMode::FIXED;
+        config.width = 8;
+        config.height = 4;
+        config.depthStencilStorage = cubeDepth ? DepthStencilStorage::TEXTURE_CUBE : DepthStencilStorage::NONE;
+        config.colorFormats = cubeDepth ? std::vector<PixelFormat>{} : std::vector<PixelFormat>{PixelFormat::RGBA8};
+        config.colorStorage = cubeDepth ? ColorStorage::TEXTURE_2D : ColorStorage::TEXTURE_CUBE;
+        BOOST_CHECK_THROW(RenderTarget::create(config), IllegalArgumentException);
+        config.height = 8;
+        config.samples = 2;
+        BOOST_CHECK_THROW(RenderTarget::create(config), IllegalArgumentException);
+    }
+    RenderTargetConfig config;
+    config.sizeMode = TargetSizeMode::FIXED;
+    config.width = config.height = 8;
+    config.depthStencilStorage = DepthStencilStorage::TEXTURE_CUBE;
+    // A layered depth attachment cannot share a framebuffer with ordinary 2D color storage.
+    BOOST_CHECK_THROW(RenderTarget::create(config), IllegalStateException);
+    config.colorStorage = ColorStorage::TEXTURE_CUBE;
+    config.depthStencilStorage = DepthStencilStorage::RENDERBUFFER;
+    BOOST_CHECK_THROW(RenderTarget::create(config), IllegalStateException);
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }

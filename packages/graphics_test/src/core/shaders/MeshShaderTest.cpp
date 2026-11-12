@@ -11,7 +11,6 @@
 #include <graphics/lights/SpotLight.h>
 #include <graphics/objects/Skybox.h>
 #include <math/Matrix4.h>
-#include <common/exceptions/IllegalArgumentException.h>
 
 /**
  * Tests the ability to set a fully-populated the render state
@@ -110,8 +109,8 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 /**
  * Tests the ability to set a render item consisting of a material containing diffuse and specular maps
  */
- BOOST_AUTO_TEST_CASE(MeshShader_setDiffuseMapMaterial)
- {
+BOOST_AUTO_TEST_CASE(MeshShader_setDiffuseMapMaterial)
+{
  	MeshMaterialPtr mat = MeshMaterial::create();
 	TexturePtr img = TextureLoader::load("assets/container.jpg");
  	mat->diffuseMap = img;
@@ -124,4 +123,4 @@ BOOST_AUTO_TEST_CASE(MeshShader_setTextureMaterial)
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::MESH);
  	BOOST_REQUIRE_NO_THROW(shader->setItem(item));
- }
+}

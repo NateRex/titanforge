@@ -10,13 +10,24 @@
 #include <memory>
 
 /**
- * Tests the ability to set a light projection matrix.
+ * Tests the ability to set a light projection matrix in support of a 2D shadow map
  */
 BOOST_AUTO_TEST_CASE(ShadowDepthShader_setProjection)
 {
     Matrix4 projection = Matrix4::fromOrthographic(20.f, 10.f, 0.1f, 100.f);
     auto shader = std::static_pointer_cast<ShadowDepthShader>(ShaderManager::getShader(ShaderId::SHADOW_DEPTH));
     BOOST_REQUIRE_NO_THROW(shader->setProjection(projection));
+}
+
+/**
+ * Tests the ability to set projection matrices for a light in support of a layered cube shadow map
+ */
+BOOST_AUTO_TEST_CASE(ShadowDepthShader_setProjections)
+{
+    Matrix4 faces[6] = {Matrix4::IDENTITY, Matrix4::IDENTITY, Matrix4::IDENTITY,
+        Matrix4::IDENTITY, Matrix4::IDENTITY, Matrix4::IDENTITY};
+    auto shader = std::static_pointer_cast<ShadowDepthShader>(ShaderManager::getShader(ShaderId::SHADOW_DEPTH));
+    BOOST_REQUIRE_NO_THROW(shader->setProjections(faces, Vector3(2.f, 3.f, 4.f), 30.f));
 }
 
 /**

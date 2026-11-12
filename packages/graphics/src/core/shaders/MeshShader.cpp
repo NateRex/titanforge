@@ -80,6 +80,7 @@ constexpr const char* MESH_FRAGMENT = R"(
         int shadowIndex;
         mat4 shadowTransform;
         vec2 shadowBias;
+        float shadowFar;
 	};
 
 	struct Material {
@@ -107,7 +108,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 	uniform vec3 uCameraPos;
     uniform bool uReceiveShadow;
-    uniform sampler2D uShadowMaps[12];
+    uniform sampler2D uShadowMaps[8];
+    uniform samplerCube uPointShadowMaps[4];
 	uniform vec3 uAmbient;
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
@@ -154,11 +156,26 @@ constexpr const char* MESH_FRAGMENT = R"(
         if (index == 5) return filteredVisibility2D(uShadowMaps[5], uv, depth, depthGradient);
         if (index == 6) return filteredVisibility2D(uShadowMaps[6], uv, depth, depthGradient);
         if (index == 7) return filteredVisibility2D(uShadowMaps[7], uv, depth, depthGradient);
-        if (index == 8) return filteredVisibility2D(uShadowMaps[8], uv, depth, depthGradient);
-        if (index == 9) return filteredVisibility2D(uShadowMaps[9], uv, depth, depthGradient);
-        if (index == 10) return filteredVisibility2D(uShadowMaps[10], uv, depth, depthGradient);
-        if (index == 11) return filteredVisibility2D(uShadowMaps[11], uv, depth, depthGradient);
         return 1.0;
+    }
+
+    // Single radial-depth sample; indices remain constant for GLSL 3.30.
+    float sampleShadowDepthCube(int index, vec3 direction) {
+        if (index == 0) return texture(uPointShadowMaps[0], direction).r;
+        if (index == 1) return texture(uPointShadowMaps[1], direction).r;
+        if (index == 2) return texture(uPointShadowMaps[2], direction).r;
+        if (index == 3) return texture(uPointShadowMaps[3], direction).r;
+        return 1.0;
+    }
+
+    // Point lights reuse their lighting position; a positive far distance selects this path.
+    float shadowVisibilityCube(Light light, vec3 normal, vec3 lightDir) {
+        if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
+        vec3 direction = frag_Pos - light.vector.xyz;
+        float depth = length(direction) / light.shadowFar;
+        if (depth > 1.0 || depth <= 0.0) return 1.0;
+        float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
+        return depth - bias > sampleShadowDepthCube(light.shadowIndex, direction) ? 0.0 : 1.0;
     }
 
     // Recover the receiver plane slope in shadow-map UV coordinates.
@@ -273,7 +290,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* light.intensity
 				* attenuation
 				* coneIntensity
-                * shadowVisibility2D(light, normal, lightDir);
+                * (light.shadowFar > 0.0 ? shadowVisibilityCube(light, normal, lightDir)
+                    : shadowVisibility2D(light, normal, lightDir));
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -462,10 +480,14 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 	ProgramBinding binding(this);
 	Shader::setLighting(lights);
 
-	for (unsigned int i = 0; i < MAX_SHADOW_LIGHTS; i++)
+	for (unsigned int i = 0; i < MAX_SHADOW_MAPS_2D; i++)
 	{
 		glUniform1i(getUniformLocation(("uShadowMaps[" + std::to_string(i) + "]").c_str()), FIRST_SHADOW_TEXTURE_UNIT + i);
 	}
+
+    for (unsigned int i = 0; i < MAX_SHADOW_MAPS_CUBE; ++i)
+        glUniform1i(getUniformLocation(("uPointShadowMaps[" + std::to_string(i) + "]").c_str()),
+            FIRST_SHADOW_TEXTURE_UNIT + MAX_SHADOW_MAPS_2D + i);
 
 	float ambientRed = 0.f;
 	float ambientGreen = 0.f;
@@ -582,13 +604,15 @@ void MeshShader::setLightUniforms(const LightInstance& renderLight, std::size_t 
 	glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
 	glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
 	glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
+    const bool point = light->lightType == LightType::POINT;
+    glUniform1f(getUniformLocation((prefix + "shadowFar").c_str()), point ? light->shadow.far : 0.f);
 	glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
 		light->shadow.minimumBias, light->shadow.maximumBias);
 	glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
 	if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
 	{
-		glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + renderLight.shadowIndex);
-		glBindTexture(GL_TEXTURE_2D, renderLight.shadowMap->id());
+		glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + (point ? MAX_SHADOW_MAPS_2D : 0) + renderLight.shadowIndex);
+		glBindTexture(renderLight.shadowMap->type(), renderLight.shadowMap->id());
 	}
 }
 

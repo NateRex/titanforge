@@ -25,6 +25,7 @@
 #include <limits>
 #include <cmath>
 #include <sstream>
+#include <graphics/objects/InstancedMesh.h>
 
 struct PresentationSettings
 {
@@ -608,4 +609,46 @@ BOOST_AUTO_TEST_CASE(Renderer_offscreenTextureComposition)
             }
         }
     }
+}
+
+/**
+ * Tests the ability to render a scene containing a mixture of light sources producing shadows, and objects that may or may not cast/receive
+ * shadows.
+ */
+BOOST_AUTO_TEST_CASE(Renderer_mixedPointShadows)
+{
+    PresentationSettings restore;
+    auto renderer = restore.renderer;
+    renderer->setShadowsEnabled(true);
+    renderer->setShadowBudget(3);
+    auto scene = Scene::create();
+    auto camera = PerspectiveCamera::create(45.f, 1.f, 0.1f, 100.f);
+    for (auto light : {LightPtr(PointLight::create()), LightPtr(DirectionalLight::create(Vector3::MINUS_ZHAT)),
+        LightPtr(SpotLight::create(Vector3::ZERO, Vector3::MINUS_ZHAT))}) {
+        light->shadow.width = light->shadow.height = 32;
+        scene->add(light);
+    }
+    auto geometry = BoxGeometry::create(1.f, 1.f, 1.f);
+    auto texture = Texture2D::create(Texture2DConfig{});
+    float x = -2.f;
+    for (auto mode : {AlphaMode::OPAQUE, AlphaMode::MASK, AlphaMode::BLEND})
+    {
+        for (bool shadows : {false, true})
+        {
+            auto material = MeshMaterial::create();
+            material->texture = texture;
+            material->alphaMode = mode;
+            material->castShadow = material->receiveShadow = shadows;
+            const float y = shadows ? 1.f : -1.f;
+            auto mesh = Mesh::create(geometry, material);
+            mesh->setPosition(x, y, -8.f);
+            scene->add(mesh);
+            auto instances = InstancedMesh::create(geometry, material);
+            instances->addInstance({Vector3(x, y, -10.f)});
+            scene->add(instances);
+        }
+        x += 2.f;
+    }
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }

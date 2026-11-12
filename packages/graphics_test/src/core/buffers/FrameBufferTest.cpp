@@ -4,6 +4,7 @@
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/textures/Texture2D.h>
 #include <glad/glad.h>
+#include <graphics/textures/TextureCube.h>
 
 /**
  * Helper method that returns the ID of the currently-bound frame buffer
@@ -116,4 +117,31 @@ BOOST_AUTO_TEST_CASE(FrameBuffer_incompleteWithoutAttachments)
         {
             return std::string(exception.what()) == "Frame buffer is incomplete: no images are attached";
         });
+}
+
+/**
+ * Test the ability to attach a layered cube texture for the depth attachment
+ */
+BOOST_AUTO_TEST_CASE(FrameBuffer_layeredDepthCube)
+{
+    TextureCubeConfig config;
+    config.size = 32;
+    config.format = PixelFormat::DEPTH32F;
+    auto texture = TextureCube::create(config);
+    auto frameBuffer = FrameBuffer::create();
+    frameBuffer->attach(FrameBufferAttachment::DEPTH, texture);
+    frameBuffer->bind();
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    BOOST_TEST(frameBuffer->isComplete());
+    GLint layered = 0, read = -1, draw = -1;
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+        GL_FRAMEBUFFER_ATTACHMENT_LAYERED, &layered);
+    glGetIntegerv(GL_READ_BUFFER, &read);
+    glGetIntegerv(GL_DRAW_BUFFER, &draw);
+    BOOST_TEST(layered == GL_TRUE);
+    BOOST_TEST(read == GL_NONE);
+    BOOST_TEST(draw == GL_NONE);
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
+    FrameBuffer::bindDefault();
 }
