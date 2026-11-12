@@ -18,8 +18,8 @@ public:
     static ShaderPtr create() { return ShaderPtr(new ShadowDepthShader()); }
 
     /**
-     * Set the projection matrix
-     * @param transform Projection transformation matrix
+     * Upload the directional/spot light world-to-clip transform
+     * @param transform Combined light projection and view matrix
      */
     void setProjection(const Matrix4& transform);
 

@@ -20,10 +20,15 @@ constexpr const char* SHADOW_VERTEX = R"(
     out vec4 vertexColor;
     out vec2 uv;
     
-    void main() {
+    // Compose the scene model transform with the optional per-instance transform.
+    mat4 worldTransform() {
         mat4 transform = model;
         if (instanced) transform *= instanceModel;
-        gl_Position = lightProjection * transform * vec4(position, 1.0);
+        return transform;
+    }
+
+    void main() {
+        gl_Position = lightProjection * worldTransform() * vec4(position, 1.0);
         vertexColor = color;
         uv = texCoord;
     }
@@ -42,11 +47,16 @@ constexpr const char* SHADOW_FRAGMENT = R"(
     uniform bool hasTexture;
     uniform sampler2D colorTexture;
     
+    // Vertex color replaces material alpha; texture alpha modulates either source.
+    float surfaceOpacity() {
+        float opacity = useVertexColor ? vertexColor.a : alpha;
+        if (hasTexture) opacity *= texture(colorTexture, uv).a;
+        return opacity;
+    }
+
     void main() {
         if (masked) {
-            float opacity = useVertexColor ? vertexColor.a : alpha;
-            if (hasTexture) opacity *= texture(colorTexture, uv).a;
-            if (opacity < cutoff) discard;
+            if (surfaceOpacity() < cutoff) discard;
         }
     }
 )";
@@ -62,7 +72,7 @@ void ShadowDepthShader::setProjection(const Matrix4& transform)
 void ShadowDepthShader::setItem(const DrawItem& item)
 {
     ProgramBinding binding(this);
-
+    
     const auto* material = static_cast<const MeshMaterial*>(item.material);
     const GeometryBuffer* buffer = item.getBuffer();
 
