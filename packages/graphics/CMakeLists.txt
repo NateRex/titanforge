@@ -5,6 +5,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(Stb REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(mikktspace CONFIG REQUIRED)
 
 # Compile the default skybox into CPP source so consumers do not have to deploy
 # runtime asset files. The original JPEGs remain compressed inside the binary.
@@ -111,6 +112,7 @@ target_link_libraries(Graphics
     PRIVATE glfw
     PRIVATE glad::glad
     PRIVATE assimp::assimp
+    PRIVATE mikktspace::mikktspace
     PRIVATE Common::Common
     PRIVATE Math::Math)
 
