@@ -23,6 +23,7 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_basics)
 	BOOST_TEST(!attrib.normals);
 	BOOST_TEST(!attrib.colors);
 	BOOST_TEST(!attrib.uvs);
+	BOOST_TEST(!attrib.tangents);
 
 	attrib = { PrimitiveType::TRIANGLES, true, true, true, true };
 	BOOST_TEST(attrib.primitiveType == PrimitiveType::TRIANGLES);
@@ -54,6 +55,8 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_equalsChecks)
 
 	a2 = { PrimitiveType::TRIANGLES, false, false, false, true };
 	BOOST_TEST(a1 != a2);
+	a2 = { PrimitiveType::TRIANGLES, false, false, false, false, true };
+	BOOST_TEST(a1 != a2);
 }
 
 /**
@@ -76,6 +79,9 @@ BOOST_AUTO_TEST_CASE(GeometryAttributes_stride)
 	// Texture coordinates
 	a = { PrimitiveType::TRIANGLES, false, false, false, true };
 	BOOST_TEST(a.getStride() == 5);
+
+	a.tangents = true;
+	BOOST_TEST(a.getStride() == 9);
 
 	// Ensure indices have no impact on stride
 	a = { PrimitiveType::TRIANGLES, true, false, false, false };

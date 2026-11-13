@@ -4,6 +4,7 @@
 #include <math/Vector3.h>
 #include <math/Matrix3.h>
 #include <memory>
+#include <cstdint>
 #include <vector>
 
 class InstanceBuffer;
@@ -127,6 +128,18 @@ private:
 	 * Instance buffer
 	 */
 	InstanceBuffer* _buffer = nullptr;
+
+	/**
+	 * A reference to the geometry instance that was used to create the cached instance buffer. This reference is used to detect when the geometry has been
+	 * replaced, requiring recreation of the instance buffer.
+	 */
+	GeometryPtr _bufferedGeometry;
+
+	/**
+	 * Geometry source revision that was most recently used to create the cached instance buffer. This value is used to detect when the geometry's fields have
+	 * changed, requiring recreation of the instance buffer.
+	 */
+	unsigned long long _geometryRevision = 0;
 
 	/**
 	 * Boolean flag indicating whether the instance buffer needs to be updated before being accessed

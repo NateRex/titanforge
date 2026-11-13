@@ -1,4 +1,5 @@
 #include <boost/test/unit_test.hpp>
+#include <glad/glad.h>
 #include <graphics/objects/InstancedMesh.h>
 #include <graphics/core/buffers/InstanceBuffer.h>
 #include <graphics/core/renderer/DrawState.h>
@@ -129,4 +130,38 @@ BOOST_AUTO_TEST_CASE(InstancedMesh_updatesBuffer)
 	mesh->traverse(secondState, Matrix4::IDENTITY, Matrix3::IDENTITY);
 	BOOST_TEST(secondState.items[0].instanceBuffer == buffer);
 	BOOST_TEST(buffer->getNumberOfInstances() == 2);
+}
+
+/**
+ * Tests that geometry edits refresh the instance buffer while preserving instance count and matrix attributes.
+ */
+BOOST_AUTO_TEST_CASE(InstancedMesh_refreshesEditedGeometry)
+{
+	auto geometry = BoxGeometry::create(1, 1, 1);
+	auto mesh = InstancedMesh::create(geometry, MeshMaterial::create(), { InstanceTransform() });
+	DrawState first;
+	mesh->traverse(first, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	first.items[0].instanceBuffer->bind();
+	GLint tangentEnabled = 0, tangentDivisor = -1;
+	glGetVertexAttribiv(8, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &tangentEnabled);
+	glGetVertexAttribiv(8, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &tangentDivisor);
+	BOOST_TEST(tangentEnabled == GL_TRUE);
+	BOOST_TEST(tangentDivisor == 0);
+	geometry->removeTextureCoords();
+
+	DrawState second;
+	mesh->traverse(second, Matrix4::IDENTITY, Matrix3::IDENTITY);
+	auto buffer = second.items[0].instanceBuffer;
+	BOOST_TEST(!buffer->getGeometryAttributes().uvs);
+	BOOST_TEST(buffer->getNumberOfInstances() == 1);
+	buffer->bind();
+	
+	GLint divisor = 0, enabled = 0;
+	for (unsigned int location = 4; location < 8; ++location)
+	{
+		glGetVertexAttribiv(location, GL_VERTEX_ATTRIB_ARRAY_ENABLED, &enabled);
+		glGetVertexAttribiv(location, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &divisor);
+		BOOST_TEST(enabled == GL_TRUE);
+		BOOST_TEST(divisor == 1);
+	}
 }

@@ -55,6 +55,14 @@ GeometryBuffer::GeometryBuffer(const GeometryAttributes& attributes, const float
 		glEnableVertexAttribArray(3);
 		offset += 2;
 	}
+
+	// Tangent attribute (if present)
+	if (_attributes.tangents)
+	{
+		glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(8);
+	}
+
 }
 
 GeometryBuffer::~GeometryBuffer()

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <graphics/geometry/pointers/GeometryPtr.h>
 #include <graphics/geometry/GeometryAttributes.h>
 
@@ -87,8 +88,8 @@ public:
 
 	/**
 	 * Sets the texture coordinate for each vertex in this geometry.
-	 * @param uvs An array where every 2 values represents the u and v components of a texture coordinate. Each
-	 * value should be in the range 0 to 1.
+	 * @param uvs An array where every 2 values represents the u and v components of a texture coordinate. Coordinates
+	 * outside [0, 1] are preserved for texture wrapping.
 	 * @param numUVs The number of texture coordinates in the array. This is expected to match the number of
 	 * vertices in this geometry.
 	 */
@@ -103,6 +104,11 @@ public:
 	 * @return An object describing the attributes that make up this geometry
 	 */
 	const GeometryAttributes getAttributes() const;
+
+	/**
+	 * @return Revision of this geometry and its source attributes, useful for consumers that cache GPU geometry.
+	 */
+	unsigned long long getRevision() const { return _revision; }
 
 	/**
 	 * @return The GPU buffer for this geometry, creating it if it does not yet exist. This method should typically only
@@ -190,6 +196,86 @@ protected:
 	 * Helper method used to build the interleaved floating-point vertex representation used by GPU buffers
 	 * @param attributes Geometry attributes
 	 * @param numValues Value in which to store the number of values in the result
+	 * @param indices Vector in which to store indices, including any tangent discontinuity splits
 	 */
-	float* createVertexData(const GeometryAttributes& attributes, unsigned int* numValues) const;
+	float* createVertexData(const GeometryAttributes& attributes, unsigned int* numValues, std::vector<unsigned int>& indices) const;
+
+	/**
+	 * Marks generated tangents and cached GPU geometry as stale and advances the source revision.
+	 * Subclasses should call this after changing source attributes directly.
+	 */
+	void invalidate();
+
+private:
+
+	/**
+	 * Recomputes the geometry-owned MikkTSpace tangent data for this geometry if it is out-of-date. Returns
+	 * @return Geometry-owned MikkTSpace tangent data, or nullptr for empty/non-triangle geometry or missing basis attributes.
+	 * Every 4 values of the result represent tangent direction and handedness for a triangle corner, in draw order. XYZ is the
+	 * tangent; W is handedness, with bitangent = W * cross(normal, tangent). A zero tangent with W = 0 marks a face without a
+	 * usable tangent basis, and thus its original normal should be used. The pointer must not be freed by the caller and is invalidated by geometry edits.
+	 */
+	void computeTangents() const;
+
+	/**
+	 * Boolean flag indicating whether or not tangent data must be regenerated before its next use
+	 *
+	 */
+	mutable bool _tangentsDirty = true;
+
+	/**
+	 * Owned tangent array in draw order. Every four floats store a triangle corner's XYZ direction and handedness.
+	 * Contains size() * 4 values when generated; nullptr when no tangent data is available.
+	 */
+	mutable float* _tangents = nullptr;
+
+	/**
+	 * Whether the cached GPU geometry must be rebuilt before its next use.
+	 */
+	bool _bufferDirty = true;
+
+	/**
+	 * Source revision incremented on edits so independent GPU caches can detect stale data.
+	 */
+	std::uint64_t _revision = 0;
+};
+
+/**
+ * Triangle-corner source data and output storage shared by MikkTSpace callbacks.
+ * @author Nathaniel Rex
+ */
+struct TangentInput
+{
+	/**
+	 * Source positions expanded, in draw order.
+	 */
+	std::vector<Vector3> positions;
+
+	/**
+	 * Source normals expanded, in draw order.
+	 */
+	std::vector<Vector3> normals;
+
+	/**
+	 * Source texture coordinates expanded, in draw order.
+	 */
+	std::vector<Vector2> uvs;
+
+	/**
+	 * Indices representing the first corner of each face with a usable tangent basis
+	 */
+	std::vector<unsigned int> faces;
+	
+	/**
+	 * Destination for tangent directions and handedness, in original draw order.
+	 */
+	float* tangents;
+
+	/**
+	 * Maps a filtered MikkTSpace face corner to the original draw order.
+	 * @param face Index in the filtered list of usable faces
+	 * @param vertex Local triangle corner, from 0 through 2
+	 * @return Corner index in the expanded source arrays and tangent output
+	 */
+	unsigned int corner(int face, int vertex) const { return faces[face] + vertex; }
 };
