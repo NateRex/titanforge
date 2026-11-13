@@ -237,7 +237,7 @@ private:
 	/**
 	 * Source revision incremented on edits so independent GPU caches can detect stale data.
 	 */
-	std::uint64_t _revision = 0;
+	unsigned long long _revision = 0;
 };
 
 /**
