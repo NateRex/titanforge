@@ -317,6 +317,7 @@ void Geometry::computeTangents() const
 	if (size() == 0 || type != PrimitiveType::TRIANGLES || !_vertices || !_normals || !_uvs || _numNormals != _numVertices || _numUVs != _numVertices)
 	{
 		_tangentsDirty = false;
+		return;
 	}
 
 	TangentInput input;
