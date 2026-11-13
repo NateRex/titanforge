@@ -140,6 +140,12 @@ public:
 	 */
 	TexturePtr specularMap = nullptr;
 
+	/**
+	 * Tangent-space RGB normal map using OpenGL +Y convention. Can be null.
+	 * Numeric multiplier: load file imagery with TextureEncoding::LINEAR.
+	 */
+	TexturePtr normalMap = nullptr;
+
     /**
 	 * Creates a mesh material.
 	 * @return The new mesh material.

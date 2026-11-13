@@ -18,11 +18,13 @@ constexpr const char* INSTANCED_MESH_VERTEX = R"(
 	layout (location = 2) in vec4 vert_VertexColor;
 	layout (location = 3) in vec2 vert_TexCoord;
 	layout (location = 4) in mat4 vert_InstanceModel;
+	layout (location = 8) in vec4 vert_Tangent;
 
 	uniform Transforms uTransforms;
 
 	out vec3 frag_Pos;
 	out vec3 frag_Normal;
+	out vec4 frag_Tangent;
 	out vec4 frag_VertexColor;
 	out vec2 frag_TexCoord;
 
@@ -35,6 +37,8 @@ constexpr const char* INSTANCED_MESH_VERTEX = R"(
 
 		// Transform surface directions to world space
 		frag_Normal = uTransforms.normal * transpose(inverse(mat3(vert_InstanceModel))) * vert_Normal;
+		frag_Tangent = vec4(mat3(model) * vert_Tangent.xyz,
+			vert_Tangent.w * sign(determinant(mat3(model))));
 
 		// Passthrough vertex RGBA color and texture coordinates
 		frag_VertexColor = vert_VertexColor;

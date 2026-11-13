@@ -25,6 +25,7 @@ BOOST_AUTO_TEST_CASE(MeshMaterial_defaults)
 	BOOST_TEST(material->refractiveIndex == RefractiveIndex::GLASS);
 	BOOST_TEST(material->diffuseMap == nullptr);
 	BOOST_TEST(material->specularMap == nullptr);
+	BOOST_TEST(material->normalMap == nullptr);
 	BOOST_TEST(!material->isBackground());
 }
 

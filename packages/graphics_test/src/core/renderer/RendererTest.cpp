@@ -698,8 +698,8 @@ BOOST_AUTO_TEST_CASE(Renderer_shadowFallbackLifecycle)
         for (int i = 0; i < 6; ++i)
         {
             const std::string prefix = "uLights[" + std::to_string(i) + "].";
-            const int expected[] = {0, 1, 2, 3, -1, 0};
-            const int invalidExpected[] = {-1, 0, 1, 2, 3, 0};
+            const int expected[] = {0, 1, 2, -1, -1, 0};
+            const int invalidExpected[] = {-1, 0, 1, 2, -1, 0};
             BOOST_TEST(integerUniform(prefix + "shadowIndex") ==
                 (frame == 2 ? -1 : (frame == 1 ? invalidExpected[i] : expected[i])));
             float intensity;
