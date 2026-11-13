@@ -81,6 +81,7 @@ constexpr const char* MESH_FRAGMENT = R"(
         mat4 shadowTransform;
         vec2 shadowBias;
         float shadowFar;
+        float shadowFilterRadius;
 	};
 
 	struct Material {
@@ -159,7 +160,7 @@ constexpr const char* MESH_FRAGMENT = R"(
         return 1.0;
     }
 
-    // Single radial-depth sample; indices remain constant for GLSL 3.30.
+    // Radial-depth lookup; indices remain constant for GLSL 3.30.
     float sampleShadowDepthCube(int index, vec3 direction) {
         if (index == 0) return texture(uPointShadowMaps[0], direction).r;
         if (index == 1) return texture(uPointShadowMaps[1], direction).r;
@@ -175,7 +176,24 @@ constexpr const char* MESH_FRAGMENT = R"(
         float depth = length(direction) / light.shadowFar;
         if (depth > 1.0 || depth <= 0.0) return 1.0;
         float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
-        return depth - bias > sampleShadowDepthCube(light.shadowIndex, direction) ? 0.0 : 1.0;
+        if (light.shadowFilterRadius == 0.0)
+            return depth - bias > sampleShadowDepthCube(light.shadowIndex, direction) ? 0.0 : 1.0;
+
+        // LearnOpenGL's fixed 20 directions; compare normalized radial depths before averaging.
+        const vec3 offsets[20] = vec3[](
+            vec3(1,1,1), vec3(1,-1,1), vec3(-1,-1,1), vec3(-1,1,1),
+            vec3(1,1,-1), vec3(1,-1,-1), vec3(-1,-1,-1), vec3(-1,1,-1),
+            vec3(1,1,0), vec3(1,-1,0), vec3(-1,-1,0), vec3(-1,1,0),
+            vec3(1,0,1), vec3(-1,0,1), vec3(1,0,-1), vec3(-1,0,-1),
+            vec3(0,1,1), vec3(0,-1,1), vec3(0,-1,-1), vec3(0,1,-1)
+        );
+        float radius = light.shadowFilterRadius * (1.0 + length(uCameraPos - frag_Pos) / light.shadowFar);
+        float visibility = 0.0;
+        for (int i = 0; i < 20; ++i) {
+            float closestDepth = sampleShadowDepthCube(light.shadowIndex, direction + offsets[i] * radius);
+            visibility += depth - bias > closestDepth ? 0.0 : 1.0;
+        }
+        return visibility / 20.0;
     }
 
     // Recover the receiver plane slope in shadow-map UV coordinates.
@@ -606,6 +624,7 @@ void MeshShader::setLightUniforms(const LightInstance& renderLight, std::size_t 
 	glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
     const bool point = light->lightType == LightType::POINT;
     glUniform1f(getUniformLocation((prefix + "shadowFar").c_str()), point ? light->shadow.far : 0.f);
+    glUniform1f(getUniformLocation((prefix + "shadowFilterRadius").c_str()), point ? light->shadow.point.filterRadius : 0.f);
 	glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
 		light->shadow.minimumBias, light->shadow.maximumBias);
 	glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());

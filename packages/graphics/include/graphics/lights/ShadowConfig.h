@@ -49,6 +49,7 @@ struct ShadowConfig
 
     /**
      * Shadow settings specific to directional lights. Controls world-space coverage perpendicular to a directional light's rays.
+     * Other types of lights ignore these settings.
      */
     struct DirectionalVolume
     {
@@ -68,5 +69,21 @@ struct ShadowConfig
          * Defaults to 20.
          */
         float height = 20.f;
+
     } directional;
+
+    /**
+     * Shadow settings specific to point lights. Contains cubemap filtering controls. Other types of lights ignore these settings.
+     */
+    struct PointFilter
+    {
+        /**
+         * Softness of point-shadow edges. Increase for softer edges; decrease for sharper edges.
+         * Defaults to 0.04 world units; zero disables smoothing. Softness increases with camera distance.
+         * Must be finite and nonnegative; invalid values disable shadows for this light.
+         */
+        float filterRadius = 0.04f;
+        
+    } point;
+
 };

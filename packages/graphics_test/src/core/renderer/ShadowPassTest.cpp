@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(ShadowPass_pointInvalidSettings)
     auto valid = PointLight::create();
     valid->shadow.width = valid->shadow.height = 32;
     ShadowPass pass;
-    for (int invalid = 0; invalid < 12; ++invalid)
+    for (int invalid = 0; invalid < 15; ++invalid)
     {
         point->shadow = valid->shadow;
         Vector3 position;
@@ -372,6 +372,9 @@ BOOST_AUTO_TEST_CASE(ShadowPass_pointInvalidSettings)
             case 8: point->shadow.near = std::numeric_limits<float>::quiet_NaN(); break;
             case 9: point->shadow.far = -1.f; break;
             case 10: position.z = std::numeric_limits<float>::infinity(); break;
+            case 12: point->shadow.point.filterRadius = -0.01f; break;
+            case 13: point->shadow.point.filterRadius = std::numeric_limits<float>::infinity(); break;
+            case 14: point->shadow.point.filterRadius = std::numeric_limits<float>::quiet_NaN(); break;
             case 11:
                 point->shadow.near = std::numeric_limits<float>::max() / 4.f;
                 point->shadow.far = std::numeric_limits<float>::max() / 2.f;

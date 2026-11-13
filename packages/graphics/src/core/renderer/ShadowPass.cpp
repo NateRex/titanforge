@@ -198,6 +198,11 @@ bool ShadowPass::buildTransforms(const LightInstance& instance, int maxSize, Mat
 
     if (light.lightType == LightType::POINT)
     {
+        if (!std::isfinite(config.point.filterRadius) || config.point.filterRadius < 0.f)
+        {
+            return invalid("filter radius must be finite and nonnegative");
+        }
+        
         if (config.width != config.height)
         {
             return invalid("cubemap dimensions must be square (width must equal height)");
