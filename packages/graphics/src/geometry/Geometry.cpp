@@ -233,7 +233,7 @@ float* Geometry::createVertexData(const GeometryAttributes& attributes, unsigned
 		assertTrue(_indices[i] < _numVertices, "Geometry index is out of range");
 	}
 
-	if (_indices && !attributes.tangents)
+	if (!attributes.tangents && _indices)
 	{
 		indices.assign(_indices, _indices + _numIndices);
 	}
