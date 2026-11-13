@@ -132,12 +132,12 @@ BOOST_AUTO_TEST_CASE(ShadowPass_shadowCapacity)
         {
             bool cube = instance.light == point.get();
             unsigned int index = cube ? cubes++ : maps++;
-            bool selected = index < (cube ? 4u : 8u);
+            bool selected = index < (cube ? 3u : 8u);
             BOOST_TEST(instance.shadowIndex == (selected ? static_cast<int>(index) : -1));
             BOOST_TEST(static_cast<bool>(instance.shadowMap) == selected);
             if (selected) resources.insert(instance.shadowMap->id());
         }
-        BOOST_TEST(resources.size() == 12u);
+        BOOST_TEST(resources.size() == 11u);
     }
 }
 

@@ -19,6 +19,8 @@ int GeometryAttributes::getStride() const
 		stride += 2;
 	}
 
+	if (tangents) stride += 4;
+
 	return stride;
 }
 
@@ -28,7 +30,8 @@ bool GeometryAttributes::operator==(const GeometryAttributes& other) const
 		&& indices == other.indices
 		&& normals == other.normals
 		&& colors == other.colors
-		&& uvs == other.uvs;
+		&& uvs == other.uvs
+		&& tangents == other.tangents;
 }
 
 bool GeometryAttributes::operator!=(const GeometryAttributes& other) const

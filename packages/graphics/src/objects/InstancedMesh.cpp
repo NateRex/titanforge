@@ -69,9 +69,14 @@ void InstancedMesh::configureDrawItem(DrawItem& item)
 void InstancedMesh::traverse(DrawState& state, const Matrix4& parentModel, const Matrix3& parentNormal)
 {
 	// Create buffer if it does not yet exist
-	if (!_buffer)
+	if (!_buffer || _bufferedGeometry != geometry || _geometryRevision != geometry->getRevision())
 	{
-		_buffer = geometry->createInstanceBuffer();
+		InstanceBuffer* replacement = geometry->createInstanceBuffer();
+		delete _buffer;
+		_buffer = replacement;
+		_bufferedGeometry = geometry;
+		_geometryRevision = geometry->getRevision();
+		_bufferNeedsUpdate = true;
 	}
 
 	// Update buffer if needed

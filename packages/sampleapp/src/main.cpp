@@ -243,6 +243,16 @@ int main()
     glassPanel->setPosition(-2.f, 1.2f, 5.f);
     scene->add(glassPanel);
 
+    // Create brick wall
+    MeshMaterialPtr material = MeshMaterial::create();
+    material->texture = TextureLoader::load("assets/brick_wall/diffuse.jpg", true);
+    TexturePtr normalMap = TextureLoader::load("assets/brick_wall/normal.jpg", true, TextureEncoding::LINEAR);
+    material->normalMap = normalMap;
+    MeshPtr wall = Mesh::create(BoxGeometry::create(7.f, 5.f, 0.4f), material);
+    wall->setPosition(-3.f, 3.f, -3.f);
+    wall->addRotation(Matrix3::fromYRotation(0.7f));
+    scene->add(wall);
+
     // Run application
     app.run([&](const Frame& frame) {
         float width, height;

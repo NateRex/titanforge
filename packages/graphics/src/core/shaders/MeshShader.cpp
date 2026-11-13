@@ -28,11 +28,13 @@ constexpr const char* MESH_VERTEX = R"(
 	layout (location = 1) in vec3 vert_Normal;
 	layout (location = 2) in vec4 vert_VertexColor;
 	layout (location = 3) in vec2 vert_TexCoord;
+	layout (location = 8) in vec4 vert_Tangent;
 
 	uniform Transforms uTransforms;
 
 	out vec3 frag_Pos;
 	out vec3 frag_Normal;
+	out vec4 frag_Tangent;
 	out vec4 frag_VertexColor;
 	out vec2 frag_TexCoord;
 
@@ -44,6 +46,8 @@ constexpr const char* MESH_VERTEX = R"(
 
 		// Transform surface directions into world space
 		frag_Normal = uTransforms.normal * vert_Normal;
+		frag_Tangent = vec4(mat3(uTransforms.model) * vert_Tangent.xyz,
+			vert_Tangent.w * sign(determinant(mat3(uTransforms.model))));
 
 		// Passthrough the vertex's RGBA color
 		frag_VertexColor = vert_VertexColor;
@@ -97,6 +101,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 		sampler2D diffuseMap;
 		int hasSpecularMap;
 		sampler2D specularMap;
+		int hasNormalMap;
+		sampler2D normalMap;
 		float reflection;
 		float refraction;
 		float refractiveIndex;
@@ -104,13 +110,14 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 	in vec3 frag_Pos;
 	in vec3 frag_Normal;
+	in vec4 frag_Tangent;
 	in vec4 frag_VertexColor;
 	in vec2 frag_TexCoord;
 
 	uniform vec3 uCameraPos;
     uniform bool uReceiveShadow;
     uniform sampler2D uShadowMaps[8];
-    uniform samplerCube uPointShadowMaps[4];
+    uniform samplerCube uPointShadowMaps[3];
 	uniform vec3 uAmbient;
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
@@ -165,7 +172,6 @@ constexpr const char* MESH_FRAGMENT = R"(
         if (index == 0) return texture(uPointShadowMaps[0], direction).r;
         if (index == 1) return texture(uPointShadowMaps[1], direction).r;
         if (index == 2) return texture(uPointShadowMaps[2], direction).r;
-        if (index == 3) return texture(uPointShadowMaps[3], direction).r;
         return 1.0;
     }
 
@@ -269,7 +275,7 @@ constexpr const char* MESH_FRAGMENT = R"(
 	}
 
 	// Accumulate diffuse and Blinn-Phong specular lighting, including shadow visibility.
-	vec3 surfaceLighting(vec3 albedo, vec3 normal, vec3 viewDir)
+	vec3 surfaceLighting(vec3 albedo, vec3 normal, vec3 meshNormal, vec3 viewDir)
 	{
 		vec3 diffuse = vec3(0.0);
 		vec3 specular = vec3(0.0);
@@ -308,8 +314,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* light.intensity
 				* attenuation
 				* coneIntensity
-                * (light.shadowFar > 0.0 ? shadowVisibilityCube(light, normal, lightDir)
-                    : shadowVisibility2D(light, normal, lightDir));
+                * (light.shadowFar > 0.0 ? shadowVisibilityCube(light, meshNormal, lightDir)
+                    : shadowVisibility2D(light, meshNormal, lightDir));
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -353,12 +359,29 @@ constexpr const char* MESH_FRAGMENT = R"(
 		return litColor;
 	}
 
+	// Orthogonalize after interpolation and nonuniform scaling. Zero handedness marks invalid UVs.
+	vec3 surfaceNormal(vec3 meshNormal)
+	{
+		if (uMaterial.hasNormalMap == 0 || abs(frag_Tangent.w) < 0.5) return meshNormal;
+		vec3 tangent = frag_Tangent.xyz - meshNormal * dot(meshNormal, frag_Tangent.xyz);
+		float tangentLength = length(tangent);
+		if (isnan(tangentLength) || isinf(tangentLength) || tangentLength <= 1.0e-8) return meshNormal;
+		tangent /= tangentLength;
+		vec3 bitangent = sign(frag_Tangent.w) * cross(meshNormal, tangent);
+		vec3 mapped = texture(uMaterial.normalMap, frag_TexCoord).rgb * 2.0 - 1.0;
+		vec3 normal = mat3(tangent, bitangent, meshNormal) * mapped;
+		float normalLength = length(normal);
+		if (isnan(normalLength) || isinf(normalLength) || normalLength <= 1.0e-8) return meshNormal;
+		return normal / normalLength;
+	}
+
 	void main()
 	{
 		vec4 albedo = surfaceAlbedo();
-		vec3 normal = normalize(frag_Normal);
+		vec3 meshNormal = normalize(frag_Normal);
+		vec3 normal = surfaceNormal(meshNormal);
 		vec3 viewDir = normalize(uCameraPos - frag_Pos);
-		vec3 litColor = surfaceLighting(albedo.rgb, normal, viewDir);
+		vec3 litColor = surfaceLighting(albedo.rgb, normal, meshNormal, viewDir);
 		litColor = applyEnvironment(litColor, normal);
 		FragColor = vec4(litColor, albedo.a);
 	}
@@ -366,7 +389,6 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 MeshShader::MeshShader(): Shader("MeshShader", MESH_VERTEX, MESH_FRAGMENT)
 {
-
 }
 
 MeshShader::MeshShader(const char* name, const char* vertex, const char* geometry, const char* fragment)
@@ -413,24 +435,43 @@ void MeshShader::setMaterial(const Material* material)
 	int loc = getUniformLocation("uMaterial.color");
 	Color color = material->color;
 	glUniform4f(loc, color.red(), color.green(), color.blue(), color.alpha());
+	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), meshMat->useVertexColors ? 1 : 0);
 
 	// Texture
+	glUniform1i(getUniformLocation("uMaterial.texture"), MATERIAL_TEXTURE_UNIT);
+	glUniform1i(getUniformLocation("uMaterial.hasTexture"), material->texture ? 1 : 0);
 	if (material->texture)
 	{
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + MATERIAL_TEXTURE_UNIT);
 		glBindTexture(GL_TEXTURE_2D, material->texture->id());
-		glUniform1i(getUniformLocation("uMaterial.texture"), 0);
-		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 1);
-	}
-	else
-	{
-		glUniform1i(getUniformLocation("uMaterial.hasTexture"), 0);
 	}
 
-    glUniform1i(getUniformLocation("uReceiveShadow"), material->receiveShadow);
-    glUniform1i(getUniformLocation("uMaterial.texture"), 0);
-    glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
-    glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
+	// Diffuse map
+	glUniform1i(getUniformLocation("uMaterial.diffuseMap"), DIFFUSE_TEXTURE_UNIT);
+	glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), meshMat->diffuseMap ? 1 : 0);
+	if (meshMat->diffuseMap)
+	{
+		glActiveTexture(GL_TEXTURE0 + DIFFUSE_TEXTURE_UNIT);
+		glBindTexture(GL_TEXTURE_2D, meshMat->diffuseMap->id());
+	}
+
+	// Specular map
+	glUniform1i(getUniformLocation("uMaterial.specularMap"), SPECULAR_TEXTURE_UNIT);
+	glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), meshMat->specularMap ? 1 : 0);
+	if (meshMat->specularMap)
+	{
+		glActiveTexture(GL_TEXTURE0 + SPECULAR_TEXTURE_UNIT);
+		glBindTexture(GL_TEXTURE_2D, meshMat->specularMap->id());
+	}
+
+	// Normal map
+	glUniform1i(getUniformLocation("uMaterial.normalMap"), NORMAL_TEXTURE_UNIT);
+	glUniform1i(getUniformLocation("uMaterial.hasNormalMap"), meshMat->normalMap ? 1 : 0);
+	if (meshMat->normalMap)
+	{
+		glActiveTexture(GL_TEXTURE0 + NORMAL_TEXTURE_UNIT);
+		glBindTexture(GL_TEXTURE_2D, meshMat->normalMap->id());
+	}
 
 	// Alpha settings
 	glUniform1i(getUniformLocation("uMaterial.alphaMode"), static_cast<int>(meshMat->getEffectiveAlphaMode()));
@@ -439,44 +480,20 @@ void MeshShader::setMaterial(const Material* material)
 	// Reflectivity and shine
 	glUniform1f(getUniformLocation("uMaterial.reflectivity"), clamp(meshMat->reflectivity, 0.f, 1.f));
 	glUniform1f(getUniformLocation("uMaterial.shine"), clamp(meshMat->shine, 0.f, 1.f));
+
+	// Environment reflection and refraction
 	glUniform1f(getUniformLocation("uMaterial.reflection"), clamp(meshMat->reflection, 0.f, 1.f));
 	glUniform1f(getUniformLocation("uMaterial.refraction"), clamp(meshMat->refraction, 0.f, 1.f));
 	glUniform1f(getUniformLocation("uMaterial.refractiveIndex"), std::max(meshMat->refractiveIndex, 1.f));
 
-	// Diffuse map
-	if (meshMat->diffuseMap)
-	{
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, meshMat->diffuseMap->id());
-		glUniform1i(getUniformLocation("uMaterial.diffuseMap"), 1);
-		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 1);
-	}
-	else
-	{
-		glUniform1i(getUniformLocation("uMaterial.hasDiffuseMap"), 0);
-	}
-
-	// Specular map
-	if (meshMat->specularMap)
-	{
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, meshMat->specularMap->id());
-		glUniform1i(getUniformLocation("uMaterial.specularMap"), 2);
-		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 1);
-	}
-	else
-	{
-		glUniform1i(getUniformLocation("uMaterial.hasSpecularMap"), 0);
-	}
-
-	// Vertex color usage
-	glUniform1i(getUniformLocation("uMaterial.hasVertexColor"), meshMat->useVertexColors ? 1 : 0);
+	// Shadows
+	glUniform1i(getUniformLocation("uReceiveShadow"), material->receiveShadow);
 }
 
 void MeshShader::setEnvironment(const Environment& environment)
 {
 	ProgramBinding binding(this);
-    glUniform1i(getUniformLocation("uEnvironment"), 3);
+    glUniform1i(getUniformLocation("uEnvironment"), 4);
 
 	if (!environment.texture)
 	{
@@ -484,7 +501,7 @@ void MeshShader::setEnvironment(const Environment& environment)
 		return;
 	}
 
-	glActiveTexture(GL_TEXTURE3);
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, environment.texture->id());
 	glUniform1i(getUniformLocation("uHasEnvironment"), 1);
 	glUniform3f(getUniformLocation("uEnvironmentColor"), environment.color.red(), environment.color.green(), environment.color.blue());

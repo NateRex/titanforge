@@ -17,6 +17,36 @@ class GeometryBuffer;
 class InstanceBuffer;
 
 /**
+ * The texture unit slot reserved for base material color
+ */
+constexpr unsigned MATERIAL_TEXTURE_UNIT = 0;
+
+/**
+ * The texture unit slot reserved for diffuse maps
+ */
+constexpr unsigned int DIFFUSE_TEXTURE_UNIT = 1;
+
+/**
+ * The texture unit slot reserved for specular maps
+ */
+constexpr unsigned int SPECULAR_TEXTURE_UNIT = 2;
+
+/**
+ * The texture unit slot reserved for normal maps
+ */
+constexpr unsigned int NORMAL_TEXTURE_UNIT = 3;
+
+/**
+ * The texture unit slot reserved for environment textures
+ */
+constexpr unsigned int ENVIRONMENT_TEXTURE_UNIT = 4;
+
+/**
+ * First texture unit slot reserved for shadow maps
+ */
+constexpr unsigned int FIRST_SHADOW_TEXTURE_UNIT = 5;
+
+/**
  * Maximum number of lights that can be applied to a scene (not including ambient lighting)
  */
 constexpr unsigned int MAX_LIGHTS = 16;
@@ -30,17 +60,12 @@ constexpr unsigned int MAX_SHADOW_MAPS_2D = 8;
 /**
  * Maximum number of lights capable of producing shadows modeled using cube textures. This covers point lights.
  */
-constexpr unsigned int MAX_SHADOW_MAPS_CUBE = 4;
+constexpr unsigned int MAX_SHADOW_MAPS_CUBE = 3;
 
 /**
  * Maximum number of lights capable of producing shadows, in total
  */
 constexpr unsigned int MAX_SHADOW_LIGHTS = MAX_SHADOW_MAPS_2D + MAX_SHADOW_MAPS_CUBE;
-
-/**
- * First texture unit slot reserved for shadow maps
- */
-constexpr unsigned int FIRST_SHADOW_TEXTURE_UNIT = 4;
 
 /**
  * Determines when an item is drawn relative to other items in a pass

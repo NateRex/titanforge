@@ -73,6 +73,11 @@ public:
 	bool uvs = false;
 
 	/**
+	 * Flag that, when true, indicates that the geometry contains per-vertex tangents. Defaults to false.
+	 */
+	bool tangents = false;
+
+	/**
 	 * @return The number of floating point values used to represent a single vertex in the geometry, taking into account
 	 * all attributes.
 	 */

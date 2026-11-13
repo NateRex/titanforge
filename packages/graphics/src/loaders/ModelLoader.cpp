@@ -97,6 +97,7 @@ MeshMaterialPtr loadMaterial(const aiMaterial* aiMat, const std::filesystem::pat
 	// Light maps
 	material->diffuseMap = loadTexture(aiMat, aiTextureType_LIGHTMAP, modelDirectory);
 	material->specularMap = loadTexture(aiMat, aiTextureType_SPECULAR, modelDirectory);
+	material->normalMap = loadTexture(aiMat, aiTextureType_NORMALS, modelDirectory);
 	
 	return material;
 }
@@ -134,8 +135,8 @@ GeometryPtr loadGeometry(const aiMesh* aiMesh)
 		if (hasUVs)
 		{
 			const aiVector3D& uv = aiMesh->mTextureCoords[0][i];
-			uvs.push_back(std::clamp(uv.x, 0.f, 1.f));
-			uvs.push_back(std::clamp(uv.y, 0.f, 1.f));
+			uvs.push_back(uv.x);
+			uvs.push_back(uv.y);
 		}
 	}
 
