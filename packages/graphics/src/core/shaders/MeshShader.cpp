@@ -80,6 +80,8 @@ constexpr const char* MESH_FRAGMENT = R"(
         int shadowIndex;
         mat4 shadowTransform;
         vec2 shadowBias;
+        float shadowFar;
+        float shadowFilterRadius;
 	};
 
 	struct Material {
@@ -107,7 +109,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 	uniform vec3 uCameraPos;
     uniform bool uReceiveShadow;
-    uniform sampler2D uShadowMaps[12];
+    uniform sampler2D uShadowMaps[8];
+    uniform samplerCube uPointShadowMaps[4];
 	uniform vec3 uAmbient;
 	uniform int uLightCount;
 	uniform Light uLights[MAX_LIGHTS];
@@ -121,7 +124,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 
 	out vec4 FragColor;
 
-    float filteredVisibility(sampler2D shadowMap, vec2 uv, float depth, vec2 depthGradient) {
+    // Receiver-plane-corrected 3x3 PCF; taps outside the map remain visible.
+    float filteredVisibility2D(sampler2D shadowMap, vec2 uv, float depth, vec2 depthGradient) {
         vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
         float visible = 0.0;
         for (int x = -1; x <= 1; ++x) {
@@ -144,22 +148,55 @@ constexpr const char* MESH_FRAGMENT = R"(
     }
 
     // GLSL 3.30 requires constant sampler-array indices.
-    float shadowVisibility(int index, vec2 uv, float depth, vec2 depthGradient) {
-        if (index == 0) return filteredVisibility(uShadowMaps[0], uv, depth, depthGradient);
-        if (index == 1) return filteredVisibility(uShadowMaps[1], uv, depth, depthGradient);
-        if (index == 2) return filteredVisibility(uShadowMaps[2], uv, depth, depthGradient);
-        if (index == 3) return filteredVisibility(uShadowMaps[3], uv, depth, depthGradient);
-        if (index == 4) return filteredVisibility(uShadowMaps[4], uv, depth, depthGradient);
-        if (index == 5) return filteredVisibility(uShadowMaps[5], uv, depth, depthGradient);
-        if (index == 6) return filteredVisibility(uShadowMaps[6], uv, depth, depthGradient);
-        if (index == 7) return filteredVisibility(uShadowMaps[7], uv, depth, depthGradient);
-        if (index == 8) return filteredVisibility(uShadowMaps[8], uv, depth, depthGradient);
-        if (index == 9) return filteredVisibility(uShadowMaps[9], uv, depth, depthGradient);
-        if (index == 10) return filteredVisibility(uShadowMaps[10], uv, depth, depthGradient);
-        if (index == 11) return filteredVisibility(uShadowMaps[11], uv, depth, depthGradient);
+    float sampleShadowVisibility2D(int index, vec2 uv, float depth, vec2 depthGradient) {
+        if (index == 0) return filteredVisibility2D(uShadowMaps[0], uv, depth, depthGradient);
+        if (index == 1) return filteredVisibility2D(uShadowMaps[1], uv, depth, depthGradient);
+        if (index == 2) return filteredVisibility2D(uShadowMaps[2], uv, depth, depthGradient);
+        if (index == 3) return filteredVisibility2D(uShadowMaps[3], uv, depth, depthGradient);
+        if (index == 4) return filteredVisibility2D(uShadowMaps[4], uv, depth, depthGradient);
+        if (index == 5) return filteredVisibility2D(uShadowMaps[5], uv, depth, depthGradient);
+        if (index == 6) return filteredVisibility2D(uShadowMaps[6], uv, depth, depthGradient);
+        if (index == 7) return filteredVisibility2D(uShadowMaps[7], uv, depth, depthGradient);
         return 1.0;
     }
 
+    // Radial-depth lookup; indices remain constant for GLSL 3.30.
+    float sampleShadowDepthCube(int index, vec3 direction) {
+        if (index == 0) return texture(uPointShadowMaps[0], direction).r;
+        if (index == 1) return texture(uPointShadowMaps[1], direction).r;
+        if (index == 2) return texture(uPointShadowMaps[2], direction).r;
+        if (index == 3) return texture(uPointShadowMaps[3], direction).r;
+        return 1.0;
+    }
+
+    // Point lights reuse their lighting position; a positive far distance selects this path.
+    float shadowVisibilityCube(Light light, vec3 normal, vec3 lightDir) {
+        if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
+        vec3 direction = frag_Pos - light.vector.xyz;
+        float depth = length(direction) / light.shadowFar;
+        if (depth > 1.0 || depth <= 0.0) return 1.0;
+        float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
+        if (light.shadowFilterRadius == 0.0)
+            return depth - bias > sampleShadowDepthCube(light.shadowIndex, direction) ? 0.0 : 1.0;
+
+        // LearnOpenGL's fixed 20 directions; compare normalized radial depths before averaging.
+        const vec3 offsets[20] = vec3[](
+            vec3(1,1,1), vec3(1,-1,1), vec3(-1,-1,1), vec3(-1,1,1),
+            vec3(1,1,-1), vec3(1,-1,-1), vec3(-1,-1,-1), vec3(-1,1,-1),
+            vec3(1,1,0), vec3(1,-1,0), vec3(-1,-1,0), vec3(-1,1,0),
+            vec3(1,0,1), vec3(-1,0,1), vec3(1,0,-1), vec3(-1,0,-1),
+            vec3(0,1,1), vec3(0,-1,1), vec3(0,-1,-1), vec3(0,1,-1)
+        );
+        float radius = light.shadowFilterRadius * (1.0 + length(uCameraPos - frag_Pos) / light.shadowFar);
+        float visibility = 0.0;
+        for (int i = 0; i < 20; ++i) {
+            float closestDepth = sampleShadowDepthCube(light.shadowIndex, direction + offsets[i] * radius);
+            visibility += depth - bias > closestDepth ? 0.0 : 1.0;
+        }
+        return visibility / 20.0;
+    }
+
+    // Recover the receiver plane slope in shadow-map UV coordinates.
     vec2 receiverDepthGradient(vec3 projected) {
         vec3 dx = dFdx(projected);
         vec3 dy = dFdy(projected);
@@ -173,7 +210,8 @@ constexpr const char* MESH_FRAGMENT = R"(
         return any(isnan(gradient)) || any(isinf(gradient)) ? vec2(0.0) : gradient;
     }
 
-    float visibility(Light light, vec3 normal, vec3 lightDir)
+    // Project the receiver into a directional/spot map and apply slope-scaled bias.
+    float shadowVisibility2D(Light light, vec3 normal, vec3 lightDir)
 	{
         if (!uReceiveShadow || light.shadowIndex < 0) return 1.0;
         vec4 clip = light.shadowTransform * vec4(frag_Pos, 1.0);
@@ -186,10 +224,11 @@ constexpr const char* MESH_FRAGMENT = R"(
             any(greaterThan(projected, vec3(1.0)))) return 1.0;
 
         float bias = max(light.shadowBias.x, light.shadowBias.y * (1.0 - max(dot(normal, lightDir), 0.0)));
-        return shadowVisibility(light.shadowIndex, projected.xy, projected.z - bias, depthGradient);
+        return sampleShadowVisibility2D(light.shadowIndex, projected.xy, projected.z - bias, depthGradient);
     }
 
-	void main()
+	// Resolve vertex/material color, texture modulation and masked-fragment rejection.
+	vec4 surfaceAlbedo()
 	{
 		// Choose surface's starting RGBA color
 		vec4 albedo = uMaterial.hasVertexColor == 1
@@ -208,8 +247,30 @@ constexpr const char* MESH_FRAGMENT = R"(
 			discard;
 		}
 
-		vec3 normal = normalize(frag_Normal);
-		vec3 viewDir = normalize(uCameraPos - frag_Pos);
+		return albedo;
+	}
+
+	// Evaluate the coefficient curve or bounded inverse-square distance falloff.
+	float distanceAttenuation(Light light, float distance)
+	{
+		// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
+		float attenuation = 1.0 / (
+			light.attenuation.x
+			+ light.attenuation.y * distance
+			+ light.attenuation.z * distance * distance);
+		if (light.minimumDistance > 0.0)
+		{
+			// Bound the reciprocal before squaring so even subnormal positive clamps
+			// cannot create infinite attenuation in single-precision shader arithmetic.
+			float inverseDistance = min(1.0 / max(distance, light.minimumDistance), 1.0e19);
+			attenuation = inverseDistance * inverseDistance;
+		}
+		return attenuation;
+	}
+
+	// Accumulate diffuse and Blinn-Phong specular lighting, including shadow visibility.
+	vec3 surfaceLighting(vec3 albedo, vec3 normal, vec3 viewDir)
+	{
 		vec3 diffuse = vec3(0.0);
 		vec3 specular = vec3(0.0);
 		vec3 diffuseReflectance = uMaterial.hasDiffuseMap != 0
@@ -233,18 +294,7 @@ constexpr const char* MESH_FRAGMENT = R"(
 			vec3 lightDir = directionLength > 0.0 ? toLight / directionLength : normal;
 			float distance = length(light.vector.xyz - frag_Pos);
 
-			// Light fades as 1 divided by (constant + linear*d + quadratic*d*d)
-			float attenuation = 1.0 / (
-				light.attenuation.x
-				+ light.attenuation.y * distance
-				+ light.attenuation.z * distance * distance);
-			if (light.minimumDistance > 0.0)
-			{
-				// Bound the reciprocal before squaring so even subnormal positive clamps
-				// cannot create infinite attenuation in single-precision shader arithmetic.
-				float inverseDistance = min(1.0 / max(distance, light.minimumDistance), 1.0e19);
-				attenuation = inverseDistance * inverseDistance;
-			}
+			float attenuation = distanceAttenuation(light, distance);
 
 			// In the case of a cone light, intensity will be 0 outside the outer cone, 1 inside the inner cone
 			// and soft blend between the two
@@ -258,7 +308,8 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* light.intensity
 				* attenuation
 				* coneIntensity
-                * visibility(light, normal, lightDir);
+                * (light.shadowFar > 0.0 ? shadowVisibilityCube(light, normal, lightDir)
+                    : shadowVisibility2D(light, normal, lightDir));
 
 			// Add matte lighting, reduced by the surface/light angle
 			float nDotL = max(dot(normal, lightDir), 0.0);
@@ -275,8 +326,13 @@ constexpr const char* MESH_FRAGMENT = R"(
 				* specularFactor;
 		}
 
-		vec3 litColor = albedo.rgb * diffuseReflectance * (uAmbient + diffuse) + specular;
+		return albedo * diffuseReflectance * (uAmbient + diffuse) + specular;
 
+	}
+
+	// Blend environment reflection followed by refraction into the lit surface.
+	vec3 applyEnvironment(vec3 litColor, vec3 normal)
+	{
 		// Apply environment reflection / refraction
 		if (uHasEnvironment != 0)
 		{
@@ -294,6 +350,16 @@ constexpr const char* MESH_FRAGMENT = R"(
 			litColor = mix(litColor, reflected, uMaterial.reflection);
 			litColor = mix(litColor, refracted, uMaterial.refraction);
 		}
+		return litColor;
+	}
+
+	void main()
+	{
+		vec4 albedo = surfaceAlbedo();
+		vec3 normal = normalize(frag_Normal);
+		vec3 viewDir = normalize(uCameraPos - frag_Pos);
+		vec3 litColor = surfaceLighting(albedo.rgb, normal, viewDir);
+		litColor = applyEnvironment(litColor, normal);
 		FragColor = vec4(litColor, albedo.a);
 	}
 )";
@@ -432,10 +498,14 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 	ProgramBinding binding(this);
 	Shader::setLighting(lights);
 
-    for (unsigned int i = 0; i < MAX_SHADOW_LIGHTS; i++)
+	for (unsigned int i = 0; i < MAX_SHADOW_MAPS_2D; i++)
 	{
 		glUniform1i(getUniformLocation(("uShadowMaps[" + std::to_string(i) + "]").c_str()), FIRST_SHADOW_TEXTURE_UNIT + i);
 	}
+
+    for (unsigned int i = 0; i < MAX_SHADOW_MAPS_CUBE; ++i)
+        glUniform1i(getUniformLocation(("uPointShadowMaps[" + std::to_string(i) + "]").c_str()),
+            FIRST_SHADOW_TEXTURE_UNIT + MAX_SHADOW_MAPS_2D + i);
 
 	float ambientRed = 0.f;
 	float ambientGreen = 0.f;
@@ -468,89 +538,101 @@ void MeshShader::setLighting(const std::vector<LightInstance>& lights)
 			continue;
 		}
 
-		// Compute the homogeneous light vector, which works differently depending on the type of light
-		Vector3 vector;
-		float w = 1.f;
-		if (light->lightType == LightType::DIRECTIONAL)
-		{
-			// Forward is the direction the rays travel; shading needs the
-			// opposite direction, from the surface toward the light.
-			vector = renderLight.direction.scale(-1.f);
-			w = 0.f;
-		}
-		else
-		{
-			vector = renderLight.position;
-		}
-
-		// Compute distance attenuation for local lights
-		float constantAttenuation = 1.f;
-		float linearAttenuation = 0.f;
-		float quadraticAttenuation = 0.f;
-		float range = light->range;
-		float minimumDistance = 0.f;
-		if (w == 1.f && light->attenuation && light->attenuationModel == AttenuationModel::INVERSE_SQUARE)
-		{
-			// Match the shader's reciprocal cap and keep subnormal uniforms from flushing
-			// to zero, which is reserved for selecting the coefficient curve.
-			minimumDistance = std::max(light->minimumDistance, 1.0e-19f);
-		}
-		else if (w == 1.f && light->attenuation && range > 0.f
-			&& light->attenuationModel == AttenuationModel::RANGE_BASED)
-		{
-			// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
-			// `range` remains the only distance users need to reason about.
-			linearAttenuation = 4.5f / range;
-			quadraticAttenuation = 80.f / (range * range);
-		}
-
-		// Encode cone falloff homogeneously. The neutral values make smoothstep
-		// evaluate to one for every possible dot product on non-spot lights.
-		Vector3 direction = Vector3::ZERO;
-		float outerCutoff = -2.f;
-		float innerCutoff = -1.f;
-		if (light->lightType == LightType::SPOTLIGHT)
-		{
-			const SpotLight* spotLight = static_cast<const SpotLight*>(light);
-			const float innerAngle = clamp(spotLight->innerAngle, 0.f, 180.f);
-			const float outerAngle = clamp(spotLight->outerAngle, innerAngle, 180.f);
-			direction = renderLight.direction;
-			outerCutoff = std::cos(deg2Rad(outerAngle));
-			innerCutoff = std::cos(deg2Rad(innerAngle));
-			// GLSL smoothstep requires distinct edges.
-			if (innerCutoff - outerCutoff < 0.00001f)
-			{
-				outerCutoff = innerCutoff - 0.00001f;
-			}
-		}
-
-		// Assign uniforms
-		const std::string prefix = "uLights[" + std::to_string(lightCount) + "].";
-		glUniform4f(getUniformLocation((prefix + "vector").c_str()), vector.x, vector.y, vector.z, w);
-		glUniform3f(getUniformLocation((prefix + "color").c_str()), color.red(), color.green(), color.blue());
-		glUniform1f(getUniformLocation((prefix + "intensity").c_str()), intensity);
-		glUniform1f(getUniformLocation((prefix + "minimumDistance").c_str()), minimumDistance);
-		glUniform3f(
-			getUniformLocation((prefix + "attenuation").c_str()),
-			constantAttenuation,
-			linearAttenuation,
-			quadraticAttenuation);
-		glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
-		glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
-        glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
-        glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
-            light->shadow.minimumBias, light->shadow.maximumBias);
-        glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
-        if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
-		{
-            glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + renderLight.shadowIndex);
-            glBindTexture(GL_TEXTURE_2D, renderLight.shadowMap->id());
-        }
+		setLightUniforms(renderLight, lightCount);
 		++lightCount;
 	}
 
 	glUniform3f(getUniformLocation("uAmbient"), ambientRed, ambientGreen, ambientBlue);
 	glUniform1i(getUniformLocation("uLightCount"), lightCount);
+}
+
+void MeshShader::setLightUniforms(const LightInstance& renderLight, std::size_t index)
+{
+	const Light* light = renderLight.light;
+	const Color color = light->color;
+	const float intensity = std::max(light->intensity, 0.f);
+
+	// Compute the homogeneous light vector, which works differently depending on the type of light
+	Vector3 vector;
+	float w = 1.f;
+	if (light->lightType == LightType::DIRECTIONAL)
+	{
+		// Forward is the direction the rays travel; shading needs the
+		// opposite direction, from the surface toward the light.
+		vector = renderLight.direction.scale(-1.f);
+		w = 0.f;
+	}
+	else
+	{
+		vector = renderLight.position;
+	}
+
+	// Compute distance attenuation for local lights
+	float constantAttenuation = 1.f;
+	float linearAttenuation = 0.f;
+	float quadraticAttenuation = 0.f;
+	float range = light->range;
+	float minimumDistance = 0.f;
+	if (w == 1.f && light->attenuation && light->attenuationModel == AttenuationModel::INVERSE_SQUARE)
+	{
+		// Match the shader's reciprocal cap and keep subnormal uniforms from flushing
+		// to zero, which is reserved for selecting the coefficient curve.
+		minimumDistance = std::max(light->minimumDistance, 1.0e-19f);
+	}
+	else if (w == 1.f && light->attenuation && range > 0.f
+		&& light->attenuationModel == AttenuationModel::RANGE_BASED)
+	{
+		// Scale the familiar lamp-like (1, 0.09, 0.032) curve so
+		// `range` remains the only distance users need to reason about.
+		linearAttenuation = 4.5f / range;
+		quadraticAttenuation = 80.f / (range * range);
+	}
+
+	// Encode cone falloff homogeneously. The neutral values make smoothstep
+	// evaluate to one for every possible dot product on non-spot lights.
+	Vector3 direction = Vector3::ZERO;
+	float outerCutoff = -2.f;
+	float innerCutoff = -1.f;
+	if (light->lightType == LightType::SPOTLIGHT)
+	{
+		const SpotLight* spotLight = static_cast<const SpotLight*>(light);
+		const float innerAngle = clamp(spotLight->innerAngle, 0.f, 180.f);
+		const float outerAngle = clamp(spotLight->outerAngle, innerAngle, 180.f);
+		direction = renderLight.direction;
+		outerCutoff = std::cos(deg2Rad(outerAngle));
+		innerCutoff = std::cos(deg2Rad(innerAngle));
+		// GLSL smoothstep requires distinct edges.
+		if (innerCutoff - outerCutoff < 0.00001f)
+		{
+			outerCutoff = innerCutoff - 0.00001f;
+		}
+	}
+
+	// Assign uniforms
+	const std::string prefix = "uLights[" + std::to_string(index) + "].";
+	glUniform4f(getUniformLocation((prefix + "vector").c_str()), vector.x, vector.y, vector.z, w);
+	glUniform3f(getUniformLocation((prefix + "color").c_str()), color.red(), color.green(), color.blue());
+	glUniform1f(getUniformLocation((prefix + "intensity").c_str()), intensity);
+	glUniform1f(getUniformLocation((prefix + "minimumDistance").c_str()), minimumDistance);
+	glUniform3f(
+		getUniformLocation((prefix + "attenuation").c_str()),
+		constantAttenuation,
+		linearAttenuation,
+		quadraticAttenuation);
+	glUniform3f(getUniformLocation((prefix + "direction").c_str()), direction.x, direction.y, direction.z);
+	glUniform2f(getUniformLocation((prefix + "cone").c_str()), outerCutoff, innerCutoff);
+	glUniform1i(getUniformLocation((prefix + "shadowIndex").c_str()), renderLight.shadowIndex);
+    const bool point = light->lightType == LightType::POINT;
+    glUniform1f(getUniformLocation((prefix + "shadowFar").c_str()), point ? light->shadow.far : 0.f);
+    glUniform1f(getUniformLocation((prefix + "shadowFilterRadius").c_str()), point ? light->shadow.point.filterRadius : 0.f);
+	glUniform2f(getUniformLocation((prefix + "shadowBias").c_str()),
+		light->shadow.minimumBias, light->shadow.maximumBias);
+	glUniformMatrix4fv(getUniformLocation((prefix + "shadowTransform").c_str()), 1, GL_TRUE, renderLight.shadowTransform.getValues());
+	if (renderLight.shadowMap && renderLight.shadowIndex >= 0)
+	{
+		glActiveTexture(GL_TEXTURE0 + FIRST_SHADOW_TEXTURE_UNIT + (point ? MAX_SHADOW_MAPS_2D : 0) + renderLight.shadowIndex);
+		glBindTexture(renderLight.shadowMap->type(), renderLight.shadowMap->id());
+	}
 }
 
 void MeshShader::setModelMatrix(const Matrix4& matrix)

@@ -57,8 +57,15 @@ void FrameBuffer::attach(FrameBufferAttachment attachment, const TexturePtr text
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous);
 
     glBindFramebuffer(GL_FRAMEBUFFER, _id);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, toGLAttachment(attachment),
-        texture ? texture->type() : GL_TEXTURE_2D, texture ? texture->id() : 0, 0);
+    if (texture && texture->type() == GL_TEXTURE_CUBE_MAP)
+    {
+        glFramebufferTexture(GL_FRAMEBUFFER, toGLAttachment(attachment), texture->id(), 0);
+    }
+    else
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, toGLAttachment(attachment),
+            texture ? texture->type() : GL_TEXTURE_2D, texture ? texture->id() : 0, 0);
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, previous);
 }
 

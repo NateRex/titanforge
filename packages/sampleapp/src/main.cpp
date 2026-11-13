@@ -10,6 +10,7 @@
 #include <graphics/scene/Scene.h>
 #include <graphics/lights/AmbientLight.h>
 #include <graphics/lights/DirectionalLight.h>
+#include <graphics/lights/PointLight.h>
 #include <graphics/cameras/PerspectiveCamera.h>
 
 #include <graphics/geometry/BoxGeometry.h>
@@ -33,7 +34,7 @@
  * @param application Application
  * @return The camera that was created
  */
-PerspectiveCameraPtr setupInputs(Application* app)
+PerspectiveCameraPtr setupBasicInputs(Application* app)
 {
     float width, height;
     RendererPtr renderer = app->getRenderer();
@@ -105,6 +106,45 @@ PerspectiveCameraPtr setupInputs(Application* app)
     return camera;
 }
 
+void setupLightInput(Application* app, ScenePtr scene)
+{
+   
+    // Create a point light above the scene, used by default
+    PointLightPtr lamp = PointLight::create();
+    lamp->setPosition(-3.f, 6.f, 3.f);
+    lamp->intensity = 20.f;
+    lamp->shadow.width = 2048;
+    lamp->shadow.height = 2048;
+    scene->add(lamp);
+
+    // Create a directional light representing sunlight. Can be toggled on instead of the point light.
+    DirectionalLightPtr sun = DirectionalLight::create(Vector3(-0.5f, -1.f, -0.3f));
+    sun->intensity = 0.40f;
+    sun->shadow.width = 2048;
+    sun->shadow.height = 2048;
+
+    InputAction switchLight("SwitchLight", InputValueType::BOOLEAN);
+    InputContextPtr lightingContext = InputContext::create();
+    lightingContext->add(DigitalInput::KEY_2, InputTrigger::PRESSED, switchLight);
+    
+    InputController* controller = app->getInputController();
+    controller->addContext(lightingContext);
+    controller->bind(switchLight, [scene, lamp, sun, lampSelected = true](InputValue value, float deltaTime) mutable
+    {
+        if (lampSelected)
+        {
+            scene->remove(lamp);
+            scene->add(sun);
+        }
+        else
+        {
+            scene->remove(sun);
+            scene->add(lamp);
+        }
+        lampSelected = !lampSelected;
+    });
+}
+
 /**
  * Creates grass instances distributed around the given plane
  * @param scene The scene
@@ -154,7 +194,7 @@ int main()
 
     // Setup scene and camera
     ScenePtr scene = Scene::create();
-    PerspectiveCameraPtr camera = setupInputs(&app);
+    PerspectiveCameraPtr camera = setupBasicInputs(&app);
     camera->lookAt(Vector3(0.f, 5.f, 10.f), Vector3::ZERO, Vector3::YHAT);
 
     // Create skybox
@@ -165,12 +205,8 @@ int main()
     ambientLighting->intensity = 0.15f;
     scene->add(ambientLighting);
 
-    // Create directional light simulating sunlight
-    DirectionalLightPtr sun = DirectionalLight::create(Vector3(-0.5f, -1.f, -0.3f));
-    sun->intensity = 0.40f;
-    sun->shadow.width = 2048;
-    sun->shadow.height = 2048;
-    scene->add(sun);
+    // Setup lighting inputs
+    setupLightInput(&app, scene);
 
     // Create post-processing effects
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();

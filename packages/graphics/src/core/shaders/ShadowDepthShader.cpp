@@ -15,23 +15,62 @@ constexpr const char* SHADOW_VERTEX = R"(
     layout(location = 4) in mat4 instanceModel;
     
     uniform mat4 model;
-    uniform mat4 lightProjection;
     uniform bool instanced;
-    out vec4 vertexColor;
-    out vec2 uv;
+    out vec4 depthColor;
+    out vec2 depthUV;
     
-    void main() {
+    // Compose the scene model transform with the optional per-instance transform.
+    mat4 worldTransform() {
         mat4 transform = model;
         if (instanced) transform *= instanceModel;
-        gl_Position = lightProjection * transform * vec4(position, 1.0);
-        vertexColor = color;
-        uv = texCoord;
+        return transform;
+    }
+
+    void main() {
+        gl_Position = worldTransform() * vec4(position, 1.0);
+        depthColor = color;
+        depthUV = texCoord;
+    }
+)";
+
+constexpr const char* SHADOW_GEOMETRY = R"(
+    #version 330 core
+    layout(triangles) in;
+    layout(triangle_strip, max_vertices = 18) out;
+    in vec4 depthColor[];
+    in vec2 depthUV[];
+    out vec4 vertexColor;
+    out vec2 uv;
+    out vec3 worldPosition;
+    uniform bool pointShadow;
+    uniform mat4 lightProjection;
+    uniform mat4 faceTransforms[6];
+
+    // Fan each triangle out to all cube faces; ordinary maps use one projection.
+    void main() {
+        int faces = pointShadow ? 6 : 1;
+        for (int face = 0; face < faces; ++face) {
+            for (int vertex = 0; vertex < 3; ++vertex) {
+                gl_Layer = face;
+                worldPosition = gl_in[vertex].gl_Position.xyz;
+                vertexColor = depthColor[vertex];
+                uv = depthUV[vertex];
+                gl_Position = (pointShadow ? faceTransforms[face] : lightProjection)
+                    * gl_in[vertex].gl_Position;
+                EmitVertex();
+            }
+            EndPrimitive();
+        }
     }
 )";
 
 constexpr const char* SHADOW_FRAGMENT = R"(
     #version 330 core
 
+    in vec3 worldPosition;
+    uniform bool pointShadow;
+    uniform vec3 lightPosition;
+    uniform float farPlane;
     in vec4 vertexColor;
     in vec2 uv;
     
@@ -42,27 +81,46 @@ constexpr const char* SHADOW_FRAGMENT = R"(
     uniform bool hasTexture;
     uniform sampler2D colorTexture;
     
+    // Vertex color replaces material alpha; texture alpha modulates either source.
+    float surfaceOpacity() {
+        float opacity = useVertexColor ? vertexColor.a : alpha;
+        if (hasTexture) opacity *= texture(colorTexture, uv).a;
+        return opacity;
+    }
+
     void main() {
         if (masked) {
-            float opacity = useVertexColor ? vertexColor.a : alpha;
-            if (hasTexture) opacity *= texture(colorTexture, uv).a;
-            if (opacity < cutoff) discard;
+            if (surfaceOpacity() < cutoff) discard;
         }
+        // Both paths write depth: point maps store radial distance in shared normalized units.
+        gl_FragDepth = pointShadow ? length(worldPosition - lightPosition) / farPlane : gl_FragCoord.z;
     }
 )";
 
-ShadowDepthShader::ShadowDepthShader() : Shader("ShadowDepthShader", SHADOW_VERTEX, SHADOW_FRAGMENT) {}
+ShadowDepthShader::ShadowDepthShader() : Shader("ShadowDepthShader", SHADOW_VERTEX, SHADOW_GEOMETRY, SHADOW_FRAGMENT) {}
 
 void ShadowDepthShader::setProjection(const Matrix4& transform)
 {
     ProgramBinding binding(this);
+    glUniform1i(getUniformLocation("pointShadow"), false);
     glUniformMatrix4fv(getUniformLocation("lightProjection"), 1, GL_TRUE, transform.getValues());
+}
+
+void ShadowDepthShader::setProjections(const Matrix4* transforms, const Vector3& position, float farPlane)
+{
+    ProgramBinding binding(this);
+    glUniform1i(getUniformLocation("pointShadow"), true);
+    for (int face = 0; face < 6; ++face)
+        glUniformMatrix4fv(getUniformLocation(("faceTransforms[" + std::to_string(face) + "]").c_str()),
+            1, GL_TRUE, transforms[face].getValues());
+    glUniform3f(getUniformLocation("lightPosition"), position.x, position.y, position.z);
+    glUniform1f(getUniformLocation("farPlane"), farPlane);
 }
 
 void ShadowDepthShader::setItem(const DrawItem& item)
 {
     ProgramBinding binding(this);
-
+    
     const auto* material = static_cast<const MeshMaterial*>(item.material);
     const GeometryBuffer* buffer = item.getBuffer();
 

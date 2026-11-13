@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <cstddef>
 #include <graphics/core/shaders/Shader.h>
 #include <graphics/core/shaders/pointers/ShaderPtr.h>
 
@@ -73,6 +75,9 @@ protected:
 private:
 
 	/**
-	 * Constructor
+	 * Upload one non-ambient light's vector, attenuation, cone and shadow state.
+	 * @param light Light instance
+	 * @param index The index of this light found when traversing the scene
 	 */
+	void setLightUniforms(const LightInstance& light, std::size_t index);
 };

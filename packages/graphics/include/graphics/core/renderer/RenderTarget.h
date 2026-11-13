@@ -8,7 +8,23 @@
 #include <vector>
 
 /**
- * Describes how a render targte stores its depth-stencil attachment
+ * Describes how a render target stores all of its color attachments
+ */
+enum class ColorStorage
+{
+    /**
+     * Color is stored in a 2D texture
+     */
+    TEXTURE_2D,
+
+    /**
+     * Color is stored in a layered cube texture
+     */
+    TEXTURE_CUBE
+};
+
+/**
+ * Describes how a render target stores its depth-stencil attachment
  * @author Nathaniel Rex
  */
 enum class DepthStencilStorage
@@ -19,9 +35,14 @@ enum class DepthStencilStorage
     NONE,
 
     /**
-     * Depth-stencil data is stored in a sampleable texture
+     * Depth-stencil data is stored in a sampleable 2D texture
      */
-    TEXTURE,
+    TEXTURE_2D,
+
+    /**
+     * Depth-stencil data is stored in a layered, sampleable cube texture.
+     */
+    TEXTURE_CUBE,
 
     /**
      * Depth-stencil data is stored in a render buffer
@@ -76,6 +97,11 @@ struct RenderTargetConfig
     unsigned int samples = 1;
 
     /**
+     * Storage type for all color attachments. Cube textures are attached as layered images.
+     */
+    ColorStorage colorStorage = ColorStorage::TEXTURE_2D;
+
+    /**
      * Formats for the ordered set of color attachments. The size of this vector determines the number of color attachments.
      * Defaults to one linear color attachment, with format PixelFormat::RGBA8.
      */
@@ -95,7 +121,7 @@ struct RenderTargetConfig
      * Sampling for depth textures; ignored for renderbuffer storage.
      */
     TextureSampling depthSampling = { TextureFilter::NEAREST, TextureFilter::NEAREST,
-        TextureWrap::CLAMP_TO_EDGE, TextureWrap::CLAMP_TO_EDGE };
+        TextureWrap::CLAMP_TO_EDGE, TextureWrap::CLAMP_TO_EDGE, TextureWrap::CLAMP_TO_EDGE };
 
 };
 
@@ -202,5 +228,19 @@ private:
      * Builds the frame buffer and its attachments, as described by the current config
      */
     void build();
+
+    /**
+     * @return True if any configured attachment uses layered cube storage. Returns false otherwise.
+     */
+    bool usesCubeStorage() const;
+
+    /**
+     * Allocates a texture using this target's dimensions, sample count, and requested shape.
+     * @param format Pixel format
+     * @param sampling Sampling configuration
+     * @param cube Boolean flag that, when true, indicates that this should be a layered cube texture
+     * @return The newly-created texture
+     */
+    TexturePtr createTexture(PixelFormat format, const TextureSampling& sampling, bool cube) const;
 
 };

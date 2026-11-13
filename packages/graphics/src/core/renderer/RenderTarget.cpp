@@ -2,6 +2,7 @@
 #include <graphics/core/buffers/FrameBuffer.h>
 #include <graphics/core/buffers/RenderBuffer.h>
 #include <graphics/textures/Texture2D.h>
+#include <graphics/textures/TextureCube.h>
 #include <common/exceptions/IllegalArgumentException.h>
 #include <glad/glad.h>
 
@@ -10,6 +11,10 @@ RenderTarget::RenderTarget(const RenderTargetConfig& config): _config(config)
     if (_config.samples == 0)
     {
         throw IllegalArgumentException("Render target sample count must be greater than zero");
+    }
+    if (usesCubeStorage() && _config.samples != 1)
+    {
+        throw IllegalArgumentException("Cube texture storage does not support multisampling");
     }
     if (_config.colorFormats.size() > 4)
     {
@@ -31,6 +36,11 @@ void RenderTarget::resize(unsigned int width, unsigned int height)
     if (width <= 0 || height <= 0)
     {
         throw IllegalArgumentException("Render target dimensions must be greater than zero");
+    }
+
+    if (usesCubeStorage() && width != height)
+    {
+        throw IllegalArgumentException("Cube texture storage requires square dimensions");
     }
 
     if (!_frameBuffer)
@@ -82,6 +92,11 @@ void RenderTarget::build()
         throw IllegalArgumentException("Render target dimensions must be greater than zero");
     }
 
+    if (usesCubeStorage() && _config.width != _config.height)
+    {
+        throw IllegalArgumentException("Cube texture storage requires square dimensions");
+    }
+
     _frameBuffer = FrameBuffer::create();
 
     // Set up color attachments
@@ -93,15 +108,10 @@ void RenderTarget::build()
             throw IllegalArgumentException("A color attachment must use a color format");
         }
 
-        Texture2DConfig texConfig;
-        texConfig.width = _config.width;
-        texConfig.height = _config.height;
-        texConfig.format = _config.colorFormats[i];
-        texConfig.samples = _config.samples;
-        texConfig.sampling.sWrap = TextureWrap::CLAMP_TO_EDGE;
-        texConfig.sampling.tWrap = TextureWrap::CLAMP_TO_EDGE;
-
-        TexturePtr texture = Texture2D::create(texConfig);
+        TextureSampling sampling;
+        sampling.sWrap = sampling.tWrap = sampling.rWrap = TextureWrap::CLAMP_TO_EDGE;
+        TexturePtr texture = createTexture(_config.colorFormats[i], sampling,
+            _config.colorStorage == ColorStorage::TEXTURE_CUBE);
         _colorTextures.push_back(texture);
         _frameBuffer->attach(static_cast<FrameBufferAttachment>(static_cast<int>(FrameBufferAttachment::COLOR0) + i), texture);
         drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
@@ -130,18 +140,13 @@ void RenderTarget::build()
         const FrameBufferAttachment attachment = (_config.depthStencilFormat == PixelFormat::DEPTH24_STENCIL8)
             ? FrameBufferAttachment::DEPTH_STENCIL : FrameBufferAttachment::DEPTH;
 
-        if (_config.depthStencilStorage == DepthStencilStorage::TEXTURE)
+        if (_config.depthStencilStorage == DepthStencilStorage::TEXTURE_2D
+            || _config.depthStencilStorage == DepthStencilStorage::TEXTURE_CUBE)
         {
             _depthStencilRenderBuffer = nullptr;
 
-            Texture2DConfig texConfig;
-            texConfig.width = _config.width;
-            texConfig.height = _config.height;
-            texConfig.format = _config.depthStencilFormat;
-            texConfig.samples = _config.samples;
-            texConfig.sampling = _config.depthSampling;
-
-            _depthStencilTexture = Texture2D::create(texConfig);
+            _depthStencilTexture = createTexture(_config.depthStencilFormat, _config.depthSampling,
+                _config.depthStencilStorage == DepthStencilStorage::TEXTURE_CUBE);
             _frameBuffer->attach(attachment, _depthStencilTexture);
         }
         else
@@ -160,4 +165,33 @@ void RenderTarget::build()
     }
 
     _frameBuffer->assertComplete();
+}
+
+
+bool RenderTarget::usesCubeStorage() const
+{
+    return _config.depthStencilStorage == DepthStencilStorage::TEXTURE_CUBE
+        || (!_config.colorFormats.empty() && _config.colorStorage == ColorStorage::TEXTURE_CUBE);
+}
+
+TexturePtr RenderTarget::createTexture(PixelFormat format, const TextureSampling& sampling, bool cube) const
+{
+    if (cube)
+    {
+        TextureCubeConfig config;
+        config.size = _config.width;
+        config.format = format;
+        config.sampling = sampling;
+        return TextureCube::create(config);
+    }
+    else
+    {
+        Texture2DConfig config;
+        config.width = _config.width;
+        config.height = _config.height;
+        config.format = format;
+        config.samples = _config.samples;
+        config.sampling = sampling;
+        return Texture2D::create(config);
+    }
 }
