@@ -60,7 +60,7 @@ public:
 	void getWindowDimensions(float* width, float* height) const;
 
     /**
-	 * @return The current linear RGB background clear color for draw commands
+	 * @return The current linear RGB background clear color for draw commands. Defaults to solid black.
 	 */
     Color getBackgroundColor() const { return _backgroundColor; }
 
@@ -71,18 +71,19 @@ public:
     void setBackgroundColor(const Color& color) { _backgroundColor = color; }
 
     /**
-	 * @return Display adjustment exponent; neutral default is 1.
+	 * @return Display adjustment exponent. Defaults to 1 (neutral).
 	 */
     float getDisplayGamma() const { return _displayGamma; }
 
     /**
 	 * Sets display adjustment after tone mapping and clamping, before exact sRGB encoding.
      * @param displayGamma Finite positive exponent.
-     * @throws IllegalArgumentException If invalid; retains the previous value. */
+     * @throws IllegalArgumentException If invalid; retains the previous value.
+	 */
     void setDisplayGamma(float displayGamma);
 
     /**
-	 * @return True if shadows are globally enabled. Returns false otherwise.
+	 * @return True if shadows are globally enabled. Returns false otherwise. Defaults to true.
 	 */
     bool getShadowsEnabled() const { return _shadowsEnabled; }
 
@@ -106,17 +107,18 @@ public:
     void setShadowBudget(unsigned int budget) { _shadowBudget = budget; }
 
     /**
-	 * @return Final tone curve function
+	 * @return Final tone curve function. Defaults to EXPONENTIAL to compress bright highlights.
 	 */
     ToneMapping getToneMapping() const { return _toneMapping; }
 
     /**
 	 * Sets the tone curve applied after all linear effects and exposure.
+     * Use NONE for uncompressed presentation that clips values above the display range.
 	 */
     void setToneMapping(ToneMapping toneMapping) { _toneMapping = toneMapping; }
 
     /**
-	 * @return Final brightness multiplier
+	 * @return Final brightness multiplier. Defaults to 1 (neutral).
 	 */
     float getExposure() const { return _exposure; }
 
@@ -196,7 +198,7 @@ private:
 	/**
 	 * Final tone curve after exposure.
 	 */
-    ToneMapping _toneMapping = ToneMapping::NONE;
+    ToneMapping _toneMapping = ToneMapping::EXPONENTIAL;
 
     /**
 	 * Final renderer-wide brightness multiplier.
