@@ -61,18 +61,18 @@ public:
 	/**
 	 * @return The current linear RGB background clear color for draw commands
 	 */
-	Color getBackgroundColor() const;
+	Color getBackgroundColor() const { return _backgroundColor; }
 
 	/**
 	 * Sets the current linear RGB background clear color for draw commands
 	 * @param color Linear RGB background color with unencoded alpha
 	 */
-	void setBackgroundColor(const Color& color);
+	void setBackgroundColor(const Color& color) { _backgroundColor = color; }
 
     /**
 	 * @return Display adjustment exponent; neutral default is 1.
 	 */
-    float getDisplayGamma() const;
+    float getDisplayGamma() const { return _displayGamma; }
 
     /**
      * Sets display adjustment, applied after all linear postprocessing and before fixed sRGB encoding.
@@ -93,8 +93,6 @@ public:
 	 * @param enabled True if shadows can be cast based on per-light settings. False otherwise.
 	 */
     void setShadowsEnabled(bool enabled) { _shadowsEnabled = enabled; }
-
-    /** Maximum shadow lights, additionally capped by available texture resources. */
 
 	/**
 	 * @return The global limit to the number of lights that can be casting shadows at one time. Lights are selected in the order

@@ -106,21 +106,6 @@ void Renderer::getWindowDimensions(float* width, float* height) const
 	return _window->getDimensions(width, height);
 }
 
-Color Renderer::getBackgroundColor() const
-{
-	return _backgroundColor;
-}
-
-void Renderer::setBackgroundColor(const Color& color)
-{
-	_backgroundColor = color;
-}
-
-float Renderer::getDisplayGamma() const
-{
-    return _displayGamma;
-}
-
 void Renderer::setDisplayGamma(float displayGamma)
 {
     if (!std::isfinite(displayGamma) || displayGamma <= 0.f)
