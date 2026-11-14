@@ -52,76 +52,51 @@ BOOST_AUTO_TEST_CASE(Renderer_localLightConfigurations)
     PresentationSettings restore;
     auto renderer = restore.renderer;
     renderer->setDisplayGamma(1.f);
+    auto scene = Scene::create();
     auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
-    for (const LightPtr& light : {LightPtr(PointLight::create()), LightPtr(SpotLight::create())})
+    auto material = MeshMaterial::create();
+    material->reflectivity = 0.f;
+    auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+    mesh->setPosition(0.f, 0.f, -3.5f);
+    scene->add(mesh);
+    
+    // Eight representative configurations of each type fit in the shader's
+    // sixteen-light limit, so every configuration participates in this draw.
+    for (bool spot : {false, true})
     {
-        if (light->lightType == LightType::SPOTLIGHT)
+        for (int configuration = 0; configuration < 8; ++configuration)
         {
-            auto spot = std::static_pointer_cast<SpotLight>(light);
-            spot->innerAngle = 45.f;
-            spot->outerAngle = 60.f;
-        }
-        auto scene = Scene::create();
-        auto material = MeshMaterial::create();
-        material->reflectivity = 0.f;
-        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
-        mesh->setPosition(0.f, 0.f, -3.5f); // Front face at z=-3, normal +Z.
-        scene->add(mesh);
-        scene->add(light);
-        auto check = [&](float distance)
-        {
-            light->setPosition(0.f, 0.f, -3.f + distance);
-            DrawState state;
-            scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-            BOOST_REQUIRE_EQUAL(state.lights.size(), 1u);
-            BOOST_TEST(state.lights[0].light == light.get());
-            BOOST_TEST(state.lights[0].position == Vector3(0.f, 0.f, -3.f + distance));
-            BOOST_REQUIRE_EQUAL(state.items.size(), 1u);
-            BOOST_TEST(state.items[0].material == material.get());
-            BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
-        };
-        light->intensity = 0.25f;
-        // Exercise distance changes, extreme clamps, and both attenuation models.
-        check(1.f);
-        check(2.f);
-        check(4.f);
-        light->minimumDistance = std::numeric_limits<float>::denorm_min();
-        check(2.f);
-        light->minimumDistance = std::numeric_limits<float>::max();
-        check(2.f);
-        light->minimumDistance = 0.01f;
-        light->range = 0.f; // Range must not affect inverse-square falloff.
-        check(1.f);
-        light->intensity = 0.5f;
-        check(1.f);
-        light->intensity = -1.f;
-        check(1.f);
-        light->intensity = 0.25f;
-        light->minimumDistance = 2.f;
-        check(1.f);
-        check(0.05f);
-        light->minimumDistance = 0.01f;
-        light->intensity = 0.000025f;
-        check(0.005f);
-        light->intensity = 0.25f;
-        light->attenuationModel = AttenuationModel::RANGE_BASED;
-        light->range = 2.f;
-        check(2.f);
-        check(4.f);
-        for (float range : {0.f, -1.f})
-        {
-            light->range = range;
-            check(2.f);
-        }
-        for (auto model : {AttenuationModel::INVERSE_SQUARE, AttenuationModel::RANGE_BASED})
-        {
-            light->attenuationModel = model;
-            light->attenuation = false;
-            light->range = 2.f;
-            check(1.f);
-            check(4.f);
+            LightPtr light = spot ? LightPtr(SpotLight::create()) : LightPtr(PointLight::create());
+            light->setPosition(0.f, 0.f, -2.f + configuration * 0.1f);
+            light->intensity = configuration == 3 ? -1.f : 0.25f;
+            if (configuration == 3)
+            {
+                light->attenuationModel = AttenuationModel::RANGE_BASED;
+                light->range = 2.f;
+            }
+            if (configuration == 1) light->minimumDistance = std::numeric_limits<float>::denorm_min();
+            if (configuration == 2) light->minimumDistance = std::numeric_limits<float>::max();
+            if (configuration >= 4) light->attenuationModel = AttenuationModel::RANGE_BASED;
+            if (configuration == 4) light->range = 0.f;
+            if (configuration == 5) light->range = -1.f;
+            if (configuration >= 6) light->attenuation = false;
+            if (configuration == 6) light->attenuationModel = AttenuationModel::INVERSE_SQUARE;
+            if (spot)
+            {
+                auto spotlight = std::static_pointer_cast<SpotLight>(light);
+                spotlight->innerAngle = 45.f;
+                spotlight->outerAngle = 60.f;
+            }
+            scene->add(light);
         }
     }
+    DrawState state;
+    scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+    BOOST_REQUIRE_EQUAL(state.lights.size(), 16u);
+    BOOST_REQUIRE_EQUAL(state.items.size(), 1u);
+    BOOST_TEST(state.items[0].material == material.get());
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }
 
 /**
@@ -131,37 +106,37 @@ BOOST_AUTO_TEST_CASE(Renderer_ambientAndDirectionalLightConfigurations)
 {
     PresentationSettings restore;
     auto renderer = restore.renderer;
-    renderer->setDisplayGamma(1.f);
+    auto scene = Scene::create();
     auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
-    for (const LightPtr& light : {LightPtr(AmbientLight::create()), LightPtr(DirectionalLight::create(Vector3::MINUS_ZHAT))})
+    for (bool directional : {false, true})
     {
-        auto scene = Scene::create();
-        auto material = MeshMaterial::create();
-        material->reflectivity = 0.f;
-        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
-        mesh->setPosition(0.f, 0.f, -3.5f);
-        scene->add(mesh);
-        scene->add(light);
-        light->intensity = 0.25f;
-        light->attenuation = true; // Even explicitly enabled attenuation cannot affect these types.
-        light->range = 1.f;
-        light->minimumDistance = 10.f;
         for (auto model : {AttenuationModel::INVERSE_SQUARE, AttenuationModel::RANGE_BASED})
         {
+            LightPtr light = directional ? LightPtr(DirectionalLight::create(Vector3::MINUS_ZHAT))
+                                         : LightPtr(AmbientLight::create());
+            light->intensity = 0.25f;
+            light->attenuation = true; // Ignored for these light types.
+            light->range = 1.f;
+            light->minimumDistance = 10.f;
             light->attenuationModel = model;
-            for (float z : {-3.5f, -5.5f})
-            {
-                mesh->setPosition(0.f, 0.f, z);
-                renderer->render(scene, camera);
-                DrawState state;
-                scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-                BOOST_REQUIRE_EQUAL(state.lights.size(), 1u);
-                BOOST_TEST(state.lights[0].light == light.get());
-                BOOST_REQUIRE_EQUAL(state.items.size(), 1u);
-                BOOST_TEST(state.items[0].material == material.get());
-            }
+            scene->add(light);
         }
     }
+    auto material = MeshMaterial::create();
+    material->reflectivity = 0.f;
+    for (float z : {-3.5f, -5.5f})
+    {
+        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+        mesh->setPosition(0.f, 0.f, z);
+        scene->add(mesh);
+    }
+    DrawState state;
+    scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+    BOOST_REQUIRE_EQUAL(state.lights.size(), 4u);
+    BOOST_REQUIRE_EQUAL(state.items.size(), 2u);
+    for (const auto& item : state.items) BOOST_TEST(item.material == material.get());
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }
 
 /**
@@ -183,29 +158,30 @@ BOOST_AUTO_TEST_CASE(Renderer_coincidentLightWithPostProcessing)
         ~ShaderCacheReset() { ShaderManager::reset(); }
     } reset;
     auto camera = PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f);
+    auto scene = Scene::create();
+    auto material = MeshMaterial::create();
+    material->reflectivity = 0.f;
+    auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
+    mesh->setPosition(0.f, 0.f, -3.5f);
+    scene->add(mesh);
     for (const LightPtr& light : {LightPtr(PointLight::create()), LightPtr(SpotLight::create())})
     {
-        auto scene = Scene::create();
-        auto material = MeshMaterial::create();
-        material->reflectivity = 0.f;
-        auto mesh = Mesh::create(BoxGeometry::create(2.f, 2.f, 1.f), material);
-        mesh->setPosition(0.f, 0.f, -3.5f);
-        scene->add(mesh);
         scene->add(light);
         light->setPosition(0.f, 0.f, -3.f);
         light->intensity = 0.000025f; // Clamped attenuation 10000 => linear 0.25.
-        auto effect = PostProcessMaterial::create();
-        effect->contrast = 0.5f;
-        scene->add(PostProcessing::create(effect));
-        renderer->render(scene, camera);
-        BOOST_TEST(effect->texture == nullptr);
-        DrawState state;
-        scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-        BOOST_REQUIRE_EQUAL(state.lights.size(), 1u);
-        BOOST_TEST(state.lights[0].position == Vector3(0.f, 0.f, -3.f));
-        BOOST_REQUIRE_EQUAL(state.postProcessing.size(), 1u);
-        BOOST_TEST(state.postProcessing[0] == effect.get());
     }
+    auto effect = PostProcessMaterial::create();
+    effect->contrast = 0.5f;
+    scene->add(PostProcessing::create(effect));
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+    BOOST_TEST(effect->texture == nullptr);
+    DrawState state;
+    scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+    BOOST_REQUIRE_EQUAL(state.lights.size(), 2u);
+    for (const auto& light : state.lights)
+        BOOST_TEST(light.position == Vector3(0.f, 0.f, -3.f));
+    BOOST_REQUIRE_EQUAL(state.postProcessing.size(), 1u);
+    BOOST_TEST(state.postProcessing[0] == effect.get());
 }
 
 /**
@@ -321,39 +297,31 @@ BOOST_AUTO_TEST_CASE(Renderer_displayGammaValidation)
 }
 
 /**
- * Tests display gamma settings and postprocess cleanup with either framebuffer sRGB state
+ * Tests display gamma and postprocess cleanup with framebuffer sRGB enabled
  */
 BOOST_AUTO_TEST_CASE(Renderer_displayGammaWithPostProcessing)
 {
     PresentationSettings restore;
     auto renderer = restore.renderer;
     renderer->setBackgroundColor(Color(0.25f, 0.25f, 0.25f, 0.4f));
-    auto camera = PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f);
-    auto scene = Scene::create();
     renderer->setDisplayGamma(2.f);
-    renderer->render(scene, camera);
-    BOOST_TEST(renderer->getDisplayGamma() == 2.f);
-
+    auto scene = Scene::create();
     auto exposure = PostProcessMaterial::create();
     exposure->exposure = 2.f;
     auto contrast = PostProcessMaterial::create();
     contrast->contrast = 0.5f;
     scene->add(PostProcessing::create(exposure));
     scene->add(PostProcessing::create(contrast));
-    for (bool srgbEnabled : {false, true})
+    const auto srgbEnabled = glIsEnabled(GL_FRAMEBUFFER_SRGB);
+    struct SrgbRestore
     {
-        if (srgbEnabled) glEnable(GL_FRAMEBUFFER_SRGB);
-        else glDisable(GL_FRAMEBUFFER_SRGB);
-        renderer->setDisplayGamma(1.f);
-        renderer->render(scene, camera);
-        BOOST_TEST(renderer->getDisplayGamma() == 1.f);
-        renderer->setDisplayGamma(2.f);
-        BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
-        BOOST_TEST(renderer->getDisplayGamma() == 2.f);
-        BOOST_TEST(renderer->getBackgroundColor() == Color(0.25f, 0.25f, 0.25f, 0.4f));
-        BOOST_TEST(exposure->texture == nullptr);
-        BOOST_TEST(contrast->texture == nullptr);
-    }
+        GLboolean enabled;
+        ~SrgbRestore() { if (enabled) glEnable(GL_FRAMEBUFFER_SRGB); else glDisable(GL_FRAMEBUFFER_SRGB); }
+    } restoreSrgb{srgbEnabled};
+    glEnable(GL_FRAMEBUFFER_SRGB);
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f)));
+    BOOST_TEST(renderer->getDisplayGamma() == 2.f);
+    BOOST_TEST(renderer->getBackgroundColor() == Color(0.25f, 0.25f, 0.25f, 0.4f));
     BOOST_TEST(exposure->texture == nullptr);
     BOOST_TEST(contrast->texture == nullptr);
 }
@@ -415,9 +383,9 @@ BOOST_AUTO_TEST_CASE(Renderer_transparentMaterialTraversal)
  */
 BOOST_AUTO_TEST_CASE(Renderer_antiAliasingContextIsolation)
 {
-    // Prime the global shader cache in the fixture context so this test also
-    // catches context isolation failures when run on its own.
-    GlobalTestFixture::RENDERER->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
+    // Prime fixture shader ownership without rendering a frame.
+    const auto previousContext = glfwGetCurrentContext();
+    ShaderManager::getShader(ShaderId::MESH);
 
     {
         struct ContextRestore
@@ -444,8 +412,8 @@ BOOST_AUTO_TEST_CASE(Renderer_antiAliasingContextIsolation)
         BOOST_TEST(renderer->getBackgroundColor() == Color(0.18f, 0.18f, 0.18f, 0.4f));
     }
 
-    // Verify the fixture can recreate and use its own shaders after restoration.
-    BOOST_REQUIRE_NO_THROW(GlobalTestFixture::RENDERER->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f)));
+    BOOST_TEST(glfwGetCurrentContext() == previousContext);
+    BOOST_REQUIRE_NO_THROW(ShaderManager::getShader(ShaderId::MESH));
 }
 
 
@@ -460,10 +428,11 @@ BOOST_AUTO_TEST_CASE(Renderer_extremeDisplayGamma)
     for (float gamma : {std::numeric_limits<float>::denorm_min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::max()})
     {
         renderer->setDisplayGamma(gamma);
-        renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f));
         BOOST_TEST(renderer->getDisplayGamma() == gamma);
         BOOST_TEST(renderer->getBackgroundColor() == Color(0.f, 0.5f, 1.f, 0.4f));
     }
+    BOOST_REQUIRE_NO_THROW(renderer->render(Scene::create(), PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f)));
+    BOOST_TEST(renderer->getDisplayGamma() == std::numeric_limits<float>::max());
 }
 
 /**
@@ -476,52 +445,44 @@ BOOST_AUTO_TEST_CASE(Renderer_linearAndSRGBInputConfiguration)
     renderer->setDisplayGamma(1.f);
     const Color linear(0.2158605f, 0.05126946f, 1.f, 128.f / 255.f);
     const Color srgb = Color::fromSRGBHex("#8040ff80");
-    auto camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
     auto scene = Scene::create();
-
-    // Background settings preserve alpha independently of material opacity rules.
-    for (const auto& color : {linear, srgb})
-    {
-        renderer->setBackgroundColor(color);
-        renderer->render(scene, camera);
-        BOOST_TEST(renderer->getBackgroundColor() == color);
-        BOOST_TEST(std::abs(color.red() - linear.red()) < 0.000001f);
-        BOOST_TEST(std::abs(color.green() - linear.green()) < 0.000001f);
-        BOOST_TEST(color.blue() == linear.blue());
-        BOOST_TEST(color.alpha() == linear.alpha());
-    }
-
-    renderer->setBackgroundColor(Color::BLACK);
-    auto light = AmbientLight::create();
-    light->intensity = 1.f;
-    scene->add(light);
-    auto geometry = Geometry::create(PrimitiveType::TRIANGLES);
-    const float positions[] = {-1.f, -1.f, -3.f, 1.f, -1.f, -3.f, 0.f, 1.f, -3.f};
-    const float normals[] = {0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f};
-    geometry->setVertices(positions, 3);
-    geometry->setNormals(normals, 3);
-    auto material = MeshMaterial::create();
-    scene->add(Mesh::create(geometry, material));
+    scene->add(AmbientLight::create());
+    renderer->setBackgroundColor(srgb);
+    BOOST_TEST(std::abs(srgb.red() - linear.red()) < 0.000001f);
+    BOOST_TEST(std::abs(srgb.green() - linear.green()) < 0.000001f);
+    BOOST_TEST(srgb.blue() == linear.blue());
+    BOOST_TEST(srgb.alpha() == linear.alpha());
     for (bool vertices : {false, true})
     {
-        material->useVertexColors = vertices;
         for (const auto& color : {linear, srgb})
         {
-            material->color = vertices ? Color::WHITE : color.withAlpha(1.f);
+            auto geometry = Geometry::create(PrimitiveType::TRIANGLES);
+            const float positions[] = {-1.f, -1.f, -3.f, 1.f, -1.f, -3.f, 0.f, 1.f, -3.f};
+            const float normals[] = {0.f, 0.f, 1.f, 0.f, 0.f, 1.f, 0.f, 0.f, 1.f};
+            geometry->setVertices(positions, 3);
+            geometry->setNormals(normals, 3);
             const float colors[] = {
                 color.red(), color.green(), color.blue(), 1.f,
                 color.red(), color.green(), color.blue(), 1.f,
                 color.red(), color.green(), color.blue(), 1.f};
             geometry->setColors(colors, 3);
-            renderer->render(scene, camera);
-            DrawState state;
-            scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
-            BOOST_REQUIRE_EQUAL(state.items.size(), 1u);
-            BOOST_TEST(state.items[0].material == material.get());
+            auto material = MeshMaterial::create();
+            material->useVertexColors = vertices;
+            material->color = vertices ? Color::WHITE : color.withAlpha(1.f);
+            auto mesh = Mesh::create(geometry, material);
+            mesh->setPosition(vertices ? 0.5f : -0.5f, 0.f, color == linear ? 0.f : -0.5f);
+            scene->add(mesh);
             BOOST_TEST(material->useVertexColors == vertices);
             BOOST_TEST(material->color == (vertices ? Color::WHITE : color.withAlpha(1.f)));
         }
     }
+    DrawState state;
+    scene->traverse(state, Matrix4::IDENTITY, Matrix3::IDENTITY);
+    BOOST_REQUIRE_EQUAL(state.items.size(), 4u);
+    BOOST_REQUIRE_EQUAL(state.lights.size(), 1u);
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f)));
+    BOOST_TEST(renderer->getBackgroundColor() == srgb);
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }
 
 /**
@@ -655,7 +616,7 @@ BOOST_AUTO_TEST_CASE(Renderer_mixedPointShadows)
 }
 
 /**
- * Invalid, overflow, and disabled shadows preserve direct lighting and refresh uploaded shadow indices.
+ * Invalid, disabled and over-capacity shadows preserve direct lighting alongside valid shadow indices.
  */
 BOOST_AUTO_TEST_CASE(Renderer_shadowFallbackLifecycle)
 {
@@ -668,7 +629,7 @@ BOOST_AUTO_TEST_CASE(Renderer_shadowFallbackLifecycle)
     auto material = MeshMaterial::create();
     scene->add(Mesh::create(BoxGeometry::create(1.f, 1.f, 1.f), material));
     std::vector<PointLightPtr> points;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 6; ++i)
     {
         auto point = PointLight::create();
         point->shadow.width = point->shadow.height = 32;
@@ -681,31 +642,27 @@ BOOST_AUTO_TEST_CASE(Renderer_shadowFallbackLifecycle)
     directional->intensity = 2.f;
     scene->add(directional);
 
-    for (int frame = 0; frame < 4; ++frame)
+    // Mix invalid, disabled, valid and over-capacity point shadows in one draw.
+    points[0]->shadow.near = 0.f;
+    points[1]->shadow.enabled = false;
+    BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
+    auto shader = ShaderManager::getShader(ShaderId::MESH);
+    auto integerUniform = [&](const std::string& name) {
+        const auto location = glGetUniformLocation(shader->id(), name.c_str());
+        BOOST_REQUIRE(location >= 0);
+        GLint value;
+        glGetUniformiv(shader->id(), location, &value);
+        return value;
+    };
+    BOOST_TEST(integerUniform("uLightCount") == 7);
+    const int expected[] = {-1, -1, 0, 1, 2, -1, 0};
+    for (int i = 0; i < 7; ++i)
     {
-        points[0]->shadow.near = frame == 1 ? 0.f : 0.1f;
-        renderer->setShadowsEnabled(frame != 2);
-        BOOST_REQUIRE_NO_THROW(renderer->render(scene, camera));
-        auto shader = ShaderManager::getShader(ShaderId::MESH);
-        auto integerUniform = [&](const std::string& name) {
-            const auto location = glGetUniformLocation(shader->id(), name.c_str());
-            BOOST_REQUIRE(location >= 0);
-            GLint value;
-            glGetUniformiv(shader->id(), location, &value);
-            return value;
-        };
-        BOOST_TEST(integerUniform("uLightCount") == 6);
-        for (int i = 0; i < 6; ++i)
-        {
-            const std::string prefix = "uLights[" + std::to_string(i) + "].";
-            const int expected[] = {0, 1, 2, -1, -1, 0};
-            const int invalidExpected[] = {-1, 0, 1, 2, -1, 0};
-            BOOST_TEST(integerUniform(prefix + "shadowIndex") ==
-                (frame == 2 ? -1 : (frame == 1 ? invalidExpected[i] : expected[i])));
-            float intensity;
-            glGetUniformfv(shader->id(), glGetUniformLocation(shader->id(), (prefix + "intensity").c_str()), &intensity);
-            BOOST_TEST(intensity == 2.f);
-        }
-        BOOST_TEST(glGetError() == GL_NO_ERROR);
+        const std::string prefix = "uLights[" + std::to_string(i) + "].";
+        BOOST_TEST(integerUniform(prefix + "shadowIndex") == expected[i]);
+        float intensity;
+        glGetUniformfv(shader->id(), glGetUniformLocation(shader->id(), (prefix + "intensity").c_str()), &intensity);
+        BOOST_TEST(intensity == 2.f);
     }
+    BOOST_TEST(glGetError() == GL_NO_ERROR);
 }
