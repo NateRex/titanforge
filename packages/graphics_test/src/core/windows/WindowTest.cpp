@@ -16,4 +16,6 @@ BOOST_AUTO_TEST_CASE(Window_basics)
 	window->getDimensions(&width, &height);
 	BOOST_TEST(width == 800);
 	BOOST_TEST(height == 600);
+
+	BOOST_REQUIRE_NO_THROW(window->setTitle("Different Title"));
 }

@@ -59,6 +59,12 @@ public:
     bool isOpen() const;
 
     /**
+     * Updates the title of an existing window. Does nothing after destruction.
+     * @param title New window title
+     */
+    void setTitle(const char* title);
+
+    /**
      * Requests that this window close. The window remains valid until it is
      * destroyed, allowing this method to be called safely from input callbacks.
      */
