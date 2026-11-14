@@ -35,12 +35,16 @@ struct PresentationSettings
     float gamma = renderer->getDisplayGamma();
     bool shadows = renderer->getShadowsEnabled();
     unsigned int budget = renderer->getShadowBudget();
+    ToneMapping toneMapping = renderer->getToneMapping();
+    float exposure = renderer->getExposure();
     ~PresentationSettings()
     {
         renderer->setBackgroundColor(background);
         renderer->setDisplayGamma(gamma);
         renderer->setShadowsEnabled(shadows);
         renderer->setShadowBudget(budget);
+        renderer->setToneMapping(toneMapping);
+        renderer->setExposure(exposure);
     }
 };
 
