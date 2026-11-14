@@ -106,6 +106,14 @@ void Window::close()
     }
 }
 
+void Window::setTitle(const char* title)
+{
+    if (_glfwWindow)
+    {
+        glfwSetWindowTitle(_glfwWindow, title);
+    }
+}
+
 void Window::destroy()
 {
     if (glfwGetCurrentContext() == _glfwWindow)

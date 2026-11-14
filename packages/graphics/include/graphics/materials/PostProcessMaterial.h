@@ -14,9 +14,11 @@ class PostProcessMaterial : public Material
 public:
 
 	/**
-	 * Exposure multiplier applied to the input color. Defaults to 1.
+	 * Gain multiplier applied to linear input RGB. Defaults to 1. Applied before this effect's saturation,
+	 * contrast, and tint; output remains linear HDR for subsequent effects. Renderer-wide exposure instead
+	 * applies after the complete effects chain and before tone mapping at final presentation.
 	 */
-	float exposure = 1.f;
+	float gain = 1.f;
 
 	/**
 	 * Color saturation multiplier. Zero produces grayscale and one preserves the input saturation.

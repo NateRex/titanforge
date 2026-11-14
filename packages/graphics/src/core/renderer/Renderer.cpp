@@ -30,7 +30,7 @@
 int Renderer::_RENDERER_COUNT = 0;
 std::mutex Renderer::_MUTEX;
 
-Renderer::Renderer(WindowPtr window): _backgroundColor(Color::BLACK)
+Renderer::Renderer(WindowPtr window)
 {
 	incrementRendererCount();
 	
@@ -106,21 +106,6 @@ void Renderer::getWindowDimensions(float* width, float* height) const
 	return _window->getDimensions(width, height);
 }
 
-Color Renderer::getBackgroundColor() const
-{
-	return _backgroundColor;
-}
-
-void Renderer::setBackgroundColor(const Color& color)
-{
-	_backgroundColor = color;
-}
-
-float Renderer::getDisplayGamma() const
-{
-    return _displayGamma;
-}
-
 void Renderer::setDisplayGamma(float displayGamma)
 {
     if (!std::isfinite(displayGamma) || displayGamma <= 0.f)
@@ -128,6 +113,15 @@ void Renderer::setDisplayGamma(float displayGamma)
         throw IllegalArgumentException("Display gamma must be finite and positive");
     }
     _displayGamma = displayGamma;
+}
+
+void Renderer::setExposure(float exposure)
+{
+    if (!std::isfinite(exposure) || exposure < 0.f)
+    {
+        throw IllegalArgumentException("Exposure must be finite and nonnegative");
+    }
+    _exposure = exposure;
 }
 
 void Renderer::destroy()
@@ -340,7 +334,7 @@ void Renderer::present(const TexturePtr& source)
 
 	ShaderPtr shader = ShaderManager::getShader(ShaderId::PRESENTATION);
 	shader->activate();
-    std::static_pointer_cast<PresentationShader>(shader)->draw(source, _displayGamma);
+    std::static_pointer_cast<PresentationShader>(shader)->draw(source, _displayGamma, _toneMapping, _exposure);
 
 	glfwSwapBuffers(_window->_glfwWindow);
 	glfwPollEvents();

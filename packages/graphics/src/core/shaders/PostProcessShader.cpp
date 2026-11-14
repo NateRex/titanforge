@@ -14,7 +14,7 @@ constexpr const char* POST_PROCESS_FRAGMENT = R"(
 	struct Material {
 		sampler2D texture;
 		vec4 color;
-		float exposure;
+		float gain;
 		float saturation;
 		float contrast;
 	};
@@ -29,8 +29,8 @@ constexpr const char* POST_PROCESS_FRAGMENT = R"(
 	{
 		vec4 source = texture(uMaterial.texture, frag_TexCoord);
 
-		// Multiply base color by exposure. Values greater than 1 brighten the image, while values less than 1 darken it.
-		vec3 color = source.rgb * uMaterial.exposure;
+		// Multiply base color by gain. Values greater than 1 brighten the image, while values less than 1 darken it.
+		vec3 color = source.rgb * uMaterial.gain;
 
 		// Reduce RGB to one perceived-brightness value. This is a weighted average rather
 		// than a plain average because human vision notices green most, red next, and blue
@@ -78,7 +78,7 @@ void PostProcessShader::setMaterial(const Material* material)
 	glBindTexture(GL_TEXTURE_2D, ppMat->texture->id());
 	glUniform1i(getUniformLocation("uMaterial.texture"), 0);
 	glUniform4f(getUniformLocation("uMaterial.color"), ppMat->color.red(), ppMat->color.green(), ppMat->color.blue(), ppMat->color.alpha());
-	glUniform1f(getUniformLocation("uMaterial.exposure"), ppMat->exposure);
+	glUniform1f(getUniformLocation("uMaterial.gain"), ppMat->gain);
 	glUniform1f(getUniformLocation("uMaterial.saturation"), ppMat->saturation);
 	glUniform1f(getUniformLocation("uMaterial.contrast"), ppMat->contrast);
 }

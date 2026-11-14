@@ -212,7 +212,7 @@ int main()
     PostProcessMaterialPtr postProcessing = PostProcessMaterial::create();
     postProcessing->contrast = 1.f;
     postProcessing->saturation = 0.9f;
-    postProcessing->exposure = 1.f;
+    postProcessing->gain = 1.f;
     scene->add(PostProcessing::create(postProcessing));
 
     // Create the ground

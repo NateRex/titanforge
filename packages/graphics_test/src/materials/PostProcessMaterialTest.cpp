@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE(PostProcessMaterial_defaults)
 
 	BOOST_REQUIRE(material != nullptr);
 	BOOST_TEST(material->materialType == MaterialType::POST_PROCESS);
-	BOOST_TEST(material->exposure == 1.f);
+	BOOST_TEST(material->gain == 1.f);
 	BOOST_TEST(material->saturation == 1.f);
 	BOOST_TEST(material->contrast == 1.f);
 }

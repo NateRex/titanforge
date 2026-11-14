@@ -9,6 +9,7 @@
 #include <graphics/core/renderer/RenderPass.h>
 #include <graphics/textures/pointers/TexturePtr.h>
 #include <graphics/core/renderer/ShadowPass.h>
+#include <graphics/core/ToneMapping.h>
 #include <mutex>
 
 class Matrix3;
@@ -58,59 +59,81 @@ public:
 	 */
 	void getWindowDimensions(float* width, float* height) const;
 
-	/**
-	 * @return The current linear RGB background clear color for draw commands
+    /**
+	 * @return The current linear RGB background clear color for draw commands. Defaults to solid black.
 	 */
-	Color getBackgroundColor() const;
+    Color getBackgroundColor() const { return _backgroundColor; }
 
-	/**
+    /**
 	 * Sets the current linear RGB background clear color for draw commands
 	 * @param color Linear RGB background color with unencoded alpha
 	 */
-	void setBackgroundColor(const Color& color);
+    void setBackgroundColor(const Color& color) { _backgroundColor = color; }
 
     /**
-	 * @return Display adjustment exponent; neutral default is 1.
+	 * @return Display adjustment exponent. Defaults to 1 (neutral).
 	 */
-    float getDisplayGamma() const;
+    float getDisplayGamma() const { return _displayGamma; }
 
     /**
-     * Sets display adjustment, applied after all linear postprocessing and before fixed sRGB encoding.
-     * RGB is clamped to [0,1] before pow(rgb, 1 / displayGamma); no tone mapping is performed.
-     * Alpha is unchanged by display adjustment and encoding.
-     * @param displayGamma Finite positive exponent; defaults to 1.
-     * @throws IllegalArgumentException If the value is nonpositive or nonfinite; retains the previous value.
-     */
+	 * Sets display adjustment after tone mapping and clamping, before exact sRGB encoding.
+     * @param displayGamma Finite positive exponent.
+     * @throws IllegalArgumentException If invalid; retains the previous value.
+	 */
     void setDisplayGamma(float displayGamma);
 
-	/**
-	 * @return True if shadows are globally enabled. Returns false otherwise.
+    /**
+	 * @return True if shadows are globally enabled. Returns false otherwise. Defaults to true.
 	 */
     bool getShadowsEnabled() const { return _shadowsEnabled; }
 
-	/**
+    /**
 	 * Sets whether shadows are globally enabled.
 	 * @param enabled True if shadows can be cast based on per-light settings. False otherwise.
 	 */
     void setShadowsEnabled(bool enabled) { _shadowsEnabled = enabled; }
 
-    /** Maximum shadow lights, additionally capped by available texture resources. */
-
-	/**
+    /**
 	 * @return The global limit to the number of lights that can be casting shadows at one time. Lights are selected in the order
 	 * they are found during scene traversal.
 	 */
     unsigned int getShadowBudget() const { return _shadowBudget; }
 
-	/**
+    /**
 	 * Sets the global limit on the number of lights that can be casting shadows at one time. This value will still be bound to
 	 * hardware constraints when rendering.
 	 * @param budget Budget
 	 */
-	void setShadowBudget(unsigned int budget) { _shadowBudget = budget; }
+    void setShadowBudget(unsigned int budget) { _shadowBudget = budget; }
+
+    /**
+	 * @return Final tone curve function. Defaults to EXPONENTIAL to compress bright highlights.
+	 */
+    ToneMapping getToneMapping() const { return _toneMapping; }
+
+    /**
+	 * Sets the tone curve applied after all linear effects and exposure.
+     * Use NONE for uncompressed presentation that clips values above the display range.
+	 */
+    void setToneMapping(ToneMapping toneMapping) { _toneMapping = toneMapping; }
+
+    /**
+	 * @return Final brightness multiplier. Defaults to 1 (neutral).
+	 */
+    float getExposure() const { return _exposure; }
+
+    /**
+	 * Sets exposure after all effect-local gain values and negative RGB removal, before every
+     * tone curve (including NONE). 1 is neutral, 2 doubles brightness, 0.5 halves it,
+     * and 0 produces black RGB. Alpha is preserved.
+     * @param exposure Finite nonnegative brightness multiplier.
+     * @throws IllegalArgumentException If invalid; retains the previous value.
+	 */
+    void setExposure(float exposure);
 
 	/**
 	 * Renders lighting, blending, and effects in linear RGB, then encodes sRGB exactly once and presents.
+	 * Applies exposure and tone mapping after effects, clamps RGB, adjusts displayGamma, then encodes sRGB.
 	 * @param scene Scene
 	 * @param camera Camera
 	 * @param modes Bit mask containing all of the visualization modes to render. Defaults to RenderModes::MATERIAL.
@@ -155,7 +178,7 @@ private:
 	/**
 	 * The current background (clear) color
 	 */
-	Color _backgroundColor;
+	Color _backgroundColor = Color::BLACK;
 
 	/**
 	 * Display adjustment exponent
@@ -171,6 +194,16 @@ private:
 	 * The budget for the number of lights that can casting shadows at one time
 	 */
     unsigned int _shadowBudget = 4;
+
+	/**
+	 * Final tone curve after exposure.
+	 */
+    ToneMapping _toneMapping = ToneMapping::EXPONENTIAL;
+
+    /**
+	 * Final renderer-wide brightness multiplier.
+	 */
+    float _exposure = 1.f;
 
 	/**
 	 * Cached resources for generating shadow maps
