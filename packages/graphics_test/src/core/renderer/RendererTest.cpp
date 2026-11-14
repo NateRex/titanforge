@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(Renderer_renderWithPostProcessing)
 	ScenePtr scene = Scene::create();
 	CameraPtr camera = PerspectiveCamera::create(30.f, 800.f / 600.f, 0.1f, 100.f);
 	PostProcessMaterialPtr first = PostProcessMaterial::create();
-	first->exposure = 1.2f;
+	first->gain = 1.2f;
 	PostProcessMaterialPtr second = PostProcessMaterial::create();
 	second->contrast = 1.15f;
 	scene->add(PostProcessing::create(first));
@@ -306,11 +306,11 @@ BOOST_AUTO_TEST_CASE(Renderer_displayGammaWithPostProcessing)
     renderer->setBackgroundColor(Color(0.25f, 0.25f, 0.25f, 0.4f));
     renderer->setDisplayGamma(2.f);
     auto scene = Scene::create();
-    auto exposure = PostProcessMaterial::create();
-    exposure->exposure = 2.f;
+    auto gain = PostProcessMaterial::create();
+    gain->gain = 2.f;
     auto contrast = PostProcessMaterial::create();
     contrast->contrast = 0.5f;
-    scene->add(PostProcessing::create(exposure));
+    scene->add(PostProcessing::create(gain));
     scene->add(PostProcessing::create(contrast));
     const auto srgbEnabled = glIsEnabled(GL_FRAMEBUFFER_SRGB);
     struct SrgbRestore
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(Renderer_displayGammaWithPostProcessing)
     BOOST_REQUIRE_NO_THROW(renderer->render(scene, PerspectiveCamera::create(30.f, 1.f, 0.1f, 100.f)));
     BOOST_TEST(renderer->getDisplayGamma() == 2.f);
     BOOST_TEST(renderer->getBackgroundColor() == Color(0.25f, 0.25f, 0.25f, 0.4f));
-    BOOST_TEST(exposure->texture == nullptr);
+    BOOST_TEST(gain->texture == nullptr);
     BOOST_TEST(contrast->texture == nullptr);
 }
 
@@ -534,7 +534,7 @@ BOOST_AUTO_TEST_CASE(Renderer_offscreenTextureComposition)
                     mesh->setPosition(0.f, 0.f, -3.f);
                     scene->add(mesh);
                     auto effect = PostProcessMaterial::create();
-                    effect->exposure = 0.5f;
+                    effect->gain = 0.5f;
 
                     for (bool effects : {false, true})
                     {
@@ -554,7 +554,7 @@ BOOST_AUTO_TEST_CASE(Renderer_offscreenTextureComposition)
                         if (effects)
                         {
                             BOOST_TEST(state.postProcessing[0] == effect.get());
-                            BOOST_TEST(state.postProcessing[0]->exposure == 0.5f);
+                            BOOST_TEST(state.postProcessing[0]->gain == 0.5f);
                         }
                         BOOST_TEST(effect->texture == nullptr);
                     }

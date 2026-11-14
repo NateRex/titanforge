@@ -5,6 +5,7 @@
 #include <graphics/materials/PostProcessMaterial.h>
 #include <graphics/loaders/TextureLoader.h>
 #include <common/exceptions/IllegalArgumentException.h>
+#include <glad/glad.h>
 
 /**
  * Tests that a fully populated post-processing material can be applied
@@ -14,7 +15,7 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setMaterial)
 	PostProcessMaterialPtr material = PostProcessMaterial::create();
 	material->texture = TextureLoader::load("assets/container.jpg");
 	material->color = Color(0.25f, 0.5f, 0.75f, 0.8f);
-	material->exposure = 1.5f;
+	material->gain = 1.5f;
 	material->saturation = 0.6f;
 	material->contrast = 1.2f;
 
@@ -22,6 +23,17 @@ BOOST_AUTO_TEST_CASE(PostProcessShader_setMaterial)
 	shader->activate();
 
 	BOOST_REQUIRE_NO_THROW(shader->setMaterial(material.get()));
+
+	const GLint gainLocation = glGetUniformLocation(shader->id(), "uMaterial.gain");
+	BOOST_REQUIRE(gainLocation >= 0);
+	GLfloat gain = 0.f;
+	glGetUniformfv(shader->id(), gainLocation, &gain);
+	BOOST_TEST(gain == 1.5f);
+
+	material->gain = 0.5f;
+	shader->setMaterial(material.get());
+	glGetUniformfv(shader->id(), gainLocation, &gain);
+	BOOST_TEST(gain == 0.5f);
 }
 
 /**
